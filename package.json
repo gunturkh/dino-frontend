@@ -6,6 +6,7 @@
     "@react-spring/web": "^9.7.1",
     "@react-three/drei": "^9.57.0",
     "@react-three/fiber": "^8.11.5",
+    "@react-three/postprocessing": "^2.7.0",
     "@splinetool/loader": "^0.9.251",
     "@splinetool/r3f-spline": "^1.0.2",
     "@testing-library/jest-dom": "^5.16.5",
