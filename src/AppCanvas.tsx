@@ -4,6 +4,8 @@ import { Canvas, useLoader, useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { EffectComposer, DepthOfField, Bloom } from "@react-three/postprocessing";
 
+
+// import {MyComponent} from './MovingCircular'
 import ForestBg from './assets/image/forest_background.jpg'
 
 function BlurredBackground() {
@@ -23,7 +25,7 @@ function BlurredBackground() {
       <Plane
         ref={planeRef}
         // position={[0, 0, -5]}
-        args={[16, 10]}
+        args={[18, 10]}
         // rotation={[Math.PI / 2, 0, 0]}
       >
         <meshBasicMaterial attach="material" map={map} transparent opacity={0.5} toneMapped={false}/>
@@ -63,6 +65,15 @@ const signUpForm = () => {
   )
 }
 
+const mesh = {
+  geometry: new THREE.SphereGeometry(1, 32, 32),
+  material: new THREE.MeshStandardMaterial({ color: "orange" }),
+};
+
+const spineData = require("./assets/axie_1000/axie.json");
+
+
+
 export default function AppCanvas() {
   return (
     // canvas full screen
@@ -70,9 +81,9 @@ export default function AppCanvas() {
       <Canvas flat linear eventPrefix="client">
         <Suspense fallback={null}>
           <BlurredBackground />
-          <Html transform>
+          {/* <Html transform>
             {signUpForm()}
-          </Html>
+          </Html> */}
         </Suspense>
       </Canvas>
     </div>
