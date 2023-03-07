@@ -3,10 +3,41 @@ import * as PIXI from "pixi.js";
 import { Spine } from "pixi-spine";
 import TextInput from "pixi-text-input";
 
+function generateBox(w, h, state) {
+  var box = new PIXI.Container();
+  var sprite = new PIXI.TilingSprite(
+    PIXI.Texture.from("tile.png"),
+    w,
+    h
+  );
+  var mask = new PIXI.Graphics();
+
+  mask.beginFill(0);
+  mask.drawRoundedRect(0, 0, w, h, 36);
+
+  box.addChild(sprite);
+  box.addChild(mask);
+  sprite.mask = mask;
+
+  switch (state) {
+    case "DEFAULT":
+      sprite.tint = 0xffffff;
+      break;
+    case "FOCUSED":
+      sprite.tint = 0x7edfff;
+      break;
+    case "DISABLED":
+      sprite.alpha = 0.5;
+      break;
+  }
+
+  return box;
+}
+
 function Spineboy() {
   const app = new PIXI.Application();
   document.body.appendChild(app.view);
-  let nameInput;
+  let nameInput, passwordInput;
 
   PIXI.Assets.load("spineboy/spineboy.json").then((resource) => {
     console.log("resource", resource);
@@ -18,7 +49,7 @@ function Spineboy() {
     animation.x = app.screen.width / 2;
     animation.y = app.screen.height;
 
-    animation.scale.set(1.5);
+    animation.scale.set(1);
 
     // set up the mixes!
     animation.stateData.setMix("walk", "jump", 0.2);
@@ -34,19 +65,7 @@ function Spineboy() {
         width: "500px",
         color: "#26272E",
       },
-      box: {
-        default: {
-          fill: 0xe8e9f3,
-          rounded: 12,
-          stroke: { color: 0xcbcee0, width: 3 },
-        },
-        focused: {
-          fill: 0xe1e3ee,
-          rounded: 12,
-          stroke: { color: 0xabafc6, width: 3 },
-        },
-        disabled: { fill: 0xdbdbdb, rounded: 12 },
-      },
+      box: generateBox,
     });
 
     nameInput.placeholder = "Enter your username";
@@ -60,7 +79,30 @@ function Spineboy() {
     nameInput.on("input", (value) => {
       console.log("text typed:", value);
     });
+
+    passwordInput = new TextInput({
+      input: {
+        fontSize: "36px",
+        padding: "12px",
+        width: "500px",
+        color: "#26272E",
+      },
+      box: generateBox,
+    });
+
+    passwordInput.placeholder = "Enter your password";
+    passwordInput.x = 500;
+    passwordInput.y = 150;
+    passwordInput.pivot.x = passwordInput.width / 2;
+    passwordInput.pivot.y = passwordInput.height / 2;
+    passwordInput.on("keydown", (keycode) => {
+      console.log("key pressed:", keycode);
+    });
+    passwordInput.on("input", (value) => {
+      console.log("text typed:", value);
+    });
     app.stage.addChild(nameInput);
+    app.stage.addChild(passwordInput);
 
     app.stage.addChild(animation);
 
