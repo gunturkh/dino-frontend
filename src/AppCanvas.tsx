@@ -3,6 +3,7 @@ import { useGLTF, Html, shaderMaterial, useTexture, Plane } from '@react-three/d
 import { Canvas, useLoader, useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { EffectComposer, DepthOfField, Bloom } from "@react-three/postprocessing";
+import Spineboy from './Spineboy';
 
 
 // import {MyComponent} from './MovingCircular'
@@ -65,15 +66,6 @@ const signUpForm = () => {
   )
 }
 
-const mesh = {
-  geometry: new THREE.SphereGeometry(1, 32, 32),
-  material: new THREE.MeshStandardMaterial({ color: "orange" }),
-};
-
-const spineData = require("./assets/axie_1000/axie.json");
-
-
-
 export default function AppCanvas() {
   return (
     // canvas full screen
@@ -84,6 +76,7 @@ export default function AppCanvas() {
           {/* <Html transform>
             {signUpForm()}
           </Html> */}
+          <Spineboy />
         </Suspense>
       </Canvas>
     </div>
