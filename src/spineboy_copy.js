@@ -2,7 +2,6 @@ import "pixi-spine"; // Do this once at the very start of your code. This regist
 import * as PIXI from "pixi.js";
 import { Spine } from "pixi-spine";
 import TextInput from "pixi-text-input";
-import ForestBg from './assets/image/forest_background.jpg'
 
 function generateBox(w, h, state) {
   var box = new PIXI.Container();
@@ -32,48 +31,28 @@ function generateBox(w, h, state) {
 }
 
 function Spineboy() {
-  // make the canvas fill the browser window
-  const app = new PIXI.Application({
-    // width: a,
-    // height: 1080,
-  });
+  const app = new PIXI.Application();
   document.body.appendChild(app.view);
+  let nameInput, passwordInput;
 
-  PIXI.Assets.load([
-    ForestBg,
-    "spineboy/spineboy.json",
-    "dragon/dragon.json"
-  ]).then((resource) => {
-    console.log('resource array', resource)
-    const background = PIXI.Sprite.from(ForestBg);
-    console.log('background', background.width, background.height)
-    app.stage.addChild(background);
-
-    // scale stage container to match the background size
-    background.width = app.screen.width;
-    background.height = app.screen.height;
-
-    {/* <Spineboy /> */}
-    const spineboy = PIXI.Assets.cache.get("spineboy/spineboy.json").spineData;
-    const SpineboyAnimation = new Spine(spineboy);
+  PIXI.Assets.load("spineboy/spineboy.json").then((resource) => {
+    console.log("resource", resource);
+    console.log("app.screen", app.screen);
+    // app.stage.interactive = true;
+    const animation = new Spine(resource.spineData);
 
     // set the position
-    SpineboyAnimation.x = app.screen.width / 5;
-    SpineboyAnimation.y = app.screen.height;
+    animation.x = app.screen.width / 5;
+    animation.y = app.screen.height;
 
-    SpineboyAnimation.scale.set(1);
+    animation.scale.set(1);
 
     // set up the mixes!
-    SpineboyAnimation.stateData.setMix("walk", "jump", 0.2);
-    SpineboyAnimation.stateData.setMix("jump", "walk", 0.4);
+    animation.stateData.setMix("walk", "jump", 0.2);
+    animation.stateData.setMix("jump", "walk", 0.4);
 
     // play animation
-    SpineboyAnimation.state.setAnimation(0, "walk", true);
-    app.stage.addChild(SpineboyAnimation);
-    {/* <Spineboy /> */}
-
-    {/* Name Input */}
-    let nameInput, passwordInput;
+    animation.state.setAnimation(0, "walk", true);
 
     nameInput = new TextInput({
       input: {
@@ -120,11 +99,28 @@ function Spineboy() {
     });
     app.stage.addChild(nameInput);
     app.stage.addChild(passwordInput);
-    {/* Name Input */}
 
-    {/* <Dragon /> */}
-    const dragonAsset = PIXI.Assets.cache.get("dragon/dragon.json").spineData;
-    const dragon = new Spine(dragonAsset);
+    app.stage.addChild(animation);
+
+    // app.stage.on("pointerdown", () => {
+    //   animation.state.setAnimation(0, "jump", false);
+    //   animation.state.addAnimation(0, "walk", true, 0);
+    // });
+
+    // if (animation.state.hasAnimation("walk")) {
+    //   // run forever, little boy!
+    //   animation.state.setAnimation(0, "walk", true);
+    //   // dont run too fast
+    //   animation.state.timeScale = 1;
+    //   // update yourself
+    //   animation.autoUpdate = true;
+    // }
+  });
+  PIXI.Assets.load("dragon/dragon.json").then(onAssetsLoaded);
+
+  function onAssetsLoaded(dragonAsset) {
+    // instantiate the spine animation
+    const dragon = new Spine(dragonAsset.spineData);
     dragon.skeleton.setToSetupPose();
     dragon.update(0);
     dragon.autoUpdate = false;
@@ -158,9 +154,7 @@ function Spineboy() {
       // update the spine animation, only needed if dragon.autoupdate is set to false
       dragon.update(app.ticker.deltaMS / 1000); // IN SECONDS!
     });
-    {/* <Dragon /> */}
-
-  });
+  }
   return <div />;
 }
 

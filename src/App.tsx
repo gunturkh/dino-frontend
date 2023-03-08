@@ -2,6 +2,7 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Spineboy from './spineboy';
+// import Spineboy from './spineboy_copy';
 
 function App() {
   return (
