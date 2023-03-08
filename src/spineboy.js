@@ -2,8 +2,8 @@ import "pixi-spine"; // Do this once at the very start of your code. This regist
 import * as PIXI from "pixi.js";
 import { Spine } from "pixi-spine";
 import TextInput from "pixi-text-input";
-import ForestBg from './assets/image/forest_background.jpg'
-
+import ForestBg from "./assets/image/forest_background.jpg";
+import { Viewport } from "pixi-viewport";
 function generateBox(w, h, state) {
   var box = new PIXI.Container();
   var sprite = new PIXI.TilingSprite(PIXI.Texture.from("tile.png"), w, h);
@@ -33,27 +33,37 @@ function generateBox(w, h, state) {
 
 function Spineboy() {
   // make the canvas fill the browser window
+  console.log("window", window);
+
   const app = new PIXI.Application({
     // width: a,
     // height: 1080,
+    width: window.innerWidth,
+    height: window.innerHeight,
   });
+  
   document.body.appendChild(app.view);
 
   PIXI.Assets.load([
     ForestBg,
     "spineboy/spineboy.json",
-    "dragon/dragon.json"
+    "dragon/dragon.json",
   ]).then((resource) => {
-    console.log('resource array', resource)
+    console.log("resource array", resource);
     const background = PIXI.Sprite.from(ForestBg);
     console.log('background', background.width, background.height)
-    app.stage.addChild(background);
+    const container = new PIXI.Container();
+    container.sortableChildren = true;
+    container.addChild(background)
+    app.stage.addChild(container);
 
     // scale stage container to match the background size
     background.width = app.screen.width;
     background.height = app.screen.height;
 
-    {/* <Spineboy /> */}
+    {
+      /* <Spineboy /> */
+    }
     const spineboy = PIXI.Assets.cache.get("spineboy/spineboy.json").spineData;
     const SpineboyAnimation = new Spine(spineboy);
 
@@ -69,10 +79,15 @@ function Spineboy() {
 
     // play animation
     SpineboyAnimation.state.setAnimation(0, "walk", true);
-    app.stage.addChild(SpineboyAnimation);
-    {/* <Spineboy /> */}
+    // app.stage.addChild(SpineboyAnimation);
+    container.addChild(SpineboyAnimation);
+    {
+      /* <Spineboy /> */
+    }
 
-    {/* Name Input */}
+    {
+      /* Name Input */
+    }
     let nameInput, passwordInput;
 
     nameInput = new TextInput({
@@ -86,8 +101,8 @@ function Spineboy() {
     });
 
     nameInput.placeholder = "Enter your username";
-    nameInput.x = 500;
-    nameInput.y = 50;
+    nameInput.x = window.innerWidth/2;
+    nameInput.y = window.innerHeight/2;
     nameInput.pivot.x = nameInput.width / 2;
     nameInput.pivot.y = nameInput.height / 2;
     nameInput.on("keydown", (keycode) => {
@@ -108,8 +123,8 @@ function Spineboy() {
     });
 
     passwordInput.placeholder = "Enter your password";
-    passwordInput.x = 500;
-    passwordInput.y = 150;
+    passwordInput.x = window.innerWidth/2;
+    passwordInput.y = window.innerHeight/2 + 100;
     passwordInput.pivot.x = passwordInput.width / 2;
     passwordInput.pivot.y = passwordInput.height / 2;
     passwordInput.on("keydown", (keycode) => {
@@ -118,16 +133,26 @@ function Spineboy() {
     passwordInput.on("input", (value) => {
       console.log("text typed:", value);
     });
-    app.stage.addChild(nameInput);
-    app.stage.addChild(passwordInput);
-    {/* Name Input */}
 
-    {/* <Dragon /> */}
+    nameInput.zIndex = 2
+    passwordInput.zIndex = 2
+    // app.stage.addChild(nameInput);
+    // app.stage.addChild(passwordInput);
+    container.addChild(nameInput);
+    container.addChild(passwordInput);
+    {
+      /* Name Input */
+    }
+
+    {
+      /* <Dragon /> */
+    }
     const dragonAsset = PIXI.Assets.cache.get("dragon/dragon.json").spineData;
     const dragon = new Spine(dragonAsset);
     dragon.skeleton.setToSetupPose();
     dragon.update(0);
     dragon.autoUpdate = false;
+    dragon.zIndex = 0;
 
     // create a container for the spine animation and add the animation to it
     const dragonCage = new PIXI.Container();
@@ -144,12 +169,13 @@ function Spineboy() {
     );
     dragonCage.scale.set(scale, scale);
     dragonCage.position.set(
-      (app.screen.width - dragonCage.width) ,
-      (app.screen.height - dragonCage.height)
+      app.screen.width - dragonCage.width,
+      app.screen.height - dragonCage.height
     );
+    dragonCage.zIndex = 0
 
     // add the container to the stage
-    app.stage.addChild(dragonCage);
+    container.addChild(dragonCage);
 
     // once position and scaled, set the animation to play
     dragon.state.setAnimation(0, "flying", true);
@@ -158,8 +184,9 @@ function Spineboy() {
       // update the spine animation, only needed if dragon.autoupdate is set to false
       dragon.update(app.ticker.deltaMS / 1000); // IN SECONDS!
     });
-    {/* <Dragon /> */}
-
+    {
+      /* <Dragon /> */
+    }
   });
   return <div />;
 }
