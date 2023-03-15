@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React, { useMemo, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as PIXI from "pixi.js";

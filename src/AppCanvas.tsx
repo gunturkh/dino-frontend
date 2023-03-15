@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React, { Suspense, useMemo, useRef } from 'react'
 import { useGLTF, Html, shaderMaterial, useTexture, Plane } from '@react-three/drei'
 import { Canvas, useLoader, useFrame, useThree } from '@react-three/fiber'

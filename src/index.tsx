@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import AppCanvas from './AppCanvas';
 import {AppSpine} from './AppSpine'
+import { AppNew } from './AppNew';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(
@@ -11,7 +12,7 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   // <React.StrictMode>
-    <App />
+    <AppNew />
     // {/* <AppSpine /> */}
     // {/* <AppCanvas /> */}
   // </React.StrictMode>
