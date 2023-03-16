@@ -6,13 +6,16 @@ import AppCanvas from './AppCanvas';
 import {AppSpine} from './AppSpine'
 import { AppNew } from './AppNew';
 import reportWebVitals from './reportWebVitals';
+import { MetaMaskProvider } from "metamask-react";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   // <React.StrictMode>
+  <MetaMaskProvider>
     <AppNew />
+  </MetaMaskProvider>
     // {/* <AppSpine /> */}
     // {/* <AppCanvas /> */}
   // </React.StrictMode>
