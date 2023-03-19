@@ -8,9 +8,9 @@ import tile from "./tile.png";
 // text input pixi js in react way
 
 export default PixiComponent("TextInput", {
-  create: (props) => {
-    console.log("props", props);
-    return new Input({
+  create: (onInput) => {
+    console.log("props", onInput);
+    const input = new Input({
       bg: new Graphics()
         .beginFill(0xdcb000)
         .drawRoundedRect(0, 0, 280, 55, 11 + 5),
@@ -23,8 +23,24 @@ export default PixiComponent("TextInput", {
       padding: [11, 11],
       maxLength: 20,
       align: "center",
-      placeholder: props.placeholder,
+      // placeholder: placeholderA,
+      // placeholder:,
     });
+//  console.log('placeholder', input.placeholder.text)
+
+    // updateBackground(input, bgProps);
+
+    // function updateBackground(input, bgProps) {
+    //   const { width, height, radius, fillColor } = bgProps;
+    
+    //   const bg = input.bg;
+    //   bg.clear();
+    //   bg.beginFill(fillColor);
+    //   bg.drawRoundedRect(0, 0, width, height, radius);
+    //   bg.endFill();
+    // }
+
+    return input;
   },
   didMount: (instance, parent) => {
     console.log("didMount instance", instance);
@@ -36,15 +52,24 @@ export default PixiComponent("TextInput", {
   //   // clean up before removal
   // },
   applyProps: (instance, oldProps, newProps) => {
-    // applyDefaultProps(instance, oldProps, newProps);
-    instance.onChange.connect((e) => newProps.onChange(e));
-    // instance.placeholder = newProps.placeholder;
-    // console.log("applyProps instance", instance);
-    // console.log("applyProps oldProps", oldProps);
-    // console.log("applyProps newProps", newProps);
-    // const { fill, x, y, width, height, onClick } = newProps;
-    // props changed
-    // apply logic to the instance
+    const { ...oldP } = oldProps;
+    const { onChange, placeholder, ...newP } = newProps;
+
+    // apply rest props to PIXI.Text
+    applyDefaultProps(instance, oldP, newP);
+    instance.eventMode = 'static'
+
+    // add default placeholder
+    instance.placeholder.text = placeholder;
+
+    // updateBackground(instance, bgProps);
+
+    // instance.onChange.connect(result);
+
+    function result() {
+      const info = instance.value;
+      onChange(info);
+    }
   },
   config: {
     // destroy instance on unmount?
@@ -56,3 +81,5 @@ export default PixiComponent("TextInput", {
     destroyChildren: true,
   },
 });
+
+
