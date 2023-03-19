@@ -22,32 +22,55 @@ import TextInput from "./components/TextInput/index";
 import useResizeObserver from "@react-hook/resize-observer";
 import MetamaskConnect from "./components/MetamaskConnect";
 import { networks } from "./chainIdConstants";
+import { axiosInstance } from "./utils/api";
 
+// const useSize = (target: any) => {
+//   const [size, setSize] = useState<any>();
 
-const useSize = (target: any) => {
-  const [size, setSize] = useState<any>();
+//   useLayoutEffect(() => {
+//     setSize(target.current.getBoundingClientRect());
+//   }, [target]);
 
-  useLayoutEffect(() => {
-    setSize(target.current.getBoundingClientRect());
-  }, [target]);
+//   // Where the magic happens
+//   useResizeObserver(target, (entry) => setSize(entry.contentRect));
+//   return size;
+// };
 
-  // Where the magic happens
-  useResizeObserver(target, (entry) => setSize(entry.contentRect));
-  return size;
+type loginReqFormat = {
+  username: string;
+  password: string;
+};
+
+type registerReqFormat = {
+  email: string;
+  username: string;
+  password: string;
+  referal: string;
+  address: string;
+  otp: string;
+};
+
+type otpReqFormat = {
+  email: string;
 };
 
 export const AppNew = () => {
   const { status, connect, ethereum, switchChain, account, chainId } =
     useMetaMask();
   const [currentChain, setCurrentChain] = useState("");
-  const target = useRef(null);
-  const size = useSize(target);
+  // const target = useRef(null);
+  // const size = useSize(target);
   const [scene, setScene] = useState("HOME");
+  const [authMode, setAuthMode] = useState<"LOGIN" | "REGISTER">("LOGIN");
+  const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [otp, setOtp] = useState("");
+  const [retypePassword, setRetypePassword] = useState("");
+  const [referralCode, setReferralCode] = useState("");
   const [testValue, setTestValue] = useState("");
-  console.log('username', username)
-  console.log('password', password)
+  console.log("username", username);
+  console.log("password", password);
 
   const options = {
     backgroundColor: 0x1099bb,
@@ -55,7 +78,7 @@ export const AppNew = () => {
     autoresize: true,
     autoStart: false,
     clearBeforeRender: false,
-    hello: true, 
+    hello: true,
     // forceCanvas: true
   };
 
@@ -66,41 +89,148 @@ export const AppNew = () => {
 
   const blurFilter = useMemo(() => new PIXI.BlurFilter(4), []);
 
-
-
   const usernameRef = useRef(null);
   const passwordRef = useRef(null);
   const testRef = useRef(null);
 
-  console.log('usernameRef', usernameRef)
-  console.log('passwordRef', passwordRef)
-  console.log('testRef', testRef)
-  // @ts-ignore
-  usernameRef?.current?.onChange.connect(() => setUsername(usernameRef.current.value))
-  // @ts-ignore
-  usernameRef?.current?.onEnter.connect((e) => console.log('onEnter fired', e))
-  // const handleOnChange = (e: any, state: any) => {
-  //   console.log("e", e);
-  //   state(e.target.value);
-  // };
+  console.log("usernameRef", usernameRef);
+  console.log("passwordRef", passwordRef);
+  console.log("testRef", testRef);
 
+  const loginHandler = async () => {
+    const loginRequestData: loginReqFormat = {
+      username,
+      password,
+    };
+    const result = await axiosInstance({
+      url: "/user/authentication",
+      method: "POST",
+      data: JSON.stringify(loginRequestData),
+    });
+
+    const { data } = result;
+    if (!data.success) window.alert(`${data.message}`);
+  };
+
+  const registerHandler = async () => {
+    const registerRequestData: registerReqFormat = {
+      email,
+      username,
+      password,
+      referal: referralCode,
+      address: "asdf",
+      otp,
+    };
+    const result = await axiosInstance({
+      url: "/user/register",
+      method: "POST",
+      data: JSON.stringify(registerRequestData),
+    });
+    const { data } = result;
+    if (!data.success) window.alert(`${data.message}`);
+  };
+
+  const otpHandler = async () => {
+    const otpRequestData: otpReqFormat = {
+      email,
+    };
+    const result = await axiosInstance({
+      url: "/otp/getRegisterOtp",
+      method: "POST",
+      data: otpRequestData,
+    });
+    const { data } = result;
+    if (!data.success) window.alert(`${data.message}`);
+  };
   return (
     // <AppProvider value={app} >
-    <div ref={target}>
-      {/* <div className={`w-screen relative top-50`}> */}
-      {/* <MetamaskConnect /> */}
-      {/* <div style={{ position: "relative", top: appHeight / 2, width: "100%" }}>
-        <input
-          type="text"
-          placeholder="username"
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div> */}
+    <div className="relative flex justify-center items-center">
+      <div className="absolute flex justify-center items-center flex-col gap-8 bg-white/50 px-3.5 py-2.5 shadow-sm hover:bg-white/80 rounded-xl ">
+        <div className="flex gap-10 justify-start">
+          <button
+            onClick={() => setAuthMode("LOGIN")}
+            className="rounded-md bg-emerald-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+          >
+            Login
+          </button>
+          <button
+            onClick={() => setAuthMode("REGISTER")}
+            className="rounded-md bg-emerald-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+          >
+            Register
+          </button>
+        </div>
+        {authMode === "LOGIN" && (
+          <>
+            <input
+              type="text"
+              placeholder="username"
+              className="bg-orange-400 p-4 rounded-xl placeholder:text-black"
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="password"
+              className="bg-orange-400 p-4 rounded-xl placeholder:text-black"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <div className="flex justify-end w-full">
+              <button
+                onClick={() => window.alert(`forgot password clicke`)}
+                className="px-1.5 py-0.5 text-sm font-semibold text-black shadow-sm hover:text-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+              >
+                Forgot password
+              </button>
+            </div>
+            <button
+              onClick={loginHandler}
+              className="rounded-md bg-emerald-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+            >
+              Login
+            </button>
+          </>
+        )}
+        {authMode === "REGISTER" && (
+          <>
+            <input
+              type="email"
+              placeholder="email"
+              className="bg-orange-400 p-4 rounded-xl placeholder:text-black"
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="username"
+              className="bg-orange-400 p-4 rounded-xl placeholder:text-black"
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="password"
+              className="bg-orange-400 p-4 rounded-xl placeholder:text-black"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="retype password"
+              className="bg-orange-400 p-4 rounded-xl placeholder:text-black"
+              onChange={(e) => setRetypePassword(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Referral Code (optional)"
+              className="bg-orange-400 p-4 rounded-xl placeholder:text-black"
+              onChange={(e) => setReferralCode(e.target.value)}
+            />
+            <button
+              onClick={registerHandler}
+              className="rounded-md bg-emerald-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+            >
+              Register
+            </button>
+          </>
+        )}
+      </div>
 
       <Stage width={appWidth} height={appHeight} options={options}>
         {scene === "GAME" && (
@@ -118,21 +248,7 @@ export const AppNew = () => {
           />
         )}
 
-        <Container x={400} y={330} position={[appWidth / 2, appHeight / 2]}>
-          {/* <Text
-            text="Click to Connect"
-            anchor={{ x: 0.5, y: 0.5 }}
-            // filters={[blurFilter]}
-            interactive={true}
-            onclick={() => {
-              console.log("click");
-              // setScene((prev) => (prev === "GAME" ? "HOME" : "GAME"));
-            }}
-            ontap={() => {
-              console.log("click");
-              // setScene((prev) => (prev === "GAME" ? "HOME" : "GAME"));
-            }}
-          /> */}
+        {/* <Container x={400} y={330} position={[appWidth / 2, appHeight / 2]}>
 
           {status === "initializing" && (
             <Text
@@ -255,57 +371,8 @@ export const AppNew = () => {
               )}
             </>
           )}
-          <TextInput
-            onChange={(e: string) => {
-              console.log('e username', e)
-              setUsername(e)}}
-            ref={usernameRef}
-            x={-100}
-            y={0}
-            width={280}
-            height={55}
-            value={username}
-            placeholder={"username"}
-          />
-          <TextInput
-            // onInput={(e: string) => setPassword(e)}
-            ref={passwordRef}
-            x={-100}
-            y={100}
-            width={280}
-            height={55}
-            onChange={(e: string) => {
-              console.log('e password', e)
-              setPassword(e)}}
-
-            value={password}
-            placeholder={"password"}
-          />
-          {/* <TextInput
-            ref={testRef}
-            x={-100}
-            y={150}
-            width={280}
-            height={55}
-            onChange={(e: string) => {
-              setTestValue(e)}}
-
-            value={testValue}
-            placeholder={"test Value"}
-          /> */}
-          {/* <CustomButton 
-            onClick={() => console.log("click")}
-            x={100}
-          y={100}
-          width={200}
-          height={50}
-          buttonText="Click me"
-          /> */}
-          {/* <TextInput onChange={(e: string)=>setUsername(e)} placeholder="Enter your username" />
-            <TextInput onChange={(e: string)=>setPassword(e)} placeholder="Enter your password"/> */}
-        </Container>
+        </Container> */}
       </Stage>
     </div>
-    // </AppProvider>
   );
 };
