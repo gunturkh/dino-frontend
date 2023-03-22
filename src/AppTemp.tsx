@@ -23,6 +23,8 @@ import useResizeObserver from "@react-hook/resize-observer";
 import MetamaskConnect from "./components/MetamaskConnect";
 import { networks } from "./chainIdConstants";
 import { axiosInstance } from "./utils/api";
+import Home from "./components/scene/Home";
+import Register from "./components/scene/Register";
 
 // const useSize = (target: any) => {
 //   const [size, setSize] = useState<any>();
@@ -54,13 +56,13 @@ type otpReqFormat = {
   email: string;
 };
 
-export const AppNew = () => {
+export const AppTemp = () => {
   const { status, connect, ethereum, switchChain, account, chainId } =
     useMetaMask();
   const [currentChain, setCurrentChain] = useState("");
   // const target = useRef(null);
   // const size = useSize(target);
-  const [scene, setScene] = useState("HOME");
+  const [scene, setScene] = useState("REGISTER");
   const [authMode, setAuthMode] = useState<"LOGIN" | "REGISTER">("LOGIN");
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -98,6 +100,8 @@ export const AppNew = () => {
   console.log("testRef", testRef);
 
   const loginHandler = async () => {
+    // TODO: to change scene to home
+    // setScene("HOME");
     const loginRequestData: loginReqFormat = {
       username,
       password,
@@ -143,9 +147,8 @@ export const AppNew = () => {
     if (!data.success) window.alert(`${data.message}`);
   };
   return (
-    // <AppProvider value={app} >
     <div className="relative flex justify-center items-center">
-      <div className="absolute flex justify-center items-center flex-col gap-8 bg-white/50 px-3.5 py-2.5 shadow-sm hover:bg-white/80 rounded-xl ">
+      {scene === 'REGISTER' && <div className="absolute flex justify-center items-center flex-col gap-8 bg-white/50 px-3.5 py-2.5 shadow-sm hover:bg-white/80 rounded-xl ">
         <div className="flex gap-10 justify-start">
           <button
             onClick={() => setAuthMode("LOGIN")}
@@ -217,7 +220,7 @@ export const AppNew = () => {
               onChange={(e) => setRetypePassword(e.target.value)}
             />
             <input
-              type="text"
+              type='text'
               placeholder="Referral Code (optional)"
               className="bg-orange-400 p-4 rounded-xl placeholder:text-black"
               onChange={(e) => setReferralCode(e.target.value)}
@@ -230,158 +233,17 @@ export const AppNew = () => {
             </button>
           </>
         )}
-      </div>
-
+      </div>}
       <Stage width={appWidth} height={appHeight} options={options}>
-        {scene === "GAME" && (
-          <Sprite
-            image={"image/forest_background.jpg"}
-            width={window.innerWidth}
-            height={window.innerHeight}
-          />
+        {scene === "REGISTER" && (
+          <Register />
         )}
         {scene === "HOME" && (
           <>
-            <Sprite
-              image={"image/forest_background.jpg"}
-              width={window.innerWidth}
-              height={window.innerHeight}
-            />
-            <Sprite
-              image="logo192.png"
-              anchor={[0.5, 0.5]}
-              position={[0, 0]}
-              eventMode='static'
-              // interactive={true}
-              onclick={() => console.log('btn1 clicked')}
+            <Home
             />
           </>
         )}
-
-        {/* <Container x={400} y={330} position={[appWidth / 2, appHeight / 2]}>
-
-          {status === "initializing" && (
-            <Text
-              text="Synchronisation with MetaMask ongoing..."
-              anchor={{ x: 0.5, y: 0.5 }}
-            />
-          )}
-
-          {status === "unavailable" && (
-            <Text text="MetaMask not available :" anchor={{ x: 0.5, y: 0.5 }} />
-          )}
-
-          {status === "notConnected" && (
-            <Text
-              anchor={{ x: 0.5, y: 0.5 }}
-              text="Connect to MetaMask"
-              eventMode="static"
-              onclick={() => connect()}
-            />
-          )}
-
-          {status === "connecting" && (
-            <Text text="Connecting..." anchor={{ x: 0.5, y: 0.5 }} />
-          )}
-
-          {status === "connected" && (
-            <>
-              <Text
-                anchor={0.5}
-                // x={appWidth / 2}
-                // y={appHeight / 2}
-                style={
-                  new PIXI.TextStyle({
-                    align: "center",
-                    fontFamily: '"Source Sans Pro", Helvetica, sans-serif',
-                    fontSize: 20,
-                    // fontWeight: 400,
-                    fill: ["#ffffff", "#ffff55"], // gradient
-                    stroke: "#000000",
-                    strokeThickness: 5,
-                    letterSpacing: 1,
-                    dropShadow: true,
-                    dropShadowColor: "#ccced2",
-                    dropShadowBlur: 4,
-                    dropShadowAngle: Math.PI / 6,
-                    dropShadowDistance: 6,
-                    wordWrap: true,
-                    wordWrapWidth: 440,
-                  })
-                }
-                text={`Connected account ${account} on chain ID ${chainId}`}
-              />
-              {chainId === networks.mainnet && (
-                <Text
-                  anchor={0.5}
-                  y={appHeight / 6}
-                  // x={appWidth / 2}
-                  // y={appHeight / 2}
-                  style={
-                    new PIXI.TextStyle({
-                      align: "center",
-                      fontFamily: '"Source Sans Pro", Helvetica, sans-serif',
-                      fontSize: 20,
-                      // fontWeight: 400,
-                      fill: ["#ffffff", "#ffff55"], // gradient
-                      stroke: "#000000",
-                      strokeThickness: 5,
-                      letterSpacing: 1,
-                      dropShadow: true,
-                      dropShadowColor: "#ccced2",
-                      dropShadowBlur: 4,
-                      dropShadowAngle: Math.PI / 6,
-                      dropShadowDistance: 6,
-                      wordWrap: true,
-                      wordWrapWidth: 440,
-                    })
-                  }
-                  text="Connect to BNB"
-                  eventMode="static"
-                  onclick={async () => {
-                    const result = await switchChain(
-                      networks.binanceSmartChain
-                    );
-                    console.log("result switch chain to bnb", chainId);
-                    // setCurrentChain(networks.binanceSmartChain);
-                  }}
-                />
-              )}
-              {chainId === networks.binanceSmartChain && (
-                <Text
-                  anchor={0.5}
-                  y={appHeight / 6}
-                  style={
-                    new PIXI.TextStyle({
-                      align: "center",
-                      fontFamily: '"Source Sans Pro", Helvetica, sans-serif',
-                      fontSize: 20,
-                      // fontWeight: 400,
-                      fill: ["#ffffff", "#ffff55"], // gradient
-                      stroke: "#000000",
-                      strokeThickness: 5,
-                      letterSpacing: 1,
-                      dropShadow: true,
-                      dropShadowColor: "#ccced2",
-                      dropShadowBlur: 4,
-                      dropShadowAngle: Math.PI / 6,
-                      dropShadowDistance: 6,
-                      wordWrap: true,
-                      wordWrapWidth: 440,
-                    })
-                  }
-                  text="Connect to Ethereum"
-                  eventMode="static"
-                  onclick={async () => {
-                    const result = await switchChain(networks.mainnet);
-                    console.log("result switch chain to ethereum", chainId);
-                    // setCurrentChain(networks.mainnet);
-                  }}
-                />
-              )}
-            </>
-          )}
-        </Container> */}
       </Stage>
     </div>
   );
