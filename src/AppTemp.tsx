@@ -148,94 +148,107 @@ export const AppTemp = () => {
   };
   return (
     <div className="relative flex justify-center items-center">
-      {scene === 'REGISTER' && <div className="absolute flex justify-center items-center flex-col gap-8 bg-white/50 px-3.5 py-2.5 shadow-sm hover:bg-white/80 rounded-xl ">
-        <div className="flex gap-10 justify-start">
-          <input
-            alt="btnLogin"
-            type={'image'}
-            src={'image/Btnlogin.png'}
-            onClick={() => setAuthMode("LOGIN")}
-            className=" px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-          />
-          <input
-            alt="btnRegister"
-            type={'image'}
-            src={'image/BtnRegister.png'}
-            onClick={() => setAuthMode("REGISTER")}
-            className=" px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-          />
-        </div>
-        {authMode === "LOGIN" && (
-          <>
+      {scene === 'REGISTER' &&
+        <div
+          className="absolute flex justify-center items-center flex-col gap-8 bg-white/50 px-3.5 py-2.5 shadow-sm rounded-xl "
+          style={{
+            background: `url(image/formBackground.png) no-repeat `,
+          }}
+        >
+          <div className="flex gap-2 justify-start">
             <input
-              type="text"
-              placeholder="username"
-              className="bg-orange-400 p-4 rounded-xl placeholder:text-black"
-              onChange={(e) => setUsername(e.target.value)}
+              alt="btnLogin"
+              type={'image'}
+              src={'image/Btnlogin.png'}
+              onClick={() => setAuthMode("LOGIN")}
+              className=" px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             />
             <input
-              type="password"
-              placeholder="password"
-              className="bg-orange-400 p-4 rounded-xl placeholder:text-black"
-              onChange={(e) => setPassword(e.target.value)}
+              alt="btnRegister"
+              type={'image'}
+              src={'image/BtnRegister.png'}
+              onClick={() => setAuthMode("REGISTER")}
+              className=" px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             />
-            <div className="flex justify-end w-full">
+          </div>
+          {authMode === "LOGIN" && (
+            <>
+              <input
+                type="text"
+                placeholder="username"
+                className="py-3 w-full px-4 rounded-xl placeholder:text-white text-white"
+                style={{
+                  background: `url(image/InputBox.png) no-repeat `,
+                }}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <input
+                type="password"
+                placeholder="password"
+                className="py-3 w-full px-4 rounded-xl focus:ring-0 placeholder:text-white text-white"
+                style={{
+                  background: `url(image/InputBox.png) no-repeat `,
+                }}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <div className="flex justify-end w-full">
+                <button
+                  onClick={() => window.alert(`forgot password clicke`)}
+                  className="px-1.5 py-0.5 text-sm font-semibold text-white shadow-sm hover:text-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+                >
+                  Forgot password
+                </button>
+              </div>
+              <input
+                alt="btnLogin"
+                type={'image'}
+                src={'image/BtnConfirm.png'}
+                onClick={loginHandler}
+                className=" px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              />
+            </>
+          )}
+          {authMode === "REGISTER" && (
+            <>
+              <input
+                type="email"
+                placeholder="email"
+                className="p-4 rounded-xl placeholder:text-black"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="username"
+                className="p-4 rounded-xl placeholder:text-black"
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <input
+                type="password"
+                placeholder="password"
+                className="p-4 rounded-xl placeholder:text-black"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <input
+                type="password"
+                placeholder="retype password"
+                className="p-4 rounded-xl placeholder:text-black"
+                onChange={(e) => setRetypePassword(e.target.value)}
+              />
+              <input
+                type='text'
+                placeholder="Referral Code (optional)"
+                className="p-4 rounded-xl placeholder:text-black"
+                onChange={(e) => setReferralCode(e.target.value)}
+              />
               <button
-                onClick={() => window.alert(`forgot password clicke`)}
-                className="px-1.5 py-0.5 text-sm font-semibold text-black shadow-sm hover:text-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+                onClick={registerHandler}
+                className="rounded-md bg-emerald-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
               >
-                Forgot password
+                Register
               </button>
-            </div>
-            <button
-              onClick={loginHandler}
-              className="rounded-md bg-emerald-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
-            >
-              Login
-            </button>
-          </>
-        )}
-        {authMode === "REGISTER" && (
-          <>
-            <input
-              type="email"
-              placeholder="email"
-              className="bg-orange-400 p-4 rounded-xl placeholder:text-black"
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="username"
-              className="bg-orange-400 p-4 rounded-xl placeholder:text-black"
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="password"
-              className="bg-orange-400 p-4 rounded-xl placeholder:text-black"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="retype password"
-              className="bg-orange-400 p-4 rounded-xl placeholder:text-black"
-              onChange={(e) => setRetypePassword(e.target.value)}
-            />
-            <input
-              type='text'
-              placeholder="Referral Code (optional)"
-              className="bg-orange-400 p-4 rounded-xl placeholder:text-black"
-              onChange={(e) => setReferralCode(e.target.value)}
-            />
-            <button
-              onClick={registerHandler}
-              className="rounded-md bg-emerald-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
-            >
-              Register
-            </button>
-          </>
-        )}
-      </div>}
+            </>
+          )}
+        </div>}
       <Stage width={appWidth} height={appHeight} options={options}>
         {scene === "REGISTER" && (
           <Register />
