@@ -17,7 +17,7 @@ import {
   useRef,
   useState,
 } from "react";
-import TextInput from "./components/TextInput/index";
+import { TextInput } from "./components/TextInput/index";
 // import CustomButton from "./components/Button";
 import useResizeObserver from "@react-hook/resize-observer";
 import MetamaskConnect from "./components/MetamaskConnect";
@@ -25,6 +25,7 @@ import { networks } from "./chainIdConstants";
 import { axiosInstance } from "./utils/api";
 import Home from "./components/scene/Home";
 import Register from "./components/scene/Register";
+// import { useGLTF, Html, shaderMaterial, useTexture, Plane } from '@react-three/drei'
 
 // const useSize = (target: any) => {
 //   const [size, setSize] = useState<any>();

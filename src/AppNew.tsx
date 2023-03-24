@@ -17,7 +17,7 @@ import {
   useRef,
   useState,
 } from "react";
-import TextInput from "./components/TextInput/index";
+import { TextInput } from "./components/TextInput/index";
 // import CustomButton from "./components/Button";
 import useResizeObserver from "@react-hook/resize-observer";
 import MetamaskConnect from "./components/MetamaskConnect";

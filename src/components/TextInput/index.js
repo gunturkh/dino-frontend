@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, memo } from "react";
 import { Input, Button } from "@pixi/ui";
 import { applyDefaultProps, PixiComponent } from "@pixi/react";
 import { Graphics, Sprite } from "pixi.js";
@@ -7,7 +7,7 @@ import tile from "./tile.png";
 
 // text input pixi js in react way
 
-export default PixiComponent("TextInput", {
+const CustomTextInput =  PixiComponent("TextInput", {
   create: (onInput) => {
     console.log("props", onInput);
     const input = new Input({
@@ -64,7 +64,7 @@ export default PixiComponent("TextInput", {
 
     // updateBackground(instance, bgProps);
 
-    // instance.onChange.connect(result);
+    instance.onChange.connect(result);
 
     function result() {
       const info = instance.value;
@@ -81,5 +81,10 @@ export default PixiComponent("TextInput", {
     destroyChildren: true,
   },
 });
+
+export const TextInput = memo(({ ...props }) => {
+
+  return <CustomTextInput {...props} />
+})
 
 

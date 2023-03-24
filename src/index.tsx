@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import AppCanvas from './AppCanvas';
+import { AppSpine } from './AppSpine';
 import { AppTemp } from './AppTemp'
 import { AppNew } from './AppNew';
 import reportWebVitals from './reportWebVitals';
@@ -16,8 +16,8 @@ root.render(
   <MetaMaskProvider>
     {/* <AppNew /> */}
     <AppTemp />
+    {/* <AppSpine /> */}
   </MetaMaskProvider>
-  // {/* <AppSpine /> */}
   // {/* <AppCanvas /> */}
   // </React.StrictMode>
 );
