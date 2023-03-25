@@ -16,6 +16,7 @@ import {
   useMemo,
   useRef,
   useState,
+  Suspense,
 } from "react";
 import { TextInput } from "./components/TextInput/index";
 // import CustomButton from "./components/Button";
@@ -25,6 +26,7 @@ import { networks } from "./chainIdConstants";
 import { axiosInstance } from "./utils/api";
 import Home from "./components/scene/Home";
 import Register from "./components/scene/Register";
+import Loading from "./components/scene/Loader";
 // import { useGLTF, Html, shaderMaterial, useTexture, Plane } from '@react-three/drei'
 
 // const useSize = (target: any) => {
@@ -63,7 +65,7 @@ export const AppTemp = () => {
   const [currentChain, setCurrentChain] = useState("");
   // const target = useRef(null);
   // const size = useSize(target);
-  const [scene, setScene] = useState("REGISTER");
+  const [scene, setScene] = useState("LOADING");
   const [authMode, setAuthMode] = useState<"LOGIN" | "REGISTER">("LOGIN");
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -281,6 +283,13 @@ export const AppTemp = () => {
         </div>
       )}
       <Stage width={appWidth} height={appHeight} options={options}>
+        {/* @ts-ignore */}
+        <Suspense fallback={<p>loading...</p>}>
+          {scene === "LOADING" && <Loading onFinishLoading={() => {
+            console.log('finish loading')
+            setScene("REGISTER")
+          }} />}
+        </Suspense>
         {scene === "REGISTER" && <Register />}
         {scene === "HOME" && (
           <>
