@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import * as PIXI from "pixi.js";
 import {
   Stage,
@@ -13,7 +13,7 @@ import {
 } from "@pixi/react";
 import DinoFundComponent from '../DinoFundComponent';
 import ProfileComponent from '../ProfileComponent';
-
+import DetailsComponent from '../DetailsComponent';
 
 const Home = ({
   setSceneState,
@@ -22,11 +22,15 @@ const Home = ({
   const app = useApp();
   console.log('app.screen', app.screen)
 
+  const [toggleBtnAudio, setToggleBtnAudio] = useState(false);
+
   const ProfileBgBounds = PIXI.Assets.get('ProfileBg').orig;
-  console.log("🚀 ~ file: home.tsx:26 ~ ProfileBgBounds:", ProfileBgBounds)
   const ProfileAvatarDefaultBounds = PIXI.Assets.get('ProfileAvatarDefault').orig;
-  console.log("🚀 ~ file: home.tsx:28 ~ ProfileAvatarDefaultBounds:", ProfileAvatarDefaultBounds)
   const DinoFundBgBounds = PIXI.Assets.get('DinoFundBg').orig;
+  const DetailsBounds = PIXI.Assets.get('DiamondDetails').orig;
+
+  console.log("🚀 ~ file: home.tsx:26 ~ ProfileBgBounds:", ProfileBgBounds)
+  console.log("🚀 ~ file: home.tsx:28 ~ ProfileAvatarDefaultBounds:", ProfileAvatarDefaultBounds)
   console.log("🚀 ~ file: home.tsx:30 ~ DinoFundBgBounds:", DinoFundBgBounds)
 
   const upperContainerRef = useRef(null);
@@ -38,7 +42,7 @@ const Home = ({
     // @ts-ignore
     console.log('upperContainerRef getGlobalPosition', upperContainerRef.current.getGlobalPosition())
   }, [])
-  { console.log('avatar',) }
+  console.log('avatar')
   return (
     <Container
     >
@@ -50,12 +54,13 @@ const Home = ({
         position={[app.screen.width / 2, app.screen.height / 2]}
       />
 
+      {/* Upper  Container */}
       <Container ref={upperContainerRef} x={app.screen.width} y={app.screen.height}>
         <ProfileComponent
           spriteTexture={PIXI.Assets.get('ProfileBg')}
           avatarTexture={PIXI.Assets.get('ProfileAvatarDefault')}
           text='test1234'
-          posX={-app.screen.width / 2 - (ProfileBgBounds.width * 2) * 1.2}
+          posX={-app.screen.width / 2 - (ProfileBgBounds.width * 2) * 1.3}
           posY={-app.screen.height + 5}
           avatarXOffset={0}
           avatarYOffset={(ProfileBgBounds.height / 2 - ProfileAvatarDefaultBounds.height / 2) * 0.5}
@@ -72,7 +77,7 @@ const Home = ({
         />
 
         <DinoFundComponent
-          ref={dinoFundRef}
+          // ref={dinoFundRef}
           spriteTexture={PIXI.Assets.get('DinoFundBg')}
           // text="9.000.000.000"
           text={`x=${app.screen.width} y=${app.screen.height}`}
@@ -94,6 +99,7 @@ const Home = ({
             0
           ]}
         >
+          {/* Button Language */}
           <Sprite
             texture={PIXI.Assets.get('BtnLngHome')}
             width={30}
@@ -106,6 +112,7 @@ const Home = ({
               console.log('BtnLngHome clicked')
             }}
           />
+          {/* Button Share */}
           <Sprite
             texture={PIXI.Assets.get('BtnShareHome')}
             width={30}
@@ -118,17 +125,118 @@ const Home = ({
               console.log('BtnShareHome clicked')
             }}
           />
-          {/* change to fancyButton pixi UI */}
+          {/* Button Audio on/mute */}
           <Sprite
-            texture={PIXI.Assets.get('BtnLngHome')}
+            texture={PIXI.Assets.get(toggleBtnAudio ? 'BtnAudioHomeOn' : 'BtnAudioHomeMute')}
             width={30}
             height={30}
             anchor={[0.5, 0.5]}
             x={-app.screen.width / 2 + 70}
             y={-(app.screen.height - DinoFundBgBounds.height * 0.5 + 3)}
+            eventMode={'static'}
+            onpointertap={() => {
+              // set toggle audio
+              setToggleBtnAudio(!toggleBtnAudio)
+            }}
           />
         </Container>
+      </Container>
 
+      {/* Details Container */}
+      <Container
+        position={[
+          0,
+          100
+        ]}
+      >
+        {/* left side */}
+        <DetailsComponent
+          spriteTexture={PIXI.Assets.get('DiamondDetails')}
+          text={'123.123.123'}
+          posX={app.screen.width / 2 - (DetailsBounds.width / 2) * 1.4}
+          posY={20}
+          textStyle={new PIXI.TextStyle({
+            fontFamily: 'Magra',
+            fontSize: 20,
+            fontWeight: 'bold',
+            fill: ['0xFFC700'],
+          })}
+          textYOffest={-3}
+          textXOffest={10}
+          onPress={() => {
+            console.log('onPress DiamondDetails')
+          }}
+        />
+        <DetailsComponent
+          spriteTexture={PIXI.Assets.get('StarDetails')}
+          text={'123.123.123'}
+          posX={app.screen.width / 2 - (DetailsBounds.width / 2) * 1.4}
+          posY={DetailsBounds.height + 35}
+          textStyle={new PIXI.TextStyle({
+            fontFamily: 'Magra',
+            fontSize: 20,
+            fontWeight: 'bold',
+            fill: ['0xFFC700'],
+          })}
+          textYOffest={-2}
+          textXOffest={10}
+          onPress={() => {
+            console.log('onPress DiamondDetails')
+          }}
+        />
+
+        {/* right side */}
+        <DetailsComponent
+          spriteTexture={PIXI.Assets.get('BNBDetails')}
+          text={'0.55012312'}
+          posX={app.screen.width / 2 + (DetailsBounds.width / 2) * 1.4}
+          posY={0}
+          textStyle={new PIXI.TextStyle({
+            fontFamily: 'Magra',
+            fontSize: 20,
+            fontWeight: 'bold',
+            fill: ['0xFFC700'],
+          })}
+          textYOffest={-3}
+          textXOffest={10}
+          onPress={() => {
+            console.log('onPress BNBDetails')
+          }}
+        />
+        <DetailsComponent
+          spriteTexture={PIXI.Assets.get('InGameTokenDetails')}
+          text={'123.123.123'}
+          posX={app.screen.width / 2 + (DetailsBounds.width / 2) * 1.4}
+          posY={DetailsBounds.height + 12}
+          textStyle={new PIXI.TextStyle({
+            fontFamily: 'Magra',
+            fontSize: 20,
+            fontWeight: 'bold',
+            fill: ['0xFFC700'],
+          })}
+          textYOffest={-1}
+          textXOffest={10}
+          onPress={() => {
+            console.log('onPress BNBDetails')
+          }}
+        />
+        <DetailsComponent
+          spriteTexture={PIXI.Assets.get('HuntingBonusDetails')}
+          text={'123.123.123'}
+          posX={app.screen.width / 2 + (DetailsBounds.width / 2) * 1.4}
+          posY={(DetailsBounds.height * 2) + 30}
+          textStyle={new PIXI.TextStyle({
+            fontFamily: 'Magra',
+            fontSize: 20,
+            fontWeight: 'bold',
+            fill: ['0xFFC700'],
+          })}
+          textYOffest={-1}
+          textXOffest={10}
+          onPress={() => {
+            console.log('onPress BNBDetails')
+          }}
+        />
       </Container>
 
 

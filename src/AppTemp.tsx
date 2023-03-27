@@ -291,7 +291,7 @@ export const AppTemp = () => {
               {authMode === "OTPEMAIL" && (
                 <Formik
                   initialValues={{ email: "" }}
-                  validate={(values) => {
+                  validate={(values: any) => {
                     console.log("validate values", values);
                     const errors: { email?: string } = {};
                     if (!values.email) {
@@ -306,7 +306,7 @@ export const AppTemp = () => {
                     console.log("errors");
                     return errors;
                   }}
-                  onSubmit={(values, { setSubmitting }) => {
+                  onSubmit={(values: any, { setSubmitting }: any) => {
                     console.log("otp submit:", values);
                     setTimeout(() => {
                       alert(JSON.stringify(values, null, 2));
@@ -324,7 +324,7 @@ export const AppTemp = () => {
                     isSubmitting,
                     submitForm,
                     /* and other goodies */
-                  }) => (
+                  }: any) => (
                     <>
                       <form onSubmit={handleSubmit}>
                         <div>
