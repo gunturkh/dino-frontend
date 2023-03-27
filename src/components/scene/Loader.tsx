@@ -27,9 +27,6 @@ const Loader = ({
   // console.log('app.renderer', app.renderer.width, app.renderer.height)
   // console.log('app.stage', app.stage.width, app.stage.height)
 
-
-  const [assets, setAssets] = React.useState<any>([]);
-
   // load assets
   async function initializeLoader() {
     await PIXI.Assets.init({ manifest: manifest })

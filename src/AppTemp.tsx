@@ -369,7 +369,7 @@ export const AppTemp = () => {
                           // onClick={otpHandler}
                           type="submit"
                           disabled={isSubmitting}
-                          // onClick={submitForm}
+                        // onClick={submitForm}
                         >
                           Request OTP
                         </button>
@@ -400,14 +400,10 @@ export const AppTemp = () => {
       <Stage width={appWidth} height={appHeight} options={options}>
         {/* @ts-ignore */}
         <Suspense fallback={<p>loading...</p>}>
-          {scene === "LOADING" && (
-            <Loading
-              onFinishLoading={() => {
-                console.log("finish loading");
-                setScene("REGISTER");
-              }}
-            />
-          )}
+          {scene === "LOADING" && <Loading onFinishLoading={() => {
+            console.log('finish loading')
+            setScene("HOME")
+          }} />}
         </Suspense>
         {scene === "REGISTER" && <Register />}
         {scene === "HOME" && (
