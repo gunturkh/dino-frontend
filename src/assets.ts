@@ -84,6 +84,26 @@ export const manifest: ResolverManifest = {
           name: 'BtnAudioHomeMute',
           srcs: 'image/BtnAudioHomeMute.png'
         },
+        {
+          name: 'DiamondDetails',
+          srcs: 'image/diamondDetails.png'
+        },
+        {
+          name: 'StarDetails',
+          srcs: 'image/starDetails.png'
+        },
+        {
+          name: 'BNBDetails',
+          srcs: 'image/bnbDetails.png'
+        },
+        {
+          name: 'InGameTokenDetails',
+          srcs: 'image/ingametokenDetails.png'
+        },
+        {
+          name: 'HuntingBonusDetails',
+          srcs: 'image/huntingBonusdetails.png'
+        },
       ]
     },
   ],

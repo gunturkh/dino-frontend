@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@pixi/react": "^7.0.3",
+    "@pixi/sound": "^5.1.1",
     "@pixi/ui": "^0.6.2",
     "@react-hook/resize-observer": "^1.2.6",
     "@testing-library/jest-dom": "^5.16.5",
