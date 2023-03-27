@@ -33,6 +33,8 @@ const Home = ({
   console.log("🚀 ~ file: home.tsx:28 ~ ProfileAvatarDefaultBounds:", ProfileAvatarDefaultBounds)
   console.log("🚀 ~ file: home.tsx:30 ~ DinoFundBgBounds:", DinoFundBgBounds)
 
+  console.log('Magra Bold', PIXI.Assets.get('Magra Bold'));
+
   const upperContainerRef = useRef(null);
   const dinoFundRef = useRef(null);
   // console.log('dinoFundRef', dinoFundRef.current)
@@ -66,7 +68,7 @@ const Home = ({
           avatarYOffset={(ProfileBgBounds.height / 2 - ProfileAvatarDefaultBounds.height / 2) * 0.5}
           textYOffset={ProfileBgBounds.height - 8}
           textStyle={new PIXI.TextStyle({
-            fontFamily: 'Magra',
+            fontFamily: 'Magra Bold',
             fontSize: 18,
             fontWeight: 'bold',
             fill: ['0x705802'],
@@ -86,7 +88,7 @@ const Home = ({
           // posY={-app.screen.height + 100}
           textYOffest={(DinoFundBgBounds.height * 0.5 / 2 - 5)}
           textStyle={new PIXI.TextStyle({
-            fontFamily: 'Magra',
+            fontFamily: 'Magra Bold',
             fontSize: 24,
             fontWeight: 'bold',
             fill: ['0xFFC700'],
@@ -156,7 +158,7 @@ const Home = ({
           posX={app.screen.width / 2 - (DetailsBounds.width / 2) * 1.4}
           posY={20}
           textStyle={new PIXI.TextStyle({
-            fontFamily: 'Magra',
+            fontFamily: 'Magra Bold',
             fontSize: 20,
             fontWeight: 'bold',
             fill: ['0xFFC700'],
@@ -173,7 +175,7 @@ const Home = ({
           posX={app.screen.width / 2 - (DetailsBounds.width / 2) * 1.4}
           posY={DetailsBounds.height + 35}
           textStyle={new PIXI.TextStyle({
-            fontFamily: 'Magra',
+            fontFamily: 'Magra Bold',
             fontSize: 20,
             fontWeight: 'bold',
             fill: ['0xFFC700'],
@@ -192,7 +194,7 @@ const Home = ({
           posX={app.screen.width / 2 + (DetailsBounds.width / 2) * 1.4}
           posY={0}
           textStyle={new PIXI.TextStyle({
-            fontFamily: 'Magra',
+            fontFamily: 'Magra Bold',
             fontSize: 20,
             fontWeight: 'bold',
             fill: ['0xFFC700'],
@@ -209,7 +211,7 @@ const Home = ({
           posX={app.screen.width / 2 + (DetailsBounds.width / 2) * 1.4}
           posY={DetailsBounds.height + 12}
           textStyle={new PIXI.TextStyle({
-            fontFamily: 'Magra',
+            fontFamily: 'Magra Bold',
             fontSize: 20,
             fontWeight: 'bold',
             fill: ['0xFFC700'],
@@ -220,13 +222,14 @@ const Home = ({
             console.log('onPress BNBDetails')
           }}
         />
+
         <DetailsComponent
           spriteTexture={PIXI.Assets.get('HuntingBonusDetails')}
           text={'123.123.123'}
           posX={app.screen.width / 2 + (DetailsBounds.width / 2) * 1.4}
           posY={(DetailsBounds.height * 2) + 30}
           textStyle={new PIXI.TextStyle({
-            fontFamily: 'Magra',
+            fontFamily: 'Magra Bold',
             fontSize: 20,
             fontWeight: 'bold',
             fill: ['0xFFC700'],

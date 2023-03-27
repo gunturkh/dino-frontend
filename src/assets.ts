@@ -3,6 +3,19 @@ import type { ResolverManifest } from "pixi.js";
 export const manifest: ResolverManifest = {
   bundles: [
     {
+      name: "Misc",
+      assets: [
+        {
+          name: "MagraBold",
+          srcs: "misc/Magra-Bold.ttf",
+        },
+        {
+          name: "MagraRegular",
+          srcs: "misc/Magra-Regular.ttf",
+        },
+      ],
+    },
+    {
       name: "LoaderScene",
       assets: [
         {
