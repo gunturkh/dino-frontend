@@ -56,6 +56,34 @@ export const manifest: ResolverManifest = {
           name: "MainBg",
           srcs: "image/mainPageBg.png",
         },
+        {
+          name: "ProfileBg",
+          srcs: "image/profileBg.png",
+        },
+        {
+          name: 'ProfileAvatarDefault',
+          srcs: 'image/iconProfile.png'
+        },
+        {
+          name: "DinoFundBg",
+          srcs: "image/dinoFund.png",
+        },
+        {
+          name: 'BtnLngHome',
+          srcs: 'image/BtnLanguageHome.png'
+        },
+        {
+          name: 'BtnShareHome',
+          srcs: 'image/BtnShare.png'
+        },
+        {
+          name: 'BtnAudioHomeOn',
+          srcs: 'image/BtnAudioHomeOn.png'
+        },
+        {
+          name: 'BtnAudioHomeMute',
+          srcs: 'image/BtnAudioHomeMute.png'
+        },
       ]
     },
   ],
