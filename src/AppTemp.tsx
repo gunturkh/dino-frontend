@@ -1,29 +1,19 @@
 import * as PIXI from "pixi.js";
-import { Formik } from "formik";
+import { Formik, useFormik } from "formik";
 import { useConnectedMetaMask, useMetaMask } from "metamask-react";
+import { useEtherBalance, useEthers } from "@usedapp/core";
+import { formatEther } from "@ethersproject/units";
+import { ethers } from "ethers";
+import { Stage } from "@pixi/react";
 import {
-  Stage,
-  Container,
-  Sprite,
-  Text,
-  useApp,
-  AppProvider,
-  Graphics,
-} from "@pixi/react";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
   Suspense,
+  useEffect,
+  useCallback,
 } from "react";
-import { TextInput } from "./components/TextInput/index";
 // import CustomButton from "./components/Button";
-import useResizeObserver from "@react-hook/resize-observer";
-import MetamaskConnect from "./components/MetamaskConnect";
-import { networks } from "./chainIdConstants";
 import { axiosInstance } from "./utils/api";
 import Home from "./components/scene/Home";
 import Register from "./components/scene/Register";
@@ -41,6 +31,9 @@ import Loading from "./components/scene/Loader";
 //   useResizeObserver(target, (entry) => setSize(entry.contentRect));
 //   return size;
 // };
+
+// regex for password validation min 1 upper, 1 lower, 1 number, min 8 char
+// ^(.{0,7}|[^0-9]*|[^A-Z]*|[^a-z]*)$
 
 type loginReqFormat = {
   username: string;
@@ -61,8 +54,11 @@ type otpReqFormat = {
 };
 
 export const AppTemp = () => {
-  const { status, connect, ethereum, switchChain, account, chainId } =
-    useMetaMask();
+  // const { status, connect, ethereum, switchChain, account, chainId } =
+  //   useMetaMask();
+  const { account, active, deactivate, activateBrowserWallet, library } =
+    useEthers();
+  const etherBalance = useEtherBalance(account);
   const [currentChain, setCurrentChain] = useState("");
   // const target = useRef(null);
   // const size = useSize(target);
@@ -71,14 +67,155 @@ export const AppTemp = () => {
     "LOGIN" | "REGISTER" | "OTPEMAIL" | "OTPMOBILE"
   >("LOGIN");
   const [email, setEmail] = useState("");
+  const [walletAddress, setWalletAddress] = useState("");
+  const [walletBalance, setWalletBalance] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
   const [retypePassword, setRetypePassword] = useState("");
   const [referralCode, setReferralCode] = useState("");
   const [testValue, setTestValue] = useState("");
-  console.log("username", username);
-  console.log("password", password);
+
+  const connectToWallet = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    activateBrowserWallet();
+  };
+
+  const disconnectFromWallet = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    deactivate();
+  };
+
+  // const getBalance = async (account: string) => {
+  //   const balance = await library!.getBalance(account);
+  //   setWalletBalance(formatEther(balance));
+  // };
+
+  const ConnectButton = () => {
+    // 'account' being undefined means that we are not connected.
+    if (account)
+      return (
+        <div className="flex flex-col">
+          <button
+            className="mt-4 py-3 w-[350px] h-[53px] px-4 font-Magra font-bold text-red-500 hover:cursor-pointer"
+            style={{
+              background: `url(image/InputBox.png) no-repeat `,
+            }}
+            type="button"
+            onClick={disconnectFromWallet}
+          >
+            Disconnect Wallet
+          </button>
+          {/* <button
+            className="mt-4 py-3 w-[350px] h-[53px] px-4 font-Magra font-bold text-red-500 hover:cursor-pointer"
+            style={{
+              background: `url(image/InputBox.png) no-repeat `,
+            }}
+            type="button"
+            onClick={() => getBalance(account)}
+          >
+            Get Balance
+          </button> */}
+        </div>
+      );
+    else
+      return (
+        <button
+          className="mt-4 py-3 w-[350px] h-[53px] px-4 font-Magra font-bold text-[#00C2FF] hover:cursor-pointer"
+          style={{
+            background: `url(image/InputBox.png) no-repeat `,
+          }}
+          type="button"
+          // disabled={otpForm.isSubmitting}
+          // onClick={otpForm.submitForm}
+
+          // onClick={() => connect()}
+          onClick={connectToWallet}
+        >
+          Connect Wallet
+        </button>
+      );
+  };
+
+  // form
+  type RegisterFormValidate = {
+    username?: string;
+    password?: string;
+    retypePassword?: string;
+    referralCode?: string;
+  };
+  const registerFormValidate = (values: RegisterFormValidate) => {
+    console.log("validate values", values);
+    const errors: RegisterFormValidate = {};
+    if (!values.username) {
+      errors.username = "Required";
+    } else if (!/^[A-Za-z][A-Za-z0-9_]{5,20}$/i.test(values.username)) {
+      errors.username = "Invalid username, min 5 chars & max 20 chars";
+    }
+    if (!values.password) {
+      errors.password = "Required";
+    }
+    if (!values.retypePassword) {
+      errors.retypePassword = "Required";
+    }
+    if (values.password !== values.retypePassword) {
+      errors.retypePassword = "Password is not the same";
+    }
+    console.log("errors", errors);
+    return errors;
+  };
+  type OTPFormValidate = { email?: string; walletAddress?: string };
+  const otpFormValidate = (values: OTPFormValidate) => {
+    console.log("validate values", values);
+    const errors: OTPFormValidate = {};
+    if (!values.email) {
+      errors.email = "Required";
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) {
+      errors.email = "Invalid email address";
+    }
+    if (!values.walletAddress) {
+      errors.walletAddress = "Required";
+    }
+    console.log("errors", errors);
+    return errors;
+  };
+  const registerForm = useFormik({
+    initialValues: {
+      username: "",
+      password: "",
+      retypePassword: "",
+      referralCode: "",
+    },
+    validate: registerFormValidate,
+    onSubmit: (values, { setSubmitting }) => {
+      alert(JSON.stringify(values, null, 2));
+      // otpHandler(values.email);
+      setSubmitting(false);
+      setAuthMode("OTPEMAIL");
+    },
+  });
+  const otpForm = useFormik({
+    initialValues: {
+      email: "",
+      walletAddress: "",
+    },
+    validate: otpFormValidate,
+    onSubmit: (values, { setSubmitting }) => {
+      // alert(JSON.stringify(values, null, 2));
+      otpHandler(values.email);
+      setSubmitting(false);
+    },
+  });
+
+  useEffect(() => {
+    console.log("active", active);
+    console.log("account", account);
+    if (active && !!account) {
+      otpForm.setFieldValue("walletAddress", account);
+    } else if (!active && !account) {
+      otpForm.setFieldValue("walletAddress", "");
+    }
+  }, [active, account]);
 
   const options = {
     backgroundColor: 0x1099bb,
@@ -95,15 +232,13 @@ export const AppTemp = () => {
   const appWidth = window.innerWidth;
   const appHeight = window.innerHeight;
 
-  const blurFilter = useMemo(() => new PIXI.BlurFilter(4), []);
-
   const usernameRef = useRef(null);
   const passwordRef = useRef(null);
   const testRef = useRef(null);
 
-  console.log("usernameRef", usernameRef);
-  console.log("passwordRef", passwordRef);
-  console.log("testRef", testRef);
+  // console.log("usernameRef", usernameRef);
+  // console.log("passwordRef", passwordRef);
+  // console.log("testRef", testRef);
 
   const loginHandler = async () => {
     // TODO: to change scene to home
@@ -123,24 +258,25 @@ export const AppTemp = () => {
   };
 
   const registerHandler = async () => {
-    const registerRequestData: registerReqFormat = {
-      email,
-      username,
-      password,
-      referal: referralCode,
-      address: "asdf",
-      otp,
-    };
-    const result = await axiosInstance({
-      url: "/user/register",
-      method: "POST",
-      data: JSON.stringify(registerRequestData),
-    });
-    const { data } = result;
-    if (!data.success) window.alert(`${data.message}`);
+    console.log("email values", otpForm.values.email);
+    // const registerRequestData: registerReqFormat = {
+    //   email,
+    //   username,
+    //   password,
+    //   referal: referralCode,
+    //   address: "asdf",
+    //   otp,
+    // };
+    // const result = await axiosInstance({
+    //   url: "/user/register",
+    //   method: "POST",
+    //   data: JSON.stringify(registerRequestData),
+    // });
+    // const { data } = result;
+    // if (!data.success) window.alert(`${data.message}`);
   };
 
-  const otpHandler = async () => {
+  const otpHandler = async (email: string) => {
     const otpRequestData: otpReqFormat = {
       email,
     };
@@ -152,6 +288,21 @@ export const AppTemp = () => {
     const { data } = result;
     if (!data.success) window.alert(`${data.message}`);
   };
+
+  // const walletStatus = (status: string) => {
+  //   switch (status) {
+  //     case "initializing":
+  //       return "Synchronisation with MetaMask ongoing...";
+  //     case "unavailable":
+  //       return "MetaMask not available :";
+  //     case "notConnected":
+  //       return "Connect to MetaMask";
+  //     case "connected":
+  //       return `Connected account ${account} on chain ID ${chainId}`;
+  //     default:
+  //       return "Synchronisation with MetaMask ongoing...";
+  //   }
+  // };
   return (
     <div className="relative flex justify-center items-center">
       {scene === "REGISTER" && (
@@ -239,151 +390,155 @@ export const AppTemp = () => {
               )}
               {authMode === "REGISTER" && (
                 <>
+                  <form onSubmit={registerForm.handleSubmit}>
+                    <div className="flex flex-col">
+                      <input
+                        name="username"
+                        type="text"
+                        placeholder="Username"
+                        className="py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                        style={{
+                          background: `url(image/InputBox.png) no-repeat `,
+                        }}
+                        onChange={registerForm.handleChange}
+                        onBlur={registerForm.handleBlur}
+                        value={registerForm.values.username}
+                      />
+                      <p className="text-red-500 font-bold font-magra">
+                        {registerForm.errors.username &&
+                          registerForm.touched.username &&
+                          registerForm.errors.username}
+                      </p>
+                      <input
+                        name="password"
+                        type="password"
+                        placeholder="Password"
+                        className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                        style={{
+                          background: `url(image/InputBox.png) no-repeat `,
+                        }}
+                        onChange={registerForm.handleChange}
+                        onBlur={registerForm.handleBlur}
+                        value={registerForm.values.password}
+                      />
+                      <p className="text-red-500 font-bold font-magra">
+                        {registerForm.errors.password &&
+                          registerForm.touched.password &&
+                          registerForm.errors.password}
+                      </p>
+                      <input
+                        name="retypePassword"
+                        type="password"
+                        placeholder="Re-enter your password"
+                        className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                        style={{
+                          background: `url(image/InputBox.png) no-repeat `,
+                        }}
+                        onChange={registerForm.handleChange}
+                        onBlur={registerForm.handleBlur}
+                        value={registerForm.values.retypePassword}
+                      />
+                      <p className="text-red-500 font-bold font-magra">
+                        {registerForm.errors.retypePassword &&
+                          registerForm.touched.retypePassword &&
+                          registerForm.errors.retypePassword}
+                      </p>
+                      <input
+                        name="referralCode"
+                        type="text"
+                        placeholder="Referral code (optional)"
+                        className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                        style={{
+                          background: `url(image/InputBox.png) no-repeat `,
+                        }}
+                        onChange={registerForm.handleChange}
+                        onBlur={registerForm.handleBlur}
+                        value={registerForm.values.referralCode}
+                      />
+                      {registerForm.errors.referralCode &&
+                        registerForm.touched.referralCode &&
+                        registerForm.errors.referralCode}
+                    </div>
+                  </form>
                   <input
-                    type="text"
-                    placeholder="Username"
-                    className="py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                    style={{
-                      background: `url(image/InputBox.png) no-repeat `,
-                      backgroundSize: "inherit",
-                    }}
-                    onChange={(e) => setUsername(e.target.value)}
-                  />
-                  <input
-                    type="password"
-                    placeholder="Password"
-                    className="py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                    style={{
-                      background: `url(image/InputBox.png) no-repeat `,
-                      backgroundSize: "inherit",
-                    }}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                  <input
-                    type="password"
-                    placeholder="Re-enter your password"
-                    className="py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                    style={{
-                      background: `url(image/InputBox.png) no-repeat `,
-                      backgroundSize: "inherit",
-                    }}
-                    onChange={(e) => setRetypePassword(e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Referral code (optional)"
-                    className="py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                    style={{
-                      background: `url(image/InputBox.png) no-repeat `,
-                      backgroundSize: "inherit",
-                    }}
-                    onChange={(e) => setReferralCode(e.target.value)}
-                  />
-                  <input
-                    alt="btnLogin"
-                    type={"image"}
+                    alt="btnRegister"
+                    type="image"
                     src={"image/BtnConfirmRegister.png"}
-                    onClick={() => setAuthMode("OTPEMAIL")}
-                    className=" px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    onClick={registerForm.submitForm}
+                    className="mt-2 px-3.5 py-2.5 text-sm "
                   />
                 </>
               )}
               {authMode === "OTPEMAIL" && (
-                <Formik
-                  initialValues={{ email: "" }}
-                  validate={(values: any) => {
-                    console.log("validate values", values);
-                    const errors: { email?: string } = {};
-                    if (!values.email) {
-                      errors.email = "Required";
-                    } else if (
-                      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(
-                        values.email
-                      )
-                    ) {
-                      errors.email = "Invalid email address";
-                    }
-                    console.log("errors");
-                    return errors;
-                  }}
-                  onSubmit={(values: any, { setSubmitting }: any) => {
-                    console.log("otp submit:", values);
-                    setTimeout(() => {
-                      alert(JSON.stringify(values, null, 2));
-                      setSubmitting(false);
-                    }, 400);
-                  }}
-                >
-                  {({
-                    values,
-                    errors,
-                    touched,
-                    handleChange,
-                    handleBlur,
-                    handleSubmit,
-                    isSubmitting,
-                    submitForm,
-                    /* and other goodies */
-                  }: any) => (
-                    <>
-                      <form onSubmit={handleSubmit}>
-                        <div>
-                          <input
-                            name="email"
-                            type="email"
-                            placeholder="Enter E-mail address"
-                            className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                            style={{
-                              background: `url(image/InputBox.png) no-repeat `,
-                            }}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            value={values.email}
-                          />
-                          <p className="text-red-500 font-bold font-magra">
-                            {errors.email && touched.email && errors.email}
-                          </p>
-                        </div>
-                        <div className="relative mt-4">
-                          <input
-                            type="text"
-                            placeholder="Enter OTP"
-                            className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                            style={{
-                              background: `url(image/InputBox.png) no-repeat `,
-                            }}
-                            onChange={(e) => setOtp(e.target.value)}
-                          />
-                          <button
-                            className="absolute right-[20px] top-[15px] font-Magra font-bold text-[#00C2FF] hover:cursor-pointer"
-                            // onClick={otpHandler}
-                            type="submit"
-                            disabled={isSubmitting}
-                            onClick={submitForm}
-                          >
-                            Request OTP
-                          </button>
-                        </div>
-                        <button
-                          className=" right-[20px] top-[15px] font-Magra font-bold text-[#00C2FF] hover:cursor-pointer"
-                          // onClick={otpHandler}
-                          type="submit"
-                          disabled={isSubmitting}
-                        // onClick={submitForm}
-                        >
-                          Request OTP
-                        </button>
-                      </form>
+                <>
+                  <form onSubmit={otpForm.handleSubmit}>
+                    <div>
                       <input
-                        alt="Register Submit"
-                        type={"image"}
-                        src={"image/BtnSubmit.png"}
-                        onClick={registerHandler}
-                        className="mt-12 px-3.5 py-2.5 text-sm"
+                        name="email"
+                        type="email"
+                        placeholder="Enter E-mail address"
+                        className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                        style={{
+                          background: `url(image/InputBox.png) no-repeat `,
+                        }}
+                        onChange={otpForm.handleChange}
+                        onBlur={otpForm.handleBlur}
+                        value={otpForm.values.email}
                       />
-                    </>
-                  )}
-                </Formik>
+                      <p className="text-red-500 font-bold font-magra">
+                        {otpForm.errors.email &&
+                          otpForm.touched.email &&
+                          otpForm.errors.email}
+                      </p>
+                    </div>
+                    {/* {!!walletAddress && ( */}
+                    {account && (
+                      <div
+                        placeholder="Wallet Address"
+                        className="mt-4 py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white text-sm font-Magra font-bold flex items-center"
+                        style={{
+                          background: `url(image/InputBox.png) no-repeat `,
+                        }}
+                      >
+                        {account}
+                      </div>
+                    )}
+                    {/* {otpForm.values?.walletAddress?.length === 0 && ( */}
+                    <ConnectButton />
+                    {/* )} */}
+                    <p className="text-red-500 font-bold font-magra">
+                      {otpForm.errors.walletAddress &&
+                        otpForm.touched.walletAddress &&
+                        otpForm.errors.walletAddress}
+                    </p>
+                    <div className="relative mt-4">
+                      <input
+                        type="text"
+                        placeholder="Enter OTP"
+                        className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                        style={{
+                          background: `url(image/InputBox.png) no-repeat `,
+                        }}
+                        onChange={(e) => setOtp(e.target.value)}
+                      />
+                      <button
+                        className="absolute right-[20px] top-[15px] font-Magra font-bold text-[#00C2FF] hover:cursor-pointer"
+                        type="submit"
+                        disabled={otpForm.isSubmitting}
+                        onClick={otpForm.submitForm}
+                      >
+                        Request OTP
+                      </button>
+                    </div>
+                  </form>
+                  <input
+                    alt="Register Submit"
+                    type={"image"}
+                    src={"image/BtnSubmit.png"}
+                    onClick={registerHandler}
+                    className="mt-12 px-3.5 py-2.5 text-sm"
+                  />
+                </>
               )}
             </div>
             <div>
@@ -400,10 +555,15 @@ export const AppTemp = () => {
       <Stage width={appWidth} height={appHeight} options={options}>
         {/* @ts-ignore */}
         <Suspense fallback={<p>loading...</p>}>
-          {scene === "LOADING" && <Loading onFinishLoading={() => {
-            console.log('finish loading')
-            setScene("HOME")
-          }} />}
+          {scene === "LOADING" && (
+            <Loading
+              onFinishLoading={() => {
+                console.log("finish loading");
+                // setScene("HOME")
+                setScene("REGISTER");
+              }}
+            />
+          )}
         </Suspense>
         {scene === "REGISTER" && <Register />}
         {scene === "HOME" && (

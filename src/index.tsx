@@ -1,23 +1,31 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import { AppSpine } from './AppSpine';
-import { AppTemp } from './AppTemp'
-import { AppNew } from './AppNew';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import { AppSpine } from "./AppSpine";
+import { AppTemp } from "./AppTemp";
+import { AppNew } from "./AppNew";
+import reportWebVitals from "./reportWebVitals";
 import { MetaMaskProvider } from "metamask-react";
+import { DAppProvider, BSC, Config, Goerli, Localhost } from "@usedapp/core";
+import { getDefaultProvider } from "ethers";
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById("root") as HTMLElement
 );
+
+const config: Config = {
+  readOnlyChainId: BSC.chainId,
+  multicallVersion: 2,
+};
+
 root.render(
   // <React.StrictMode>
-  <MetaMaskProvider>
-    {/* <AppNew /> */}
+  // <MetaMaskProvider>
+  <DAppProvider config={config}>
     <AppTemp />
-    {/* <AppSpine /> */}
-  </MetaMaskProvider>
+  </DAppProvider>
+  // </MetaMaskProvider>
   // {/* <AppCanvas /> */}
   // </React.StrictMode>
 );
