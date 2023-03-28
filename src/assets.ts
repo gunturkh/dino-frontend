@@ -117,6 +117,50 @@ export const manifest: ResolverManifest = {
           name: 'HuntingBonusDetails',
           srcs: 'image/huntingBonusdetails.png'
         },
+        {
+          name: 'LowerBtnSmallBg',
+          srcs: 'image/imgLowerMenuBackground.png'
+        },
+        {
+          name: 'LowerBtnBigBg',
+          srcs: 'image/imgUpassBackground.png'
+        },
+        {
+          name: 'ImgAlbum',
+          srcs: 'image/imgAlbumIcon.png'
+        },
+        {
+          name: 'ImgBulletin',
+          srcs: 'image/imgBulletinIcon.png'
+        },
+        {
+          name: 'ImgComrade',
+          srcs: 'image/imgComradeIcon.png'
+        },
+        {
+          name: 'ImgDinoCenter',
+          srcs: 'image/imgDinoCenterIcon.png'
+        },
+        {
+          name: 'ImgGameTask',
+          srcs: 'image/imgGameTaskIcon.png'
+        },
+        {
+          name: 'ImgHistory',
+          srcs: 'image/imgHistoryIcon.png'
+        },
+        {
+          name: 'ImgMiniGames',
+          srcs: 'image/imgMiniGamesIcon.png'
+        },
+        {
+          name: 'ImgProfile',
+          srcs: 'image/imgProfileIcon.png'
+        },
+        {
+          name: 'ImgUpass',
+          srcs: 'image/imgUpassIcon.png'
+        },
       ]
     },
   ],
