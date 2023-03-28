@@ -12,43 +12,47 @@ import {
   AnimatedSprite,
 } from "@pixi/react";
 
-type ProfileComponentProps = {
+type props = {
   spriteTexture: PIXI.Texture;
-  avatarTexture?: PIXI.Texture;
+  imageIcon?: PIXI.Texture;
   text?: string;
   textStyle?: PIXI.TextStyle;
-  posX?: number;
-  posY?: number;
+  posX: number;
+  posY: number;
   textXOffset?: number;
   textYOffset?: number;
-  avatarXOffset?: number;
-  avatarYOffset?: number;
+  imageXOffset?: number;
+  imageYOffset?: number;
   scaleX?: number;
   scaleY?: number;
   ref?: any;
-  componentPosX: number;
-  componentPosY: number;
+  x?: number;
+  y?: number;
+  scaleImgX?: number;
+  scaleImgY?: number;
   onPress?: () => void;
 }
 
-const ProfileComponent = ({
+const LowerButtonComponent = ({
   spriteTexture,
-  avatarTexture,
+  imageIcon,
   text,
   textStyle,
-  posX = 0,
-  posY = 0,
+  posX,
+  posY,
   textXOffset = 0,
   textYOffset = 0,
-  avatarXOffset = 0,
-  avatarYOffset = 0,
+  imageXOffset = 0,
+  imageYOffset = 0,
   scaleX = 1,
   scaleY = 1,
   ref = null,
-  componentPosX,
-  componentPosY,
+  x = 0,
+  y = 0,
+  scaleImgX = 1,
+  scaleImgY = 1,
   onPress,
-}: ProfileComponentProps) => {
+}: props) => {
   const app = useApp();
   const containerRef = React.useRef(null);
 
@@ -56,10 +60,10 @@ const ProfileComponent = ({
     <Container
       ref={ref || containerRef}
       scale={[scaleX, scaleY]}
-      eventMode="static"
-      position={[componentPosX, componentPosY]}
-      zIndex={1}
-      onpointertap={onPress}>
+      //  x={x} 
+      //  y={y}
+      anchor={[0, 0]}
+      eventMode="static" onpointertap={onPress}>
       {spriteTexture && (
         <>
           <Sprite
@@ -71,15 +75,15 @@ const ProfileComponent = ({
           // scale={[scaleX, scaleY]}
           />
           <Sprite
-            texture={avatarTexture || PIXI.Texture.EMPTY}
-            anchor={[0.5, 0.5]}
-            // scale={[0.5, 0.5]}
-            position={[0 + avatarXOffset, 18 + avatarYOffset]}
+            texture={imageIcon || PIXI.Texture.EMPTY}
+            anchor={[0.5, 0]}
+            scale={[scaleImgX, scaleImgY]}
+            position={[posX + imageXOffset, posY + imageYOffset]}
           />
           <Text
             text={text || ''}
-            anchor={[0.5, 0.5]}
-            position={[0 + textXOffset, 13 + textYOffset]}
+            anchor={[0.5, 0]}
+            position={[posX + textXOffset, posY + textYOffset]}
             style={textStyle}
           // scale={[scaleX, scaleY]}
           />
@@ -89,4 +93,4 @@ const ProfileComponent = ({
   )
 }
 
-export default ProfileComponent
+export default LowerButtonComponent

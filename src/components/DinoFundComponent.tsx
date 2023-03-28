@@ -29,8 +29,8 @@ const DinoFundComponent = ({
   spriteTexture,
   text,
   textStyle,
-  posX,
-  posY,
+  posX = 0,
+  posY = 0,
   textXOffest = 0,
   textYOffest = 0,
   scaleX = 1,
@@ -39,22 +39,14 @@ const DinoFundComponent = ({
 }: DinoFundProps) => {
   const app = useApp();
   const containerRef = React.useRef(null);
-  const [containerBounds, setContainerBounds] = React.useState(null)
-
-  useEffect(() => {
-    // @ts-ignore
-    // console.log('containerRef getBounds', containerRef.current.getBounds())
-    // @ts-ignore
-    // console.log('containerRef getLocalBounds', containerRef.current.getLocalBounds())
-    // @ts-ignore
-    setContainerBounds(containerRef?.current.getLocalBounds())
-    // @ts-ignore
-    // console.log('containerRef getGlobalPosition', containerRef.current.getGlobalPosition())
-  }, [containerRef])
-  console.log('containerBounds', containerBounds)
 
   return (
-    <Container ref={ref || containerRef} scale={[scaleX, scaleY]} >
+    <Container
+      ref={ref || containerRef}
+      scale={[scaleX, scaleY]}
+      position={[posX, posY]}
+      zIndex={1}
+    >
       {spriteTexture && (
         <>
           <Sprite
@@ -62,13 +54,13 @@ const DinoFundComponent = ({
             texture={spriteTexture || PIXI.Texture.EMPTY}
             anchor={[0.5, 0]}
             // scale={[0.5, 0.5]}
-            position={[posX, posY]}
+            position={[0, 0]}
           // scale={[scaleX, scaleY]}
           />
           <Text
             text={text || ''}
             anchor={[0.5, 0]}
-            position={[posX + textXOffest, posY + textYOffest]}
+            position={[0 + textXOffest, 0 + textYOffest]}
             style={textStyle}
           // scale={[scaleX, scaleY]}
           />

@@ -38,13 +38,6 @@ const DetailsComponent = ({
 }: Props) => {
   const app = useApp();
   const containerRef = useRef(null);
-  const [containerBounds, setContainerBounds] = useState(null)
-
-  useEffect(() => {
-    // @ts-ignore
-    setContainerBounds(containerRef?.current.getLocalBounds())
-  }, [containerRef])
-  console.log('containerBounds', containerBounds)
 
   return (
     <Container
