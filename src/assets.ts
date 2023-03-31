@@ -22,6 +22,10 @@ export const manifest: ResolverManifest = {
           name: "LoaderBarBg",
           srcs: "image/LoadingBar.png",
         },
+        {
+          name: 'BackBtn',
+          srcs: 'image/backBtn.png'
+        },
       ],
     },
     {
@@ -160,6 +164,39 @@ export const manifest: ResolverManifest = {
         {
           name: 'ImgUpass',
           srcs: 'image/imgUpassIcon.png'
+        },
+      ]
+    },
+    {
+      name: 'ProfileScene',
+      assets: [
+        {
+          name: 'LogoutBtn',
+          srcs: 'image/logoutBtn.png'
+        },
+        {
+          name: 'RenameIcon',
+          srcs: 'image/renameIcon.png'
+        },
+        {
+          name: 'SampleLogo',
+          srcs: 'logo192.png'
+        },
+        {
+          name: 'ChevronIcon',
+          srcs: 'image/chevronRightIcon.png'
+        },
+        {
+          name: 'CopyIcon',
+          srcs: 'image/copyIcon.png'
+        },
+        {
+          name: 'SwitchOnIcon',
+          srcs: 'image/switchOn.png'
+        },
+        {
+          name: 'SwitchOffIcon',
+          srcs: 'image/switcffOn.png'
         },
       ]
     },
