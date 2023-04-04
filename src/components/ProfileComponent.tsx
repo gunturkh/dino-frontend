@@ -29,6 +29,8 @@ type ProfileComponentProps = {
   componentPosX: number;
   componentPosY: number;
   onPress?: () => void;
+  width?: number;
+  height?: number;
 }
 
 const ProfileComponent = ({
@@ -47,6 +49,8 @@ const ProfileComponent = ({
   ref = null,
   componentPosX,
   componentPosY,
+  width,
+  height,
   onPress,
 }: ProfileComponentProps) => {
   const app = useApp();
@@ -55,15 +59,17 @@ const ProfileComponent = ({
   return (
     <Container
       ref={ref || containerRef}
-      scale={[scaleX, scaleY]}
+      // scale={[scaleX, scaleY]}
       eventMode="static"
       position={[componentPosX, componentPosY]}
       zIndex={1}
+      width={width}
+      height={height}
       onpointertap={onPress}>
+
       {spriteTexture && (
         <>
           <Sprite
-            // texture={PIXI.Assets.get('DinoFundLogo')}
             texture={spriteTexture || PIXI.Texture.EMPTY}
             anchor={[0.5, 0]}
             // scale={[0.5, 0.5]}

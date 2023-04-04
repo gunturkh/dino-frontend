@@ -183,7 +183,7 @@ export const manifest: ResolverManifest = {
           srcs: 'logo192.png'
         },
         {
-          name: 'ChevronIcon',
+          name: 'ChevronRightIcon',
           srcs: 'image/chevronRightIcon.png'
         },
         {
@@ -196,7 +196,7 @@ export const manifest: ResolverManifest = {
         },
         {
           name: 'SwitchOffIcon',
-          srcs: 'image/switcffOn.png'
+          srcs: 'image/switchOff.png'
         },
       ]
     },

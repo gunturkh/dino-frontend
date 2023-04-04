@@ -1,29 +1,44 @@
 import React, { Component } from "react";
 import { Input, Button } from "@pixi/ui";
-import * as PIXI from "pixi.js";
 import { applyDefaultProps, PixiComponent } from "@pixi/react";
 import { Graphics, Sprite } from "pixi.js";
 
 import tile from "./tile.png";
-const TextInput = require('pixi-text-input')
 
 // text input pixi js in react way
-new PIXI.Text()
+
 export default PixiComponent("TextInput", {
   create: (onInput) => {
-    const input = new TextInput({
-      input: {
-        fontSize: '36px',
-        padding: '12px',
-        width: '500px',
-        color: '#26272E'
+    console.log("props", onInput);
+    const input = new Input({
+      bg: new Graphics()
+        .beginFill(0xdcb000)
+        .drawRoundedRect(0, 0, 280, 55, 11 + 5),
+      // .beginFill(0xf1d583)
+      // .drawRoundedRect(5, 5, 280 - 5 * 2, 55 - 5 * 2, 11),
+      textStyle: {
+        fill: 0x000000,
+        fontSize: 22,
       },
-      box: {
-        default: {fill: 0xE8E9F3, rounded: 12, stroke: {color: 0xCBCEE0, width: 3}},
-        focused: {fill: 0xE1E3EE, rounded: 12, stroke: {color: 0xABAFC6, width: 3}},
-        disabled: {fill: 0xDBDBDB, rounded: 12}
-      }
-    })
+      padding: [11, 11],
+      maxLength: 20,
+      align: "center",
+      // placeholder: placeholderA,
+      // placeholder:,
+    });
+    //  console.log('placeholder', input.placeholder.text)
+
+    // updateBackground(input, bgProps);
+
+    // function updateBackground(input, bgProps) {
+    //   const { width, height, radius, fillColor } = bgProps;
+
+    //   const bg = input.bg;
+    //   bg.clear();
+    //   bg.beginFill(fillColor);
+    //   bg.drawRoundedRect(0, 0, width, height, radius);
+    //   bg.endFill();
+    // }
 
     return input;
   },
@@ -38,36 +53,26 @@ export default PixiComponent("TextInput", {
   // },
   applyProps: (instance, oldProps, newProps) => {
     const { ...oldP } = oldProps;
-    const { onInput, ...newP } = newProps;
+    const { onChange, placeholder, ...newP } = newProps;
 
     // apply rest props to PIXI.Text
     applyDefaultProps(instance, oldP, newP);
+    instance.eventMode = 'static'
 
-    // instance.onChange.connect(instance.value);
-    // instance.onChange.connect((e) => newProps.onChange(e));
-    // instance.x = newProps.x;
-    // instance.y = newProps.y;
-    // instance.width = newProps.width;
-    // instance.height = newProps.height;
-    // instance.placeholder = newProps.placeholder;
-    // instance.visible = newProps.visible;
+    // add default placeholder
+    instance.placeholder.text = placeholder;
 
-    // instance.onChange.connect(result);
+    // updateBackground(instance, bgProps);
+
+    // instance.onEnter.connect((val) => onChange(`Input ${i + 1} (${val})`));
+    instance.onEnter.connect((val) => onChange(val));
+
 
     function result() {
+      console.log('result', result)
       const info = instance.value;
-      onInput(info);
+      onChange(info);
     }
-
-    // applyDefaultProps(instance, oldProps, newProps);
-    // instance.onChange.connect((e) => newProps.onChange(e));
-    // instance.placeholder = newProps.placeholder;
-    // console.log("applyProps instance", instance);
-    // console.log("applyProps oldProps", oldProps);
-    // console.log("applyProps newProps", newProps);
-    // const { fill, x, y, width, height, onClick } = newProps;
-    // props changed
-    // apply logic to the instance
   },
   config: {
     // destroy instance on unmount?
@@ -79,3 +84,5 @@ export default PixiComponent("TextInput", {
     destroyChildren: true,
   },
 });
+
+

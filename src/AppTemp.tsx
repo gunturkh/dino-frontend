@@ -18,6 +18,9 @@ import { axiosInstance } from "./utils/api";
 import Home from "./components/scene/Home";
 import Register from "./components/scene/Register";
 import Loading from "./components/scene/Loader";
+import Profile from "./components/scene/Profile";
+import ProfileTemp from "./components/scene/ProfileTemp";
+
 // import { useGLTF, Html, shaderMaterial, useTexture, Plane } from '@react-three/drei'
 
 // const useSize = (target: any) => {
@@ -80,6 +83,12 @@ export const AppTemp = () => {
   const [referralCode, setReferralCode] = useState("");
   const [testValue, setTestValue] = useState("");
 
+  const [app, setApp] = useState<any>(false);
+
+  useEffect(() => {
+    // app?.renderer.render(app.stage);
+  }, [app]);
+
   const connectToWallet = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
     activateBrowserWallet();
@@ -89,6 +98,7 @@ export const AppTemp = () => {
     e.stopPropagation();
     deactivate();
   };
+
 
   // const getBalance = async (account: string) => {
   //   const balance = await library!.getBalance(account);
@@ -286,7 +296,9 @@ export const AppTemp = () => {
     autoStart: false,
     clearBeforeRender: false,
     hello: true,
-    // forceCanvas: true
+    transparent: false,
+    // resolution: 1,
+    // forceCanvas: true,
   };
 
   // const app = useApp();
@@ -297,6 +309,7 @@ export const AppTemp = () => {
   const usernameRef = useRef(null);
   const passwordRef = useRef(null);
   const testRef = useRef(null);
+  console.log('scene', scene)
 
   // console.log("usernameRef", usernameRef);
   // console.log("passwordRef", passwordRef);
@@ -668,25 +681,46 @@ export const AppTemp = () => {
           </div>
         </div>
       )}
-      <Stage width={appWidth} height={appHeight} options={options}>
+      <Stage
+        width={appWidth}
+        height={appHeight}
+        options={options}
+        raf={true}
+        onAnimationIteration={() => {
+          console.log("animation iteration");
+        }}
+        onMount={_app => setApp(_app)}
+      >
         {/* @ts-ignore */}
+
         <Suspense fallback={<p>loading...</p>}>
           {scene === "LOADING" && (
             <Loading
               onFinishLoading={() => {
                 console.log("finish loading");
-                // setScene("HOME")
+                // setScene("PROFILE")
                 setScene("REGISTER");
               }}
             />
           )}
         </Suspense>
         {scene === "REGISTER" && <Register />}
+        {scene === "PROFILE" &&
+          (<>
+            {/* <Profile */}
+            <ProfileTemp
+              onBackBtnClick={() => { setScene("HOME"); console.log('back') }}
+            />
+          </>
+          )}
         {scene === "HOME" && (
           <>
-            <Home />
+            <Home
+              onProfileClick={() => setScene("PROFILE")}
+            />
           </>
         )}
+
       </Stage>
     </div>
   );

@@ -16,11 +16,18 @@ import ProfileComponent from '../ProfileComponent';
 import DetailsComponent from '../DetailsComponent';
 import LowerButtonComponent from '../LowerButtonComponent';
 
+type Props = {
+  onProfileClick: () => void;
+}
+
 const Home = ({
-  setSceneState,
-}: any
+  onProfileClick,
+}: Props
 ) => {
   const app = useApp();
+  // @ts-ignore
+  globalThis.__PIXI_APP__ = app;
+
   console.log('app.screen', app.screen)
   const [getHomeContainerBounds, setHomeContainerBounds] = useState({
     x: 0,
@@ -101,7 +108,7 @@ const Home = ({
               fill: ['0x705802'],
             })}
             onPress={() => {
-              console.log('onPress ProfileComponent')
+              onProfileClick()
             }}
           />
 
