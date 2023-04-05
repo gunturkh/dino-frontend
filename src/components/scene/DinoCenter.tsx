@@ -14,18 +14,10 @@ import DinoFundComponent from "../DinoFundComponent";
 import ProfileComponent from "../ProfileComponent";
 import DetailsComponent from "../DetailsComponent";
 import LowerButtonComponent from "../LowerButtonComponent";
+import EggListingComponent from "../EggListingComponent";
 
-type Props = {
-  onProfileClick: () => void;
-  setScene: (value:string) => void;
-  scene: string;
-};
-
-const Home = ({ onProfileClick, setScene, scene }: Props) => {
+const DinoCenter = ({ setScene, scene }: any) => {
   const app = useApp();
-  // @ts-ignore
-  globalThis.__PIXI_APP__ = app;
-
   console.log("app.screen", app.screen);
   console.log("scene", scene);
   const [getHomeContainerBounds, setHomeContainerBounds] = useState({
@@ -56,6 +48,21 @@ const Home = ({ onProfileClick, setScene, scene }: Props) => {
   useEffect(() => {
     console.log("homeContainerBounds", getHomeContainerBounds);
   }, [getHomeContainerBounds]);
+
+  const dummyListingData = [
+    { price: 1000, timestamp: 500 },
+    { price: 1020, timestamp: 530 },
+    { price: 1040, timestamp: 535 },
+    { price: 1070, timestamp: 555 },
+    { price: 1080, timestamp: 560 },
+    { price: 1090, timestamp: 570 },
+    { price: 1100, timestamp: 575 },
+    { price: 1120, timestamp: 585 },
+    { price: 1130, timestamp: 590 },
+    { price: 1140, timestamp: 595 },
+    { price: 1150, timestamp: 600 },
+    { price: 1160, timestamp: 605 },
+  ];
   // const dinoFundRef = useRef(null);
   // console.log('dinoFundRef', dinoFundRef.current)
   // useEffect(() => {
@@ -65,6 +72,13 @@ const Home = ({ onProfileClick, setScene, scene }: Props) => {
   //   console.log('upperContainerRef getGlobalPosition', upperContainerRef.current.getGlobalPosition())
   // }, [])
   // console.log('avatar')
+  const calculateEggXPosition = (index: number) => {
+    return BtnSmallBounds.width + 90 * (index % 4);
+  };
+  const calculateEggYPosition = (index: number) => {
+    return Math.floor(index / 4) * 100;
+  };
+
   return (
     <Container>
       <Sprite
@@ -118,13 +132,13 @@ const Home = ({ onProfileClick, setScene, scene }: Props) => {
               })
             }
             onPress={() => {
-              onProfileClick();
+              console.log("onPress ProfileComponent");
             }}
           />
 
           <DinoFundComponent
             spriteTexture={PIXI.Assets.get("DinoFundBg")}
-            text="9.000.000.000"
+            text="Dino Center"
             // text={`w=${getHomeContainerBounds.width.toFixed()} h=${getHomeContainerBounds.height}`}
             posX={0}
             posY={0}
@@ -197,6 +211,7 @@ const Home = ({ onProfileClick, setScene, scene }: Props) => {
           x={-(app.screen.width / 2)}
           y={app.screen.width > 450 ? 120 : 100}
           width={app.screen.width > 450 ? 450 : app.screen.width}
+          visible={false}
           // anchor={[0.5, 0.5]}
         >
           {/* left side */}
@@ -304,174 +319,44 @@ const Home = ({ onProfileClick, setScene, scene }: Props) => {
         {getHomeContainerBounds && (
           <Container
             anchor={[0.5, 0.5]}
-            x={0}
-            y={app.screen.height - BtnSmallBounds.height * 2 - 15}
-            width={app.screen.width > 450 ? 450 : app.screen.width}
+            x={-190}
+            y={app.screen.height / 2 - 100}
+            // width={app.screen.width > 450 ? 450 : app.screen.width}
           >
             {/* left side */}
-            <LowerButtonComponent
-              spriteTexture={PIXI.Assets.get("LowerBtnSmallBg")}
-              imageIcon={PIXI.Assets.get("ImgDinoCenter")}
-              text={"Dino Center"}
-              posX={-155}
-              posY={15}
-              imageYOffset={10}
-              textYOffset={BtnSmallBounds.height / 2 + 13}
-              textStyle={
-                new PIXI.TextStyle({
-                  fontFamily: "Magra Bold",
-                  fontSize: 12,
-                  fontWeight: "bold",
-                  fill: ["0xFFC700"],
-                })
-              }
-              onPress={() => {
-                setScene('DINOCENTER')
-              }}
-            />
-            <LowerButtonComponent
-              spriteTexture={PIXI.Assets.get("LowerBtnSmallBg")}
-              imageIcon={PIXI.Assets.get("ImgGameTask")}
-              text={"Game Task"}
-              posX={BtnSmallBounds.width - 155}
-              posY={15}
-              imageYOffset={10}
-              textYOffset={BtnSmallBounds.height / 2 + 13}
-              textStyle={
-                new PIXI.TextStyle({
-                  fontFamily: "Magra Bold",
-                  fontSize: 12,
-                  fontWeight: "bold",
-                  fill: ["0xFFC700"],
-                })
-              }
-            />
-            <LowerButtonComponent
-              spriteTexture={PIXI.Assets.get("LowerBtnSmallBg")}
-              imageIcon={PIXI.Assets.get("ImgBulletin")}
-              text={"Bulletin"}
-              posX={-155}
-              posY={BtnSmallBounds.height + 10}
-              imageYOffset={10}
-              textYOffset={BtnSmallBounds.height / 2 + 13}
-              textStyle={
-                new PIXI.TextStyle({
-                  fontFamily: "Magra Bold",
-                  fontSize: 12,
-                  fontWeight: "bold",
-                  fill: ["0xFFC700"],
-                })
-              }
-            />
-            <LowerButtonComponent
-              spriteTexture={PIXI.Assets.get("LowerBtnSmallBg")}
-              imageIcon={PIXI.Assets.get("ImgComrade")}
-              text={"Comrade"}
-              posX={BtnSmallBounds.width - 155}
-              posY={BtnSmallBounds.height + 10}
-              imageYOffset={10}
-              textYOffset={BtnSmallBounds.height / 2 + 13}
-              textStyle={
-                new PIXI.TextStyle({
-                  fontFamily: "Magra Bold",
-                  fontSize: 12,
-                  fontWeight: "bold",
-                  fill: ["0xFFC700"],
-                })
-              }
-            />
-
-            {/* center button */}
-            <LowerButtonComponent
-              spriteTexture={PIXI.Assets.get("LowerBtnBigBg")}
-              imageIcon={PIXI.Assets.get("ImgUpass")}
-              text={"U Pass"}
-              posX={0}
-              posY={BtnSmallBounds.height + 20}
-              scaleX={0.8}
-              scaleY={0.8}
-              imageYOffset={13}
-              textYOffset={BtnBigBounds.height / 2 + 20}
-              textStyle={
-                new PIXI.TextStyle({
-                  fontFamily: "Magra Bold",
-                  fontSize: 14,
-                  fontWeight: "bold",
-                  fill: ["0xFFC700"],
-                })
-              }
-            />
-            {/* center button */}
-
-            {/* right side */}
-            <LowerButtonComponent
-              spriteTexture={PIXI.Assets.get("LowerBtnSmallBg")}
-              imageIcon={PIXI.Assets.get("ImgAlbum")}
-              text={"Album"}
-              posX={155}
-              posY={15}
-              imageYOffset={10}
-              textYOffset={BtnSmallBounds.height / 2 + 13}
-              textStyle={
-                new PIXI.TextStyle({
-                  fontFamily: "Magra Bold",
-                  fontSize: 12,
-                  fontWeight: "bold",
-                  fill: ["0xFFC700"],
-                })
-              }
-            />
-            <LowerButtonComponent
-              spriteTexture={PIXI.Assets.get("LowerBtnSmallBg")}
-              imageIcon={PIXI.Assets.get("ImgMiniGames")}
-              text={"Mini Games"}
-              posX={155 - BtnSmallBounds.width}
-              posY={15}
-              imageYOffset={10}
-              textYOffset={BtnSmallBounds.height / 2 + 13}
-              textStyle={
-                new PIXI.TextStyle({
-                  fontFamily: "Magra Bold",
-                  fontSize: 12,
-                  fontWeight: "bold",
-                  fill: ["0xFFC700"],
-                })
-              }
-            />
-            <LowerButtonComponent
-              spriteTexture={PIXI.Assets.get("LowerBtnSmallBg")}
-              imageIcon={PIXI.Assets.get("ImgProfile")}
-              text={"Profile"}
-              posX={155}
-              posY={BtnSmallBounds.height + 10}
-              imageYOffset={10}
-              textYOffset={BtnSmallBounds.height / 2 + 13}
-              textStyle={
-                new PIXI.TextStyle({
-                  fontFamily: "Magra Bold",
-                  fontSize: 12,
-                  fontWeight: "bold",
-                  fill: ["0xFFC700"],
-                })
-              }
-            />
-            <LowerButtonComponent
-              spriteTexture={PIXI.Assets.get("LowerBtnSmallBg")}
-              imageIcon={PIXI.Assets.get("ImgHistory")}
-              text={"History"}
-              posX={155 - BtnSmallBounds.width}
-              posY={BtnSmallBounds.height + 10}
-              imageYOffset={10}
-              textYOffset={BtnSmallBounds.height / 2 + 13}
-              textStyle={
-                new PIXI.TextStyle({
-                  fontFamily: "Magra Bold",
-                  fontSize: 12,
-                  fontWeight: "bold",
-                  fill: ["0xFFC700"],
-                })
-              }
-            />
+            {dummyListingData.map((d, idx) => {
+              return (
+                <EggListingComponent
+                  spriteTexture={PIXI.Assets.get("LowerBtnSmallBg")}
+                  imageIcon={PIXI.Assets.get("ImgDinoCenter")}
+                  priceText={d.price.toString()}
+                  timerText={d.timestamp.toString()}
+                  // posX={BtnSmallBounds.width - (70 * idx)}
+                  posX={calculateEggXPosition(idx)}
+                  posY={calculateEggYPosition(idx)}
+                  imageYOffset={10}
+                  priceTextYOffset={BtnSmallBounds.height / 2 + 13}
+                  timerTextYOffset={BtnSmallBounds.height / 2 + 30}
+                  priceTextStyle={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: 12,
+                      fontWeight: "bold",
+                      fill: ["0xFFC700"],
+                    })
+                  }
+                  timerTextStyle={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: 12,
+                      fontWeight: "bold",
+                      fill: ["0xFFC700"],
+                    })
+                  }
+                  onPress={() => setScene("DINOCENTER")}
+                />
+              );
+            })}
           </Container>
         )}
       </Container>
@@ -479,4 +364,4 @@ const Home = ({ onProfileClick, setScene, scene }: Props) => {
   );
 };
 
-export default Home;
+export default DinoCenter;
