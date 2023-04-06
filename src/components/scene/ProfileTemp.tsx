@@ -261,7 +261,6 @@ const ProfileTemp = ({
   ]
 
   const ProfileBgBounds = PIXI.Assets.get('ProfileBg').orig;
-  const ProfileAvatarDefaultBounds = PIXI.Assets.get('ProfileAvatarDefault').orig;
 
   const onMenuItemClick = (title: string) => {
     // console.log('title', title)
@@ -317,11 +316,16 @@ const ProfileTemp = ({
   }
 
   const bgGraphic = new PIXI.Graphics()
-    .beginFill(0xffffff)
+    .beginFill(0x9d9da6)
     .drawRoundedRect(0, 0, 1000, 1000, 15)
     .endFill();
-
   const bgTexture = app.renderer.generateTexture(bgGraphic);
+
+  const bgWhite = new PIXI.Graphics()
+    .beginFill(0xffffff)
+    .drawRoundedRect(0, 0, 500, 100, 15)
+    .endFill();
+  const bgWhiteTexture = app.renderer.generateTexture(bgWhite);
 
 
   return (
@@ -376,7 +380,6 @@ const ProfileTemp = ({
             <Sprite
               // ref={profileBgRef}
               texture={bgTexture}
-              tint={0x9d9da6}
               alpha={0.5}
               width={isNotMobile ? 450 : app.screen.width * 0.9}
               height={menuItemBounds?.height + menuItemBounds?.height / 2}
@@ -460,7 +463,7 @@ const ProfileTemp = ({
                   onpointertap={() => onMenuItemClick(item.title)}
                 >
                   <Sprite
-                    texture={PIXI.Texture.WHITE}
+                    texture={bgWhiteTexture}
                     width={isNotMobile ? 430 : app.screen.width * 0.85}
                     height={isNotMobile ? 40 : 37}
                     position={[0, 0]}
