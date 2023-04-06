@@ -102,24 +102,48 @@ export const manifest: ResolverManifest = {
           srcs: 'image/BtnAudioHomeMute.png'
         },
         {
-          name: 'DiamondDetails',
-          srcs: 'image/diamondDetails.png'
-        },
-        {
-          name: 'StarDetails',
-          srcs: 'image/starDetails.png'
-        },
-        {
           name: 'BNBDetails',
           srcs: 'image/bnbDetails.png'
         },
         {
-          name: 'InGameTokenDetails',
-          srcs: 'image/ingametokenDetails.png'
+          name: 'DinoEggDetails',
+          srcs: 'image/PnlDinoEgg.png'
+        },
+        // {
+        //   name: 'StarDetails',
+        //   srcs: 'image/PnlBonus.png'
+        // },
+        // {
+        //   name: 'DinoTicketDetails',
+        //   srcs: 'image/PnlDinoTicket.png'
+        // },
+        // {
+        //   name: 'EventFragmentDetails',
+        //   srcs: 'image/PnlEventFragment.png'
+        // },
+        {
+          name: 'BNBIcon',
+          srcs: 'image/imgBnBIcon.png'
         },
         {
-          name: 'HuntingBonusDetails',
-          srcs: 'image/huntingBonusdetails.png'
+          name: 'DinoEggIcon',
+          srcs: 'image/imgDinoEggIcon.png'
+        },
+        {
+          name: 'BonusIcon',
+          srcs: 'image/imgBonusIcon.png'
+        },
+        {
+          name: 'DinoTicketIcon',
+          srcs: 'image/imgDinoTicketIcon.png'
+        },
+        {
+          name: 'EventFragmentIcon',
+          srcs: 'image/imgEventFragmentIcon.png'
+        },
+        {
+          name: 'ImgDetailsBg',
+          srcs: 'image/imgDetailsBg.png'
         },
         {
           name: 'LowerBtnSmallBg',
