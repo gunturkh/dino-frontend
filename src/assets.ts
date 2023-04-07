@@ -224,5 +224,528 @@ export const manifest: ResolverManifest = {
         },
       ]
     },
+    {
+      name: 'CollectionScene',
+      assets: [
+        // Herald Tier
+        {
+          name: 'AlangasaurusLocked',
+          srcs: 'image/cards/locked/alangasaurus.png'
+        },
+        {
+          name: 'AlanqaLocked',
+          srcs: 'image/cards/locked/alanqa.png'
+        },
+        {
+          name: 'ArgentinosaurusLocked',
+          srcs: 'image/cards/locked/argentinosaurus.png'
+        },
+        {
+          name: 'BonitasauraLocked',
+          srcs: 'image/cards/locked/Bonitasaura.png'
+        },
+        {
+          name: 'ColoborhynchusLocked',
+          srcs: 'image/cards/locked/coloborhynchus.png'
+        },
+        {
+          name: 'DiplocaulusLocked',
+          srcs: 'image/cards/locked/diplocaulus.png'
+        },
+        {
+          name: 'GuanlongLocked',
+          srcs: 'image/cards/locked/guanlong.png'
+        },
+        {
+          name: 'HatzegopteryxLocked',
+          srcs: 'image/cards/locked/hatzegopteryx.png'
+        },
+        {
+          name: 'LabyrinthodontiaLocked',
+          srcs: 'image/cards/locked/labyrinthodontia.png'
+        },
+        {
+          name: 'LabyrinthosaurusLocked',
+          srcs: 'image/cards/locked/labyrinthosaurus.png'
+        },
+        {
+          name: 'LimnoscelisLocked',
+          srcs: 'image/cards/locked/limnoscelis.png'
+        },
+        {
+          name: 'MajungasaurusLocked',
+          srcs: 'image/cards/locked/majungasaurus.png'
+        },
+        {
+          name: 'PelecanimimusLocked',
+          srcs: 'image/cards/locked/pelecanimimus.png'
+        },
+        {
+          name: 'TriceratopsLocked',
+          srcs: 'image/cards/locked/triceratops.png'
+        },
+        {
+          name: 'TropeognathusLocked',
+          srcs: 'image/cards/locked/tropeognathus.png'
+        },
+        {
+          name: 'TuojiangosaurusLocked',
+          srcs: 'image/cards/locked/tuojiangosaurus.png'
+        },
+        {
+          name: 'UtahraptorLocked',
+          srcs: 'image/cards/locked/utahraptor.png'
+        },
+
+        // Elite Tier
+        {
+          name: 'AllosaurusLocked',
+          srcs: 'image/cards/locked/allosaurus.png'
+        },
+        {
+          name: 'CarnotaurusLocked',
+          srcs: 'image/cards/locked/carnotaurus.png'
+        },
+        {
+          name: 'CorythosaurusLocked',
+          srcs: 'image/cards/locked/corythosaurus.png'
+        },
+        {
+          name: 'DilophosaurusLocked',
+          srcs: 'image/cards/locked/dilophosaurus.png'
+        },
+        {
+          name: 'DimetrocarnusLocked',
+          srcs: 'image/cards/locked/dimetrocarnus.png'
+        },
+        {
+          name: 'DiplodocusLocked',
+          srcs: 'image/cards/locked/diplodocus.png'
+        },
+        {
+          name: 'DiplotatorLocked',
+          srcs: 'image/cards/locked/diplotator.png'
+        },
+        {
+          name: 'DsungaripterusLocked',
+          srcs: 'image/cards/locked/dsungaripterus.png'
+        },
+        {
+          name: 'GallimimusLocked',
+          srcs: 'image/cards/locked/gallimimus.png'
+        },
+        {
+          name: 'GiganotosaurusLocked',
+          srcs: 'image/cards/locked/giganotosaurus.png'
+        },
+        {
+          name: 'IrritatorLocked',
+          srcs: 'image/cards/locked/irritator.png'
+        },
+        {
+          name: 'MonolophosaurusLocked',
+          srcs: 'image/cards/locked/monolophosaurus.png'
+        },
+        {
+          name: 'NasutoceratopsLocked',
+          srcs: 'image/cards/locked/nasutoceratops.png'
+        },
+        {
+          name: 'NundagosaurusLocked ',
+          srcs: 'image/cards/locked/nundagosaurus .png'
+        },
+        {
+          name: 'NundasuchusLocked',
+          srcs: 'image/cards/locked/nundasuchus.png'
+        },
+
+        // Ancient Tier
+        {
+          name: 'AndrewtheriumLocked',
+          srcs: 'image/cards/locked/andrewtherium.png'
+        },
+        {
+          name: 'DimetrodonLocked',
+          srcs: 'image/cards/locked/dimetrodon.png'
+        },
+        {
+          name: 'DimorphodonLocked',
+          srcs: 'image/cards/locked/dimorphodon.png'
+        },
+        {
+          name: 'EdaphosaurusLocked',
+          srcs: 'image/cards/locked/edaphosaurus.png'
+        },
+        {
+          name: 'HauffiosaurusLocked',
+          srcs: 'image/cards/locked/hauffiosaurus.png'
+        },
+        {
+          name: 'KronosaurusLocked',
+          srcs: 'image/cards/locked/kronosaurus.png'
+        },
+        {
+          name: 'LeedsichthysLocked',
+          srcs: 'image/cards/locked/leedsichthys.png'
+        },
+        {
+          name: 'LiopleurodonLocked',
+          srcs: 'image/cards/locked/liopleurodon.png'
+        },
+        {
+          name: 'marsupial LionLocked',
+          srcs: 'image/cards/locked/marsupial lion.png'
+        },
+        {
+          name: 'MicroposaurusLocked',
+          srcs: 'image/cards/locked/microposaurus.png'
+        },
+        {
+          name: 'OstafrikasaurusLocked',
+          srcs: 'image/cards/locked/ostafrikasaurus.png'
+        },
+        {
+          name: 'PliosaurusLocked',
+          srcs: 'image/cards/locked/pliosaurus.png'
+        },
+
+        // Mytical Tier
+        {
+          name: 'AllonogmiusLocked',
+          srcs: 'image/cards/locked/allonogmius.png'
+        },
+        {
+          name: 'ArmormataLocked',
+          srcs: 'image/cards/locked/armormata.png'
+        },
+        {
+          name: 'BagehesaurusLocked',
+          srcs: 'image/cards/locked/bagehesaurus.png'
+        },
+        {
+          name: 'ChromaspinusLocked',
+          srcs: 'image/cards/locked/chromaspinus.png'
+        },
+        {
+          name: 'DracoceratopsLocked',
+          srcs: 'image/cards/locked/dracoceratops.png'
+        },
+        {
+          name: 'ErliphosaurusLocked',
+          srcs: 'image/cards/locked/erliphosaurus.png'
+        },
+        {
+          name: 'GorgosuchusLocked',
+          srcs: 'image/cards/locked/gorgosuchus.png'
+        },
+        {
+          name: 'IguanosuchusLocked',
+          srcs: 'image/cards/locked/iguanosuchus.png'
+        },
+        {
+          name: 'SmilodonLocked',
+          srcs: 'image/cards/locked/smilodon.png'
+        },
+        {
+          name: 'TroodonLocked',
+          srcs: 'image/cards/locked/troodon.png'
+        },
+
+        // Immortal Tier
+        {
+          name: 'GiantOrthoconeLocked',
+          srcs: 'image/cards/locked/giantorthocone.png'
+        },
+        {
+          name: 'HyaenodonLocked',
+          srcs: 'image/cards/locked/hyaenodon.png'
+        },
+        {
+          name: 'OviraptorLocked',
+          srcs: 'image/cards/locked/oviraptor.png'
+        },
+        {
+          name: 'PlotosaurusLocked',
+          srcs: 'image/cards/locked/plotosaurus.png'
+        },
+        {
+          name: 'ProceratosaurusLocked',
+          srcs: 'image/cards/locked/proceratosaurus.png'
+        },
+        {
+          name: 'ProcoptodonLocked',
+          srcs: 'image/cards/locked/procoptodon.png'
+        },
+        {
+          name: 'StygimolochLocked',
+          srcs: 'image/cards/locked/stygimoloch.png'
+        },
+        {
+          name: 'TusoteuthisLocked',
+          srcs: 'image/cards/locked/tusoteuthis.png'
+        },
+
+
+        // Unlocked
+        // Herald Tier
+        {
+          name: 'AlangasaurusUnlocked',
+          srcs: 'image/cards/unlocked/alangasaurus.png'
+        },
+        {
+          name: 'AlanqaUnlocked',
+          srcs: 'image/cards/unlocked/alanqa.png'
+        },
+        {
+          name: 'ArgentinosaurusUnlocked',
+          srcs: 'image/cards/unlocked/argentinosaurus.png'
+        },
+        {
+          name: 'BonitasauraUnlocked',
+          srcs: 'image/cards/unlocked/Bonitasaura.png'
+        },
+        {
+          name: 'ColoborhynchusUnlocked',
+          srcs: 'image/cards/unlocked/coloborhynchus.png'
+        },
+        {
+          name: 'DiplocaulusUnlocked',
+          srcs: 'image/cards/unlocked/diplocaulus.png'
+        },
+        {
+          name: 'GuanlongUnlocked',
+          srcs: 'image/cards/unlocked/guanlong.png'
+        },
+        {
+          name: 'HatzegopteryxUnlocked',
+          srcs: 'image/cards/unlocked/hatzegopteryx.png'
+        },
+        {
+          name: 'LabyrinthodontiaUnlocked',
+          srcs: 'image/cards/unlocked/labyrinthodontia.png'
+        },
+        {
+          name: 'LabyrinthosaurusUnlocked',
+          srcs: 'image/cards/unlocked/labyrinthosaurus.png'
+        },
+        {
+          name: 'LimnoscelisUnlocked',
+          srcs: 'image/cards/unlocked/limnoscelis.png'
+        },
+        {
+          name: 'MajungasaurusUnlocked',
+          srcs: 'image/cards/unlocked/majungasaurus.png'
+        },
+        {
+          name: 'PelecanimimusUnlocked',
+          srcs: 'image/cards/unlocked/pelecanimimus.png'
+        },
+        {
+          name: 'TriceratopsUnlocked',
+          srcs: 'image/cards/unlocked/triceratops.png'
+        },
+        {
+          name: 'TropeognathusUnlocked',
+          srcs: 'image/cards/unlocked/tropeognathus.png'
+        },
+        {
+          name: 'TuojiangosaurusUnlocked',
+          srcs: 'image/cards/unlocked/tuojiangosaurus.png'
+        },
+        {
+          name: 'UtahraptorUnlocked',
+          srcs: 'image/cards/unlocked/utahraptor.png'
+        },
+
+        // Elite Tier
+        {
+          name: 'AllosaurusUnlocked',
+          srcs: 'image/cards/unlocked/allosaurus.png'
+        },
+        {
+          name: 'CarnotaurusUnlocked',
+          srcs: 'image/cards/unlocked/carnotaurus.png'
+        },
+        {
+          name: 'CorythosaurusUnlocked',
+          srcs: 'image/cards/unlocked/corythosaurus.png'
+        },
+        {
+          name: 'DilophosaurusUnlocked',
+          srcs: 'image/cards/unlocked/dilophosaurus.png'
+        },
+        {
+          name: 'DimetrocarnusUnlocked',
+          srcs: 'image/cards/unlocked/dimetrocarnus.png'
+        },
+        {
+          name: 'DiplodocusUnlocked',
+          srcs: 'image/cards/unlocked/diplodocus.png'
+        },
+        {
+          name: 'DiplotatorUnlocked',
+          srcs: 'image/cards/unlocked/diplotator.png'
+        },
+        {
+          name: 'DsungaripterusUnlocked',
+          srcs: 'image/cards/unlocked/dsungaripterus.png'
+        },
+        {
+          name: 'GallimimusUnlocked',
+          srcs: 'image/cards/unlocked/gallimimus.png'
+        },
+        {
+          name: 'GiganotosaurusUnlocked',
+          srcs: 'image/cards/unlocked/giganotosaurus.png'
+        },
+        {
+          name: 'IrritatorUnlocked',
+          srcs: 'image/cards/unlocked/irritator.png'
+        },
+        {
+          name: 'MonolophosaurusUnlocked',
+          srcs: 'image/cards/unlocked/monolophosaurus.png'
+        },
+        {
+          name: 'NasutoceratopsUnlocked',
+          srcs: 'image/cards/unlocked/nasutoceratops.png'
+        },
+        {
+          name: 'NundagosaurusUnlocked ',
+          srcs: 'image/cards/unlocked/nundagosaurus .png'
+        },
+        {
+          name: 'NundasuchusUnlocked',
+          srcs: 'image/cards/unlocked/nundasuchus.png'
+        },
+
+        // Ancient Tier
+        {
+          name: 'AndrewtheriumUnlocked',
+          srcs: 'image/cards/unlocked/andrewtherium.png'
+        },
+        {
+          name: 'DimetrodonUnlocked',
+          srcs: 'image/cards/unlocked/dimetrodon.png'
+        },
+        {
+          name: 'DimorphodonUnlocked',
+          srcs: 'image/cards/unlocked/dimorphodon.png'
+        },
+        {
+          name: 'EdaphosaurusUnlocked',
+          srcs: 'image/cards/unlocked/edaphosaurus.png'
+        },
+        {
+          name: 'HauffiosaurusUnlocked',
+          srcs: 'image/cards/unlocked/hauffiosaurus.png'
+        },
+        {
+          name: 'KronosaurusUnlocked',
+          srcs: 'image/cards/unlocked/kronosaurus.png'
+        },
+        {
+          name: 'LeedsichthysUnlocked',
+          srcs: 'image/cards/unlocked/leedsichthys.png'
+        },
+        {
+          name: 'LiopleurodonUnlocked',
+          srcs: 'image/cards/unlocked/liopleurodon.png'
+        },
+        {
+          name: 'marsupial LionUnlocked',
+          srcs: 'image/cards/unlocked/marsupial lion.png'
+        },
+        {
+          name: 'MicroposaurusUnlocked',
+          srcs: 'image/cards/unlocked/microposaurus.png'
+        },
+        {
+          name: 'OstafrikasaurusUnlocked',
+          srcs: 'image/cards/unlocked/ostafrikasaurus.png'
+        },
+        {
+          name: 'PliosaurusUnlocked',
+          srcs: 'image/cards/unlocked/pliosaurus.png'
+        },
+
+        // Mytical Tier
+        {
+          name: 'AllonogmiusUnlocked',
+          srcs: 'image/cards/unlocked/allonogmius.png'
+        },
+        {
+          name: 'ArmormataUnlocked',
+          srcs: 'image/cards/unlocked/armormata.png'
+        },
+        {
+          name: 'BagehesaurusUnlocked',
+          srcs: 'image/cards/unlocked/bagehesaurus.png'
+        },
+        {
+          name: 'ChromaspinusUnlocked',
+          srcs: 'image/cards/unlocked/chromaspinus.png'
+        },
+        {
+          name: 'DracoceratopsUnlocked',
+          srcs: 'image/cards/unlocked/dracoceratops.png'
+        },
+        {
+          name: 'ErliphosaurusUnlocked',
+          srcs: 'image/cards/unlocked/erliphosaurus.png'
+        },
+        {
+          name: 'GorgosuchusUnlocked',
+          srcs: 'image/cards/unlocked/gorgosuchus.png'
+        },
+        {
+          name: 'IguanosuchusUnlocked',
+          srcs: 'image/cards/unlocked/iguanosuchus.png'
+        },
+        {
+          name: 'SmilodonUnlocked',
+          srcs: 'image/cards/unlocked/smilodon.png'
+        },
+        {
+          name: 'TroodonUnlocked',
+          srcs: 'image/cards/unlocked/troodon.png'
+        },
+
+        // Immortal Tier
+        {
+          name: 'GiantOrthoconeUnlocked',
+          srcs: 'image/cards/unlocked/giantorthocone.png'
+        },
+        {
+          name: 'HyaenodonUnlocked',
+          srcs: 'image/cards/unlocked/hyaenodon.png'
+        },
+        {
+          name: 'OviraptorUnlocked',
+          srcs: 'image/cards/unlocked/oviraptor.png'
+        },
+        {
+          name: 'PlotosaurusUnlocked',
+          srcs: 'image/cards/unlocked/plotosaurus.png'
+        },
+        {
+          name: 'ProceratosaurusUnlocked',
+          srcs: 'image/cards/unlocked/proceratosaurus.png'
+        },
+        {
+          name: 'ProcoptodonUnlocked',
+          srcs: 'image/cards/unlocked/procoptodon.png'
+        },
+        {
+          name: 'StygimolochUnlocked',
+          srcs: 'image/cards/unlocked/stygimoloch.png'
+        },
+        {
+          name: 'TusoteuthisUnlocked',
+          srcs: 'image/cards/unlocked/tusoteuthis.png'
+        },
+
+      ]
+    },
   ],
 };
