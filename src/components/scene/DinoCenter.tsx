@@ -1,23 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as PIXI from "pixi.js";
-import {
-  Stage,
-  Container,
-  Sprite,
-  Text,
-  useApp,
-  AppProvider,
-  Graphics,
-  AnimatedSprite,
-} from "@pixi/react";
+import { Container, Sprite, useApp } from "@pixi/react";
 import DinoFundComponent from "../DinoFundComponent";
 import ProfileComponent from "../ProfileComponent";
 import DetailsComponent from "../DetailsComponent";
-import LowerButtonComponent from "../LowerButtonComponent";
 import EggListingComponent from "../EggListingComponent";
+import { useStore } from "../../utils/store";
 
-const DinoCenter = ({ setScene, scene }: any) => {
+const DinoCenter = ({ scene }: any) => {
   const app = useApp();
+  const changeScene = useStore((state) => state.changeScene);
   const isNotMobile = app.screen.width > 450;
   console.log("app.screen", app.screen);
   console.log("scene", scene);
@@ -206,70 +198,73 @@ const DinoCenter = ({ setScene, scene }: any) => {
         </Container>
 
         {/* Details Container */}
-          {/* left side */}
-          <Container
-            position={[isNotMobile ? -100 : -85, 0]}
-            visible={false}
-          >
-            <DetailsComponent
-              spriteTexture={PIXI.Assets.get('ImgDetailsBg')}
-              IconTexture={PIXI.Assets.get('EventFragmentIcon')}
-              text={'0.55012312'}
-              posX={0}
-              posY={0}
-              scaleX={isNotMobile ? 1 : 0.85}
-              textStyle={new PIXI.TextStyle({
-                fontFamily: 'Magra Bold',
+        {/* left side */}
+        <Container position={[isNotMobile ? -100 : -85, 0]} visible={false}>
+          <DetailsComponent
+            spriteTexture={PIXI.Assets.get("ImgDetailsBg")}
+            IconTexture={PIXI.Assets.get("EventFragmentIcon")}
+            text={"0.55012312"}
+            posX={0}
+            posY={0}
+            scaleX={isNotMobile ? 1 : 0.85}
+            textStyle={
+              new PIXI.TextStyle({
+                fontFamily: "Magra Bold",
                 fontSize: 20,
-                fontWeight: 'bold',
-                fill: ['0xFFC700'],
-              })}
-              textYOffest={-3}
-              textXOffest={10}
-              onPress={() => {
-                console.log('onPress EventFragmentDetails')
-              }}
-            />
-            <DetailsComponent
-              spriteTexture={PIXI.Assets.get('ImgDetailsBg')}
-              IconTexture={PIXI.Assets.get('DinoTicketIcon')}
-              text={'123.123.123'}
-              posX={0}
-              posY={35}
-              scaleX={isNotMobile ? 1 : 0.85}
-              textStyle={new PIXI.TextStyle({
-                fontFamily: 'Magra Bold',
+                fontWeight: "bold",
+                fill: ["0xFFC700"],
+              })
+            }
+            textYOffest={-3}
+            textXOffest={10}
+            onPress={() => {
+              console.log("onPress EventFragmentDetails");
+            }}
+          />
+          <DetailsComponent
+            spriteTexture={PIXI.Assets.get("ImgDetailsBg")}
+            IconTexture={PIXI.Assets.get("DinoTicketIcon")}
+            text={"123.123.123"}
+            posX={0}
+            posY={35}
+            scaleX={isNotMobile ? 1 : 0.85}
+            textStyle={
+              new PIXI.TextStyle({
+                fontFamily: "Magra Bold",
                 fontSize: 20,
-                fontWeight: 'bold',
-                fill: ['0xFFC700'],
-              })}
-              textYOffest={-1}
-              textXOffest={10}
-              onPress={() => {
-                console.log('onPress DinoTicketDetails')
-              }}
-            />
+                fontWeight: "bold",
+                fill: ["0xFFC700"],
+              })
+            }
+            textYOffest={-1}
+            textXOffest={10}
+            onPress={() => {
+              console.log("onPress DinoTicketDetails");
+            }}
+          />
 
-            <DetailsComponent
-              spriteTexture={PIXI.Assets.get('ImgDetailsBg')}
-              IconTexture={PIXI.Assets.get('DinoEggIcon')}
-              text={'123.123.123'}
-              posX={0}
-              posY={70}
-              scaleX={isNotMobile ? 1 : 0.85}
-              textStyle={new PIXI.TextStyle({
-                fontFamily: 'Magra Bold',
+          <DetailsComponent
+            spriteTexture={PIXI.Assets.get("ImgDetailsBg")}
+            IconTexture={PIXI.Assets.get("DinoEggIcon")}
+            text={"123.123.123"}
+            posX={0}
+            posY={70}
+            scaleX={isNotMobile ? 1 : 0.85}
+            textStyle={
+              new PIXI.TextStyle({
+                fontFamily: "Magra Bold",
                 fontSize: 20,
-                fontWeight: 'bold',
-                fill: ['0xFFC700'],
-              })}
-              textYOffest={-1}
-              textXOffest={10}
-              onPress={() => {
-                console.log('onPress DinoEggDetailss')
-              }}
-            />
-          </Container>
+                fontWeight: "bold",
+                fill: ["0xFFC700"],
+              })
+            }
+            textYOffest={-1}
+            textXOffest={10}
+            onPress={() => {
+              console.log("onPress DinoEggDetailss");
+            }}
+          />
+        </Container>
 
         {/* Lower Button Container */}
         {getHomeContainerBounds && (
@@ -309,7 +304,7 @@ const DinoCenter = ({ setScene, scene }: any) => {
                       fill: ["0xFFC700"],
                     })
                   }
-                  onPress={() => setScene("DINOCENTER")}
+                  onPress={() => changeScene("DINOCENTER")}
                 />
               );
             })}

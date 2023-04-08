@@ -1,43 +1,15 @@
-import * as PIXI from "pixi.js";
-import { Formik, useFormik } from "formik";
-import { useConnectedMetaMask, useMetaMask } from "metamask-react";
+import { useFormik } from "formik";
 import { useEtherBalance, useEthers } from "@usedapp/core";
-import { formatEther } from "@ethersproject/units";
-import { ethers } from "ethers";
 import { Stage } from "@pixi/react";
-import {
-  useMemo,
-  useRef,
-  useState,
-  Suspense,
-  useEffect,
-  useCallback,
-} from "react";
-// import CustomButton from "./components/Button";
+import { useState, Suspense, useEffect } from "react";
 import { axiosInstance } from "./utils/api";
 import Home from "./components/scene/Home";
 import Register from "./components/scene/Register";
 import Loading from "./components/scene/Loader";
-import Profile from "./components/scene/Profile";
 import ProfileTemp from "./components/scene/ProfileTemp";
 
 import DinoCenter from "./components/scene/DinoCenter";
-// import { useGLTF, Html, shaderMaterial, useTexture, Plane } from '@react-three/drei'
-
-// const useSize = (target: any) => {
-//   const [size, setSize] = useState<any>();
-
-//   useLayoutEffect(() => {
-//     setSize(target.current.getBoundingClientRect());
-//   }, [target]);
-
-//   // Where the magic happens
-//   useResizeObserver(target, (entry) => setSize(entry.contentRect));
-//   return size;
-// };
-
-// regex for password validation min 1 upper, 1 lower, 1 number, min 8 char
-// ^(.{0,7}|[^0-9]*|[^A-Z]*|[^a-z]*)$
+import { useStore } from "./utils/store";
 
 type loginReqFormat = {
   username: string;
@@ -62,33 +34,15 @@ type otpReqFormat = {
 };
 
 export const AppTemp = () => {
-  // const { status, connect, ethereum, switchChain, account, chainId } =
-  //   useMetaMask();
-  const { account, active, deactivate, activateBrowserWallet, library } =
-    useEthers();
-  const etherBalance = useEtherBalance(account);
-  const [currentChain, setCurrentChain] = useState("");
-  // const target = useRef(null);
-  // const size = useSize(target);
-  const [scene, setScene] = useState("LOADING");
+  const { account, active, deactivate, activateBrowserWallet } = useEthers();
+  const scene = useStore((state) => state.scene);
+  const changeScene = useStore((state) => state.changeScene);
+  const saveToken = useStore((state) => state.saveToken);
   const [authMode, setAuthMode] = useState<
     "LOGIN" | "REGISTER" | "OTPEMAIL" | "OTPMOBILE" | "LOGINWALLET"
   >("LOGIN");
-  const [email, setEmail] = useState("");
-  const [walletAddress, setWalletAddress] = useState("");
-  const [walletBalance, setWalletBalance] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
-  const [retypePassword, setRetypePassword] = useState("");
-  const [referralCode, setReferralCode] = useState("");
-  const [testValue, setTestValue] = useState("");
-
-  const [app, setApp] = useState<any>(false);
-
-  useEffect(() => {
-    // app?.renderer.render(app.stage);
-  }, [app]);
+  const [registerCheckbox, setRegisterCheckbox] = useState(false);
 
   const connectToWallet = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
@@ -176,6 +130,11 @@ export const AppTemp = () => {
     }
     if (!values.password) {
       errors.password = "Required";
+    } else if (
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,20}$/i.test(values.password)
+    ) {
+      errors.password =
+        "Password must contain 1 uppercase, 1 lowercase, 1 number, min 8 chars & max 20 chars, no symbol";
     }
     console.log("errors", errors);
     return errors;
@@ -200,9 +159,21 @@ export const AppTemp = () => {
     }
     if (!values.password) {
       errors.password = "Required";
+    } else if (
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,20}$/i.test(values.password)
+    ) {
+      errors.password =
+        "Password must contain 1 uppercase, 1 lowercase, 1 number, min 8 chars & max 20 chars, no symbol";
     }
     if (!values.retypePassword) {
       errors.retypePassword = "Required";
+    } else if (
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,20}$/i.test(
+        values.retypePassword
+      )
+    ) {
+      errors.retypePassword =
+        "Password must contain 1 uppercase, 1 lowercase, 1 number, min 8 chars & max 20 chars, no symbol";
     }
     if (values.password !== values.retypePassword) {
       errors.retypePassword = "Password is not the same";
@@ -229,7 +200,7 @@ export const AppTemp = () => {
     },
     validate: loginFormValidate,
     onSubmit: (values, { setSubmitting }) => {
-      alert(JSON.stringify(values, null, 2));
+      // alert(JSON.stringify(values, null, 2));
       // otpHandler(values.email);
       setSubmitting(false);
       setAuthMode("LOGINWALLET");
@@ -241,10 +212,10 @@ export const AppTemp = () => {
     },
     validate: loginWalletFormValidate,
     onSubmit: (values, { setSubmitting }) => {
-      alert(JSON.stringify(values, null, 2));
+      // alert(JSON.stringify(values, null, 2));
       // otpHandler(values.email);
+      loginHandler();
       setSubmitting(false);
-      setScene("HOME");
       // setAuthMode("LOGINWALLET");
     },
   });
@@ -287,7 +258,7 @@ export const AppTemp = () => {
       loginWalletForm.setFieldValue("walletAddress", account);
     if (!active && !account && authMode === "LOGINWALLET")
       loginWalletForm.setFieldValue("walletAddress", "");
-  }, [active, account]);
+  }, [active, account, authMode]);
 
   const options = {
     backgroundColor: 0x1099bb,
@@ -301,35 +272,30 @@ export const AppTemp = () => {
     // forceCanvas: true,
   };
 
-  // const app = useApp();
-
   const appWidth = window.innerWidth;
   const appHeight = window.innerHeight;
 
-  const usernameRef = useRef(null);
-  const passwordRef = useRef(null);
-  const testRef = useRef(null);
   console.log("scene", scene);
-
-  // console.log("usernameRef", usernameRef);
-  // console.log("passwordRef", passwordRef);
-  // console.log("testRef", testRef);
 
   const loginHandler = async () => {
     // TODO: to change scene to home
     // setScene("HOME");
     const loginRequestData: loginReqFormat = {
-      username,
-      password,
+      username: loginForm.values.username,
+      password: loginForm.values.password,
     };
     const result = await axiosInstance({
       url: "/user/authentication",
       method: "POST",
-      data: JSON.stringify(loginRequestData),
+      data: loginRequestData,
     });
 
     const { data } = result;
     if (!data.success) window.alert(`${data.message}`);
+    if (data && data.result) {
+      saveToken(data.result?.jwt);
+      changeScene('HOME')
+    }
   };
 
   const registerHandler = async () => {
@@ -345,7 +311,7 @@ export const AppTemp = () => {
     const result = await axiosInstance({
       url: "/user/register",
       method: "POST",
-      data: JSON.stringify(registerRequestData),
+      data: registerRequestData,
     });
     const { data } = result;
     if (!data.success) window.alert(`${data.message}`);
@@ -459,7 +425,7 @@ export const AppTemp = () => {
                         onBlur={loginForm.handleBlur}
                         value={loginForm.values.password}
                       />
-                      <p className="text-red-500 font-bold font-magra">
+                      <p className="text-red-500 font-bold font-magra max-w-[350px]">
                         {loginForm.errors.password &&
                           loginForm.touched.password &&
                           loginForm.errors.password}
@@ -467,7 +433,9 @@ export const AppTemp = () => {
                       <div className="flex justify-end w-full">
                         <button
                           type="button"
-                          onClick={() => window.alert(`forgot password clicke`)}
+                          onClick={() =>
+                            window.alert(`forgot password clicked`)
+                          }
                           className="px-1.5 py-0.5 text-sm font-bold text-white shadow-sm hover:text-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 font-Magra"
                         >
                           Forgot password
@@ -517,7 +485,7 @@ export const AppTemp = () => {
                         onBlur={registerForm.handleBlur}
                         value={registerForm.values.password}
                       />
-                      <p className="text-red-500 font-bold font-magra">
+                      <p className="text-red-500 font-bold font-magra max-w-[350px]">
                         {registerForm.errors.password &&
                           registerForm.touched.password &&
                           registerForm.errors.password}
@@ -534,7 +502,7 @@ export const AppTemp = () => {
                         onBlur={registerForm.handleBlur}
                         value={registerForm.values.retypePassword}
                       />
-                      <p className="text-red-500 font-bold font-magra">
+                      <p className="text-red-500 font-bold font-magra max-w-[350px]">
                         {registerForm.errors.retypePassword &&
                           registerForm.touched.retypePassword &&
                           registerForm.errors.retypePassword}
@@ -556,6 +524,27 @@ export const AppTemp = () => {
                         registerForm.errors.referralCode}
                     </div>
                   </form>
+                  <div className="mt-4 flex items-center max-w-[400px]">
+                    {registerCheckbox && (
+                      <input
+                        // type="checkbox"
+                        type="image"
+                        alt="checkboxEula"
+                        src="image/CheckBoxChecked.png"
+                        onClick={() => setRegisterCheckbox(false)}
+                      />
+                    )}
+                    {!registerCheckbox && (
+                      <input
+                        // type="checkbox"
+                        type="image"
+                        alt="checkboxEula"
+                        src="image/CheckboxEulaBackground.png"
+                        onClick={() => setRegisterCheckbox(true)}
+                      />
+                    )}
+                    <span className="font-Magra ml-2 text-white font-bold">{`I have read and agreed to <User Agreement and Privacy Policy>`}</span>
+                  </div>
                   <input
                     alt="btnRegister"
                     type="image"
@@ -669,15 +658,6 @@ export const AppTemp = () => {
                 </>
               )}
             </div>
-            <div className="mt-4 flex items-center">
-              <input
-                // type="checkbox"
-                type="image"
-                alt="checkboxEula"
-                src="image/CheckboxEulaBackground.png"
-              />
-              <span className="font-Magra ml-2 text-white font-bold">{`I have read and agreed to <User Agreement and Privacy Policy>`}</span>
-            </div>
           </div>
         </div>
       )}
@@ -689,7 +669,7 @@ export const AppTemp = () => {
         onAnimationIteration={() => {
           console.log("animation iteration");
         }}
-        onMount={(_app) => setApp(_app)}
+        // onMount={(_app) => setApp(_app)}
       >
         {/* @ts-ignore */}
 
@@ -698,9 +678,7 @@ export const AppTemp = () => {
             <Loading
               onFinishLoading={() => {
                 console.log("finish loading");
-                setScene("HOME")
-                // setScene("PROFILE")
-                // setScene("REGISTER");
+                changeScene("REGISTER");
               }}
             />
           )}
@@ -708,10 +686,9 @@ export const AppTemp = () => {
         {scene === "REGISTER" && <Register />}
         {scene === "PROFILE" && (
           <>
-            {/* <Profile */}
             <ProfileTemp
               onBackBtnClick={() => {
-                setScene("HOME");
+                changeScene("HOME");
                 console.log("back");
               }}
             />
@@ -719,17 +696,12 @@ export const AppTemp = () => {
         )}
         {scene === "HOME" && (
           <>
-            <Home
-              onProfileClick={() => setScene("PROFILE")}
-              setScene={setScene}
-              scene={scene}
-            />
-            {/* <Home setScene={setScene} scene={scene} /> */}
+            <Home onProfileClick={() => changeScene("PROFILE")} scene={scene} />
           </>
         )}
         {scene === "DINOCENTER" && (
           <>
-            <DinoCenter setScene={setScene} scene={scene} />
+            <DinoCenter scene={scene} />
           </>
         )}
       </Stage>
