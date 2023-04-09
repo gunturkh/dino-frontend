@@ -16,10 +16,12 @@ import { manifest } from '../../assets';
 
 type LoaderProps = {
   onFinishLoading: () => void;
+  visible: boolean;
 }
 
 const Loader = ({
   onFinishLoading,
+  visible = true,
 }: LoaderProps) => {
   const app = useApp();
   console.log('app.screen', app.screen.width, app.screen.height)
@@ -36,6 +38,7 @@ const Loader = ({
   }
 
   initializeLoader();
+  console.log('testLoad asset outside', PIXI.Assets.get('MainBg'))
 
   const loaderBarWidth = app.screen.width < 450 ? app.screen.width * 0.8 : app.screen.width * 0.3;
   const loaderBarFill = new PIXI.Graphics();
@@ -64,6 +67,10 @@ const Loader = ({
   loaderBar.x = app.screen.width / 2 - loaderBar.width / 2;
   loaderBar.y = app.screen.height - 110;
   app.stage.addChild(loaderBar);
+  if (!visible) {
+    // loaderBar.visible = true;
+    app.stage.removeChild(loaderBar);
+  }
   console.log('app loaderBar.x', loaderBar.x, loaderBar.width)
 
   // need to expose this to loader props

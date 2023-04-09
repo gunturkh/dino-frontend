@@ -40,7 +40,7 @@ const DetailsComponent = ({
 }: Props) => {
   const app = useApp();
   const containerRef = useRef();
-  const referenceBounds = PIXI.Assets.get('BNBDetails')?.orig
+  const referenceBounds = PIXI.Assets?.get('BNBDetails')?.orig;
   const [isLoaded, setIsLoaded] = useState(false);
 
   const [bounds, setBounds] = useState(referenceBounds)
