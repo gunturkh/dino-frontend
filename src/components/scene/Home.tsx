@@ -5,7 +5,8 @@ import DinoFundComponent from "../DinoFundComponent";
 import ProfileComponent from "../ProfileComponent";
 import DetailsComponent from "../DetailsComponent";
 import LowerButtonComponent from "../LowerButtonComponent";
-import { useStore } from "../../utils/store";
+import { useAuthStore, useStore } from "../../utils/store";
+import { axiosInstance } from "../../utils/api";
 
 type Props = {
   onProfileClick: () => void;
@@ -16,8 +17,8 @@ type Props = {
 const Home = ({ onProfileClick, scene }: Props) => {
   const app = useApp();
   const changeScene = useStore((state) => state.changeScene);
-  const token = useStore((state) => state.token);
-  console.log('token', token)
+  const token = useAuthStore((state) => state.token);
+  console.log("token", token);
   const isNotMobile = app.screen.width > 450;
   // @ts-ignore
   globalThis.__PIXI_APP__ = app;
@@ -59,6 +60,19 @@ const Home = ({ onProfileClick, scene }: Props) => {
   useEffect(() => {
     console.log("homeContainerBounds", getHomeContainerBounds);
   }, [getHomeContainerBounds]);
+  useEffect(() => {
+    // /user/getUserData
+    const getUserData = async () => {
+      const result = await axiosInstance({
+        url: "/user/getUserData",
+        method: "GET",
+      });
+      console.log('getUserData Result:', result)
+    };
+
+    getUserData();
+  }, []);
+
   // const dinoFundRef = useRef(null);
   // console.log('dinoFundRef', dinoFundRef.current)
   // useEffect(() => {
@@ -210,8 +224,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
             // width={app.screen.width > 450 ? 450 : app.screen.width}
           >
             <DetailsComponent
-              spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
-              IconTexture={PIXI?.Assets?.get("BNBIcon")}
+              spriteTexture={PIXI?.Assets?.get("ImgDetailsBg") || PIXI.Texture.EMPTY}
+              IconTexture={PIXI?.Assets?.get("BNBIcon") || PIXI.Texture.EMPTY}
               text={"123.123.123"}
               posX={0}
               posY={0}
@@ -231,8 +245,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
               }}
             />
             <DetailsComponent
-              spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
-              IconTexture={PIXI?.Assets?.get("BonusIcon")}
+              spriteTexture={PIXI?.Assets?.get("ImgDetailsBg") || PIXI.Texture.EMPTY}
+              IconTexture={PIXI?.Assets?.get("BonusIcon") || PIXI.Texture.EMPTY}
               text={"123.123.123"}
               posX={0}
               posY={35}
@@ -256,8 +270,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
           {/* left side */}
           <Container position={[isNotMobile ? -100 : -85, 0]}>
             <DetailsComponent
-              spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
-              IconTexture={PIXI?.Assets?.get("EventFragmentIcon")}
+              spriteTexture={PIXI?.Assets?.get("ImgDetailsBg") || PIXI.Texture.EMPTY}
+              IconTexture={PIXI?.Assets?.get("EventFragmentIcon") || PIXI.Texture.EMPTY}
               text={"0.55012312"}
               posX={0}
               posY={0}
@@ -277,8 +291,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
               }}
             />
             <DetailsComponent
-              spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
-              IconTexture={PIXI?.Assets?.get("DinoTicketIcon")}
+              spriteTexture={PIXI?.Assets?.get("ImgDetailsBg") || PIXI.Texture.EMPTY}
+              IconTexture={PIXI?.Assets?.get("DinoTicketIcon") || PIXI.Texture.EMPTY}
               text={"123.123.123"}
               posX={0}
               posY={35}
@@ -299,8 +313,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
             />
 
             <DetailsComponent
-              spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
-              IconTexture={PIXI?.Assets?.get("DinoEggIcon")}
+              spriteTexture={PIXI?.Assets?.get("ImgDetailsBg") || PIXI.Texture.EMPTY}
+              IconTexture={PIXI?.Assets?.get("DinoEggIcon") || PIXI.Texture.EMPTY}
               text={"123.123.123"}
               posX={0}
               posY={70}

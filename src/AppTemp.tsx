@@ -9,7 +9,7 @@ import Loading from "./components/scene/Loader";
 import ProfileTemp from "./components/scene/ProfileTemp";
 
 import DinoCenter from "./components/scene/DinoCenter";
-import { useStore } from "./utils/store";
+import { useAuthStore, useStore } from "./utils/store";
 
 type loginReqFormat = {
   username: string;
@@ -35,9 +35,10 @@ type otpReqFormat = {
 
 export const AppTemp = () => {
   const { account, active, deactivate, activateBrowserWallet } = useEthers();
+  const token = useAuthStore((state) => state.token);
+  const saveToken = useAuthStore((state) => state.saveToken);
   const scene = useStore((state) => state.scene);
   const changeScene = useStore((state) => state.changeScene);
-  const saveToken = useStore((state) => state.saveToken);
   const [authMode, setAuthMode] = useState<
     "LOGIN" | "REGISTER" | "OTPEMAIL" | "OTPMOBILE" | "LOGINWALLET"
   >("LOGIN");
@@ -293,8 +294,7 @@ export const AppTemp = () => {
     const { data } = result;
     if (!data.success) window.alert(`${data.message}`);
     if (data && data.result) {
-      saveToken(data.result?.jwt);
-      changeScene('HOME')
+      saveToken(data.result?.jwt, () => changeScene("HOME"));
     }
   };
 
@@ -678,7 +678,8 @@ export const AppTemp = () => {
             <Loading
               onFinishLoading={() => {
                 console.log("finish loading");
-                changeScene("REGISTER");
+                if (token && token !== '') changeScene('HOME')
+                else changeScene("REGISTER");
               }}
             />
           )}

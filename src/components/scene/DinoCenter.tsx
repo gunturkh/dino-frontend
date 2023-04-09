@@ -201,8 +201,8 @@ const DinoCenter = ({ scene }: any) => {
         {/* left side */}
         <Container position={[isNotMobile ? -100 : -85, 0]} visible={false}>
           <DetailsComponent
-            spriteTexture={PIXI.Assets.get("ImgDetailsBg")}
-            IconTexture={PIXI.Assets.get("EventFragmentIcon")}
+            spriteTexture={PIXI.Assets?.get("ImgDetailsBg") || PIXI.Texture.EMPTY}
+            IconTexture={PIXI.Assets?.get("EventFragmentIcon") || PIXI.Texture.EMPTY}
             text={"0.55012312"}
             posX={0}
             posY={0}
@@ -222,8 +222,8 @@ const DinoCenter = ({ scene }: any) => {
             }}
           />
           <DetailsComponent
-            spriteTexture={PIXI.Assets.get("ImgDetailsBg")}
-            IconTexture={PIXI.Assets.get("DinoTicketIcon")}
+            spriteTexture={PIXI.Assets?.get("ImgDetailsBg") || PIXI.Texture.EMPTY}
+            IconTexture={PIXI.Assets?.get("DinoTicketIcon") || PIXI.Texture.EMPTY}
             text={"123.123.123"}
             posX={0}
             posY={35}
@@ -244,8 +244,8 @@ const DinoCenter = ({ scene }: any) => {
           />
 
           <DetailsComponent
-            spriteTexture={PIXI.Assets.get("ImgDetailsBg")}
-            IconTexture={PIXI.Assets.get("DinoEggIcon")}
+            spriteTexture={PIXI.Assets?.get("ImgDetailsBg") || PIXI.Texture.EMPTY}
+            IconTexture={PIXI.Assets?.get("DinoEggIcon") || PIXI.Texture.EMPTY}
             text={"123.123.123"}
             posX={0}
             posY={70}
