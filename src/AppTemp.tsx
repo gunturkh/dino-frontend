@@ -7,6 +7,7 @@ import Home from "./components/scene/Home";
 import Register from "./components/scene/Register";
 import Loading from "./components/scene/Loader";
 import ProfileTemp from "./components/scene/ProfileTemp";
+import Album from "./components/scene/Album";
 
 import DinoCenter from "./components/scene/DinoCenter";
 import { useAuthStore, useStore } from "./utils/store";
@@ -281,6 +282,7 @@ export const AppTemp = () => {
   const loginHandler = async () => {
     // TODO: to change scene to home
     // setScene("HOME");
+    // changeScene('HOME')
     const loginRequestData: loginReqFormat = {
       username: loginForm.values.username,
       password: loginForm.values.password,
@@ -669,7 +671,7 @@ export const AppTemp = () => {
         onAnimationIteration={() => {
           console.log("animation iteration");
         }}
-        // onMount={(_app) => setApp(_app)}
+      // onMount={(_app) => setApp(_app)}
       >
         {/* @ts-ignore */}
 
@@ -681,10 +683,16 @@ export const AppTemp = () => {
                 if (token && token !== '') changeScene('HOME')
                 else changeScene("REGISTER");
               }}
+              visible={scene === "LOADING"}
             />
           )}
         </Suspense>
         {scene === "REGISTER" && <Register />}
+        {scene === "HOME" && (
+          <>
+            <Home onProfileClick={() => changeScene("PROFILE")} scene={scene} />
+          </>
+        )}
         {scene === "PROFILE" && (
           <>
             <ProfileTemp
@@ -695,14 +703,21 @@ export const AppTemp = () => {
             />
           </>
         )}
-        {scene === "HOME" && (
-          <>
-            <Home onProfileClick={() => changeScene("PROFILE")} scene={scene} />
-          </>
-        )}
         {scene === "DINOCENTER" && (
           <>
             <DinoCenter scene={scene} />
+          </>
+        )}
+        {scene === "ALBUM" && (
+          <>
+            <Album
+              scene={scene}
+              onBackBtnClick={() => {
+                changeScene("HOME");
+                console.log("back");
+              }}
+              visible={scene === "ALBUM"}
+            />
           </>
         )}
       </Stage>

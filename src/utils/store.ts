@@ -10,7 +10,7 @@ type AuthStore = {
     saveToken: (token: string, callback?: () => void) => void,
     logout: () => void,
 }
-type Screen = 'HOME' | 'REGISTER' | 'DINOCENTER' | 'LOADING' | 'LOGIN' | 'PROFILE'
+type Screen = 'HOME' | 'REGISTER' | 'DINOCENTER' | 'LOADING' | 'LOGIN' | 'PROFILE' | 'ALBUM'
 
 export const useStore = create<Store>((set, _get) => ({
     scene: 'LOADING',
