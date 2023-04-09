@@ -195,6 +195,14 @@ export const manifest: ResolverManifest = {
       name: 'ProfileScene',
       assets: [
         {
+          name: 'ProfileBackground',
+          srcs: 'image/profileBackground.png'
+        },
+        {
+          name: 'UpperDivider',
+          srcs: 'image/imgDivider.png'
+        },
+        {
           name: 'LogoutBtn',
           srcs: 'image/logoutBtn.png'
         },
@@ -203,12 +211,12 @@ export const manifest: ResolverManifest = {
           srcs: 'image/renameIcon.png'
         },
         {
-          name: 'SampleLogo',
-          srcs: 'logo192.png'
+          name: 'MenuLeftIcon',
+          srcs: 'image/menuLeftIcon.png'
         },
         {
-          name: 'ChevronRightIcon',
-          srcs: 'image/chevronRightIcon.png'
+          name: 'ArrowRightIcon',
+          srcs: 'image/arrowRightIcon.png'
         },
         {
           name: 'CopyIcon',
@@ -221,6 +229,18 @@ export const manifest: ResolverManifest = {
         {
           name: 'SwitchOffIcon',
           srcs: 'image/switchOff.png'
+        },
+        {
+          name: 'TwitterIcon',
+          srcs: 'image/twitterIcon.png'
+        },
+        {
+          name: 'TiktokIcon',
+          srcs: 'image/tiktokIcon.png'
+        },
+        {
+          name: 'TelegramIcon',
+          srcs: 'image/telegramIcon.png'
         },
       ]
     },
@@ -747,5 +767,38 @@ export const manifest: ResolverManifest = {
 
       ]
     },
+    {
+      name: 'AlbumScene',
+      assets: [
+        {
+          name: 'AlbumBackground',
+          srcs: 'image/albumBackground.png',
+        },
+        {
+          name: 'AlbumNextPageBtn',
+          srcs: 'image/BtnAlbumNextPage.png',
+        },
+        {
+          name: 'AlbumNextPageBtnDisabled',
+          srcs: 'image/BtnAlbumNextPageDisabled.png',
+        },
+        {
+          name: 'AlbumPrevPageBtn',
+          srcs: 'image/BtnAlbumPrevPage.png',
+        },
+        {
+          name: 'AlbumPrevPageBtnDisabled',
+          srcs: 'image/BtnAlbumPrevPageDisabled.png',
+        },
+        {
+          name: 'AlbumClaimBtn',
+          srcs: 'image/btnClaimBackgroundEnable.png',
+        },
+        {
+          name: 'AlbumClaimBtnDisabled',
+          srcs: 'image/btnClaimBackgroundDisable.png',
+        },
+      ]
+    }
   ],
 };
