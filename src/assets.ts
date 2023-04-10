@@ -631,8 +631,8 @@ export const manifest: ResolverManifest = {
           srcs: 'image/cards/unlocked/nasutoceratops.png'
         },
         {
-          name: 'NundagosaurusUnlocked ',
-          srcs: 'image/cards/unlocked/nundagosaurus .png'
+          name: 'NundagosaurusUnlocked',
+          srcs: 'image/cards/unlocked/nundagosaurus.png'
         },
         {
           name: 'NundasuchusUnlocked',
@@ -797,6 +797,18 @@ export const manifest: ResolverManifest = {
         {
           name: 'AlbumClaimBtnDisabled',
           srcs: 'image/btnClaimBackgroundDisable.png',
+        },
+        {
+          name: 'RarityPanelBg',
+          srcs: 'image/rarityPanelBg.png',
+        },
+        {
+          name: 'RarityBtnAllFilter',
+          srcs: 'image/rarityBtnAllBg.png',
+        },
+        {
+          name: 'RarityBtnFilter',
+          srcs: 'image/rarityBtnFilterBg.png',
         },
       ]
     }
