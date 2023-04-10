@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useRef, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import * as PIXI from "pixi.js";
 import {
   Stage,
@@ -28,6 +28,13 @@ const ProfileTemp = ({ onBackBtnClick }: Props) => {
 
   const [isLoaded, setIsLoaded] = useState(false);
   const [toggleWithdrawal, setToggleWithdrawal] = useState(false);
+  const [confirmQuitPanelBounds, setConfirmQuitPanelBounds] = useState<any>({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  });
+  const [confirmQuitPanelVisible, setConfirmQuitPanelVisible] = useState(false);
 
   const profileBgRef = useRef();
   useTick((delta) => {
@@ -322,6 +329,24 @@ const ProfileTemp = ({ onBackBtnClick }: Props) => {
     .endFill();
   const bgWhiteTexture = app.renderer.generateTexture(bgWhite);
 
+  const confirmQuitPanelRef = useCallback((node: any) => {
+    if (node !== null) {
+      node.width = (isNotMobile ? 410 : app.screen.width * 0.75);
+      node.height = app.screen.height * 0.3;
+      setConfirmQuitPanelBounds(node.getBounds());
+    }
+  }, [])
+
+  const confirmQuitBtnItems = [
+    {
+      title: 'Confirm',
+    },
+    {
+      title: 'Cancel',
+    },
+  ]
+
+
   return (
     <>
       {console.log('menuItemBounds', menuItemBounds)}
@@ -401,8 +426,7 @@ const ProfileTemp = ({ onBackBtnClick }: Props) => {
                 eventMode="static"
                 onpointertap={() => {
                   console.log("logout clicked");
-                  logout();
-                  changeScene('REGISTER')
+                  setConfirmQuitPanelVisible(true);
                 }}
               />
             </Container>
@@ -545,6 +569,116 @@ const ProfileTemp = ({ onBackBtnClick }: Props) => {
                   {item.rightSection}
                 </Container>
               ))}
+            </Container>
+
+            {/* Confirm Logout Panel */}
+            <Container
+              position={[0, app.screen.height * 0.5]}
+              anchor={[0.5, 0.5]}
+              visible={confirmQuitPanelVisible}
+            >
+              <Sprite
+                texture={PIXI.Texture.WHITE}
+                width={app.screen.width}
+                height={app.screen.height * 1.5}
+                anchor={[0.5, 0.5]}
+                // scale={isNotMobile ? [1, 1] : [0.5, 1]}
+                position={[0, 0]}
+                filters={[new PIXI.BlurFilter(10)]}
+                tint={'black'}
+                alpha={0.7}
+              />
+              <Container
+                ref={confirmQuitPanelRef}
+                position={[0, 0]}
+              >
+                <Sprite
+                  texture={PIXI.Assets.get('RarityPanelBg')}
+                  anchor={[0.5, 0.5]}
+                  position={[0, 0]}
+                />
+
+                {/* upper panel component */}
+                <Container
+                  position={[0, confirmQuitPanelBounds?.height * (isNotMobile ? -0.35 : -0.4)]}
+                >
+                  <Text
+                    text={'Quit'}
+                    position={[0, 0]}
+                    anchor={[0.5, 0.5]}
+                    style={new PIXI.TextStyle({
+                      fontFamily: 'Magra Bold',
+                      fontSize: isNotMobile ? 20 : 18,
+                      fontWeight: '600',
+                      strokeThickness: 1,
+                      fill: ['white'],
+                    })}
+                  />
+                  <Sprite
+                    texture={PIXI.Assets.get('LogoutBtn')}
+                    width={isNotMobile ? 40 : 40}
+                    height={isNotMobile ? 40 : 40}
+                    anchor={[0.5, 0.5]}
+                    position={[confirmQuitPanelBounds?.width * (isNotMobile ? 0.38 : 0.5), 0]}
+                    eventMode='static'
+                    onpointertap={() => setConfirmQuitPanelVisible(false)}
+                  />
+                </Container>
+
+                {/* Action Button */}
+                <Container
+                  position={[0, confirmQuitPanelBounds?.height * (isNotMobile ? 0.27 : 0.35)]}
+                >
+                  <Text
+                    text={'Log Out?'}
+                    position={[0, isNotMobile ? -100 : -confirmQuitPanelBounds?.height * 0.4]}
+                    anchor={[0.5, 0.5]}
+                    style={new PIXI.TextStyle({
+                      fontFamily: 'Magra Bold',
+                      fontSize: isNotMobile ? 20 : 18,
+                      fontWeight: '600',
+                      strokeThickness: 1,
+                      fill: ['white'],
+                    })}
+                  />
+                  {confirmQuitBtnItems?.map((item: any, index: number) => {
+                    return (
+                      <Container
+                        key={index}
+                        position={[((index % 2) * 120), Math.floor(index / 2) * 55]}
+                        eventMode='static'
+                        onpointertap={() => {
+                          if (item?.title === 'Confirm') {
+                            logout();
+                            changeScene('REGISTER')
+                          }
+                          else {
+                            setConfirmQuitPanelVisible(false);
+                          }
+                        }}
+                      >
+                        <Sprite
+                          texture={PIXI.Assets.get('RarityBtnFilter') || PIXI.Texture.EMPTY}
+                          anchor={[1, 0.5]}
+                          position={[0, 0]}
+                        />
+                        <Text
+                          text={item?.title}
+                          position={[-55, 0]}
+                          anchor={[0.5, 0.5]}
+                          style={new PIXI.TextStyle({
+                            fontFamily: 'Magra Bold',
+                            fontSize: isNotMobile ? 20 : 18,
+                            fontWeight: '600',
+                            strokeThickness: 1,
+                            fill: ['white'],
+                          })}
+                        />
+                      </Container>
+                    )
+                  })}
+                </Container>
+              </Container>
             </Container>
           </Container>
         </Container>
