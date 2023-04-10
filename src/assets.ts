@@ -371,8 +371,8 @@ export const manifest: ResolverManifest = {
           srcs: 'image/cards/locked/nasutoceratops.png'
         },
         {
-          name: 'NundagosaurusLocked ',
-          srcs: 'image/cards/locked/nundagosaurus .png'
+          name: 'NundagosaurusLocked',
+          srcs: 'image/cards/locked/nundagosaurus.png'
         },
         {
           name: 'NundasuchusLocked',
