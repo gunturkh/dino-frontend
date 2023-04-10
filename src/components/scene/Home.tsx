@@ -223,7 +223,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
             >
               <DetailsComponent
                 spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
-                IconTexture={PIXI?.Assets?.get("BNBIcon")}
+                IconTexture={PIXI?.Assets?.get("USDTIcon")}
                 text={"123.123.123"}
                 posX={0}
                 posY={0}
@@ -346,17 +346,20 @@ const Home = ({ onProfileClick, scene }: Props) => {
               <LowerButtonComponent
                 spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}
                 imageIcon={PIXI?.Assets?.get("ImgDinoCenter")}
-                text={"Dino Center"}
+                text={"Jurassic Market"}
                 posX={-155}
                 posY={15}
                 imageYOffset={10}
-                textYOffset={BtnSmallBounds?.height / 2 + 13}
+                textYOffset={BtnSmallBounds?.height / 2 + 5}
                 textStyle={
                   new PIXI.TextStyle({
-                    fontFamily: "Magra Bold",
-                    fontSize: 12,
-                    fontWeight: "bold",
+                    align: "center",
                     fill: ["0xFFC700"],
+                    fontFamily: "Magra Bold",
+                    fontSize: 11,
+                    fontWeight: "bold",
+                    wordWrap: true,
+                    wordWrapWidth: 50,
                   })
                 }
                 onPress={() => changeScene("DINOCENTER")}
