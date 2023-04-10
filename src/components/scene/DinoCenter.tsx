@@ -6,6 +6,7 @@ import ProfileComponent from "../ProfileComponent";
 import DetailsComponent from "../DetailsComponent";
 import EggListingComponent from "../EggListingComponent";
 import { useStore } from "../../utils/store";
+import { axiosInstance } from "../../utils/api";
 
 const DinoCenter = ({ scene }: any) => {
   const app = useApp();
@@ -21,6 +22,7 @@ const DinoCenter = ({ scene }: any) => {
   });
 
   const [toggleBtnAudio, setToggleBtnAudio] = useState(false);
+  const [eggLists, setEggLists] = useState([]);
 
   const ProfileBgBounds = PIXI.Assets.get("ProfileBg").orig;
   const ProfileAvatarDefaultBounds = PIXI.Assets.get(
@@ -40,19 +42,53 @@ const DinoCenter = ({ scene }: any) => {
     console.log("homeContainerBounds", getHomeContainerBounds);
   }, [getHomeContainerBounds]);
 
+  useEffect(() => {
+    // /egg/lists
+    const getEggList = async () => {
+      const data: any = await axiosInstance({
+        url: "/egg/lists",
+        method: "GET",
+      });
+      console.log("getEggList Result:", data);
+      if (data?.status === 200 && data?.data?.result?.lists) {
+        setEggLists(data?.data?.result.lists);
+      }
+    };
+
+    getEggList();
+  }, []);
+
   const dummyListingData = [
-    { price: 1000, timestamp: 500 },
-    { price: 1020, timestamp: 530 },
-    { price: 1040, timestamp: 535 },
-    { price: 1070, timestamp: 555 },
-    { price: 1080, timestamp: 560 },
-    { price: 1090, timestamp: 570 },
-    { price: 1100, timestamp: 575 },
-    { price: 1120, timestamp: 585 },
-    { price: 1130, timestamp: 590 },
-    { price: 1140, timestamp: 595 },
-    { price: 1150, timestamp: 600 },
-    { price: 1160, timestamp: 605 },
+    {
+      id: "43d0dc7559ab1d630b1255b4bc073368",
+      ticket: 2,
+      total: "216000000000000000000",
+      openat: 1681059000,
+    },
+    {
+      id: "1b866c80f12fa4f67b80879b10badbfb",
+      ticket: 1,
+      total: "53946251000000000000",
+      openat: 1681155515,
+    },
+    {
+      id: "c17ec81751eb424c57ccbb6b22e7842d",
+      ticket: 1,
+      total: "58261950000000000000",
+      openat: 1681165515,
+    },
+    {
+      id: "8bc77b6cdfa78deba5fde023653acea9",
+      ticket: 1,
+      total: "58261950000000000000",
+      openat: 1681175515,
+    },
+    {
+      id: "086f39a21e9925ec873f528d9d19794d",
+      ticket: 1,
+      total: "58261950000000000000",
+      openat: 1681185515,
+    },
   ];
   // const dinoFundRef = useRef(null);
   // console.log('dinoFundRef', dinoFundRef.current)
@@ -201,8 +237,12 @@ const DinoCenter = ({ scene }: any) => {
         {/* left side */}
         <Container position={[isNotMobile ? -100 : -85, 0]} visible={false}>
           <DetailsComponent
-            spriteTexture={PIXI.Assets?.get("ImgDetailsBg") || PIXI.Texture.EMPTY}
-            IconTexture={PIXI.Assets?.get("EventFragmentIcon") || PIXI.Texture.EMPTY}
+            spriteTexture={
+              PIXI.Assets?.get("ImgDetailsBg") || PIXI.Texture.EMPTY
+            }
+            IconTexture={
+              PIXI.Assets?.get("EventFragmentIcon") || PIXI.Texture.EMPTY
+            }
             text={"0.55012312"}
             posX={0}
             posY={0}
@@ -222,8 +262,12 @@ const DinoCenter = ({ scene }: any) => {
             }}
           />
           <DetailsComponent
-            spriteTexture={PIXI.Assets?.get("ImgDetailsBg") || PIXI.Texture.EMPTY}
-            IconTexture={PIXI.Assets?.get("DinoTicketIcon") || PIXI.Texture.EMPTY}
+            spriteTexture={
+              PIXI.Assets?.get("ImgDetailsBg") || PIXI.Texture.EMPTY
+            }
+            IconTexture={
+              PIXI.Assets?.get("DinoTicketIcon") || PIXI.Texture.EMPTY
+            }
             text={"123.123.123"}
             posX={0}
             posY={35}
@@ -244,7 +288,9 @@ const DinoCenter = ({ scene }: any) => {
           />
 
           <DetailsComponent
-            spriteTexture={PIXI.Assets?.get("ImgDetailsBg") || PIXI.Texture.EMPTY}
+            spriteTexture={
+              PIXI.Assets?.get("ImgDetailsBg") || PIXI.Texture.EMPTY
+            }
             IconTexture={PIXI.Assets?.get("DinoEggIcon") || PIXI.Texture.EMPTY}
             text={"123.123.123"}
             posX={0}
@@ -275,39 +321,43 @@ const DinoCenter = ({ scene }: any) => {
             // width={app.screen.width > 450 ? 450 : app.screen.width}
           >
             {/* left side */}
-            {dummyListingData.map((d, idx) => {
-              return (
-                <EggListingComponent
-                  spriteTexture={PIXI.Assets.get("LowerBtnSmallBg")}
-                  imageIcon={PIXI.Assets.get("ImgDinoCenter")}
-                  priceText={d.price.toString()}
-                  timerText={d.timestamp.toString()}
-                  // posX={BtnSmallBounds.width - (70 * idx)}
-                  posX={calculateEggXPosition(idx)}
-                  posY={calculateEggYPosition(idx)}
-                  imageYOffset={10}
-                  priceTextYOffset={BtnSmallBounds.height / 2 + 13}
-                  timerTextYOffset={BtnSmallBounds.height / 2 + 30}
-                  priceTextStyle={
-                    new PIXI.TextStyle({
-                      fontFamily: "Magra Bold",
-                      fontSize: 12,
-                      fontWeight: "bold",
-                      fill: ["0xFFC700"],
-                    })
-                  }
-                  timerTextStyle={
-                    new PIXI.TextStyle({
-                      fontFamily: "Magra Bold",
-                      fontSize: 12,
-                      fontWeight: "bold",
-                      fill: ["0xFFC700"],
-                    })
-                  }
-                  onPress={() => changeScene("DINOCENTER")}
-                />
-              );
-            })}
+            {/* {eggLists.length > 0 && eggLists.map((d: any, idx: number) => { */}
+            {dummyListingData.length > 0 &&
+              dummyListingData.map((d: any, idx: number) => {
+                return (
+                  <EggListingComponent
+                    key={`egg-list-${idx}`}
+                    index={`egg-list-${idx}`}
+                    spriteTexture={PIXI.Assets.get("LowerBtnSmallBg")}
+                    imageIcon={PIXI.Assets.get("ImgDinoCenter")}
+                    priceText={d.total.toString()}
+                    timerText={d.openat.toString()}
+                    // posX={BtnSmallBounds.width - (70 * idx)}
+                    posX={calculateEggXPosition(idx)}
+                    posY={calculateEggYPosition(idx)}
+                    imageYOffset={10}
+                    priceTextYOffset={BtnSmallBounds.height / 2 + 13}
+                    timerTextYOffset={BtnSmallBounds.height / 2 + 30}
+                    priceTextStyle={
+                      new PIXI.TextStyle({
+                        fontFamily: "Magra Bold",
+                        fontSize: 12,
+                        fontWeight: "bold",
+                        fill: ["0xFFC700"],
+                      })
+                    }
+                    timerTextStyle={
+                      new PIXI.TextStyle({
+                        fontFamily: "Magra Bold",
+                        fontSize: 12,
+                        fontWeight: "bold",
+                        fill: ["0xFFFFFF"],
+                      })
+                    }
+                    onPress={() => changeScene("DINOCENTER")}
+                  />
+                );
+              })}
           </Container>
         )}
       </Container>

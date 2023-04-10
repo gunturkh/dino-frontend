@@ -1,5 +1,4 @@
-
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as PIXI from "pixi.js";
 import {
   Stage,
@@ -35,7 +34,9 @@ type props = {
   scaleImgX?: number;
   scaleImgY?: number;
   onPress?: () => void;
-}
+  key?: string;
+  index?: string;
+};
 
 const EggListingComponent = ({
   spriteTexture,
@@ -60,18 +61,95 @@ const EggListingComponent = ({
   scaleImgX = 1,
   scaleImgY = 1,
   onPress,
+  key,
+  index,
 }: props) => {
   const app = useApp();
   const containerRef = React.useRef(null);
+  // const [timeLeft, setTimeLeft] = useState(
+  //   1681145515 < new Date().getTime() / 1000
+  // );
+  const timerRef = useRef();
+  const [expiryTime, setExpiryTime] = useState(parseInt(timerText as string));
+  const [countdownTime, setCountdownTime] = useState({
+    countdownHours: 0,
+    countdownMinutes: 0,
+    countdownSeconds: 0,
+  });
+
+  useEffect(() => {
+    let timeInterval: any;
+    const countdown = () => {
+      if (expiryTime > 0) {
+        timeInterval = setInterval(() => {
+          const countdownDateTime = expiryTime * 1000;
+          const currentTime = new Date().getTime();
+          const remainingDayTime = countdownDateTime - currentTime;
+          console.log(`countdownDateTime ${index}`, countdownDateTime);
+          console.log(`currentTime ${index}`, currentTime);
+          console.log(`remainingDayTime ${index}`, remainingDayTime);
+          const totalHours = Math.floor(
+            (remainingDayTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+          );
+          const totalMinutes = Math.floor(
+            (remainingDayTime % (1000 * 60 * 60)) / (1000 * 60)
+          );
+          const totalSeconds = Math.floor(
+            (remainingDayTime % (1000 * 60)) / 1000
+          );
+
+          const runningCountdownTime = {
+            countdownHours: totalHours,
+            countdownMinutes: totalMinutes,
+            countdownSeconds: totalSeconds,
+          };
+
+          if (remainingDayTime < 0) {
+            clearInterval(timeInterval);
+            setExpiryTime(0);
+          } else {
+            setCountdownTime(runningCountdownTime);
+          }
+        }, 1000);
+      }
+    };
+    countdown();
+    return () => {
+      clearInterval(timeInterval);
+    };
+  }, []);
+
+  const countdownText = () => {
+    if (expiryTime === 0) return "Keep";
+    else
+      return (
+        `${
+          countdownTime.countdownHours.toString().length === 1
+            ? `0${countdownTime.countdownHours}`
+            : countdownTime.countdownHours
+        }:${
+          countdownTime.countdownMinutes.toString().length === 1
+            ? `0${countdownTime.countdownMinutes}`
+            : countdownTime.countdownMinutes
+        }:${
+          countdownTime.countdownSeconds.toString().length === 1
+            ? `0${countdownTime.countdownSeconds}`
+            : countdownTime.countdownSeconds
+        }` || ""
+      );
+  };
 
   return (
     <Container
       ref={ref || containerRef}
       scale={[scaleX, scaleY]}
-      //  x={x} 
+      //  x={x}
       //  y={y}
       anchor={[0, 0]}
-      eventMode="static" onpointertap={onPress}>
+      eventMode="static"
+      onpointertap={onPress}
+      key={key}
+    >
       {spriteTexture && (
         <>
           <Sprite
@@ -80,7 +158,7 @@ const EggListingComponent = ({
             anchor={[0.5, 0]}
             // scale={[0.5, 0.5]}
             position={[posX, posY]}
-          // scale={[scaleX, scaleY]}
+            // scale={[scaleX, scaleY]}
           />
           <Sprite
             texture={imageIcon || PIXI.Texture.EMPTY}
@@ -89,23 +167,24 @@ const EggListingComponent = ({
             position={[posX + imageXOffset, posY + imageYOffset]}
           />
           <Text
-            text={priceText || ''}
+            text={priceText || ""}
             anchor={[0.5, 0]}
             position={[posX + priceTextXOffset, posY + priceTextYOffset]}
             style={priceTextStyle}
-          // scale={[scaleX, scaleY]}
+            // scale={[scaleX, scaleY]}
           />
           <Text
-            text={timerText || ''}
+            // text={timerText || ""}
+            text={countdownText()}
             anchor={[0.5, 0]}
             position={[posX + timerTextXOffset, posY + timerTextYOffset]}
             style={timerTextStyle}
-          // scale={[scaleX, scaleY]}
+            // scale={[scaleX, scaleY]}
           />
         </>
       )}
     </Container>
-  )
-}
+  );
+};
 
-export default EggListingComponent
+export default EggListingComponent;
