@@ -29,6 +29,7 @@ const Album = ({
 
   const [isLoaded, setIsLoaded] = useState(false);
 
+
   // create a ref with container type
   const cardListRef = useCallback((node: any) => {
     if (node !== null) {
@@ -36,8 +37,6 @@ const Album = ({
       node.height = app.screen.height * 0.7;
     }
   }, [])
-  const containerCardHeight = app.screen.height * 0.7;
-  console.log("🚀 ~ file: Album.tsx:34 ~ containerCardHeight:", containerCardHeight)
 
   const calculateCardXPosition = (index: number) => {
     return 90 * (index % 4);
@@ -45,10 +44,6 @@ const Album = ({
   const calculateCardYPosition = (index: number) => {
     return Math.floor(index / 4) * 110;
   };
-
-
-
-
 
   useEffect(() => {
     setIsLoaded(true);
@@ -190,14 +185,14 @@ const Album = ({
       imageUnlock: PIXI.Assets.get('TuojiangosaurusUnlocked'),
       isLocked: true,
     },
-    // {
-    //   id: 17,
-    //   rarity: 1,
-    //   name: 'UTAHRAPTOR',
-    //   image: PIXI.Assets.get('UtahraptorLocked'),
-    //   imageUnlock: PIXI.Assets.get('UtahraptorUnlocked'),
-    //   isLocked: true,
-    // },
+    {
+      id: 17,
+      rarity: 1,
+      name: 'UTAHRAPTOR',
+      image: PIXI.Assets.get('UtahraptorLocked'),
+      imageUnlock: PIXI.Assets.get('UtahraptorUnlocked'),
+      isLocked: true,
+    },
   ]
 
   const cardItemElite = [
@@ -299,7 +294,7 @@ const Album = ({
     },
     {
       id: 30,
-      rarity: 1,
+      rarity: 2,
       name: 'NASUTOCERATOPS',
       image: PIXI.Assets.get('NasutoceratopsLocked'),
       imageUnlock: PIXI.Assets.get('NasutoceratopsUnlocked'),
@@ -307,7 +302,7 @@ const Album = ({
     },
     {
       id: 31,
-      rarity: 1,
+      rarity: 2,
       name: 'NUNDAGOSAURUS',
       image: PIXI.Assets.get('NundagosaurusLocked'),
       imageUnlock: PIXI.Assets.get('NundagosaurusUnlocked'),
@@ -315,7 +310,7 @@ const Album = ({
     },
     {
       id: 32,
-      rarity: 1,
+      rarity: 2,
       name: 'NUNDASUCHUS',
       image: PIXI.Assets.get('NundasuchusLocked'),
       imageUnlock: PIXI.Assets.get('NundasuchusUnlocked'),
@@ -572,6 +567,35 @@ const Album = ({
     },
   ]
 
+  const cardItems = [
+    ...cardItemHerald,
+    ...cardItemElite,
+    ...cardItemAncient,
+    ...cardItemMythical,
+    ...cardItemImmortal,
+  ]
+  console.log("cardItems.length", cardItems.length)
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPage = Math.ceil(cardItems?.length / 16);
+  const cardPerPage = 16;
+
+  const indexOfLastPost = currentPage * cardPerPage;
+  const indexOfFirstPost = indexOfLastPost - cardPerPage;
+  const currentCards = cardItems?.slice(indexOfFirstPost, indexOfLastPost);
+
+  const nextPage = () => {
+    if (currentPage !== Math.ceil(cardItems?.length / cardPerPage)) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const previousPage = () => {
+    if (currentPage !== 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   return (
     <>
       {isLoaded && (<Container visible={visible}>
@@ -691,7 +715,7 @@ const Album = ({
               anchor={[0.5, 0.5]}
             // jitter at first render when set height
             >
-              {cardItemHerald?.map((item, index) => {
+              {currentCards?.map((item, index) => {
                 return (
                   <Sprite
                     key={index}
@@ -712,7 +736,7 @@ const Album = ({
             position={[0, app.screen.height * 0.85]}
           >
             <Text
-              text={'1/10'}
+              text={`${currentPage}/${totalPage}`}
               position={[0, 0]}
               anchor={[0.5, 0.5]}
               style={new PIXI.TextStyle({
@@ -732,6 +756,8 @@ const Album = ({
               anchor={[0.5, 0.5]}
               scale={isNotMobile ? [0.9, 0.9] : [0.7, 0.7]}
               position={[isNotMobile ? -160 : -150, 0]}
+              eventMode='static'
+              onpointertap={() => previousPage()}
             />
             {/* Claim Button */}
             <Container>
@@ -759,6 +785,8 @@ const Album = ({
               anchor={[0.5, 0.5]}
               scale={isNotMobile ? [0.9, 0.9] : [0.7, 0.7]}
               position={[isNotMobile ? 160 : 150, 0]}
+              eventMode='static'
+              onpointertap={() => nextPage()}
             />
           </Container>
 
