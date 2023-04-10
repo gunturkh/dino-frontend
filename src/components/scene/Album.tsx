@@ -1,15 +1,10 @@
-import React, { Suspense, useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import * as PIXI from "pixi.js";
 import {
-  Stage,
   Container,
   Sprite,
   Text,
   useApp,
-  AppProvider,
-  Graphics,
-  AnimatedSprite,
-  useTick,
 } from "@pixi/react";
 
 type Props = {
@@ -28,13 +23,36 @@ const Album = ({
   const isNotMobile = app.screen.width > 450;
 
   const [isLoaded, setIsLoaded] = useState(false);
+  const [rarityPanelBounds, setRarityPanelBounds] = useState({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  });
+  const [isRarityPanelVisible, setIsRarityPanelVisible] = useState(false);
+  console.log("🚀 ~ file: Album.tsx:32 ~ rarityPanelBounds:", rarityPanelBounds)
 
 
   // create a ref with container type
   const cardListRef = useCallback((node: any) => {
     if (node !== null) {
       // scale height to 70% of screen height
-      node.height = app.screen.height * 0.7;
+      node.height = app.screen.height * (isNotMobile ? 0.725 : 0.7);
+      node.width = (isNotMobile ? 450 : app.screen.width * 0.9);
+    }
+  }, [])
+
+  const bottomComponentRef = useCallback((node: any) => {
+    if (node !== null) {
+      node.width = (isNotMobile ? 450 : app.screen.width * 0.9);
+    }
+  }, [])
+
+  const rarityPanelRef = useCallback((node: any) => {
+    if (node !== null) {
+      node.width = (isNotMobile ? 410 : app.screen.width * 0.75);
+      node.height = app.screen.height * 0.3;
+      setRarityPanelBounds(node.getBounds());
     }
   }, [])
 
@@ -54,7 +72,38 @@ const Album = ({
   console.log('isLoaded', isLoaded)
   console.log('app profile screen', app.screen)
 
-
+  const rarityItems = [
+    {
+      id: 0,
+      name: 'ALL',
+      image: PIXI.Assets.get('RarityBtnAllFilter'),
+    },
+    {
+      id: 1,
+      name: 'H',
+      image: PIXI.Assets.get('RarityBtnFilter'),
+    },
+    {
+      id: 2,
+      name: 'E',
+      image: PIXI.Assets.get('RarityBtnFilter'),
+    },
+    {
+      id: 3,
+      name: 'A',
+      image: PIXI.Assets.get('RarityBtnFilter'),
+    },
+    {
+      id: 4,
+      name: 'M',
+      image: PIXI.Assets.get('RarityBtnFilter'),
+    },
+    {
+      id: 5,
+      name: 'I',
+      image: PIXI.Assets.get('RarityBtnFilter'),
+    },
+  ];
 
   const cardItemHerald = [
     {
@@ -574,18 +623,49 @@ const Album = ({
     ...cardItemMythical,
     ...cardItemImmortal,
   ]
+  // TODO: integrate cardItems to backend data
   console.log("cardItems.length", cardItems.length)
 
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPage = Math.ceil(cardItems?.length / 16);
   const cardPerPage = 16;
 
   const indexOfLastPost = currentPage * cardPerPage;
   const indexOfFirstPost = indexOfLastPost - cardPerPage;
-  const currentCards = cardItems?.slice(indexOfFirstPost, indexOfLastPost);
+  const [tempCards, setTempCards] = useState<any>([])
+  const currentCards = tempCards?.slice(indexOfFirstPost, indexOfLastPost)
+
+  const disabledNext = currentPage === Math.ceil((tempCards?.length / cardPerPage))
+  const disabledPrev = currentPage === 1
+  console.group("Group Test")
+  console.log("indexOfLastPost:", indexOfLastPost)
+  console.log("indexOfFirstPost:", indexOfFirstPost)
+
+  console.log("tempCards:", tempCards)
+  console.log("currentCards:", currentCards)
+  console.groupEnd()
+
+
+
+  // running this once to get the first 16 cards
+  useEffect(() => {
+    if (cardItems)
+      setTempCards(cardItems)
+  }, [])
+
+  const filterCards = (rarity: number) => {
+    setCurrentPage(1)
+    const filteredCards = cardItems.filter((card: any) => card.rarity === rarity)
+    // sort by id
+    filteredCards.sort((a: any, b: any) => a.id - b.id)
+    setTempCards(filteredCards)
+
+    if (rarity === 0) {
+      setTempCards(cardItems)
+    }
+  }
 
   const nextPage = () => {
-    if (currentPage !== Math.ceil(cardItems?.length / cardPerPage)) {
+    if (currentPage !== Math.ceil((tempCards?.length / cardPerPage))) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -677,6 +757,8 @@ const Album = ({
           <Container
             position={isNotMobile ? [-145, 110] : [-135, 95]}
             anchor={[0.5, 0.5]}
+            eventMode='static'
+            onpointertap={() => setIsRarityPanelVisible(!isRarityPanelVisible)}
           >
             <Text
               text={'Rarity'}
@@ -699,27 +781,24 @@ const Album = ({
             />
           </Container>
 
-          {/* Rarity popup */}
-          <Container>
-
-          </Container>
-
           {/* Album list */}
           <Container
             position={[0, 0]}
-          // height={app.screen.height * 0.7}
           >
             <Container
               ref={cardListRef}
-              position={[-135, isNotMobile ? 200 : 175]}
+              position={isNotMobile ?
+                [-(450 * 0.38), app.screen.height - app.screen.height * 0.76] :
+                [-(app.screen.width * 0.35), app.screen.height * 0.265]
+              }
               anchor={[0.5, 0.5]}
             // jitter at first render when set height
             >
-              {currentCards?.map((item, index) => {
+              {currentCards?.length !== 0 && currentCards?.map((item: any, index: number) => {
                 return (
                   <Sprite
                     key={index}
-                    texture={item?.image as PIXI.Texture}
+                    texture={item?.isLocked ? item?.imageUnlock : item?.image}
                     anchor={[0.5, 0.5]}
                     scale={isNotMobile ? [0.1, 0.1] : [0.095, 0.1]}
                     x={calculateCardXPosition(index)}
@@ -730,13 +809,106 @@ const Album = ({
             </Container>
           </Container>
 
+          {/* Rarity popup */}
+          <Container
+            position={[0, app.screen.height * 0.5]}
+            anchor={[0.5, 0.5]}
+            visible={isRarityPanelVisible}
+          >
+            <Sprite
+              texture={PIXI.Texture.WHITE}
+              width={app.screen.width}
+              height={app.screen.height * 1.5}
+              anchor={[0.5, 0.5]}
+              // scale={isNotMobile ? [1, 1] : [0.5, 1]}
+              position={[0, 0]}
+              filters={[new PIXI.BlurFilter(10)]}
+              tint={'black'}
+              alpha={0.7}
+            />
+            <Container
+              ref={rarityPanelRef}
+              position={[0, 0]}
+            >
+              <Sprite
+                texture={PIXI.Assets.get('RarityPanelBg')}
+                anchor={[0.5, 0.5]}
+                position={[0, 0]}
+              />
+
+              {/* upper panel component */}
+              <Container
+                position={[0, rarityPanelBounds?.height * (isNotMobile ? -0.35 : -0.4)]}
+              >
+                <Text
+                  text={'Rarity'}
+                  position={[0, 0]}
+                  anchor={[0.5, 0.5]}
+                  style={new PIXI.TextStyle({
+                    fontFamily: 'Magra Bold',
+                    fontSize: isNotMobile ? 20 : 18,
+                    fontWeight: '600',
+                    strokeThickness: 1,
+                    fill: ['white'],
+                  })}
+                />
+                <Sprite
+                  texture={PIXI.Assets.get('LogoutBtn')}
+                  width={isNotMobile ? 40 : 40}
+                  height={isNotMobile ? 40 : 40}
+                  anchor={[0.5, 0.5]}
+                  position={[rarityPanelBounds?.width * (isNotMobile ? 0.38 : 0.5), 0]}
+                  eventMode='static'
+                  onpointertap={() => setIsRarityPanelVisible(false)}
+                />
+              </Container>
+
+              {/* filter Button */}
+              <Container
+                position={[0, rarityPanelBounds?.height * (isNotMobile ? -0.1 : -0.15)]}
+              >
+                {rarityItems?.map((item: any, index: number) => {
+                  return (
+                    <Container
+                      key={index}
+                      position={[((index % 2) * 120), Math.floor(index / 2) * 55]}
+                      eventMode='static'
+                      onpointertap={() => {
+                        filterCards(item?.id)
+                        setIsRarityPanelVisible(false)
+                      }}
+                    >
+                      <Sprite
+                        texture={item?.image}
+                        anchor={[1, 0.5]}
+                        position={[0, 0]}
+                      />
+                      <Text
+                        text={item?.name}
+                        position={[-55, 0]}
+                        anchor={[0.5, 0.5]}
+                        style={new PIXI.TextStyle({
+                          fontFamily: 'Magra Bold',
+                          fontSize: isNotMobile ? 20 : 18,
+                          fontWeight: '600',
+                          strokeThickness: 1,
+                          fill: ['white'],
+                        })}
+                      />
+                    </Container>
+                  )
+                })}
+              </Container>
+            </Container>
+          </Container>
+
 
           {/* page number */}
           <Container
             position={[0, app.screen.height * 0.85]}
           >
             <Text
-              text={`${currentPage}/${totalPage}`}
+              text={`${currentPage}/${Math.ceil(tempCards?.length / 16)}`}
               position={[0, 0]}
               anchor={[0.5, 0.5]}
               style={new PIXI.TextStyle({
@@ -750,9 +922,12 @@ const Album = ({
           </Container>
 
           {/* Bottom component */}
-          <Container position={[0, app.screen.height * 0.93]}>
+          <Container
+            ref={bottomComponentRef}
+            position={[0, app.screen.height * (isNotMobile ? 0.94 : 0.93)]}
+          >
             <Sprite
-              texture={PIXI.Assets.get('AlbumPrevPageBtn') || PIXI.Texture.EMPTY}
+              texture={PIXI.Assets.get(disabledPrev ? 'AlbumPrevPageBtnDisabled' : 'AlbumPrevPageBtn') || PIXI.Texture.EMPTY}
               anchor={[0.5, 0.5]}
               scale={isNotMobile ? [0.9, 0.9] : [0.7, 0.7]}
               position={[isNotMobile ? -160 : -150, 0]}
@@ -781,7 +956,7 @@ const Album = ({
             </Container>
 
             <Sprite
-              texture={PIXI.Assets.get('AlbumNextPageBtn') || PIXI.Texture.EMPTY}
+              texture={PIXI.Assets.get(disabledNext ? 'AlbumNextPageBtnDisabled' : 'AlbumNextPageBtn') || PIXI.Texture.EMPTY}
               anchor={[0.5, 0.5]}
               scale={isNotMobile ? [0.9, 0.9] : [0.7, 0.7]}
               position={[isNotMobile ? 160 : 150, 0]}
