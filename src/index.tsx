@@ -7,7 +7,7 @@ import { AppTemp } from "./AppTemp";
 import { AppNew } from "./AppNew";
 import reportWebVitals from "./reportWebVitals";
 import { MetaMaskProvider } from "metamask-react";
-import { DAppProvider, BSC, Config, MetamaskConnector, } from "@usedapp/core";
+import { DAppProvider, BSC, BSCTestnet, Config, MetamaskConnector, } from "@usedapp/core";
 import { WalletConnectConnector } from '@usedapp/wallet-connect-connector'
 import { getDefaultProvider } from "ethers";
 
@@ -16,7 +16,10 @@ const root = ReactDOM.createRoot(
 );
 
 const config: Config = {
-  readOnlyChainId: BSC.chainId,
+  readOnlyUrls: {
+    [BSC.chainId]: 'https://bsc-dataseed.binance.org',
+    [BSCTestnet.chainId]: 'https://data-seed-prebsc-1-s1.binance.org:8545',
+  },
   multicallVersion: 2,
   connectors: {
     metamask: new MetamaskConnector(),

@@ -1,8 +1,11 @@
 import { useFormik } from "formik";
-import { useEtherBalance, useEthers } from "@usedapp/core";
+import { useEtherBalance, useEthers, BSC, BSCTestnet, } from "@usedapp/core";
 import { Stage } from "@pixi/react";
 import { useState, Suspense, useEffect } from "react";
 import { axiosInstance } from "./utils/api";
+// @ts-ignore
+import WalletConnectProvider from '@walletconnect/web3-provider/dist/umd/index.min.js'
+import { formatEther } from '@ethersproject/units'
 import Home from "./components/scene/Home";
 import Register from "./components/scene/Register";
 import Loading from "./components/scene/Loader";
@@ -11,6 +14,7 @@ import Album from "./components/scene/Album";
 
 import DinoCenter from "./components/scene/DinoCenter";
 import { useAuthStore, useStore } from "./utils/store";
+import { BigNumber, BigNumberish } from "ethers";
 
 type loginReqFormat = {
   username: string;
@@ -35,20 +39,35 @@ type otpReqFormat = {
 };
 
 export const AppTemp = () => {
-  const { account, active, deactivate, activateBrowserWallet } = useEthers();
+  const { account, active, activate, deactivate, activateBrowserWallet, error } = useEthers();
   const token = useAuthStore((state) => state.token);
   const saveToken = useAuthStore((state) => state.saveToken);
   const scene = useStore((state) => state.scene);
+  const walletAddress = useStore((state) => state.walletAddress);
+  const setWalletAddress = useStore((state) => state.setWalletAddress);
+  const mainnetBalance = useEtherBalance(walletAddress, { chainId: BSC.chainId })
+  const testnetBalance = useEtherBalance(walletAddress, { chainId: BSCTestnet.chainId })
   const changeScene = useStore((state) => state.changeScene);
   const [authMode, setAuthMode] = useState<
     "LOGIN" | "REGISTER" | "OTPEMAIL" | "OTPMOBILE" | "LOGINWALLET"
   >("LOGIN");
   const [otp, setOtp] = useState("");
+  const [activateError, setActivateError] = useState('')
   const [registerCheckbox, setRegisterCheckbox] = useState(false);
 
-  const connectToWallet = (e: React.MouseEvent<HTMLElement>, type: string) => {
+  console.log({ mainnetBalance: mainnetBalance && formatEther(mainnetBalance as any), testnetBalance: testnetBalance && formatEther(testnetBalance as any) })
+  const connectToWallet = async (e: React.MouseEvent<HTMLElement>, type: string) => {
     e.stopPropagation();
-    activateBrowserWallet({ type });
+    setActivateError('')
+    if (type === 'metamask') {
+      activateBrowserWallet({ type });
+    } else if (type === 'walletConnect') {
+      const provider = new WalletConnectProvider({
+        infuraId: 'd8df2cb7844e4a54ab0a782f608749dd',
+      })
+      await provider.enable()
+      await activate(provider)
+    }
   };
 
   const disconnectFromWallet = (e: React.MouseEvent<HTMLElement>) => {
@@ -252,6 +271,7 @@ export const AppTemp = () => {
   useEffect(() => {
     console.log("active", active);
     console.log("account", account);
+    if (!!account) setWalletAddress(account)
     if (active && !!account && authMode === "OTPEMAIL")
       otpForm.setFieldValue("walletAddress", account);
     if (!active && !account && authMode === "OTPEMAIL")
@@ -262,6 +282,12 @@ export const AppTemp = () => {
       loginWalletForm.setFieldValue("walletAddress", "");
   }, [active, account, authMode]);
 
+  useEffect(() => {
+    if (error) {
+      setActivateError(error.message)
+      window.alert(error.message)
+    }
+  }, [error])
   const options = {
     backgroundColor: 0x1099bb,
     antialias: true,
