@@ -815,6 +815,59 @@ export const manifest: ResolverManifest = {
           srcs: 'image/rarityBtnFilterBg.png',
         },
       ]
-    }
+    },
+    {
+      name: "ListingScene",
+      assets: [
+        {
+          name: "BtnHelp",
+          srcs: "image/BtnHelp.png",
+        },
+        {
+          name: "BtnPagePaginationActive",
+          srcs: "image/BtnPagePaginationActive.png",
+        },
+        {
+          name: 'BtnPagePaginationNumberInactive',
+          srcs: 'image/BtnPagePaginationNumberInactive.png'
+        },
+        {
+          name: "BtnPagePaginationRest",
+          srcs: "image/BtnPagePaginationRest.png",
+        },
+        {
+          name: 'BtnPurchaseCountdown',
+          srcs: 'image/BtnPurchaseCountdown.png'
+        },
+        {
+          name: 'BtnRefreshListing',
+          srcs: 'image/BtnRefreshListing.png'
+        },
+        {
+          name: 'EggIcon1',
+          srcs: 'image/imgJurassicEggIcon.png'
+        },
+        {
+          name: 'EggIcon2',
+          srcs: 'image/imgJurassicEggIcon1.png'
+        },
+        {
+          name: 'EggIcon3',
+          srcs: 'image/imgJurassicEggIcon2.png'
+        },
+        {
+          name: 'ListingBackground',
+          srcs: 'image/ListingBackground.png'
+        },
+        {
+          name: 'ListingButtonHighlight',
+          srcs: 'image/ListingButtonHighlight.png'
+        },
+        {
+          name: 'PnlJurassicMarketBackground',
+          srcs: 'image/pnlJurassicMarketBackground.png'
+        },
+      ]
+    },
   ],
 };
