@@ -102,7 +102,7 @@ export const AppTemp = () => {
           // onClick={() => connect()}
           onClick={(e) => connectToWallet(e, type)}
         >
-          Connect {type}
+          Connect {type === 'metamask' ? 'Metamask' : 'WalletConnect'}
         </button>
       );
   };
