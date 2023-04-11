@@ -7,7 +7,8 @@ import { AppTemp } from "./AppTemp";
 import { AppNew } from "./AppNew";
 import reportWebVitals from "./reportWebVitals";
 import { MetaMaskProvider } from "metamask-react";
-import { DAppProvider, BSC, Config, Goerli, Localhost } from "@usedapp/core";
+import { DAppProvider, BSC, Config, MetamaskConnector, } from "@usedapp/core";
+import { WalletConnectConnector } from '@usedapp/wallet-connect-connector'
 import { getDefaultProvider } from "ethers";
 
 const root = ReactDOM.createRoot(
@@ -17,6 +18,10 @@ const root = ReactDOM.createRoot(
 const config: Config = {
   readOnlyChainId: BSC.chainId,
   multicallVersion: 2,
+  connectors: {
+    metamask: new MetamaskConnector(),
+    walletConnect: new WalletConnectConnector({ infuraId: 'd8df2cb7844e4a54ab0a782f608749dd' }),
+  },
 };
 
 root.render(

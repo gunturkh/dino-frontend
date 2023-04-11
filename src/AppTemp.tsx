@@ -46,9 +46,9 @@ export const AppTemp = () => {
   const [otp, setOtp] = useState("");
   const [registerCheckbox, setRegisterCheckbox] = useState(false);
 
-  const connectToWallet = (e: React.MouseEvent<HTMLElement>) => {
+  const connectToWallet = (e: React.MouseEvent<HTMLElement>, type: string) => {
     e.stopPropagation();
-    activateBrowserWallet();
+    activateBrowserWallet({ type });
   };
 
   const disconnectFromWallet = (e: React.MouseEvent<HTMLElement>) => {
@@ -61,7 +61,7 @@ export const AppTemp = () => {
   //   setWalletBalance(formatEther(balance));
   // };
 
-  const ConnectButton = () => {
+  const ConnectButton = ({ type }: { type: string }) => {
     // 'account' being undefined means that we are not connected.
     if (account)
       return (
@@ -100,9 +100,9 @@ export const AppTemp = () => {
           // onClick={otpForm.submitForm}
 
           // onClick={() => connect()}
-          onClick={connectToWallet}
+          onClick={(e) => connectToWallet(e, type)}
         >
-          Connect Wallet
+          Connect {type}
         </button>
       );
   };
@@ -591,7 +591,10 @@ export const AppTemp = () => {
                       </div>
                     )}
                     {/* {otpForm.values?.walletAddress?.length === 0 && ( */}
-                    <ConnectButton />
+                    <div className="flex flex-col">
+                      <ConnectButton type='metamask' />
+                      <ConnectButton type='walletConnect' />
+                    </div>
                     {/* )} */}
                     <p className="text-red-500 font-bold font-magra">
                       {otpForm.errors.walletAddress &&
@@ -642,7 +645,10 @@ export const AppTemp = () => {
                           {account}
                         </div>
                       )}
-                      <ConnectButton />
+                      <div className="flex flex-col">
+                        <ConnectButton type='metamask' />
+                        <ConnectButton type='walletConnect' />
+                      </div>
                       <p className="text-red-500 font-bold font-magra">
                         {loginWalletForm.errors.walletAddress &&
                           loginWalletForm.touched.walletAddress &&
