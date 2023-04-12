@@ -840,8 +840,16 @@ export const manifest: ResolverManifest = {
           srcs: 'image/BtnPurchaseCountdown.png'
         },
         {
+          name: 'BtnPurchaseActive',
+          srcs: 'image/BtnPurchaseActive.png'
+        },
+        {
           name: 'BtnRefreshListing',
           srcs: 'image/BtnRefreshListing.png'
+        },
+        {
+          name: 'ListingItemBg',
+          srcs: 'image/jurassicEggBg.png'
         },
         {
           name: 'EggIcon1',
@@ -866,6 +874,14 @@ export const manifest: ResolverManifest = {
         {
           name: 'PnlJurassicMarketBackground',
           srcs: 'image/pnlJurassicMarketBackground.png'
+        },
+        {
+          name: 'RankExpBarBg',
+          srcs: 'image/rankExpBarBg.png'
+        },
+        {
+          name: 'RankExpBarFill',
+          srcs: 'image/imgRankExpBarFill.png'
         },
       ]
     },
