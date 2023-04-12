@@ -123,29 +123,26 @@ const EggListingComponent = ({
     if (expiryTime === 0) return "Keep";
     else
       return (
-        `${
-          countdownTime.countdownHours.toString().length === 1
-            ? `0${countdownTime.countdownHours}`
-            : countdownTime.countdownHours
-        }:${
-          countdownTime.countdownMinutes.toString().length === 1
-            ? `0${countdownTime.countdownMinutes}`
-            : countdownTime.countdownMinutes
-        }:${
-          countdownTime.countdownSeconds.toString().length === 1
-            ? `0${countdownTime.countdownSeconds}`
-            : countdownTime.countdownSeconds
+        `${countdownTime.countdownHours.toString().length === 1
+          ? `0${countdownTime.countdownHours}`
+          : countdownTime.countdownHours
+        }:${countdownTime.countdownMinutes.toString().length === 1
+          ? `0${countdownTime.countdownMinutes}`
+          : countdownTime.countdownMinutes
+        }:${countdownTime.countdownSeconds.toString().length === 1
+          ? `0${countdownTime.countdownSeconds}`
+          : countdownTime.countdownSeconds
         }` || ""
       );
   };
 
   return (
     <Container
-      ref={ref || containerRef}
+      ref={ref}
       scale={[scaleX, scaleY]}
-      //  x={x}
-      //  y={y}
-      anchor={[0, 0]}
+      x={x}
+      y={y}
+      anchor={[0.5, 0.5]}
       eventMode="static"
       onpointertap={onPress}
       key={key}
@@ -158,7 +155,7 @@ const EggListingComponent = ({
             anchor={[0.5, 0]}
             // scale={[0.5, 0.5]}
             position={[posX, posY]}
-            // scale={[scaleX, scaleY]}
+          // scale={[scaleX, scaleY]}
           />
           <Sprite
             texture={imageIcon || PIXI.Texture.EMPTY}
@@ -171,7 +168,7 @@ const EggListingComponent = ({
             anchor={[0.5, 0]}
             position={[posX + priceTextXOffset, posY + priceTextYOffset]}
             style={priceTextStyle}
-            // scale={[scaleX, scaleY]}
+          // scale={[scaleX, scaleY]}
           />
           <Text
             // text={timerText || ""}
@@ -179,7 +176,7 @@ const EggListingComponent = ({
             anchor={[0.5, 0]}
             position={[posX + timerTextXOffset, posY + timerTextYOffset]}
             style={timerTextStyle}
-            // scale={[scaleX, scaleY]}
+          // scale={[scaleX, scaleY]}
           />
         </>
       )}

@@ -737,7 +737,13 @@ export const AppTemp = () => {
         )}
         {scene === "DINOCENTER" && (
           <>
-            <DinoCenter scene={scene} />
+            <DinoCenter
+              scene={scene}
+              onBackBtnClick={() => {
+                changeScene("HOME");
+                console.log("back");
+              }}
+            />
           </>
         )}
         {scene === "ALBUM" && (
