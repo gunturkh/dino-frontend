@@ -285,7 +285,7 @@ export const AppTemp = () => {
   useEffect(() => {
     if (error) {
       setActivateError(error.message)
-      window.alert(error.message)
+      // window.alert(error.message)
     }
   }, [error])
   const options = {

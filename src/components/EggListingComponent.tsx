@@ -1,75 +1,57 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import * as PIXI from "pixi.js";
 import {
-  Stage,
   Container,
   Sprite,
   Text,
   useApp,
-  AppProvider,
-  Graphics,
-  AnimatedSprite,
 } from "@pixi/react";
 
 type props = {
-  spriteTexture: PIXI.Texture;
-  imageIcon?: PIXI.Texture;
   priceText?: string;
   timerText?: string;
-  priceTextStyle?: PIXI.TextStyle;
-  timerTextStyle?: PIXI.TextStyle;
-  posX: number;
-  posY: number;
-  priceTextXOffset?: number;
-  priceTextYOffset?: number;
-  timerTextXOffset?: number;
-  timerTextYOffset?: number;
-  imageXOffset?: number;
-  imageYOffset?: number;
-  scaleX?: number;
-  scaleY?: number;
-  ref?: any;
-  x?: number;
-  y?: number;
-  scaleImgX?: number;
-  scaleImgY?: number;
-  onPress?: () => void;
   key?: string;
   index?: string;
+  idx: number,
+  eggType: number,
+  onBtnKeepPress: (idx: number) => void,
 };
 
 const EggListingComponent = ({
-  spriteTexture,
-  imageIcon,
   priceText,
   timerText,
-  priceTextStyle,
-  timerTextStyle,
-  posX,
-  posY,
-  priceTextXOffset = 0,
-  priceTextYOffset = 0,
-  timerTextXOffset = 0,
-  timerTextYOffset = 0,
-  imageXOffset = 0,
-  imageYOffset = 0,
-  scaleX = 1,
-  scaleY = 1,
-  ref = null,
-  x = 0,
-  y = 0,
-  scaleImgX = 1,
-  scaleImgY = 1,
-  onPress,
   key,
   index,
+  idx,
+  eggType,
+  onBtnKeepPress,
 }: props) => {
   const app = useApp();
-  const containerRef = React.useRef(null);
-  // const [timeLeft, setTimeLeft] = useState(
-  //   1681145515 < new Date().getTime() / 1000
-  // );
-  const timerRef = useRef();
+  const isNotMobile = app.screen.width >= 430;
+
+  const [listingItemBounds, setListingItemBounds] = useState({
+    x: 0, y: 0, width: 0, height: 0
+  });
+
+  const calculateEggXPosition = (index: number) => {
+    return listingItemBounds.width + 95 * (index % 4);
+  };
+  const calculateEggYPosition = (index: number) => {
+    return Math.floor(index / 4) * 135;
+  };
+
+  const listingItemBgRef = useCallback((node: any) => {
+    if (node !== null) {
+      setListingItemBounds(node.getBounds());
+    }
+  }, []);
+
+  const listingActionBtnRef = useCallback((node: any) => {
+    if (node !== null && listingItemBounds.height > 0) {
+      node.y = listingItemBounds.height * (isNotMobile ? 0.25 : 0.3)
+    }
+  }, [isNotMobile, listingItemBounds.height]);
+
   const [expiryTime, setExpiryTime] = useState(parseInt(timerText as string));
   const [countdownTime, setCountdownTime] = useState({
     countdownHours: 0,
@@ -138,48 +120,62 @@ const EggListingComponent = ({
 
   return (
     <Container
-      ref={ref}
-      scale={[scaleX, scaleY]}
-      x={x}
-      y={y}
-      anchor={[0.5, 0.5]}
-      eventMode="static"
-      onpointertap={onPress}
-      key={key}
+      x={calculateEggXPosition(idx)}
+      y={calculateEggYPosition(idx)}
     >
-      {spriteTexture && (
-        <>
+      <Sprite
+        ref={listingItemBgRef}
+        texture={PIXI.Assets.get("ListingItemBg")}
+        anchor={[0.5, 0.5]}
+        scale={isNotMobile ? [0.9, 0.85] : [0.9, 0.9]}
+      />
+      <Sprite
+        texture={PIXI.Assets.get(eggType === 4 ? "EggIcon3" : eggType === 2 ? "EggIcon2" : eggType === 1 ? "EggIcon1" : '')}
+        anchor={[0.5, 0.5]}
+        scale={isNotMobile ? [0.75, 0.85] : [0.8, 0.9]}
+      />
+
+      {/* Action Button */}
+      <Container
+        ref={listingActionBtnRef}
+        eventMode="static"
+        onpointertap={() => {
+          if (countdownText() !== 'Keep') return
+          else return onBtnKeepPress(idx);
+        }}
+      >
+        <Text
+          text={priceText}
+          position={[0, isNotMobile ? 10 : 7]}
+          anchor={[0.5, 0]}
+          style={new PIXI.TextStyle({
+            fontFamily: 'Magra Bold',
+            fontSize: isNotMobile ? 16 : 15,
+            fontWeight: '600',
+            strokeThickness: 1,
+            fill: ['0xFFB800'],
+          })}
+        />
+        <Container position={[0, isNotMobile ? 30 : 25]}>
           <Sprite
-            // texture={PIXI.Assets.get('DinoFundLogo')}
-            texture={spriteTexture || PIXI.Texture.EMPTY}
+            texture={PIXI.Assets.get(countdownText() === 'Keep' ? "BtnPurchaseActive" : "BtnPurchaseCountdown")}
             anchor={[0.5, 0]}
-            // scale={[0.5, 0.5]}
-            position={[posX, posY]}
-          // scale={[scaleX, scaleY]}
-          />
-          <Sprite
-            texture={imageIcon || PIXI.Texture.EMPTY}
-            anchor={[0.5, 0]}
-            scale={[scaleImgX, scaleImgY]}
-            position={[posX + imageXOffset, posY + imageYOffset]}
+            position={[0, 0]}
           />
           <Text
-            text={priceText || ""}
-            anchor={[0.5, 0]}
-            position={[posX + priceTextXOffset, posY + priceTextYOffset]}
-            style={priceTextStyle}
-          // scale={[scaleX, scaleY]}
-          />
-          <Text
-            // text={timerText || ""}
             text={countdownText()}
+            position={[0, isNotMobile ? 2.5 : 2.5]}
             anchor={[0.5, 0]}
-            position={[posX + timerTextXOffset, posY + timerTextYOffset]}
-            style={timerTextStyle}
-          // scale={[scaleX, scaleY]}
+            style={new PIXI.TextStyle({
+              fontFamily: 'Magra Bold',
+              fontSize: isNotMobile ? 16 : 15,
+              fontWeight: '600',
+              strokeThickness: 1,
+              fill: ['white'],
+            })}
           />
-        </>
-      )}
+        </Container>
+      </Container>
     </Container>
   );
 };
