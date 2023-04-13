@@ -15,6 +15,15 @@ type props = {
   idx: number,
   eggType: number,
   onBtnKeepPress: (idx: number) => void,
+  calculateEggXPosition: number,
+  calculateEggYPosition: number,
+  listingItemBounds: {
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  }
+  listingItemBgRef: any
 };
 
 const EggListingComponent = ({
@@ -25,26 +34,13 @@ const EggListingComponent = ({
   idx,
   eggType,
   onBtnKeepPress,
+  calculateEggXPosition,
+  calculateEggYPosition,
+  listingItemBounds,
+  listingItemBgRef,
 }: props) => {
   const app = useApp();
   const isNotMobile = app.screen.width >= 430;
-
-  const [listingItemBounds, setListingItemBounds] = useState({
-    x: 0, y: 0, width: 0, height: 0
-  });
-
-  const calculateEggXPosition = (index: number) => {
-    return listingItemBounds.width + 95 * (index % 4);
-  };
-  const calculateEggYPosition = (index: number) => {
-    return Math.floor(index / 4) * 135;
-  };
-
-  const listingItemBgRef = useCallback((node: any) => {
-    if (node !== null) {
-      setListingItemBounds(node.getBounds());
-    }
-  }, []);
 
   const listingActionBtnRef = useCallback((node: any) => {
     if (node !== null && listingItemBounds.height > 0) {
@@ -120,8 +116,8 @@ const EggListingComponent = ({
 
   return (
     <Container
-      x={calculateEggXPosition(idx)}
-      y={calculateEggYPosition(idx)}
+      x={calculateEggXPosition}
+      y={calculateEggYPosition}
     >
       <Sprite
         ref={listingItemBgRef}

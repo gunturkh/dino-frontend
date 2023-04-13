@@ -93,68 +93,130 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
   });
 
   console.log("rankDetailBounds:", rankDetailBounds)
-
-  const [eggLists, setEggLists] = useState([]);
-  const [blogPosts, setBlogPosts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [paginationPageNumbers, setPaginationPageNumbers] = useState([1]);
-  const [eggPerPage] = useState(12);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [selectedPanel, setSelectedPanel] = useState("Listing");
 
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [eggPerPage] = useState(12);
+  const [paginationPageNumbers, setPaginationPageNumbers] = useState([1]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [tempCards, setTempCards] = useState<any>([])
+  const totalPages = Math.ceil(tempCards.length / eggPerPage);
+  const startIndex = (currentPage - 1) * eggPerPage;
+  const endIndex = startIndex + eggPerPage;
+  const currentEggs = tempCards.slice(startIndex, endIndex);
 
-  const indexOfLastPost = currentPage * eggPerPage;
-  const indexOfFirstPost = indexOfLastPost - eggPerPage;
-  const currentEggs = duplicateListingData.slice(indexOfFirstPost, indexOfLastPost);
+  const [listingItemBounds, setListingItemBounds] = useState({
+    x: 0, y: 0, width: 0, height: 0
+  });
+
+  const [eggListingBounds, setEggListingBounds] = useState({
+    x: 0, y: 0, width: 0, height: 0,
+  });
+
+  const listingItemBgRef = useCallback((node: any) => {
+    if (node !== null) {
+      setListingItemBounds(node.getBounds());
+    }
+  }, []);
+
+  const eggListingComponentRef = useCallback((node: any) => {
+    if (node !== null) {
+      // node.height = app.screen.height * (isNotMobile ? 0.6 : 0.57);
+
+      if (app.screen.width > 430) {
+        node.x = -(node.width / 2 + listingItemBounds.width * 0.5)
+        node.y = app.screen.height * 0.3
+        node.height = app.screen.height * 0.6
+        // node.width = 450 * 1;
+      } else if (app.screen.width > 400 && app.screen.width <= 430) {
+        node.x = -(node.width / 2 + listingItemBounds.width * 0.5)
+        node.y = app.screen.height * 0.3
+        node.height = app.screen.height * 0.6
+        // node.width = 450 * 0.94;
+      } else if (app.screen.width < 400) {
+        node.x = -(node.width / 2 + rankDetailBounds.width * 0.12)
+        node.y = app.screen.height * 0.37
+        node.height = app.screen.height * 0.57
+        // node.width = app.screen.width * 0.95;
+      }
+      setEggListingBounds(node.getBounds())
+      // node.x = -(node.width / 2 + rankDetailBounds.width * 0.125)
+      console.log('eggListingComponentRef bounds', node.getBounds())
+    }
+  }, [app.screen.height, app.screen.width, listingItemBounds.width, rankDetailBounds.width]);
+
+  const paginationRef = useCallback((node: any) => {
+    if (node !== null) {
+
+      // x={app.screen.width * 0.4}
+
+      if (app.screen.width > 430) {
+        node.width = 450 * 0.5;
+        node.x = app.screen.width * 0.47
+        node.y = app.screen.height * 0.92
+      } else if (app.screen.width > 400 && app.screen.width <= 430) {
+        node.width = 450 * 0.58;
+        node.x = app.screen.width * 0.42
+        node.y = app.screen.height * 0.92
+      } else if (app.screen.width < 400) {
+        node.width = app.screen.width * 0.6;
+        node.x = app.screen.width * 0.4
+        node.y = app.screen.height * 0.935
+      }
+    }
+  }, [app.screen.height, app.screen.width]);
+
+  // running this once to get the first 12 eggs
+  useEffect(() => {
+    if (duplicateListingData)
+      setTempCards(duplicateListingData)
+  }, [])
+
+  useEffect(() => {
+    const pageNumbers = [];
+
+    if (totalPages <= 3) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      if (currentPage === 1) {
+        pageNumbers.push(1, 2, 3);
+      } else if (currentPage === totalPages) {
+        pageNumbers.push(totalPages - 2, totalPages - 1, totalPages);
+      } else {
+        pageNumbers.push(currentPage - 1, currentPage, currentPage + 1);
+      }
+    }
+    setPaginationPageNumbers(pageNumbers)
+  }, [currentPage, eggPerPage, totalPages])
+
+  const paginate = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
 
   const RankDetailsRef = useCallback((node: any) => {
     if (node !== null) {
       setRankDetailBounds(node.getBounds());
       if (app.screen.width > 430) {
-
-        node.width = 450 * 1.2;
-      } else if (app.screen.width > 400) {
+        node.width = 450 * 1;
+      } else if (app.screen.width > 400 && app.screen.width <= 430) {
         node.width = 450 * 0.94;
-      } else {
+      } else if (app.screen.width < 400) {
         node.width = app.screen.width * 0.95;
       }
     }
   }, [app.screen.width]);
 
-  const eggListingComponentRef = useCallback((node: any) => {
-    if (node !== null) {
-      node.height = app.screen.height * (isNotMobile ? 0.6 : 0.57);
-      // node.x = -(listingItemBounds.width * (isNotMobile ? 2.5 : 2.5))
-      if (app.screen.width > 430) {
-        node.x = -(node.width / 2 + rankDetailBounds.width * 0.125)
-        node.y = app.screen.height * 0.27
-        node.width = 450 * 1.2;
-      } else if (app.screen.width > 400) {
-        node.x = -(node.width / 2 + rankDetailBounds.width * 0.122)
-        node.y = app.screen.height * 0.31
-        node.width = 450 * 0.94;
-      } else {
-        node.x = -(node.width / 2 + rankDetailBounds.width * 0.12)
-        node.y = app.screen.height * 0.37
-        node.width = app.screen.width * 0.95;
-      }
-      // node.x = -(node.width / 2 + rankDetailBounds.width * 0.125)
-      console.log('test x', -(node.width / 2 + rankDetailBounds.width * 0.08))
-      console.log('eggListingComponentRef bounds', node.getBounds())
-    }
-  }, [app.screen.height, app.screen.width, isNotMobile, rankDetailBounds.width]);
 
-  const paginationRef = useCallback((node: any) => {
-    if (node !== null) {
-      if (app.screen.width > 430) {
-        node.width = 450 * 0.7;
-      } else if (app.screen.width > 400) {
-        node.width = 450 * 0.58;
-      } else {
-        node.width = app.screen.width * 0.6;
-      }
-    }
-  }, [app.screen.width]);
+
+
+  const calculateEggXPosition = (index: number) => {
+    return listingItemBounds.width + 95 * (index % 4) as number;
+  };
+  const calculateEggYPosition = (index: number) => {
+    return Math.floor(index / 4) * 135 as number;
+  };
 
 
   useEffect(() => {
@@ -173,48 +235,19 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
       });
       console.log("getEggList Result:", data);
       if (data?.status === 200 && data?.data?.result?.lists) {
-        setEggLists(data?.data?.result.lists);
+        // setEggLists(data?.data?.result.lists);
       }
     };
 
     getEggList();
   }, []);
 
-  const paginate = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-  };
 
-  useEffect(() => {
-    const pageNumbers = [];
 
-    for (let i = 1; i <= Math.ceil(duplicateListingData.length / eggPerPage); i++) {
-      pageNumbers.push(i);
-    }
-    setPaginationPageNumbers(pageNumbers)
-  }, [eggPerPage])
   console.log("data::", {
     currentPage,
     currentEggs,
   })
-
-  const Paginate = ({ postsPerPage, totalPosts, paginate }: { postsPerPage: number, totalPosts: number, paginate: (val: number) => void }) => {
-
-    return (
-      <div className="pagination-container">
-        <ul className="pagination">
-          {paginationPageNumbers.map((number) => (
-            <li
-              key={number}
-              onClick={() => paginate(number)}
-              className="page-number"
-            >
-              {number}
-            </li>
-          ))}
-        </ul>
-      </div>
-    );
-  };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const barView = new PIXI.Container();
@@ -241,8 +274,6 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
 
   const progressBarComponentRef = useCallback((node: any) => {
     if (node !== null) {
-      console.log("progressBarComponentRef", node.getBounds());
-
       expText.anchor.set(0, 0.5);
       // barView.width = rankDetailBounds.width * 0.4;
       expText.position.set(-expText.width / 2, 10);
@@ -277,6 +308,15 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
             filters={[new PIXI.BlurFilter(10)]}
             tint={'white'}
             alpha={0.3}
+          />
+
+          {/* let it false, just for reference bounds */}
+          <Sprite
+            ref={listingItemBgRef}
+            texture={PIXI.Assets.get("ListingItemBg")}
+            anchor={[0.5, 0.5]}
+            scale={isNotMobile ? [0.9, 0.85] : [0.9, 0.9]}
+            visible={false}
           />
 
           <Container position={[app.screen.width / 2, 0]}
@@ -595,8 +635,9 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
             {/* Listing Component */}
             <Container
               ref={eggListingComponentRef}
-              anchor={[0, 0.5]}
+              anchor={[0.5, 0.5]}
               visible={selectedPanel === 'Listing'}
+              width={eggListingBounds?.width}
             >
               {currentEggs.length > 0 &&
                 currentEggs?.map((d: any, idx: number) => {
@@ -610,6 +651,11 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
                         priceText={d?.total.toString()}
                         timerText={d?.openat.toString()}
                         eggType={d?.ticket}
+                        listingItemBgRef={listingItemBgRef}
+                        listingItemBounds={listingItemBounds}
+
+                        calculateEggXPosition={calculateEggXPosition(idx)}
+                        calculateEggYPosition={calculateEggYPosition(idx)}
                         onBtnKeepPress={(eggIndex) => {
                           // TODO: action button for keep, using idx from props as a differentiator
                           console.log('onBtnKeepPress', eggIndex)
@@ -643,8 +689,6 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
 
           {/* Pagination & Refresh */}
           <Container
-            x={app.screen.width * 0.48}
-            y={app.screen.height * (isNotMobile ? 0.92 : 0.935)}
             ref={paginationRef}
           >
             {/* Pagination */}
@@ -654,90 +698,44 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
 
             >
               <Sprite
-                texture={PIXI.Assets.get('BtnPagePaginationRest')}
+                texture={currentPage <= 2 ? PIXI.Texture.EMPTY : PIXI.Assets.get('BtnPagePaginationRest')}
                 position={[isNotMobile ? -120 : -120, 0]}
                 anchor={[0.5, 0.5]}
                 width={50}
                 height={50}
               />
-              <Container
-                position={[isNotMobile ? -60 : -60, 0]}
-                eventMode="static"
-                onpointertap={() => {
-                  paginate(1)
-                }}
-              >
-                <Sprite
-                  texture={PIXI.Assets.get(currentPage === 1 ? 'BtnPagePaginationActive' : 'BtnPagePaginationNumberInactive')}
-                  anchor={[0.5, 0.5]}
-                  width={55}
-                  height={55}
-
-                />
-                <Text
-                  text={'1'}
-                  position={[0, 0]}
-                  anchor={[0.5, 0.6]}
-                  style={new PIXI.TextStyle({
-                    fontFamily: 'Magra Bold',
-                    fontSize: isNotMobile ? 26 : 20,
-                    fontWeight: '600',
-                    strokeThickness: 1,
-                    fill: ['white'],
-                  })}
-                />
-              </Container>
-              <Container
-                eventMode="static"
-                onpointertap={() => {
-                  paginate(2)
-                }}
-              >
-                <Sprite
-                  texture={PIXI.Assets.get(currentPage === 2 ? 'BtnPagePaginationActive' : 'BtnPagePaginationNumberInactive')}
-                  anchor={[0.5, 0.5]}
-                  width={55}
-                  height={55}
-                />
-                <Text
-                  text={'2'}
-                  position={[0, isNotMobile ? 0 : 0]}
-                  anchor={[0.5, 0.6]}
-                  style={new PIXI.TextStyle({
-                    fontFamily: 'Magra Bold',
-                    fontSize: isNotMobile ? 26 : 20,
-                    fontWeight: '600',
-                    strokeThickness: 1,
-                    fill: ['white'],
-                  })}
-                />
-              </Container>
-              <Container
-                position={[isNotMobile ? 60 : 60, 0]}
-                eventMode="static"
-                onpointertap={() => {
-                  paginate(3)
-                }}
-              >
-                <Sprite
-                  texture={PIXI.Assets.get(currentPage === 3 ? 'BtnPagePaginationActive' : 'BtnPagePaginationNumberInactive')}
-                  anchor={[0.5, 0.5]}
-                  width={55}
-                  height={55}
-                />
-                <Text
-                  text={'3'}
-                  position={[0, isNotMobile ? 0 : 0]}
-                  anchor={[0.5, 0.6]}
-                  style={new PIXI.TextStyle({
-                    fontFamily: 'Magra Bold',
-                    fontSize: isNotMobile ? 26 : 20,
-                    fontWeight: '600',
-                    strokeThickness: 1,
-                    fill: ['white'],
-                  })}
-                />
-              </Container>
+              {paginationPageNumbers?.map((pageNumber, index) => {
+                console.log('pageNumber', pageNumber)
+                return (
+                  <Container
+                    key={`page-${pageNumber}`}
+                    position={[isNotMobile ? -60 + ((index) * 60) : -60 + ((index) * 60), 0]}
+                    eventMode="static"
+                    onpointertap={() => {
+                      paginate(pageNumber)
+                    }}
+                  >
+                    <Sprite
+                      texture={PIXI.Assets.get(pageNumber === currentPage ? 'BtnPagePaginationActive' : 'BtnPagePaginationNumberInactive')}
+                      anchor={[0.5, 0.5]}
+                      width={55}
+                      height={55}
+                    />
+                    <Text
+                      text={pageNumber.toString()}
+                      position={[0, 0]}
+                      anchor={[0.5, 0.6]}
+                      style={new PIXI.TextStyle({
+                        fontFamily: 'Magra Bold',
+                        fontSize: isNotMobile ? 26 : 20,
+                        fontWeight: '600',
+                        strokeThickness: 1,
+                        fill: ['white'],
+                      })}
+                    />
+                  </Container>
+                )
+              })}
               <Sprite
                 texture={PIXI.Assets.get('BtnPagePaginationRest')}
                 position={[isNotMobile ? 120 : 120, 0]}
