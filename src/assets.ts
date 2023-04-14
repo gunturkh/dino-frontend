@@ -193,6 +193,10 @@ export const manifest: ResolverManifest = {
           name: 'ImgUpass',
           srcs: 'image/imgUpassIcon.png'
         },
+        {
+          name: 'EggPlate',
+          srcs: 'image/eggPlate.png'
+        }
       ]
     },
     {
@@ -882,6 +886,18 @@ export const manifest: ResolverManifest = {
         {
           name: 'RankExpBarFill',
           srcs: 'image/imgRankExpBarFill.png'
+        },
+        // {
+        //   name: 'BigEggIcon1',
+        //   srcs: 'image/imgJurassicEggBigIcon1.png'
+        // },
+        // {
+        //   name: 'BigEggIcon2',
+        //   srcs: 'image/imgJurassicEggBigIcon2.png'
+        // },
+        {
+          name: 'BigEggIcon3',
+          srcs: 'image/imgJurassicEggBigIcon3.png'
         },
       ]
     },

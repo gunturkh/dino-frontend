@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import * as PIXI from "pixi.js";
-import { Container, Sprite, useApp } from "@pixi/react";
+import { Container, Sprite, useApp, Text } from "@pixi/react";
 import DinoFundComponent from "../DinoFundComponent";
 import ProfileComponent from "../ProfileComponent";
 import DetailsComponent from "../DetailsComponent";
@@ -74,17 +74,151 @@ const Home = ({ onProfileClick, scene }: Props) => {
     };
 
     getUserData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // const dinoFundRef = useRef(null);
-  // console.log('dinoFundRef', dinoFundRef.current)
-  // useEffect(() => {
-  //   // @ts-ignore
-  //   console.log('upperContainerRef', upperContainerRef.current.getBounds())
-  //   // @ts-ignore
-  //   console.log('upperContainerRef getGlobalPosition', upperContainerRef.current.getGlobalPosition())
-  // }, [])
-  // console.log('avatar')
+  const [normalEggBounds, setNormalEggBounds] = useState({
+    x: 0, y: 0, width: 0, height: 0
+  });
+  const normalEggref = useCallback((node: any) => {
+    if (node !== null) {
+      setNormalEggBounds(node.getBounds());
+    }
+  }, []);
+
+  const NormalEggComponent = ({
+    eggTexture,
+    ref, posX, posY, onPress, scaleEgg, scaleBtn, posBtn,
+    text,
+  }: any) => {
+    return (
+      <Container
+        ref={ref || null}
+        x={posX || 0}
+        y={posY || 0}
+      >
+        <Sprite
+          texture={eggTexture || PIXI.Texture.EMPTY}
+          anchor={[0.5, 0.5]}
+          scale={scaleEgg ? scaleEgg : [0.9, 0.9]}
+        />
+        {/* action button */}
+        <Container
+          position={posBtn ? posBtn : [0, 25]}
+          scale={scaleBtn ? scaleBtn : [0.6, 0.7]}
+          eventMode="static"
+          onpointertap={() => {
+            onPress();
+          }}
+        >
+          <Sprite
+            position={[0, 0]}
+            texture={PIXI.Assets.get(true ? "BtnPurchaseActive" : "BtnPurchaseCountdown") || PIXI.Texture.EMPTY}
+            anchor={[0.5, 0.5]}
+          />
+          <Text
+            text={text ? text : '00:00:00'}
+            position={[0, 0]}
+            anchor={[0.5, 0.5]}
+            style={new PIXI.TextStyle({
+              fontFamily: 'Magra Bold',
+              fontSize: 13,
+              fontWeight: '600',
+              strokeThickness: 1,
+              fill: ['white'],
+            })}
+          />
+        </Container>
+      </Container>
+    )
+  }
+
+  const EggPlateComponent = () => {
+    return (
+      <Container
+        x={-5}
+        y={app.screen.height / 2}
+      >
+        <Sprite
+          texture={PIXI.Assets.get("EggPlate") || PIXI.Texture.EMPTY}
+          anchor={[0.5, 0.5]}
+        />
+
+        {/* egg 2 */}
+        <NormalEggComponent
+          eggTexture={PIXI.Assets.get("EggIcon1")}
+          posX={-53}
+          posY={-112}
+          posBtn={[-3, 25]}
+          text={'Pre-List'}
+          onPress={() => console.log('egg 2 clicked')}
+        />
+
+        {/* egg 3 */}
+        <NormalEggComponent
+          eggTexture={PIXI.Assets.get("EggIcon2")}
+          posX={-92}
+          posY={-65}
+          text={'Reveal'}
+          onPress={() => console.log('egg 3 clicked')}
+        />
+
+        {/* egg 4 */}
+        <NormalEggComponent
+          eggTexture={PIXI.Assets.get("EggIcon1")}
+          posX={-79}
+          posY={-2}
+          onPress={() => console.log('egg 4 clicked')}
+        />
+
+        {/* egg 5 */}
+        <NormalEggComponent
+          ref={normalEggref}
+          eggTexture={PIXI.Assets.get("EggIcon3")}
+          posX={7}
+          posY={29}
+          onPress={() => console.log('egg 5 clicked')}
+        />
+
+        {/* egg 6 */}
+        <NormalEggComponent
+          eggTexture={PIXI.Assets.get("EggIcon2")}
+          posX={98}
+          posY={-2}
+          onPress={() => console.log('egg 6 clicked')}
+        />
+
+        {/* egg 7 */}
+        <NormalEggComponent
+          eggTexture={PIXI.Assets.get("EggIcon1")}
+          posX={109}
+          posY={-65}
+          onPress={() => console.log('egg 7 clicked')}
+        />
+
+        {/* egg 8 */}
+        <NormalEggComponent
+          eggTexture={PIXI.Assets.get("EggIcon2")}
+          posX={70}
+          posY={-112}
+          posBtn={[5, 25]}
+          onPress={() => console.log('egg 8 clicked')}
+        />
+
+        {/* egg 1 (big) */}
+        <NormalEggComponent
+          eggTexture={PIXI.Assets.get("BigEggIcon3")}
+          posX={10}
+          posY={-75}
+          posBtn={[0, 50]}
+          scaleBtn={[1.2, 1.3]}
+          scaleEgg={[0.95, 0.95]}
+          onPress={() => console.log('egg 1 clicked')}
+        />
+
+      </Container>
+    )
+  }
   return (
     <>
       {isLoaded && <Container>
@@ -340,13 +474,18 @@ const Home = ({ onProfileClick, scene }: Props) => {
             </Container>
           </Container>
 
+          {/* Egg Panel */}
+          {EggPlateComponent()}
+
+
+
           {/* Lower Button Container */}
-          {true && (
+          {(
             <Container
-              anchor={[0.5, 0.5]}
+              anchor={[0.5, 1]}
               x={0}
               y={app.screen?.height - BtnSmallBounds?.height * 2 - 15}
-              width={app.screen?.width > 450 ? 450 : app.screen.width}
+              width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
             >
               {/* left side */}
               <LowerButtonComponent

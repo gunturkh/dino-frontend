@@ -1,15 +1,10 @@
 
-import React, { useEffect } from 'react'
+import React from 'react'
 import * as PIXI from "pixi.js";
 import {
-  Stage,
   Container,
   Sprite,
   Text,
-  useApp,
-  AppProvider,
-  Graphics,
-  AnimatedSprite,
 } from "@pixi/react";
 
 type props = {
@@ -53,7 +48,6 @@ const LowerButtonComponent = ({
   scaleImgY = 1,
   onPress,
 }: props) => {
-  const app = useApp();
   const containerRef = React.useRef(null);
 
   return (
@@ -68,7 +62,7 @@ const LowerButtonComponent = ({
         <>
           <Sprite
             // texture={PIXI.Assets.get('DinoFundLogo')}
-            texture={spriteTexture || PIXI.Texture.EMPTY}
+            texture={PIXI.Texture.EMPTY}
             anchor={[0.5, 0]}
             // scale={[0.5, 0.5]}
             position={[posX, posY]}

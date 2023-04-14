@@ -1,12 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import * as PIXI from "pixi.js";
 import { Container, Sprite, useApp, Text } from "@pixi/react";
-import { List, ProgressBar } from "@pixi/ui";
-import DinoFundComponent from "../DinoFundComponent";
-import ProfileComponent from "../ProfileComponent";
-import DetailsComponent from "../DetailsComponent";
+import { ProgressBar } from "@pixi/ui";
+
 import EggListingComponent from "../EggListingComponent";
-import { useStore } from "../../utils/store";
+// import { useStore } from "../../utils/store";
 import { axiosInstance } from "../../utils/api";
 
 const dummyListingData = [
@@ -83,7 +81,6 @@ console.log("🚀 ~ file: DinoCenter.tsx:91 ~ duplicateListingData:", duplicateL
 
 const DinoCenter = ({ scene, onBackBtnClick }: any) => {
   const app = useApp();
-  const changeScene = useStore((state) => state.changeScene);
   const isNotMobile = app.screen.width >= 430;
   console.log("app.screen", app.screen);
   console.log("scene", scene);
@@ -99,6 +96,7 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
   const [eggPerPage] = useState(12);
   const [paginationPageNumbers, setPaginationPageNumbers] = useState([1]);
   const [currentPage, setCurrentPage] = useState(1);
+  // TODO: tempCards should be set with the actual data from the API
   const [tempCards, setTempCards] = useState<any>([])
   const totalPages = Math.ceil(tempCards.length / eggPerPage);
   const startIndex = (currentPage - 1) * eggPerPage;
@@ -226,19 +224,18 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
     };
   }, []);
 
+  const getEggList = async () => {
+    const data: any = await axiosInstance({
+      url: "/egg/lists",
+      method: "GET",
+    });
+    console.log("getEggList Result:", data);
+    if (data?.status === 200 && data?.data?.result?.lists) {
+      // setEggLists(data?.data?.result.lists);
+    }
+  };
   useEffect(() => {
     // /egg/lists
-    const getEggList = async () => {
-      const data: any = await axiosInstance({
-        url: "/egg/lists",
-        method: "GET",
-      });
-      console.log("getEggList Result:", data);
-      if (data?.status === 200 && data?.data?.result?.lists) {
-        // setEggLists(data?.data?.result.lists);
-      }
-    };
-
     getEggList();
   }, []);
 
@@ -752,6 +749,12 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
               x={rankDetailBounds?.width *
                 (app.screen.width > 430 ? 0.5 : app.screen.width > 400 ? 0.44 : 0.42)}
               scale={app.screen.width > 430 ? [1.7, 1.7] : app.screen.width > 400 ? [1.5, 1.5] : [1.2, 1.2]}
+              eventMode="static"
+              onpointertap={() => {
+                getEggList()
+                // reset pagination
+                setCurrentPage(1)
+              }}
             />
 
           </Container>
