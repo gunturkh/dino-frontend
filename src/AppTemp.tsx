@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useFormik } from "formik";
 import { useEtherBalance, useEthers, BSC, BSCTestnet, useToken, useTokenBalance } from "@usedapp/core";
 import { Stage } from "@pixi/react";
@@ -296,7 +297,7 @@ export const AppTemp = () => {
       loginWalletForm.setFieldValue("walletAddress", account);
     if (!active && !account && authMode === "LOGINWALLET")
       loginWalletForm.setFieldValue("walletAddress", "");
-  }, [active, account, authMode, chainId, loginWalletForm, otpForm, setWalletAddress, switchNetwork]);
+  }, [active, account, authMode, chainId]);
 
   useEffect(() => {
     if (usdtBalance) {
