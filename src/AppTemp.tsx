@@ -1,10 +1,10 @@
 import { useFormik } from "formik";
-import { useEtherBalance, useEthers, BSC, BSCTestnet, useToken, ERC20Interface, Falsy, useCall, useTokenBalance, } from "@usedapp/core";
+import { useEtherBalance, useEthers, BSC, BSCTestnet, useToken, useTokenBalance } from "@usedapp/core";
 import { Stage } from "@pixi/react";
 import { useState, Suspense, useEffect } from "react";
 import { axiosInstance } from "./utils/api";
 // @ts-ignore
-import WalletConnectProvider from '@walletconnect/web3-provider/dist/umd/index.min.js'
+// import WalletConnectProvider from '@walletconnect/web3-provider/dist/umd/index.min.js'
 import { formatEther, formatUnits } from '@ethersproject/units'
 import Home from "./components/scene/Home";
 import Register from "./components/scene/Register";
@@ -14,17 +14,17 @@ import Album from "./components/scene/Album";
 
 import DinoCenter from "./components/scene/DinoCenter";
 import { useAuthStore, useStore } from "./utils/store";
-import { BigNumber, BigNumberish, Contract, utils } from "ethers";
-import { Interface } from "ethers/lib/utils";
+// import { BigNumber, BigNumberish, Contract, utils } from "ethers";
+// import { Interface } from "ethers/lib/utils";
 
 type loginReqFormat = {
   username: string;
   password: string;
 };
 
-type loginWalletReqFormat = {
-  walletAddress: string;
-};
+// type loginWalletReqFormat = {
+//   walletAddress: string;
+// };
 
 type registerReqFormat = {
   email: string;
@@ -41,11 +41,11 @@ type otpReqFormat = {
 const USDT_ADDRESS = '0x0ed04d340a054382383ee2edff0ced66ead7496c'
 
 export const AppTemp = () => {
-  const { account, active, activate, deactivate, activateBrowserWallet, error, chainId, switchNetwork } = useEthers();
+  const { account, active, deactivate, activateBrowserWallet, chainId, switchNetwork } = useEthers();
   const token = useAuthStore((state) => state.token);
   const saveToken = useAuthStore((state) => state.saveToken);
   const scene = useStore((state) => state.scene);
-  const walletAddress = useStore((state) => state.walletAddress);
+  // const walletAddress = useStore((state) => state.walletAddress);
   const setWalletAddress = useStore((state) => state.setWalletAddress);
   const setWalletBalance = useStore((state) => state.setWalletBalance);
   const usdtInfo = useToken(USDT_ADDRESS)
@@ -60,7 +60,7 @@ export const AppTemp = () => {
     "LOGIN" | "REGISTER" | "OTPEMAIL" | "OTPMOBILE" | "LOGINWALLET"
   >("LOGIN");
   const [otp, setOtp] = useState("");
-  const [activateError, setActivateError] = useState('')
+  // const [activateError, setActivateError] = useState('')
   const [registerCheckbox, setRegisterCheckbox] = useState(false);
 
   // console.log('usdtBalance', usdtBalance)
@@ -71,15 +71,15 @@ export const AppTemp = () => {
   // console.log({ testnetBalance: testnetBalance && formatEther(testnetBalance as any) })
   const connectToWallet = async (e: React.MouseEvent<HTMLElement>, type: string) => {
     e.stopPropagation();
-    setActivateError('')
+    // setActivateError('')
     if (type === 'metamask') {
       activateBrowserWallet({ type });
     } else if (type === 'walletConnect') {
-      const provider = new WalletConnectProvider({
-        infuraId: 'd8df2cb7844e4a54ab0a782f608749dd',
-      })
-      await provider.enable()
-      await activate(provider)
+      // const provider = new WalletConnectProvider({
+      //   infuraId: 'd8df2cb7844e4a54ab0a782f608749dd',
+      // })
+      // await provider.enable()
+      // await activate(provider)
     }
   };
 
@@ -296,7 +296,7 @@ export const AppTemp = () => {
       loginWalletForm.setFieldValue("walletAddress", account);
     if (!active && !account && authMode === "LOGINWALLET")
       loginWalletForm.setFieldValue("walletAddress", "");
-  }, [active, account, authMode, chainId]);
+  }, [active, account, authMode, chainId, loginWalletForm, otpForm, setWalletAddress, switchNetwork]);
 
   useEffect(() => {
     if (usdtBalance) {
@@ -643,7 +643,7 @@ export const AppTemp = () => {
                     {/* {otpForm.values?.walletAddress?.length === 0 && ( */}
                     <div className="flex flex-col">
                       <ConnectButton type='metamask' />
-                      <ConnectButton type='walletConnect' />
+                      {/* <ConnectButton type='walletConnect' /> */}
                     </div>
                     {/* )} */}
                     <p className="text-red-500 font-bold font-magra">
@@ -697,7 +697,7 @@ export const AppTemp = () => {
                       )}
                       <div className="flex flex-col">
                         <ConnectButton type='metamask' />
-                        <ConnectButton type='walletConnect' />
+                        {/* <ConnectButton type='walletConnect' /> */}
                       </div>
                       <p className="text-red-500 font-bold font-magra">
                         {loginWalletForm.errors.walletAddress &&

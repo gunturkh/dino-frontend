@@ -1,15 +1,10 @@
 
-import React, { useEffect } from 'react'
+import React from 'react'
 import * as PIXI from "pixi.js";
 import {
-  Stage,
   Container,
   Sprite,
   Text,
-  useApp,
-  AppProvider,
-  Graphics,
-  AnimatedSprite,
 } from "@pixi/react";
 
 type ProfileComponentProps = {
@@ -53,7 +48,6 @@ const ProfileComponent = ({
   height,
   onPress,
 }: ProfileComponentProps) => {
-  const app = useApp();
   const containerRef = React.useRef(null);
 
   return (

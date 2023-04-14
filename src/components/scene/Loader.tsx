@@ -1,16 +1,9 @@
 
-import React, { useEffect } from 'react'
 import * as PIXI from "pixi.js";
 import {
-  Stage,
   Container,
   Sprite,
-  Text,
   useApp,
-  AppProvider,
-  Graphics,
-  AnimatedSprite,
-  useTick,
 } from "@pixi/react";
 import { manifest } from '../../assets';
 

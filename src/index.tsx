@@ -1,15 +1,9 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import App from "./App";
-import { AppSpine } from "./AppSpine";
 import { AppTemp } from "./AppTemp";
-import { AppNew } from "./AppNew";
 import reportWebVitals from "./reportWebVitals";
-import { MetaMaskProvider } from "metamask-react";
 import { DAppProvider, BSC, BSCTestnet, Config, MetamaskConnector, } from "@usedapp/core";
-import { WalletConnectConnector } from '@usedapp/wallet-connect-connector'
-import { getDefaultProvider } from "ethers";
+// import { WalletConnectConnector } from '@usedapp/wallet-connect-connector'
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -24,7 +18,7 @@ const config: Config = {
   multicallVersion: 1,
   connectors: {
     metamask: new MetamaskConnector(),
-    walletConnect: new WalletConnectConnector({ infuraId: 'd8df2cb7844e4a54ab0a782f608749dd' }),
+    // walletConnect: new WalletConnectConnector({ infuraId: 'd8df2cb7844e4a54ab0a782f608749dd' }),
   },
 };
 

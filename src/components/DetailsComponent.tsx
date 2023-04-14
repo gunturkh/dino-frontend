@@ -2,7 +2,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import * as PIXI from "pixi.js";
 import {
-  Stage,
   Container,
   Sprite,
   Text,
@@ -40,11 +39,11 @@ const DetailsComponent = ({
 }: Props) => {
   const app = useApp();
   const containerRef = useRef();
-  const referenceBounds = PIXI.Assets?.get('BNBDetails')?.orig;
+  // const referenceBounds = PIXI.Assets?.get('BNBDetails')?.orig;
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const [bounds, setBounds] = useState(referenceBounds)
-  console.log("🚀 ~ file: DetailsComponent.tsx:47 ~ setBounds ~ setBounds:", bounds)
+  // const [bounds, setBounds] = useState(referenceBounds)
+  // console.log("🚀 ~ file: DetailsComponent.tsx:47 ~ setBounds ~ setBounds:", bounds)
 
   useEffect(() => {
     if (app && !isLoaded) {

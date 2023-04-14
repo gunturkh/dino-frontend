@@ -1,15 +1,10 @@
 
-import React, { useEffect } from 'react'
+import React from 'react'
 import * as PIXI from "pixi.js";
 import {
-  Stage,
   Container,
   Sprite,
   Text,
-  useApp,
-  AppProvider,
-  Graphics,
-  AnimatedSprite,
 } from "@pixi/react";
 
 type DinoFundProps = {
@@ -37,7 +32,6 @@ const DinoFundComponent = ({
   scaleY = 1,
   ref = null,
 }: DinoFundProps) => {
-  const app = useApp();
   const containerRef = React.useRef(null);
 
   return (

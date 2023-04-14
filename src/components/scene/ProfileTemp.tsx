@@ -1,14 +1,11 @@
-import React, { Suspense, useCallback, useEffect, useRef, useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useCallback, useEffect, useRef, useState } from "react";
 import * as PIXI from "pixi.js";
 import {
-  Stage,
   Container,
   Sprite,
   Text,
   useApp,
-  AppProvider,
-  Graphics,
-  AnimatedSprite,
   useTick,
 } from "@pixi/react";
 import { useAuthStore, useStore } from "../../utils/store";
@@ -36,7 +33,6 @@ const ProfileTemp = ({ onBackBtnClick }: Props) => {
   });
   const [confirmQuitPanelVisible, setConfirmQuitPanelVisible] = useState(false);
 
-  const profileBgRef = useRef();
   useTick((delta) => {
     // console.log('delta', delta)
   });

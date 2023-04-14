@@ -77,12 +77,12 @@ const Home = ({ onProfileClick, scene }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [normalEggBounds, setNormalEggBounds] = useState({
-    x: 0, y: 0, width: 0, height: 0
-  });
+  // const [normalEggBounds, setNormalEggBounds] = useState({
+  //   x: 0, y: 0, width: 0, height: 0
+  // });
   const normalEggref = useCallback((node: any) => {
     if (node !== null) {
-      setNormalEggBounds(node.getBounds());
+      // setNormalEggBounds(node.getBounds());
     }
   }, []);
 
