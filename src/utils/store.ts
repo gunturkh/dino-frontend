@@ -1,13 +1,23 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
+type User = {
+    bonuses: string
+    ga_key: boolean
+    sponsor: string
+    tickets: number
+    username: string
+}
+
 type Store = {
     scene: Screen,
     changeScene: (screen: Screen) => void,
     walletAddress: string,
-    walletDetails: { mainnet: string, testnet: string }
+    walletBalance: string,
     setWalletAddress: (address: string) => void,
-    setWalletDetail: ({ mainnet, testnet }: { mainnet: string, testnet: string }) => void,
+    setWalletBalance: (balance: string) => void,
+    userData: User,
+    setUserData: (data: User) => void,
 }
 type AuthStore = {
     token: string | null,
@@ -20,9 +30,17 @@ export const useStore = create<Store>((set, _get) => ({
     scene: 'LOADING',
     changeScene: (screen) => set(() => ({ scene: screen })),
     walletAddress: '',
-    walletDetails: { mainnet: '', testnet: '' },
+    walletBalance: '0',
     setWalletAddress: (address) => set(() => ({ walletAddress: address })),
-    setWalletDetail: ({ mainnet, testnet }) => set(() => ({ walletDetails: { mainnet, testnet } })),
+    setWalletBalance: (balance) => set(() => ({ walletBalance: balance })),
+    userData: {
+        bonuses: '0',
+        ga_key: false,
+        sponsor: '',
+        tickets: 0,
+        username: ''
+    },
+    setUserData: (data) => set(() => ({ userData: data })),
 }))
 
 export const useAuthStore = create(persist<AuthStore>((set, _get) => ({

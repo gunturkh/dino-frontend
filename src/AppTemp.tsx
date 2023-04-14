@@ -1,11 +1,11 @@
 import { useFormik } from "formik";
-import { useEtherBalance, useEthers, BSC, BSCTestnet, } from "@usedapp/core";
+import { useEtherBalance, useEthers, BSC, BSCTestnet, useToken, ERC20Interface, Falsy, useCall, useTokenBalance, } from "@usedapp/core";
 import { Stage } from "@pixi/react";
 import { useState, Suspense, useEffect } from "react";
 import { axiosInstance } from "./utils/api";
 // @ts-ignore
 import WalletConnectProvider from '@walletconnect/web3-provider/dist/umd/index.min.js'
-import { formatEther } from '@ethersproject/units'
+import { formatEther, formatUnits } from '@ethersproject/units'
 import Home from "./components/scene/Home";
 import Register from "./components/scene/Register";
 import Loading from "./components/scene/Loader";
@@ -14,7 +14,8 @@ import Album from "./components/scene/Album";
 
 import DinoCenter from "./components/scene/DinoCenter";
 import { useAuthStore, useStore } from "./utils/store";
-import { BigNumber, BigNumberish } from "ethers";
+import { BigNumber, BigNumberish, Contract, utils } from "ethers";
+import { Interface } from "ethers/lib/utils";
 
 type loginReqFormat = {
   username: string;
@@ -37,16 +38,23 @@ type registerReqFormat = {
 type otpReqFormat = {
   email: string;
 };
+const USDT_ADDRESS = '0x0ed04d340a054382383ee2edff0ced66ead7496c'
 
 export const AppTemp = () => {
-  const { account, active, activate, deactivate, activateBrowserWallet, error } = useEthers();
+  const { account, active, activate, deactivate, activateBrowserWallet, error, chainId, switchNetwork } = useEthers();
   const token = useAuthStore((state) => state.token);
   const saveToken = useAuthStore((state) => state.saveToken);
   const scene = useStore((state) => state.scene);
   const walletAddress = useStore((state) => state.walletAddress);
   const setWalletAddress = useStore((state) => state.setWalletAddress);
-  const mainnetBalance = useEtherBalance(walletAddress, { chainId: BSC.chainId })
-  const testnetBalance = useEtherBalance(walletAddress, { chainId: BSCTestnet.chainId })
+  const setWalletBalance = useStore((state) => state.setWalletBalance);
+  const usdtInfo = useToken(USDT_ADDRESS)
+  const usdtBalance = useTokenBalance(USDT_ADDRESS, account)
+  const tokenBalance = useTokenBalance('0x1D2F0da169ceB9fC7B3144628dB156f3F6c60dBE', account)
+  const etherBalance = useEtherBalance(account, { chainId: BSCTestnet.chainId })
+  const mainnetBalance = useEtherBalance(account, { chainId: BSC.chainId })
+  const testnetBalance = useEtherBalance(account, { chainId: BSCTestnet.chainId })
+
   const changeScene = useStore((state) => state.changeScene);
   const [authMode, setAuthMode] = useState<
     "LOGIN" | "REGISTER" | "OTPEMAIL" | "OTPMOBILE" | "LOGINWALLET"
@@ -55,7 +63,12 @@ export const AppTemp = () => {
   const [activateError, setActivateError] = useState('')
   const [registerCheckbox, setRegisterCheckbox] = useState(false);
 
-  console.log({ mainnetBalance: mainnetBalance && formatEther(mainnetBalance as any), testnetBalance: testnetBalance && formatEther(testnetBalance as any) })
+  // console.log('usdtBalance', usdtBalance)
+  console.log('tokenBalance', tokenBalance)
+  console.log('etherBalance', etherBalance)
+  console.log('usdtInfo', usdtInfo)
+  console.log({ mainnetBalance: mainnetBalance && formatEther(mainnetBalance as any), testnetBalance: testnetBalance && formatEther(testnetBalance as any), chainId })
+  // console.log({ testnetBalance: testnetBalance && formatEther(testnetBalance as any) })
   const connectToWallet = async (e: React.MouseEvent<HTMLElement>, type: string) => {
     e.stopPropagation();
     setActivateError('')
@@ -271,7 +284,10 @@ export const AppTemp = () => {
   useEffect(() => {
     console.log("active", active);
     console.log("account", account);
-    if (!!account) setWalletAddress(account)
+    if (!!account) {
+      setWalletAddress(account)
+      if (chainId !== BSCTestnet.chainId) switchNetwork(BSCTestnet.chainId)
+    }
     if (active && !!account && authMode === "OTPEMAIL")
       otpForm.setFieldValue("walletAddress", account);
     if (!active && !account && authMode === "OTPEMAIL")
@@ -280,14 +296,22 @@ export const AppTemp = () => {
       loginWalletForm.setFieldValue("walletAddress", account);
     if (!active && !account && authMode === "LOGINWALLET")
       loginWalletForm.setFieldValue("walletAddress", "");
-  }, [active, account, authMode]);
+  }, [active, account, authMode, chainId]);
 
   useEffect(() => {
-    if (error) {
-      setActivateError(error.message)
-      // window.alert(error.message)
+    if (usdtBalance) {
+      const balance = formatUnits(usdtBalance, 18)
+      console.log('usdtBalance', balance)
+      setWalletBalance(balance)
     }
-  }, [error])
+  }, [setWalletBalance, usdtBalance])
+
+  // useEffect(() => {
+  //   if (error) {
+  //     setActivateError(error.message)
+  //     window.alert(error.message)
+  //   }
+  // }, [error])
   const options = {
     backgroundColor: 0x1099bb,
     antialias: true,

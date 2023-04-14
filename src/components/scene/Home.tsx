@@ -17,6 +17,9 @@ type Props = {
 const Home = ({ onProfileClick, scene }: Props) => {
   const app = useApp();
   const changeScene = useStore((state) => state.changeScene);
+  const walletBalance = useStore((state) => state.walletBalance);
+  const userData = useStore((state) => state.userData);
+  const setUserData = useStore((state) => state.setUserData);
   const token = useAuthStore((state) => state.token);
   console.log("token", token);
   const isNotMobile = app.screen.width > 450;
@@ -65,6 +68,9 @@ const Home = ({ onProfileClick, scene }: Props) => {
         method: "GET",
       });
       console.log('getUserData Result:', result)
+      if (result && result.data && result.data.result) {
+        setUserData(result.data.result)
+      }
     };
 
     getUserData();
@@ -110,7 +116,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
             <ProfileComponent
               spriteTexture={PIXI?.Assets?.get("ProfileBg") || PIXI.Texture.EMPTY}
               avatarTexture={PIXI?.Assets?.get("ProfileAvatarDefault") || PIXI.Texture.EMPTY}
-              text={`h=${app.screen.height?.toFixed()}`}
+              text={userData.username}
               componentPosX={
                 app.screen?.width > 450
                   ? -(ProfileBgBounds?.width * 2.4)
@@ -224,7 +230,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
               <DetailsComponent
                 spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
                 IconTexture={PIXI?.Assets?.get("USDTIcon")}
-                text={"123.123.123"}
+                text={walletBalance}
                 posX={0}
                 posY={0}
                 scaleX={isNotMobile ? 1 : 0.8}
@@ -270,7 +276,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
               <DetailsComponent
                 spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
                 IconTexture={PIXI?.Assets?.get("EventFragmentIcon")}
-                text={"0.55012312"}
+                text={userData?.bonuses.toString() || '0'}
                 posX={0}
                 posY={0}
                 scaleX={isNotMobile ? 1 : 0.85}
@@ -291,7 +297,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
               <DetailsComponent
                 spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
                 IconTexture={PIXI?.Assets?.get("DinoTicketIcon")}
-                text={"123.123.123"}
+                text={userData?.tickets.toString() || '0'}
                 posX={0}
                 posY={35}
                 scaleX={isNotMobile ? 1 : 0.85}

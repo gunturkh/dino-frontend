@@ -783,7 +783,7 @@ const Album = ({
 
           {/* Album list */}
           <Container
-            position={[0, 0]}
+            position={[0, 10]}
           >
             <Container
               ref={cardListRef}
