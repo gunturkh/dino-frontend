@@ -54,7 +54,7 @@ const EggListingComponent = ({
     countdownMinutes: 0,
     countdownSeconds: 0,
   });
-
+  console.log(`${index}`)
   useEffect(() => {
     let timeInterval: any;
     const countdown = () => {
@@ -95,7 +95,7 @@ const EggListingComponent = ({
     return () => {
       clearInterval(timeInterval);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const countdownText = () => {

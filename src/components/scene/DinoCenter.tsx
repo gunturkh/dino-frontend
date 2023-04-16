@@ -11,70 +11,136 @@ const dummyListingData = [
   {
     id: "43d0dc7559ab1d630b1255b4bc073368",
     ticket: 2,
-    total: "5125.371",
-    openat: 1681341402,
+    // total: "5125.371",
+    total: "1",
+    openat: 1681640817,
   },
   {
     id: "1b866c80f12fa4f67b80879b10badbfb",
     ticket: 1,
-    total: "5125.371",
-    openat: 1681198665,
+    // total: "5125.371",
+    total: "2",
+    openat: 1681642817,
   },
   {
     id: "c17ec81751eb424c57ccbb6b22e7842d",
     ticket: 1,
-    total: "5125.371",
-    openat: 1681198765,
+    // total: "5125.371",
+    total: "3",
+    openat: 1681645817,
   },
   {
     id: "8bc77b6cdfa78deba5fde023653acea9",
     ticket: 4,
-    total: "5125.371",
-    openat: 1681198865,
+    // total: "5125.371",
+    total: "4",
+    openat: 1681647817,
   },
   {
     id: "086f39a21e9925ec873f528d9d19794d",
     ticket: 4,
-    total: "5125.371",
-    openat: 1681185515,
+    // total: "5125.371",
+    total: "5",
+    openat: 1681648817,
   },
   {
     id: "086f39a21e9925ec873f528d9d19794d",
     ticket: 1,
-    total: "5125.371",
-    openat: 1681185515,
+    // total: "5125.371",
+    total: "6",
+    openat: 1681649817,
   },
   {
     id: "086f39a21e9925ec873f528d9d19794d",
     ticket: 1,
-    total: "5125.371",
-    openat: 1681185515,
+    // total: "5125.371",
+    total: "7",
+    openat: 1681650817,
   },
   {
     id: "086f39a21e9925ec873f528d9d19794d",
     ticket: 1,
-    total: "5125.371",
-    openat: 1681185515,
+    // total: "5125.371",
+    total: "8",
+    openat: 1681651817,
   },
   {
     id: "086f39a21e9925ec873f528d9d19794d",
     ticket: 1,
-    total: "5125.371",
-    openat: 1681185515,
+    // total: "5125.371",
+    total: "9",
+    openat: 1681653817,
   },
   {
     id: "086f39a21e9925ec873f528d9d19794d",
     ticket: 1,
-    total: "5125.371",
-    openat: 1681185515,
+    // total: "5125.371",
+    total: "10",
+    openat: 1681654817,
+  },
+  {
+    id: "086f39a21e9925ec873f528d9d19794d",
+    ticket: 1,
+    // total: "5125.371",
+    total: "11",
+    openat: 1681655817,
+  },
+  {
+    id: "086f39a21e9925ec873f528d9d19794d",
+    ticket: 1,
+    // total: "5125.371",
+    total: "12",
+    openat: 1681656817,
+  },
+  {
+    id: "086f39a21e9925ec873f528d9d19794d",
+    ticket: 1,
+    // total: "5125.371",
+    total: "13",
+    openat: 1681658817,
+  },
+  {
+    id: "086f39a21e9925ec873f528d9d19794d",
+    ticket: 1,
+    // total: "5125.371",
+    total: "14",
+    openat: 1681660817,
+  },
+  {
+    id: "086f39a21e9925ec873f528d9d19794d",
+    ticket: 1,
+    // total: "5125.371",
+    total: "15",
+    openat: 1681662817,
+  },
+  {
+    id: "086f39a21e9925ec873f528d9d19794d",
+    ticket: 1,
+    // total: "5125.371",
+    total: "16",
+    openat: 1681664817,
+  },
+  {
+    id: "086f39a21e9925ec873f528d9d19794d",
+    ticket: 1,
+    // total: "5125.371",
+    total: "17",
+    openat: 1681684817,
+  },
+  {
+    id: "086f39a21e9925ec873f528d9d19794d",
+    ticket: 1,
+    // total: "5125.371",
+    total: "18",
+    openat: 1681686817,
   },
 ];
 
 const duplicateListingData = [
   dummyListingData,
-  dummyListingData,
-  dummyListingData,
-  dummyListingData,
+  // dummyListingData,
+  // dummyListingData,
+  // dummyListingData,
 ].flat();
 console.log("🚀 ~ file: DinoCenter.tsx:91 ~ duplicateListingData:", duplicateListingData)
 
@@ -642,8 +708,8 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
                   return (
                     <>
                       <EggListingComponent
-                        key={`egg-list-${idx}`}
-                        index={`egg-list-${idx}`}
+                        key={`egg-list-${idx + ((currentPage - 1) * 12)}`}
+                        index={`egg-list-${idx + ((currentPage - 1) * 12)}`}
                         idx={idx}
                         priceText={d?.total.toString()}
                         timerText={d?.openat.toString()}
