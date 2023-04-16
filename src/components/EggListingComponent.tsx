@@ -8,6 +8,7 @@ import {
 } from "@pixi/react";
 
 type props = {
+  id?: string;
   priceText?: string;
   timerText?: string;
   key?: string;
@@ -27,6 +28,7 @@ type props = {
 };
 
 const EggListingComponent = ({
+  id,
   priceText,
   timerText,
   key,
@@ -54,7 +56,7 @@ const EggListingComponent = ({
     countdownMinutes: 0,
     countdownSeconds: 0,
   });
-  console.log(`${index}`)
+  console.log(`${index}`, { listingItemBounds })
   useEffect(() => {
     let timeInterval: any;
     const countdown = () => {
@@ -63,9 +65,9 @@ const EggListingComponent = ({
           const countdownDateTime = expiryTime * 1000;
           const currentTime = new Date().getTime();
           const remainingDayTime = countdownDateTime - currentTime;
-          console.log(`countdownDateTime ${index}`, countdownDateTime);
-          console.log(`currentTime ${index}`, currentTime);
-          console.log(`remainingDayTime ${index}`, remainingDayTime);
+          // console.log(`countdownDateTime ${index}`, countdownDateTime);
+          // console.log(`currentTime ${index}`, currentTime);
+          // console.log(`remainingDayTime ${index}`, remainingDayTime);
           const totalHours = Math.floor(
             (remainingDayTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
           );

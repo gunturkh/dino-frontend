@@ -20,6 +20,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
   const walletBalance = useStore((state) => state.walletBalance);
   const userData = useStore((state) => state.userData);
   const setUserData = useStore((state) => state.setUserData);
+  const setEggListsData = useStore((state) => state.setEggListsData);
   const token = useAuthStore((state) => state.token);
   console.log("token", token);
   const isNotMobile = app.screen.width > 450;
@@ -73,9 +74,21 @@ const Home = ({ onProfileClick, scene }: Props) => {
       }
     };
 
+  const getEggList = async () => {
+    const data: any = await axiosInstance({
+      url: "/egg/lists",
+      method: "GET",
+    });
+    console.log("getEggList Result:", data);
+    if (data?.status === 200 && data?.data?.result?.lists) {
+      setEggListsData(data?.data?.result.lists);
+    }
+  };
+
     getUserData();
+    getEggList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [token]);
 
   // const [normalEggBounds, setNormalEggBounds] = useState({
   //   x: 0, y: 0, width: 0, height: 0

@@ -160,7 +160,7 @@ export const AppTemp = () => {
     const errors: LoginFormValidate = {};
     if (!values.username) {
       errors.username = "Required";
-    } else if (!/^[A-Za-z][A-Za-z0-9_]{5,20}$/i.test(values.username)) {
+    } else if (!/^[A-Za-z0-9_]{5,20}$/i.test(values.username)) {
       errors.username = "Invalid username, min 5 chars & max 20 chars";
     }
     if (!values.password) {

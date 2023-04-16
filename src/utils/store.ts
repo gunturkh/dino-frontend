@@ -9,6 +9,13 @@ type User = {
     username: string
 }
 
+type Egg = {
+    id: string,
+    openat: number,
+    ticket: number,
+    total: string
+}
+
 type Store = {
     scene: Screen,
     changeScene: (screen: Screen) => void,
@@ -18,6 +25,8 @@ type Store = {
     setWalletBalance: (balance: string) => void,
     userData: User,
     setUserData: (data: User) => void,
+    eggListsData: Egg[],
+    setEggListsData: (data: Egg[]) => void,
 }
 type AuthStore = {
     token: string | null,
@@ -41,6 +50,8 @@ export const useStore = create<Store>((set, _get) => ({
         username: ''
     },
     setUserData: (data) => set(() => ({ userData: data })),
+    eggListsData: [],
+    setEggListsData: (data) => set(() => ({ eggListsData: data }))
 }))
 
 export const useAuthStore = create(persist<AuthStore>((set, _get) => ({

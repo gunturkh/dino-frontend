@@ -4,7 +4,7 @@ import { Container, Sprite, useApp, Text } from "@pixi/react";
 import { ProgressBar } from "@pixi/ui";
 
 import EggListingComponent from "../EggListingComponent";
-// import { useStore } from "../../utils/store";
+import { useStore } from "../../utils/store";
 import { axiosInstance } from "../../utils/api";
 
 const dummyListingData = [
@@ -156,18 +156,21 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
   });
 
   console.log("rankDetailBounds:", rankDetailBounds)
+  const eggListsData = useStore(state => state.eggListsData)
+  const setEggListsData = useStore(state => state.setEggListsData)
   const [isLoaded, setIsLoaded] = useState(false);
   const [selectedPanel, setSelectedPanel] = useState("Listing");
+  const [eggLists, setEggLists] = useState([]);
 
   const [eggPerPage] = useState(12);
   const [paginationPageNumbers, setPaginationPageNumbers] = useState([1]);
   const [currentPage, setCurrentPage] = useState(1);
   // TODO: tempCards should be set with the actual data from the API
   const [tempCards, setTempCards] = useState<any>([])
-  const totalPages = Math.ceil(tempCards.length / eggPerPage);
+  const totalPages = Math.ceil(eggListsData.length / eggPerPage);
   const startIndex = (currentPage - 1) * eggPerPage;
   const endIndex = startIndex + eggPerPage;
-  const currentEggs = tempCards.slice(startIndex, endIndex);
+  const currentEggs = eggListsData.slice(startIndex, endIndex);
 
   const [listingItemBounds, setListingItemBounds] = useState({
     x: 0, y: 0, width: 0, height: 0
@@ -232,8 +235,7 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
 
   // running this once to get the first 12 eggs
   useEffect(() => {
-    if (duplicateListingData)
-      setTempCards(duplicateListingData)
+    if (duplicateListingData) setEggListsData(duplicateListingData)
   }, [])
 
   useEffect(() => {
@@ -297,7 +299,18 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
     });
     console.log("getEggList Result:", data);
     if (data?.status === 200 && data?.data?.result?.lists) {
-      // setEggLists(data?.data?.result.lists);
+      setEggListsData(data?.data?.result.lists);
+    }
+  };
+
+  const handleKeep = async (id: string) => {
+    const data: any = await axiosInstance({
+      url: "/egg/keep",
+      method: "GET",
+      data: { id }
+    });
+    console.log("handleKeep Result:", data);
+    if (data?.status === 200) {
     }
   };
   useEffect(() => {
@@ -708,10 +721,11 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
                   return (
                     <>
                       <EggListingComponent
+                        id={`${d.id}`}
                         key={`egg-list-${idx + ((currentPage - 1) * 12)}`}
                         index={`egg-list-${idx + ((currentPage - 1) * 12)}`}
                         idx={idx}
-                        priceText={d?.total.toString()}
+                        priceText={d?.total}
                         timerText={d?.openat.toString()}
                         eggType={d?.ticket}
                         listingItemBgRef={listingItemBgRef}
@@ -721,7 +735,8 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
                         calculateEggYPosition={calculateEggYPosition(idx)}
                         onBtnKeepPress={(eggIndex) => {
                           // TODO: action button for keep, using idx from props as a differentiator
-                          console.log('onBtnKeepPress', eggIndex)
+                          console.log('onBtnKeepPress', d.id)
+                          handleKeep(d.id)
                         }}
                       />
                     </>
