@@ -91,7 +91,7 @@ const Loader = ({
       />
       <Sprite
         image={"image/Logo Dino.png"}
-        width={200}
+        width={250}
         height={200}
         anchor={[0.5, 0.5]}
         position={[app.screen.width / 2, app.screen.height - 250]}
