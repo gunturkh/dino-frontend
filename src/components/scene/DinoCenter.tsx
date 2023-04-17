@@ -215,8 +215,8 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
         // node.width = 450 * 0.94;
       } else if (app.screen.width < 400) {
         node.x = -(node.width / 2 + rankDetailBounds.width * 0.12)
-        node.y = app.screen.height * 0.37
-        node.height = app.screen.height * 0.57
+        node.y = app.screen.height * 0.44
+        node.height = app.screen.height * 0.5
         // node.width = app.screen.width * 0.95;
       }
       setEggListingBounds(node.getBounds())
@@ -891,6 +891,7 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
               })}
               <Sprite
                 texture={PIXI.Assets.get('BtnPagePaginationRest')}
+                // texture={paginationPageNumbers.length < 3 ? PIXI.Texture.EMPTY : PIXI.Assets.get('BtnPagePaginationRest')}
                 position={[isNotMobile ? 120 : 120, 0]}
                 anchor={[0.5, 0.5]}
                 width={50}
@@ -908,8 +909,6 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
               eventMode="static"
               onpointertap={() => {
                 getEggList()
-                // reset pagination
-                setCurrentPage(1)
               }}
             />
 

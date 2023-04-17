@@ -50,9 +50,19 @@ const EggListingComponent = ({
 
   const listingActionBtnRef = useCallback((node: any) => {
     if (node !== null && listingItemBounds.height > 0) {
-      node.y = listingItemBounds.height * (isNotMobile ? 0.25 : 0.3)
+
+      if (app.screen.width > 430) {
+        // node.y = listingItemBounds.height * (isNotMobile ? 0.25 : 0.3)
+        node.y = listingItemBounds.height * 0.25
+      }
+      else if (app.screen.width > 400 && app.screen.width <= 430) {
+        node.y = listingItemBounds.height * 0.25
+      }
+      else if (app.screen.width < 400) {
+        node.y = listingItemBounds.height * 0.3
+      }
     }
-  }, [isNotMobile, listingItemBounds.height]);
+  }, [app.screen.width, listingItemBounds.height]);
 
   const [expiryTime, setExpiryTime] = useState(parseInt(timerText as string));
   const [countdownTime, setCountdownTime] = useState({

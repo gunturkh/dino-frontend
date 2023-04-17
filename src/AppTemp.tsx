@@ -2,7 +2,7 @@
 import { useFormik } from "formik";
 import { useEtherBalance, useEthers, BSC, BSCTestnet, useToken, useTokenBalance } from "@usedapp/core";
 import { Stage } from "@pixi/react";
-import { useState, Suspense, useEffect } from "react";
+import { useState, Suspense, useEffect, useCallback } from "react";
 import { axiosInstance } from "./utils/api";
 // @ts-ignore
 // import WalletConnectProvider from '@walletconnect/web3-provider/dist/umd/index.min.js'
@@ -328,7 +328,17 @@ export const AppTemp = () => {
   const appWidth = window.innerWidth;
   const appHeight = window.innerHeight;
 
-  console.log("scene", scene);
+  const stageRef = useCallback((node: Stage) => {
+    if (node !== null) {
+      // node.render();
+      node.forceUpdate(() => {
+        node.render();
+      });
+
+
+    }
+  }, []);
+
 
   const loginHandler = async () => {
     // TODO: to change scene to home
@@ -720,70 +730,74 @@ export const AppTemp = () => {
           </div>
         </div>
       )}
-      <Stage
-        width={appWidth}
-        height={appHeight}
-        options={options}
-        raf={true}
-        onAnimationIteration={() => {
-          console.log("animation iteration");
-        }}
-      // onMount={(_app) => setApp(_app)}
-      >
-        {/* @ts-ignore */}
+      <div>
+        <Stage
+          ref={stageRef}
+          width={appWidth}
+          height={appHeight}
+          options={options}
+          raf={true}
+          // renderOnComponentChange={true}
+          onAnimationIteration={() => {
+            console.log("animation iteration");
+          }}
+        // onMount={(_app) => setApp(_app)}
+        >
+          {/* @ts-ignore */}
 
-        <Suspense fallback={<p>loading...</p>}>
-          {scene === "LOADING" && (
-            <Loading
-              onFinishLoading={() => {
-                console.log("finish loading");
-                if (token && token !== '') changeScene('HOME')
-                else changeScene("REGISTER");
-              }}
-              visible={scene === "LOADING"}
-            />
+          <Suspense fallback={<p>loading...</p>}>
+            {scene === "LOADING" && (
+              <Loading
+                onFinishLoading={() => {
+                  console.log("finish loading");
+                  if (token && token !== '') changeScene('HOME')
+                  else changeScene("REGISTER");
+                }}
+                visible={scene === "LOADING"}
+              />
+            )}
+          </Suspense>
+          {scene === "REGISTER" && <Register />}
+          {scene === "HOME" && (
+            <>
+              <Home onProfileClick={() => changeScene("PROFILE")} scene={scene} />
+            </>
           )}
-        </Suspense>
-        {scene === "REGISTER" && <Register />}
-        {scene === "HOME" && (
-          <>
-            <Home onProfileClick={() => changeScene("PROFILE")} scene={scene} />
-          </>
-        )}
-        {scene === "PROFILE" && (
-          <>
-            <ProfileTemp
-              onBackBtnClick={() => {
-                changeScene("HOME");
-                console.log("back");
-              }}
-            />
-          </>
-        )}
-        {scene === "DINOCENTER" && (
-          <>
-            <DinoCenter
-              scene={scene}
-              onBackBtnClick={() => {
-                changeScene("HOME");
-                console.log("back");
-              }}
-            />
-          </>
-        )}
-        {scene === "ALBUM" && (
-          <>
-            <Album
-              scene={scene}
-              onBackBtnClick={() => {
-                changeScene("HOME");
-                console.log("back");
-              }}
-              visible={scene === "ALBUM"}
-            />
-          </>
-        )}
-      </Stage>
+          {scene === "PROFILE" && (
+            <>
+              <ProfileTemp
+                onBackBtnClick={() => {
+                  changeScene("HOME");
+                  console.log("back");
+                }}
+              />
+            </>
+          )}
+          {scene === "DINOCENTER" && (
+            <>
+              <DinoCenter
+                scene={scene}
+                onBackBtnClick={() => {
+                  changeScene("HOME");
+                  console.log("back");
+                }}
+              />
+            </>
+          )}
+          {scene === "ALBUM" && (
+            <>
+              <Album
+                scene={scene}
+                onBackBtnClick={() => {
+                  changeScene("HOME");
+                  console.log("back");
+                }}
+                visible={scene === "ALBUM"}
+              />
+            </>
+          )}
+        </Stage>
+      </div>
     </div>
   );
 };

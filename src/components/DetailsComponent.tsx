@@ -21,6 +21,7 @@ type Props = {
   scaleY?: number;
   ref?: any;
   onPress?: () => void;
+  isVisible?: boolean;
 }
 
 const DetailsComponent = ({
@@ -36,6 +37,7 @@ const DetailsComponent = ({
   scaleY = 1,
   ref = null,
   onPress,
+  isVisible = true,
 }: Props) => {
   const app = useApp();
   const containerRef = useRef();
@@ -67,6 +69,7 @@ const DetailsComponent = ({
         position={[posX, posY]}
         eventMode='static'
         onpointertap={onPress}
+        visible={isVisible}
       >
         {spriteTexture && IconTexture && (
           <>

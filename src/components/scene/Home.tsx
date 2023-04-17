@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import * as PIXI from "pixi.js";
 import { Container, Sprite, useApp, Text } from "@pixi/react";
 // import { useSendTransaction } from "@usedapp/core";
@@ -74,8 +74,163 @@ const Home = ({ onProfileClick, scene }: Props) => {
   const BtnSmallBounds = PIXI?.Assets?.get("LowerBtnSmallBg")?.orig || defaultBounds;
   const BtnBigBounds = PIXI?.Assets?.get("LowerBtnBigBg")?.orig || defaultBounds;
 
-  const upperContainerRef = useRef(null);
-  const homecontainerRef = useRef(null);
+  // useEffect(() => {
+  //   if (isLoaded) {
+  //     // app.resizeTo = window;
+  //     var W = 430, H = 932;
+  //     var ratio = Math.min(window.innerWidth / W, window.innerHeight / H);
+
+  //     app.stage.position.set(app.renderer.width / 2, app.renderer.height / 2);
+  //     app.stage.scale.set(ratio, ratio);
+  //     app.stage.pivot.set(W / 2, H / 2);
+
+
+
+  //     app.renderer.resize(Math.max(1, window.innerWidth), Math.max(1, window.innerHeight));
+  //     console.log("app.screen", app.screen);
+  //   }
+  // }, [app, isLoaded]);
+
+  const upperContainerRef = useCallback((node: any) => {
+    // if (node !== null) {
+    //   if (app.screen.width > 430) {
+    //     node.width = 450 * 1;
+    //   } else if (app.screen.width > 400 && app.screen.width <= 430) {
+    //     node.width = 450 * 0.95;
+    //   } else if (app.screen.width < 400) {
+    //     node.width = app.screen.width * 0.95;
+    //   }
+    //   console.log('upperContainerRef node.height', node.height, node.width, node.y, node.x)
+    // }
+
+  }, []);
+
+  const homecontainerRef = useCallback((node: any) => {
+    if (node !== null) {
+      node.x = app.screen.width / 2
+      node.y = 0
+
+      if (app.screen.width > 430) {
+        node.scale.set(1.1, 1)
+      } else if (app.screen.width > 400 && app.screen.width <= 430) {
+        // node.width = 450 * 0.95;
+        node.scale.set(0.95, 1)
+        // node.height = app.screen.height * 0.97
+      } else if (app.screen.width < 400) {
+        node.scale.set(0.9, 1)
+        if (app.screen.height > 800) {
+          node.scale.set(0.9, 1)
+        } else if (app.screen.height >= 700 && app.screen.height <= 800) {
+          node.scale.set(0.9, 1)
+        } else if (app.screen.height >= 400 && app.screen.height <= 500) {
+          node.scale.set(0.9, 1)
+        } else if (app.screen.height < 400) {
+          node.scale.set(0.9, 1)
+
+        }
+      }
+      // else if (app.screen.width < 400) {
+      //   // node.width = app.screen.width * 0.95;
+      //   node.height = app.screen.height * 0.9
+      //   node.scale.set(0.9, 1)
+      // }
+      console.log('upperContainerRef node.height', node.height, node.width, node.y, node.x)
+    }
+  }, [app.screen.height, app.screen.width]);
+
+  const detailsContainerRef = useCallback((node: any) => {
+    if (node !== null) {
+      // y={app.screen?.width > 450 ? 130 : 110}
+      if (app.screen.width > 430) {
+        node.y = app.screen.height * 0.15
+      } else if (app.screen.width > 400 && app.screen.width <= 430) {
+        node.y = app.screen.height * 0.12
+      } else if (app.screen.width < 400) {
+        node.y = app.screen.height * 0.15
+        if (app.screen.height > 800) {
+          node.scale.set(0.9, 1)
+        } else if (app.screen.height >= 700 && app.screen.height <= 800) {
+          node.scale.set(0.9, 1)
+        } else if (app.screen.height >= 400 && app.screen.height <= 500) {
+          node.scale.set(0.9, 1)
+        } else if (app.screen.height < 400) {
+          node.scale.set(0.9, 1)
+
+        }
+      }
+      console.log('upperContainerRef node.height', node.height, node.width, node.y, node.x)
+    }
+  }, [app.screen.height, app.screen.width]);
+
+  const [lowerContainerBounds, setLowerContainerBounds] = useState(defaultBounds);
+
+  console.log('lowerContainerBounds outside', lowerContainerBounds)
+
+
+  const lowerSectionContainerRef = useCallback((node: any) => {
+    if (node !== null && isLoaded) {
+      setLowerContainerBounds(node.getBounds(true))
+      // node.y = 0
+      console.log('lowerBounds local bounds', node.getLocalBounds())
+      console.log('lowerBounds get bounds', node.getBounds())
+      const localBounds = node.getLocalBounds()
+      console.log("🚀 ~ file: home.tsx:136 ~ lowerSectionContainerRef ~ localBounds:", localBounds)
+
+      if (app.screen.width > 430) {
+        node.y = app.screen.height * 0.8
+      }
+      else if (app.screen.width > 400 && app.screen.width <= 430) {
+        node.y = app.screen.height * 0.8
+      }
+      else if (app.screen.width < 400) {
+        node.y = app.screen.height * 0.61
+        if (app.screen.height > 800) {
+          node.y = app.screen.height * 0.78
+        } else if (app.screen.height >= 700 && app.screen.height <= 800) {
+          node.y = app.screen.height * 0.7
+        } else if (app.screen.height > 500 && app.screen.height <= 700) {
+          node.y = app.screen.height * 0.7
+        } else if (app.screen.height >= 400 && app.screen.height <= 500) {
+          node.y = app.screen.height * 0.65
+        } else if (app.screen.height < 400) {
+          node.y = app.screen.height * 0.57
+        }
+      }
+
+      // console.log('lowerSectionContainerRef node.height', node.height, node.width, node.y, node.x)
+    }
+  }, [app.screen.height, app.screen.width, isLoaded]);
+
+
+  const [eggPlateContainerBounds, setEggPlateContainerBounds] = useState({
+    x: 0, y: 0, width: 0, height: 0
+  });
+
+  const eggPlateContainerRef = useCallback((node: any) => {
+    if (node !== null) {
+      if (app.screen.width > 430) {
+        node.y = app.screen.height / 2
+        node.scale.set(1, 1)
+        // node.height = app.screen.height * 0.6
+        node.width = 450 * 1;
+      } else if (app.screen.width > 400 && app.screen.width <= 430) {
+        node.y = app.screen.height / 2
+        node.scale.set(1, 1)
+        // node.height = app.screen.height * 0.6
+        // node.width = 450 * 0.94;
+      } else if (app.screen.width < 400) {
+        node.y = app.screen.height / 2 + 20
+        node.height = app.screen.height * 0.35
+        node.width = app.screen.width * 0.7;
+        node.scale.set(0.8, 0.8)
+      }
+      console.log('eggplate node.height', node.height, node.width, node.y, node.x)
+      setEggPlateContainerBounds(node.getBounds());
+
+    }
+  }, [app.screen.height, app.screen.width]);
+
+  console.log('eggPlateContainerBounds', eggPlateContainerBounds)
 
   useEffect(() => {
     // /user/getUserData
@@ -105,15 +260,6 @@ const Home = ({ onProfileClick, scene }: Props) => {
     getEggList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
-
-  // const [normalEggBounds, setNormalEggBounds] = useState({
-  //   x: 0, y: 0, width: 0, height: 0
-  // });
-  const normalEggref = useCallback((node: any) => {
-    if (node !== null) {
-      // setNormalEggBounds(node.getBounds());
-    }
-  }, []);
 
   const NormalEggComponent = ({
     eggTexture,
@@ -165,8 +311,11 @@ const Home = ({ onProfileClick, scene }: Props) => {
   const EggPlateComponent = () => {
     return (
       <Container
+        ref={eggPlateContainerRef}
         x={-5}
-        y={app.screen.height / 2}
+        scale={[0.9, 0.9]}
+        height={app.screen.height * 0.4}
+      // width={app.screen.width * 0.9}
       >
         <Sprite
           texture={PIXI.Assets.get("EggPlate") || PIXI.Texture.EMPTY}
@@ -202,7 +351,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
 
         {/* egg 5 */}
         <NormalEggComponent
-          ref={normalEggref}
+          // ref={normalEggref}
           eggTexture={PIXI.Assets.get("EggIcon3")}
           posX={7}
           posY={29}
@@ -250,450 +399,458 @@ const Home = ({ onProfileClick, scene }: Props) => {
   }
   return (
     <>
-      {isLoaded && <Container>
-        <Sprite
-          texture={PIXI?.Assets?.get("MainBg") || PIXI.Texture.EMPTY}
-          width={
-            app.screen.width < 450 ? app.screen.width * 1.5 : app.screen.width
-          }
-          height={app.screen.height}
-          anchor={[0.5, 0.5]}
-          position={[app.screen.width / 2, app.screen.height / 2]}
-        />
+      {/* {isLoaded && */}
+      {true &&
         <Container
-          ref={homecontainerRef}
-          x={app.screen.width / 2}
-          y={0}
-          width={app.screen.width > 450 ? 450 : app.screen.width}
-        // position={[app.screen.width / 2, 0]}
-        // anchor={[0.5, 0.5]}
+          height={app.screen.height}
         >
-          {/* Upper  Container */}
-          <Container
-            ref={upperContainerRef}
-            // x={0}
-            y={app.screen.width > 450 ? 20 : 0}
-            // width={app.screen.width}
+          <Sprite
+            texture={PIXI?.Assets?.get("MainBg") || PIXI.Texture.EMPTY}
+            width={
+              app.screen.width < 450 ? app.screen.width * 1.5 : app.screen.width
+            }
+            height={app.screen.height}
             anchor={[0.5, 0.5]}
+            position={[app.screen.width / 2, app.screen.height / 2]}
+          />
+          <Container
+            ref={homecontainerRef}
+
           >
-            <ProfileComponent
-              spriteTexture={PIXI?.Assets?.get("ProfileBg") || PIXI.Texture.EMPTY}
-              avatarTexture={PIXI?.Assets?.get("ProfileAvatarDefault") || PIXI.Texture.EMPTY}
-              text={userData.username}
-              componentPosX={
-                app.screen?.width > 450
-                  ? -(ProfileBgBounds?.width * 2.4)
-                  : -(ProfileBgBounds?.width * 2.4)
-              }
-              componentPosY={0}
-              avatarXOffset={0}
-              avatarYOffset={
-                (ProfileBgBounds?.height / 2 -
-                  ProfileAvatarDefaultBounds?.height / 2) *
-                0.5
-              }
-              textYOffset={ProfileBgBounds?.height - 8}
-              textStyle={
-                new PIXI.TextStyle({
-                  fontFamily: "Magra Bold",
-                  fontSize: 16,
-                  fontWeight: "bold",
-                  fill: ["0x705802"],
-                })
-              }
-              onPress={() => {
-                onProfileClick();
-              }}
-            />
-
-            <DinoFundComponent
-              spriteTexture={PIXI?.Assets?.get("DinoFundBg")}
-              text="9.000.000.000"
-              // text={`w=${getHomeContainerBounds.width.toFixed()} h=${getHomeContainerBounds.height}`}
-              posX={0}
-              posY={0}
-              scaleX={app.screen?.width > 450 ? 0.87 : 0.75}
-              textYOffest={(DinoFundBgBounds?.height * 0.5) / 2 - 5}
-              textStyle={
-                new PIXI.TextStyle({
-                  fontFamily: "Magra Bold",
-                  fontSize: 24,
-                  fontWeight: "bold",
-                  fill: ["0xFFC700"],
-                })
-              }
-            />
-
+            {/* Upper  Container */}
             <Container
-              position={[
-                (DinoFundBgBounds?.width / 2) *
-                (app.screen?.width > 450 ? 1.05 : 1),
-                DinoFundBgBounds?.height / 2 - 7,
-              ]}
+              ref={upperContainerRef}
+              // x={0}
+              y={app.screen.width > 450 ? 20 : 0}
+              // height={app.screen.height * 0.1}
+              // width={app.screen.width * 0.95}
+              anchor={[0.5, 0.5]}
             >
-              {/* Button Language */}
-              <Sprite
-                texture={PIXI?.Assets?.get("BtnLngHome") || PIXI.Texture.EMPTY}
-                width={app.screen?.width > 450 ? 35 : 30}
-                height={app.screen?.width > 450 ? 35 : 30}
+              <ProfileComponent
+                spriteTexture={PIXI?.Assets?.get("ProfileBg") || PIXI.Texture.EMPTY}
+                avatarTexture={PIXI?.Assets?.get("ProfileAvatarDefault") || PIXI.Texture.EMPTY}
+                text={userData.username}
+                componentPosX={
+                  app.screen?.width > 450
+                    ? -(ProfileBgBounds?.width * 2.4)
+                    : -(ProfileBgBounds?.width * 2.4)
+                }
+                componentPosY={0}
+                avatarXOffset={0}
+                avatarYOffset={
+                  (ProfileBgBounds?.height / 2 -
+                    ProfileAvatarDefaultBounds?.height / 2) *
+                  0.5
+                }
+                textYOffset={ProfileBgBounds?.height - 8}
+                textStyle={
+                  new PIXI.TextStyle({
+                    fontFamily: "Magra Bold",
+                    fontSize: 16,
+                    fontWeight: "bold",
+                    fill: ["0x705802"],
+                  })
+                }
+                onPress={() => {
+                  onProfileClick();
+                }}
+              />
+
+              <DinoFundComponent
+                spriteTexture={PIXI?.Assets?.get("DinoFundBg")}
+                text="9.000.000.000"
+                // text={`w=${getHomeContainerBounds.width.toFixed()} h=${getHomeContainerBounds.height}`}
+                posX={0}
+                posY={0}
+                scaleX={app.screen?.width > 450 ? 0.87 : 0.75}
+                textYOffest={(DinoFundBgBounds?.height * 0.5) / 2 - 5}
+                textStyle={
+                  new PIXI.TextStyle({
+                    fontFamily: "Magra Bold",
+                    fontSize: 24,
+                    fontWeight: "bold",
+                    fill: ["0xFFC700"],
+                  })
+                }
+              />
+
+              <Container
+                position={[
+                  (DinoFundBgBounds?.width / 2) *
+                  (app.screen?.width > 450 ? 1.05 : 1),
+                  DinoFundBgBounds?.height / 2 - 7,
+                ]}
+              >
+                {/* Button Language */}
+                <Sprite
+                  texture={PIXI?.Assets?.get("BtnLngHome") || PIXI.Texture.EMPTY}
+                  width={app.screen?.width > 450 ? 35 : 30}
+                  height={app.screen?.width > 450 ? 35 : 30}
+                  anchor={[0.5, 0.5]}
+                  x={0}
+                  y={0}
+                  eventMode={"static"}
+                  onpointertap={() => {
+                    console.log("BtnLngHome clicked");
+                  }}
+                />
+                {/* Button Share */}
+                <Sprite
+                  texture={PIXI?.Assets?.get("BtnShareHome") || PIXI.Texture.EMPTY}
+                  width={app.screen?.width > 450 ? 35 : 30}
+                  height={app.screen?.width > 450 ? 35 : 30}
+                  anchor={[0.5, 0.5]}
+                  x={20 * (app.screen?.width > 450 ? 2 : 1.6)}
+                  y={0}
+                  eventMode={"static"}
+                  onpointertap={() => {
+                    console.log("BtnShareHome clicked");
+                  }}
+                />
+                {/* Button Audio on/mute */}
+                <Sprite
+                  texture={PIXI?.Assets?.get(
+                    toggleBtnAudio ? "BtnAudioHomeOn" : "BtnAudioHomeMute"
+                  ) || PIXI.Texture.EMPTY}
+                  width={app.screen?.width > 450 ? 35 : 30}
+                  height={app.screen?.width > 450 ? 35 : 30}
+                  anchor={[0.5, 0.5]}
+                  x={20 * (app.screen?.width > 450 ? 4 : 3.2)}
+                  y={0}
+                  eventMode={"static"}
+                  onpointertap={() => {
+                    // set toggle audio
+                    setToggleBtnAudio(!toggleBtnAudio);
+                  }}
+                />
+              </Container>
+            </Container>
+
+            {/* Details Container */}
+            <Container
+              ref={detailsContainerRef}
+              x={0}
+
+              // width={app.screen.width > 450 ? 450 : app.screen.width}
+              anchor={[0.5, 0.5]}
+
+            >
+              {/* right side */}
+              <Container
+                // position={[app.screen.width / 2 - (lfSideBounds.width / 2), 0]}
+                position={[isNotMobile ? 110 : 90, 10]}
+                anchor={[0.5, 0.5]}
+              // width={app.screen.width > 450 ? 450 : app.screen.width}
+              >
+                <DetailsComponent
+                  spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
+                  IconTexture={PIXI?.Assets?.get("USDTIcon")}
+                  text={walletBalance}
+                  posX={0}
+                  posY={0}
+                  scaleX={isNotMobile ? 1 : 0.8}
+                  textStyle={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: 20,
+                      fontWeight: "bold",
+                      fill: ["0xFFC700"],
+                    })
+                  }
+                  textYOffest={-3}
+                  textXOffest={10}
+                  onPress={() => {
+                    console.log("onPress BNBDetails");
+                  }}
+                />
+                <DetailsComponent
+                  spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
+                  IconTexture={PIXI?.Assets?.get("BonusIcon")}
+                  text={"123.123.123"}
+                  posX={0}
+                  posY={35}
+                  scaleX={isNotMobile ? 1 : 0.8}
+                  textStyle={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: 20,
+                      fontWeight: "bold",
+                      fill: ["0xFFC700"],
+                    })
+                  }
+                  textYOffest={-2}
+                  textXOffest={10}
+                  onPress={() => {
+                    console.log("onPress StarDetails");
+                  }}
+                />
+              </Container>
+
+              {/* left side */}
+              <Container
+                // pos for 3 details
+                // position={[isNotMobile ? -100 : -85, 0]}
+                position={[isNotMobile ? -100 : -85, -25]}
+                scale={[0.8, 1]}
+              >
+                <DetailsComponent
+                  isVisible={false}
+                  spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
+                  IconTexture={PIXI?.Assets?.get("EventFragmentIcon")}
+                  text={userData?.bonuses.toString() || '0'}
+                  posX={0}
+                  posY={0}
+                  scaleX={isNotMobile ? 1 : 0.85}
+                  textStyle={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: 20,
+                      fontWeight: "bold",
+                      fill: ["0xFFC700"],
+                    })
+                  }
+                  textYOffest={-3}
+                  textXOffest={10}
+                  onPress={() => {
+                    console.log("onPress EventFragmentDetails");
+                  }}
+                />
+                <DetailsComponent
+                  spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
+                  IconTexture={PIXI?.Assets?.get("DinoTicketIcon")}
+                  text={userData?.tickets.toString() || '0'}
+                  posX={0}
+                  posY={35}
+                  scaleX={isNotMobile ? 1 : 0.85}
+                  textStyle={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: 20,
+                      fontWeight: "bold",
+                      fill: ["0xFFC700"],
+                    })
+                  }
+                  textYOffest={-1}
+                  textXOffest={10}
+                  onPress={async () => {
+                    await rawBuyTickets(100)
+                    // console.log("onPress DinoTicketDetails");
+                    // const txReq = { to: TICKET_ADDR, from: walletAddress, data: d.TxRawApproval, value: utils.parseEther(d.total) }
+                    // console.log('txReq', txReq)
+                    // const txSend = await sendTransaction(txReq)
+                    // console.log('txSend', txSend)
+                  }}
+                />
+
+                <DetailsComponent
+                  spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
+                  IconTexture={PIXI?.Assets?.get("DinoEggIcon")}
+                  text={"123.123.123"}
+                  posX={0}
+                  posY={70}
+                  scaleX={isNotMobile ? 1 : 0.85}
+                  textStyle={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: 20,
+                      fontWeight: "bold",
+                      fill: ["0xFFC700"],
+                    })
+                  }
+                  textYOffest={-1}
+                  textXOffest={10}
+                  onPress={() => {
+                    console.log("onPress DinoEggDetailss");
+                  }}
+                />
+              </Container>
+            </Container>
+
+            {/* Egg Panel */}
+            {EggPlateComponent()}
+
+
+
+            {/* Lower Button Container */}
+            {(
+              <Container
+                ref={lowerSectionContainerRef}
                 anchor={[0.5, 0.5]}
                 x={0}
-                y={0}
-                eventMode={"static"}
-                onpointertap={() => {
-                  console.log("BtnLngHome clicked");
-                }}
-              />
-              {/* Button Share */}
-              <Sprite
-                texture={PIXI?.Assets?.get("BtnShareHome") || PIXI.Texture.EMPTY}
-                width={app.screen?.width > 450 ? 35 : 30}
-                height={app.screen?.width > 450 ? 35 : 30}
-                anchor={[0.5, 0.5]}
-                x={20 * (app.screen?.width > 450 ? 2 : 1.6)}
-                y={0}
-                eventMode={"static"}
-                onpointertap={() => {
-                  console.log("BtnShareHome clicked");
-                }}
-              />
-              {/* Button Audio on/mute */}
-              <Sprite
-                texture={PIXI?.Assets?.get(
-                  toggleBtnAudio ? "BtnAudioHomeOn" : "BtnAudioHomeMute"
-                ) || PIXI.Texture.EMPTY}
-                width={app.screen?.width > 450 ? 35 : 30}
-                height={app.screen?.width > 450 ? 35 : 30}
-                anchor={[0.5, 0.5]}
-                x={20 * (app.screen?.width > 450 ? 4 : 3.2)}
-                y={0}
-                eventMode={"static"}
-                onpointertap={() => {
-                  // set toggle audio
-                  setToggleBtnAudio(!toggleBtnAudio);
-                }}
-              />
-            </Container>
+              // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
+              >
+                {/* left side */}
+                <LowerButtonComponent
+                  spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}
+                  imageIcon={PIXI?.Assets?.get("ImgDinoCenter")}
+                  text={"Jurassic Market"}
+                  posX={-155}
+                  posY={15}
+                  imageYOffset={10}
+                  textYOffset={BtnSmallBounds?.height / 2 + 5}
+                  textStyle={
+                    new PIXI.TextStyle({
+                      align: "center",
+                      fill: ["0xFFC700"],
+                      fontFamily: "Magra Bold",
+                      fontSize: 11,
+                      fontWeight: "bold",
+                      wordWrap: true,
+                      wordWrapWidth: 50,
+                    })
+                  }
+                  onPress={() => changeScene("DINOCENTER")}
+                />
+                <LowerButtonComponent
+                  spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}
+                  imageIcon={PIXI?.Assets?.get("ImgGameTask")}
+                  text={"Game Task"}
+                  posX={BtnSmallBounds?.width - 155}
+                  posY={15}
+                  imageYOffset={10}
+                  textYOffset={BtnSmallBounds?.height / 2 + 13}
+                  textStyle={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: 12,
+                      fontWeight: "bold",
+                      fill: ["0xFFC700"],
+                    })
+                  }
+                />
+                <LowerButtonComponent
+                  spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}
+                  imageIcon={PIXI?.Assets?.get("ImgBulletin")}
+                  text={"Bulletin"}
+                  posX={-155}
+                  posY={BtnSmallBounds?.height + 10}
+                  imageYOffset={10}
+                  textYOffset={BtnSmallBounds?.height / 2 + 13}
+                  textStyle={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: 12,
+                      fontWeight: "bold",
+                      fill: ["0xFFC700"],
+                    })
+                  }
+                />
+                <LowerButtonComponent
+                  spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}
+                  imageIcon={PIXI?.Assets?.get("ImgComrade")}
+                  text={"Comrade"}
+                  posX={BtnSmallBounds?.width - 155}
+                  posY={BtnSmallBounds?.height + 10}
+                  imageYOffset={10}
+                  textYOffset={BtnSmallBounds?.height / 2 + 13}
+                  textStyle={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: 12,
+                      fontWeight: "bold",
+                      fill: ["0xFFC700"],
+                    })
+                  }
+                />
+
+                {/* center button */}
+                <LowerButtonComponent
+                  spriteTexture={PIXI?.Assets?.get("LowerBtnBigBg")}
+                  imageIcon={PIXI?.Assets?.get("ImgUpass")}
+                  text={"Dino Pass"}
+                  posX={0}
+                  posY={BtnSmallBounds?.height + 0}
+                  scaleX={0.8}
+                  scaleY={0.8}
+                  imageYOffset={13}
+                  textYOffset={BtnBigBounds?.height / 2 + 20}
+                  textStyle={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: 14,
+                      fontWeight: "bold",
+                      fill: ["0xFFC700"],
+                    })
+                  }
+                />
+                {/* center button */}
+
+                {/* right side */}
+                <LowerButtonComponent
+                  spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}
+                  imageIcon={PIXI?.Assets?.get("ImgAlbum")}
+                  text={"Album"}
+                  posX={155}
+                  posY={15}
+                  imageYOffset={10}
+                  textYOffset={BtnSmallBounds?.height / 2 + 13}
+                  textStyle={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: 12,
+                      fontWeight: "bold",
+                      fill: ["0xFFC700"],
+                    })
+                  }
+                  onPress={() => changeScene("ALBUM")}
+                />
+                <LowerButtonComponent
+                  spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}
+                  imageIcon={PIXI?.Assets?.get("ImgMiniGames")}
+                  text={"Mini Games"}
+                  posX={155 - BtnSmallBounds?.width}
+                  posY={15}
+                  imageYOffset={10}
+                  textYOffset={BtnSmallBounds?.height / 2 + 13}
+                  textStyle={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: 12,
+                      fontWeight: "bold",
+                      fill: ["0xFFC700"],
+                    })
+                  }
+                />
+                <LowerButtonComponent
+                  spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}
+                  imageIcon={PIXI?.Assets?.get("ImgProfile")}
+                  text={"Profile"}
+                  posX={155}
+                  posY={BtnSmallBounds?.height + 10}
+                  imageYOffset={10}
+                  textYOffset={BtnSmallBounds?.height / 2 + 13}
+                  textStyle={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: 12,
+                      fontWeight: "bold",
+                      fill: ["0xFFC700"],
+                    })
+                  }
+                  onPress={() => changeScene("PROFILE")}
+                />
+                <LowerButtonComponent
+                  spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}
+                  imageIcon={PIXI?.Assets?.get("ImgHistory")}
+                  text={"History"}
+                  posX={155 - BtnSmallBounds?.width}
+                  posY={BtnSmallBounds?.height + 10}
+                  imageYOffset={10}
+                  textYOffset={BtnSmallBounds?.height / 2 + 13}
+                  textStyle={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: 12,
+                      fontWeight: "bold",
+                      fill: ["0xFFC700"],
+                    })
+                  }
+                />
+              </Container>
+            )}
           </Container>
-
-          {/* Details Container */}
-          <Container
-            x={0}
-            y={app.screen?.width > 450 ? 130 : 110}
-            // width={app.screen.width > 450 ? 450 : app.screen.width}
-            anchor={[0.5, 0.5]}
-          >
-            {/* right side */}
-            <Container
-              // position={[app.screen.width / 2 - (lfSideBounds.width / 2), 0]}
-              position={[isNotMobile ? 110 : 90, 20]}
-              anchor={[0.5, 0.5]}
-            // width={app.screen.width > 450 ? 450 : app.screen.width}
-            >
-              <DetailsComponent
-                spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
-                IconTexture={PIXI?.Assets?.get("USDTIcon")}
-                text={walletBalance}
-                posX={0}
-                posY={0}
-                scaleX={isNotMobile ? 1 : 0.8}
-                textStyle={
-                  new PIXI.TextStyle({
-                    fontFamily: "Magra Bold",
-                    fontSize: 20,
-                    fontWeight: "bold",
-                    fill: ["0xFFC700"],
-                  })
-                }
-                textYOffest={-3}
-                textXOffest={10}
-                onPress={() => {
-                  console.log("onPress BNBDetails");
-                }}
-              />
-              <DetailsComponent
-                spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
-                IconTexture={PIXI?.Assets?.get("BonusIcon")}
-                text={"123.123.123"}
-                posX={0}
-                posY={35}
-                scaleX={isNotMobile ? 1 : 0.8}
-                textStyle={
-                  new PIXI.TextStyle({
-                    fontFamily: "Magra Bold",
-                    fontSize: 20,
-                    fontWeight: "bold",
-                    fill: ["0xFFC700"],
-                  })
-                }
-                textYOffest={-2}
-                textXOffest={10}
-                onPress={() => {
-                  console.log("onPress StarDetails");
-                }}
-              />
-            </Container>
-
-            {/* left side */}
-            <Container position={[isNotMobile ? -100 : -85, 0]}>
-              <DetailsComponent
-                spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
-                IconTexture={PIXI?.Assets?.get("EventFragmentIcon")}
-                // text={userData?.bonuses.toString() || '0'}
-                text={'0'}
-                posX={0}
-                posY={0}
-                scaleX={isNotMobile ? 1 : 0.85}
-                textStyle={
-                  new PIXI.TextStyle({
-                    fontFamily: "Magra Bold",
-                    fontSize: 20,
-                    fontWeight: "bold",
-                    fill: ["0xFFC700"],
-                  })
-                }
-                textYOffest={-3}
-                textXOffest={10}
-                onPress={() => {
-                  console.log("onPress EventFragmentDetails");
-                }}
-              />
-              <DetailsComponent
-                spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
-                IconTexture={PIXI?.Assets?.get("DinoTicketIcon")}
-                text={userData?.tickets.toString() || '0'}
-                posX={0}
-                posY={35}
-                scaleX={isNotMobile ? 1 : 0.85}
-                textStyle={
-                  new PIXI.TextStyle({
-                    fontFamily: "Magra Bold",
-                    fontSize: 20,
-                    fontWeight: "bold",
-                    fill: ["0xFFC700"],
-                  })
-                }
-                textYOffest={-1}
-                textXOffest={10}
-                onPress={async () => {
-                  await rawBuyTickets(100)
-                  // console.log("onPress DinoTicketDetails");
-                  // const txReq = { to: TICKET_ADDR, from: walletAddress, data: d.TxRawApproval, value: utils.parseEther(d.total) }
-                  // console.log('txReq', txReq)
-                  // const txSend = await sendTransaction(txReq)
-                  // console.log('txSend', txSend)
-
-                }}
-              />
-
-              <DetailsComponent
-                spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
-                IconTexture={PIXI?.Assets?.get("DinoEggIcon")}
-                text={"123.123.123"}
-                posX={0}
-                posY={70}
-                scaleX={isNotMobile ? 1 : 0.85}
-                textStyle={
-                  new PIXI.TextStyle({
-                    fontFamily: "Magra Bold",
-                    fontSize: 20,
-                    fontWeight: "bold",
-                    fill: ["0xFFC700"],
-                  })
-                }
-                textYOffest={-1}
-                textXOffest={10}
-                onPress={() => {
-                  console.log("onPress DinoEggDetailss");
-                }}
-              />
-            </Container>
-          </Container>
-
-          {/* Egg Panel */}
-          {EggPlateComponent()}
-
-
-
-          {/* Lower Button Container */}
-          {(
-            <Container
-              anchor={[0.5, 1]}
-              x={0}
-              y={app.screen?.height - BtnSmallBounds?.height * 2 - 15}
-              width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
-            >
-              {/* left side */}
-              <LowerButtonComponent
-                spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}
-                imageIcon={PIXI?.Assets?.get("ImgDinoCenter")}
-                text={"Jurassic Market"}
-                posX={-155}
-                posY={15}
-                imageYOffset={10}
-                textYOffset={BtnSmallBounds?.height / 2 + 5}
-                textStyle={
-                  new PIXI.TextStyle({
-                    align: "center",
-                    fill: ["0xFFC700"],
-                    fontFamily: "Magra Bold",
-                    fontSize: 11,
-                    fontWeight: "bold",
-                    wordWrap: true,
-                    wordWrapWidth: 50,
-                  })
-                }
-                onPress={() => changeScene("DINOCENTER")}
-              />
-              <LowerButtonComponent
-                spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}
-                imageIcon={PIXI?.Assets?.get("ImgGameTask")}
-                text={"Game Task"}
-                posX={BtnSmallBounds?.width - 155}
-                posY={15}
-                imageYOffset={10}
-                textYOffset={BtnSmallBounds?.height / 2 + 13}
-                textStyle={
-                  new PIXI.TextStyle({
-                    fontFamily: "Magra Bold",
-                    fontSize: 12,
-                    fontWeight: "bold",
-                    fill: ["0xFFC700"],
-                  })
-                }
-              />
-              <LowerButtonComponent
-                spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}
-                imageIcon={PIXI?.Assets?.get("ImgBulletin")}
-                text={"Bulletin"}
-                posX={-155}
-                posY={BtnSmallBounds?.height + 10}
-                imageYOffset={10}
-                textYOffset={BtnSmallBounds?.height / 2 + 13}
-                textStyle={
-                  new PIXI.TextStyle({
-                    fontFamily: "Magra Bold",
-                    fontSize: 12,
-                    fontWeight: "bold",
-                    fill: ["0xFFC700"],
-                  })
-                }
-              />
-              <LowerButtonComponent
-                spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}
-                imageIcon={PIXI?.Assets?.get("ImgComrade")}
-                text={"Comrade"}
-                posX={BtnSmallBounds?.width - 155}
-                posY={BtnSmallBounds?.height + 10}
-                imageYOffset={10}
-                textYOffset={BtnSmallBounds?.height / 2 + 13}
-                textStyle={
-                  new PIXI.TextStyle({
-                    fontFamily: "Magra Bold",
-                    fontSize: 12,
-                    fontWeight: "bold",
-                    fill: ["0xFFC700"],
-                  })
-                }
-              />
-
-              {/* center button */}
-              <LowerButtonComponent
-                spriteTexture={PIXI?.Assets?.get("LowerBtnBigBg")}
-                imageIcon={PIXI?.Assets?.get("ImgUpass")}
-                text={"U Pass"}
-                posX={0}
-                posY={BtnSmallBounds?.height + 20}
-                scaleX={0.8}
-                scaleY={0.8}
-                imageYOffset={13}
-                textYOffset={BtnBigBounds?.height / 2 + 20}
-                textStyle={
-                  new PIXI.TextStyle({
-                    fontFamily: "Magra Bold",
-                    fontSize: 14,
-                    fontWeight: "bold",
-                    fill: ["0xFFC700"],
-                  })
-                }
-              />
-              {/* center button */}
-
-              {/* right side */}
-              <LowerButtonComponent
-                spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}
-                imageIcon={PIXI?.Assets?.get("ImgAlbum")}
-                text={"Album"}
-                posX={155}
-                posY={15}
-                imageYOffset={10}
-                textYOffset={BtnSmallBounds?.height / 2 + 13}
-                textStyle={
-                  new PIXI.TextStyle({
-                    fontFamily: "Magra Bold",
-                    fontSize: 12,
-                    fontWeight: "bold",
-                    fill: ["0xFFC700"],
-                  })
-                }
-                onPress={() => changeScene("ALBUM")}
-              />
-              <LowerButtonComponent
-                spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}
-                imageIcon={PIXI?.Assets?.get("ImgMiniGames")}
-                text={"Mini Games"}
-                posX={155 - BtnSmallBounds?.width}
-                posY={15}
-                imageYOffset={10}
-                textYOffset={BtnSmallBounds?.height / 2 + 13}
-                textStyle={
-                  new PIXI.TextStyle({
-                    fontFamily: "Magra Bold",
-                    fontSize: 12,
-                    fontWeight: "bold",
-                    fill: ["0xFFC700"],
-                  })
-                }
-              />
-              <LowerButtonComponent
-                spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}
-                imageIcon={PIXI?.Assets?.get("ImgProfile")}
-                text={"Profile"}
-                posX={155}
-                posY={BtnSmallBounds?.height + 10}
-                imageYOffset={10}
-                textYOffset={BtnSmallBounds?.height / 2 + 13}
-                textStyle={
-                  new PIXI.TextStyle({
-                    fontFamily: "Magra Bold",
-                    fontSize: 12,
-                    fontWeight: "bold",
-                    fill: ["0xFFC700"],
-                  })
-                }
-                onPress={() => changeScene("PROFILE")}
-              />
-              <LowerButtonComponent
-                spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}
-                imageIcon={PIXI?.Assets?.get("ImgHistory")}
-                text={"History"}
-                posX={155 - BtnSmallBounds?.width}
-                posY={BtnSmallBounds?.height + 10}
-                imageYOffset={10}
-                textYOffset={BtnSmallBounds?.height / 2 + 13}
-                textStyle={
-                  new PIXI.TextStyle({
-                    fontFamily: "Magra Bold",
-                    fontSize: 12,
-                    fontWeight: "bold",
-                    fill: ["0xFFC700"],
-                  })
-                }
-              />
-            </Container>
-          )}
         </Container>
-      </Container>}
+      }
     </>
   );
 };
