@@ -16,6 +16,15 @@ type Egg = {
     total: string
 }
 
+export type EggTransactionData = {
+    id: string,
+    expired: number,
+    total: string,
+    TxRawApproval: string,
+    TxRawPayment: string,
+    ticket: number
+}
+
 type Store = {
     scene: Screen,
     changeScene: (screen: Screen) => void,
@@ -27,6 +36,8 @@ type Store = {
     setUserData: (data: User) => void,
     eggListsData: Egg[],
     setEggListsData: (data: Egg[]) => void,
+    eggTransactionData: EggTransactionData[]
+    setEggTransactionData: (data: EggTransactionData) => void,
 }
 type AuthStore = {
     token: string | null,
@@ -35,7 +46,7 @@ type AuthStore = {
 }
 type Screen = 'HOME' | 'REGISTER' | 'DINOCENTER' | 'LOADING' | 'LOGIN' | 'PROFILE' | 'ALBUM'
 
-export const useStore = create<Store>((set, _get) => ({
+export const useStore = create<Store>((set, get) => ({
     scene: 'LOADING',
     changeScene: (screen) => set(() => ({ scene: screen })),
     walletAddress: '',
@@ -51,7 +62,15 @@ export const useStore = create<Store>((set, _get) => ({
     },
     setUserData: (data) => set(() => ({ userData: data })),
     eggListsData: [],
-    setEggListsData: (data) => set(() => ({ eggListsData: data }))
+    setEggListsData: (data) => set(() => ({ eggListsData: data })),
+    eggTransactionData: [],
+    setEggTransactionData: (data) => set(() => {
+        const currentEggTransactionData = get().eggTransactionData
+        currentEggTransactionData.push(data)
+        return {
+            eggTransactionData: currentEggTransactionData
+        }
+    })
 }))
 
 export const useAuthStore = create(persist<AuthStore>((set, _get) => ({

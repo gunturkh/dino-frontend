@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as PIXI from "pixi.js";
 import { Container, Sprite, useApp, Text } from "@pixi/react";
+// import { useSendTransaction } from "@usedapp/core";
 import DinoFundComponent from "../DinoFundComponent";
 import ProfileComponent from "../ProfileComponent";
 import DetailsComponent from "../DetailsComponent";
 import LowerButtonComponent from "../LowerButtonComponent";
 import { useAuthStore, useStore } from "../../utils/store";
 import { axiosInstance } from "../../utils/api";
+// import { TICKET_ADDR } from "../../utils/config";
 
 type Props = {
   onProfileClick: () => void;
@@ -14,14 +16,28 @@ type Props = {
   scene: string;
 };
 
+const rawBuyTickets = async (qty: number) => {
+  const data: any = await axiosInstance({
+    url: "/ticket/createRawBuyTickets",
+    method: "POST",
+    data: { qty }
+  });
+  console.log("rawBuyTickets Result:", data);
+  if (data?.data?.success) {
+    // processTransaction(id, ticket)
+  }
+};
+
 const Home = ({ onProfileClick, scene }: Props) => {
   const app = useApp();
   const changeScene = useStore((state) => state.changeScene);
+  // const walletAddress = useStore((state) => state.walletAddress);
   const walletBalance = useStore((state) => state.walletBalance);
   const userData = useStore((state) => state.userData);
   const setUserData = useStore((state) => state.setUserData);
   const setEggListsData = useStore((state) => state.setEggListsData);
   const token = useAuthStore((state) => state.token);
+  // const { sendTransaction, state } = useSendTransaction({ transactionName: 'Buy Ticket' })
   console.log("token", token);
   const isNotMobile = app.screen.width > 450;
   // @ts-ignore
@@ -74,16 +90,16 @@ const Home = ({ onProfileClick, scene }: Props) => {
       }
     };
 
-  const getEggList = async () => {
-    const data: any = await axiosInstance({
-      url: "/egg/lists",
-      method: "GET",
-    });
-    console.log("getEggList Result:", data);
-    if (data?.status === 200 && data?.data?.result?.lists) {
-      setEggListsData(data?.data?.result.lists);
-    }
-  };
+    const getEggList = async () => {
+      const data: any = await axiosInstance({
+        url: "/egg/lists",
+        method: "GET",
+      });
+      console.log("getEggList Result:", data);
+      if (data?.status === 200 && data?.data?.result?.lists) {
+        setEggListsData(data?.data?.result.lists);
+      }
+    };
 
     getUserData();
     getEggList();
@@ -423,7 +439,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
               <DetailsComponent
                 spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
                 IconTexture={PIXI?.Assets?.get("EventFragmentIcon")}
-                text={userData?.bonuses.toString() || '0'}
+                // text={userData?.bonuses.toString() || '0'}
+                text={'0'}
                 posX={0}
                 posY={0}
                 scaleX={isNotMobile ? 1 : 0.85}
@@ -458,8 +475,14 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 }
                 textYOffest={-1}
                 textXOffest={10}
-                onPress={() => {
-                  console.log("onPress DinoTicketDetails");
+                onPress={async () => {
+                  await rawBuyTickets(100)
+                  // console.log("onPress DinoTicketDetails");
+                  // const txReq = { to: TICKET_ADDR, from: walletAddress, data: d.TxRawApproval, value: utils.parseEther(d.total) }
+                  // console.log('txReq', txReq)
+                  // const txSend = await sendTransaction(txReq)
+                  // console.log('txSend', txSend)
+
                 }}
               />
 

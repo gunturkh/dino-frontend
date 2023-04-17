@@ -16,6 +16,8 @@ type props = {
   idx: number,
   eggType: number,
   onBtnKeepPress: (idx: number) => void,
+  onBtnPurchasePress: (idx: number) => void,
+  selectedPanel: string,
   calculateEggXPosition: number,
   calculateEggYPosition: number,
   listingItemBounds: {
@@ -36,6 +38,8 @@ const EggListingComponent = ({
   idx,
   eggType,
   onBtnKeepPress,
+  onBtnPurchasePress,
+  selectedPanel,
   calculateEggXPosition,
   calculateEggYPosition,
   listingItemBounds,
@@ -163,6 +167,36 @@ const EggListingComponent = ({
           />
           <Text
             text={countdownText()}
+            position={[0, isNotMobile ? 2.5 : 2.5]}
+            anchor={[0.5, 0]}
+            style={new PIXI.TextStyle({
+              fontFamily: 'Magra Bold',
+              fontSize: isNotMobile ? 16 : 15,
+              fontWeight: '600',
+              strokeThickness: 1,
+              fill: ['white'],
+            })}
+          />
+        </Container>
+      </Container>
+
+      <Container
+        ref={listingActionBtnRef}
+        eventMode="static"
+        onpointertap={() => {
+          if (countdownText() === 'Keep') return
+          else return onBtnPurchasePress(idx);
+        }}
+        visible={selectedPanel=== 'My Listing'}
+      >
+        <Container position={[0, isNotMobile ? 60 : 55]}>
+          <Sprite
+            texture={PIXI.Assets.get(countdownText() === 'Keep' ? "BtnPurchaseActive" : "BtnPurchaseCountdown")}
+            anchor={[0.5, 0]}
+            position={[0, 0]}
+          />
+          <Text
+            text={'Purchase'}
             position={[0, isNotMobile ? 2.5 : 2.5]}
             anchor={[0.5, 0]}
             style={new PIXI.TextStyle({

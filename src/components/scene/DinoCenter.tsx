@@ -1,12 +1,16 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect, useState } from "react";
 import * as PIXI from "pixi.js";
 import { Container, Sprite, useApp, Text } from "@pixi/react";
 import { ProgressBar } from "@pixi/ui";
 
 import EggListingComponent from "../EggListingComponent";
-import { useStore } from "../../utils/store";
+import { EggTransactionData, useStore } from "../../utils/store";
 import { axiosInstance } from "../../utils/api";
-
+import { useSendTransaction, useTokenAllowance } from "@usedapp/core";
+import { PAYGATEWAY_ADDR, RPC_ENDPOINT, USDT_ABI, USDT_ADDR } from "../../utils/config";
+import { ethers, utils } from "ethers";
+const ethProvider = new ethers.providers.JsonRpcProvider(RPC_ENDPOINT);
 const dummyListingData = [
   {
     id: "43d0dc7559ab1d630b1255b4bc073368",
@@ -147,6 +151,7 @@ console.log("🚀 ~ file: DinoCenter.tsx:91 ~ duplicateListingData:", duplicateL
 
 const DinoCenter = ({ scene, onBackBtnClick }: any) => {
   const app = useApp();
+  // const { account } = useEthers()
   const isNotMobile = app.screen.width >= 430;
   console.log("app.screen", app.screen);
   console.log("scene", scene);
@@ -156,22 +161,30 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
   });
 
   console.log("rankDetailBounds:", rankDetailBounds)
+  const walletAddress = useStore(state => state.walletAddress)
   const eggListsData = useStore(state => state.eggListsData)
   const setEggListsData = useStore(state => state.setEggListsData)
+  const eggTransactionData = useStore(state => state.eggTransactionData)
+  const setEggTransactionData = useStore(state => state.setEggTransactionData)
   const [isLoaded, setIsLoaded] = useState(false);
   const [selectedPanel, setSelectedPanel] = useState("Listing");
-  const [eggLists, setEggLists] = useState([]);
+  // const [eggLists, setEggLists] = useState([]);
 
   const [eggPerPage] = useState(12);
   const [paginationPageNumbers, setPaginationPageNumbers] = useState([1]);
   const [currentPage, setCurrentPage] = useState(1);
   // TODO: tempCards should be set with the actual data from the API
-  const [tempCards, setTempCards] = useState<any>([])
+  // const [tempCards, setTempCards] = useState<any>([])
   const totalPages = Math.ceil(eggListsData.length / eggPerPage);
   const startIndex = (currentPage - 1) * eggPerPage;
   const endIndex = startIndex + eggPerPage;
   const currentEggs = eggListsData.slice(startIndex, endIndex);
 
+  const allowance = useTokenAllowance(USDT_ADDR, walletAddress, PAYGATEWAY_ADDR)
+  const { sendTransaction, state } = useSendTransaction({ transactionName: 'Send Ethereum' })
+  console.log('allowance token', allowance)
+  console.log('account', walletAddress)
+  console.log('transaction state', state)
   const [listingItemBounds, setListingItemBounds] = useState({
     x: 0, y: 0, width: 0, height: 0
   });
@@ -303,14 +316,30 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
     }
   };
 
-  const handleKeep = async (id: string) => {
+  const processTransaction = async (id: string, ticket: number) => {
     const data: any = await axiosInstance({
-      url: "/egg/keep",
+      url: `/egg/detail?id=${id}`,
       method: "GET",
+    });
+    console.log("processTransaction Result:", data);
+    if (data?.data?.success) {
+      setEggTransactionData({ ...data?.data?.result, ticket })
+      setSelectedPanel("My Listing")
+    }
+  };
+
+  const handleKeep = async (id: string, ticket: number) => {
+    const { data }: any = await axiosInstance({
+      url: "/egg/keep",
+      method: "POST",
       data: { id }
     });
     console.log("handleKeep Result:", data);
-    if (data?.status === 200) {
+    if (data?.success) {
+      processTransaction(id, ticket)
+    }
+    else {
+      window.alert(data.message)
     }
   };
   useEffect(() => {
@@ -730,14 +759,18 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
                         eggType={d?.ticket}
                         listingItemBgRef={listingItemBgRef}
                         listingItemBounds={listingItemBounds}
-
+                        selectedPanel={selectedPanel}
                         calculateEggXPosition={calculateEggXPosition(idx)}
                         calculateEggYPosition={calculateEggYPosition(idx)}
                         onBtnKeepPress={(eggIndex) => {
                           // TODO: action button for keep, using idx from props as a differentiator
                           console.log('onBtnKeepPress', d.id)
-                          handleKeep(d.id)
+                          handleKeep(d.id, d.ticket)
                         }}
+                        onBtnPurchasePress={(idx) => {
+                          console.log('approve ', idx)
+                        }
+                        }
                       />
                     </>
                   );
@@ -761,7 +794,49 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
                   strokeThickness: 1,
                   fill: ['white'],
                 })}
+                visible={eggTransactionData?.length === 0}
               />
+
+              {eggTransactionData.length > 0 &&
+                eggTransactionData?.map((d: EggTransactionData, idx: number) => {
+                  // setExpiryTime(d.openat)
+                  return (
+                    <>
+                      <EggListingComponent
+                        id={`${d.id}`}
+                        key={`egg-transaction-${idx + ((currentPage - 1) * 12)}`}
+                        index={`egg-transaction-${idx + ((currentPage - 1) * 12)}`}
+                        idx={idx}
+                        priceText={d?.total}
+                        timerText={d?.expired.toString()}
+                        eggType={d?.ticket}
+                        listingItemBgRef={listingItemBgRef}
+                        listingItemBounds={listingItemBounds}
+                        selectedPanel={selectedPanel}
+                        calculateEggXPosition={calculateEggXPosition(idx)}
+                        calculateEggYPosition={calculateEggYPosition(idx)}
+                        onBtnKeepPress={(eggIndex) => {
+                          // TODO: action button for keep, using idx from props as a differentiator
+                          console.log('onBtnKeepPress', d.id)
+                          handleKeep(d.id, d.ticket)
+                        }}
+                        onBtnPurchasePress={async (idx) => {
+                          console.log('allowance ', allowance)
+                          console.log('account approve', walletAddress)
+                          const contract = new ethers.Contract(USDT_ADDR, USDT_ABI, ethProvider);
+                          console.log('contract', contract)
+                          let checkallw = await contract?.allowance(walletAddress, PAYGATEWAY_ADDR);
+                          checkallw = checkallw.toString();
+                          console.log('checkallw', checkallw)
+                          const txReq = { to: USDT_ADDR, from: walletAddress, data: d.TxRawApproval, value: utils.parseEther(d.total) }
+                          console.log('txReq', txReq)
+                          const txSend = await sendTransaction(txReq)
+                          console.log('txSend', txSend)
+                        }}
+                      />
+                    </>
+                  );
+                })}
             </Container>
           </Container>
 
