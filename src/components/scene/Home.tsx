@@ -36,6 +36,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
   const userData = useStore((state) => state.userData);
   const setUserData = useStore((state) => state.setUserData);
   const setEggListsData = useStore((state) => state.setEggListsData);
+  const setTicketPanel = useStore((state) => state.setTicketPanel);
   const token = useAuthStore((state) => state.token);
   // const { sendTransaction, state } = useSendTransaction({ transactionName: 'Buy Ticket' })
   console.log("token from home", token);
@@ -630,7 +631,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
                   textXOffest={10}
                   onPress={async () => {
                     // await rawBuyTickets(100)
-                    setBuyTicketPanelVisible(true)
+                    // setBuyTicketPanelVisible(true)
+                    setTicketPanel({ show: true, mode: 'BUY' })
                     // console.log("onPress DinoTicketDetails");
                     // const txReq = { to: TICKET_ADDR, from: walletAddress, data: d.TxRawApproval, value: utils.parseEther(d.total) }
                     // console.log('txReq', txReq)
@@ -952,7 +954,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[buyTicketPanelBounds?.width * 0.5 - (isNotMobile ? 50 : 25), 0]}
                     eventMode='static'
-                    // onpointertap={() => setGoogleAuthVisible(false)}
+                  // onpointertap={() => setGoogleAuthVisible(false)}
                   />
                 </Container>
 
