@@ -136,7 +136,7 @@ const GameGuide = ({ onBackBtnClick }: Props) => {
                 width={isNotMobile ? 450 : app.screen.width * 0.9}
                 height={app.screen.height * 0.8}
                 anchor={[0.5, 0]}
-                position={[0, isNotMobile ? 150 : 100]}
+                position={[0, app.screen.height * 0.135]}
               />
             </Container>
           </Container>

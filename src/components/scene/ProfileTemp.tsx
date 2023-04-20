@@ -15,6 +15,7 @@ const ProfileTemp = ({ onBackBtnClick }: Props) => {
 
   const logout = useAuthStore((state) => state.logout);
   const changeScene = useStore((state) => state.changeScene);
+  const userData = useStore((state) => state.userData);
   const isNotMobile = app.screen.width > 450;
 
   const [isLoaded, setIsLoaded] = useState(false);
@@ -133,7 +134,7 @@ const ProfileTemp = ({ onBackBtnClick }: Props) => {
         >
           <Sprite
             texture={PIXI.Assets.get(
-              toggleWithdrawal ? "SwitchOnIcon" : "SwitchOffIcon"
+              userData?.ga_key ? "SwitchOnIcon" : "SwitchOffIcon"
             )}
             anchor={[0.5, 0.5]}
             width={isNotMobile ? 50 : 52}
@@ -458,17 +459,18 @@ const ProfileTemp = ({ onBackBtnClick }: Props) => {
             </Container>
 
             {/* Profile */}
-            <Container x={0} y={0} height={app.screen.height * 0.8}>
+            <Container x={0} y={0} height={app.screen.height * 0.85}>
               <Sprite
                 // ref={profileBgRef}
                 texture={bgTexture}
                 alpha={0.85}
                 width={isNotMobile ? 450 : app.screen.width * 0.9}
-                height={menuItemBounds?.height + menuItemBounds?.height / 2}
+                height={
+                  // menuItemBounds?.height + menuItemBounds?.height / 2 + 20
+                  app.screen.height * 0.8
+                }
                 anchor={[0.5, 0]}
                 position={[0, isNotMobile ? 100 : 87]}
-                // mask={mask}
-                // isMask={true}
               />
 
               {/* Avatar Container */}
@@ -587,140 +589,137 @@ const ProfileTemp = ({ onBackBtnClick }: Props) => {
                   </Container>
                 ))}
               </Container>
+            </Container>
+          </Container>
+          {/* Confirm Logout Panel */}
+          <Container
+            position={[0, app.screen.height * 0.5]}
+            anchor={[0.5, 0.5]}
+            visible={confirmQuitPanelVisible}
+            height={window.innerHeight}
+          >
+            <Sprite
+              texture={PIXI.Texture.WHITE}
+              width={app.screen.width}
+              height={app.screen.height}
+              anchor={[0, 0.5]}
+              // scale={isNotMobile ? [1, 1] : [0.5, 1]}
+              position={[0, 0]}
+              filters={[new PIXI.BlurFilter(10)]}
+              tint={"black"}
+              alpha={0.7}
+              eventMode="static"
+            />
 
-              {/* Confirm Logout Panel */}
-              <Container
-                position={[0, app.screen.height * 0.5]}
+            <Container
+              ref={confirmQuitPanelRef}
+              position={[app.screen.width / 2, 0]}
+            >
+              <Sprite
+                texture={PIXI.Assets.get("RarityPanelBg")}
                 anchor={[0.5, 0.5]}
-                visible={confirmQuitPanelVisible}
+                position={[0, 0]}
+              />
+
+              {/* upper panel component */}
+              <Container
+                position={[
+                  0,
+                  confirmQuitPanelBounds?.height * (isNotMobile ? -0.35 : -0.4),
+                ]}
               >
-                <Sprite
-                  texture={PIXI.Texture.WHITE}
-                  width={app.screen.width}
-                  height={app.screen.height * 1.5}
-                  anchor={[0.5, 0.5]}
-                  // scale={isNotMobile ? [1, 1] : [0.5, 1]}
+                <Text
+                  text={"Quit"}
                   position={[0, 0]}
-                  filters={[new PIXI.BlurFilter(10)]}
-                  tint={"black"}
-                  alpha={0.7}
+                  anchor={[0.5, 0.5]}
+                  style={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: isNotMobile ? 20 : 18,
+                      fontWeight: "600",
+                      strokeThickness: 1,
+                      fill: ["white"],
+                    })
+                  }
                 />
-                <Container ref={confirmQuitPanelRef} position={[0, 0]}>
-                  <Sprite
-                    texture={PIXI.Assets.get("RarityPanelBg")}
-                    anchor={[0.5, 0.5]}
-                    position={[0, 0]}
-                  />
+                <Sprite
+                  texture={PIXI.Assets.get("LogoutBtn")}
+                  width={isNotMobile ? 40 : 40}
+                  height={isNotMobile ? 40 : 40}
+                  anchor={[0.5, 0.5]}
+                  position={[
+                    confirmQuitPanelBounds?.width * (isNotMobile ? 0.38 : 0.5),
+                    0,
+                  ]}
+                  eventMode="static"
+                  onpointertap={() => setConfirmQuitPanelVisible(false)}
+                />
+              </Container>
 
-                  {/* upper panel component */}
-                  <Container
-                    position={[
-                      0,
-                      confirmQuitPanelBounds?.height *
-                        (isNotMobile ? -0.35 : -0.4),
-                    ]}
-                  >
-                    <Text
-                      text={"Quit"}
-                      position={[0, 0]}
-                      anchor={[0.5, 0.5]}
-                      style={
-                        new PIXI.TextStyle({
-                          fontFamily: "Magra Bold",
-                          fontSize: isNotMobile ? 20 : 18,
-                          fontWeight: "600",
-                          strokeThickness: 1,
-                          fill: ["white"],
-                        })
-                      }
-                    />
-                    <Sprite
-                      texture={PIXI.Assets.get("LogoutBtn")}
-                      width={isNotMobile ? 40 : 40}
-                      height={isNotMobile ? 40 : 40}
-                      anchor={[0.5, 0.5]}
-                      position={[
-                        confirmQuitPanelBounds?.width *
-                          (isNotMobile ? 0.38 : 0.5),
-                        0,
-                      ]}
+              {/* Action Button */}
+              <Container
+                position={[
+                  0,
+                  confirmQuitPanelBounds?.height * (isNotMobile ? 0.27 : 0.35),
+                ]}
+              >
+                <Text
+                  text={"Log Out?"}
+                  position={[
+                    0,
+                    isNotMobile ? -100 : -confirmQuitPanelBounds?.height * 0.4,
+                  ]}
+                  anchor={[0.5, 0.5]}
+                  style={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: isNotMobile ? 20 : 18,
+                      fontWeight: "600",
+                      strokeThickness: 1,
+                      fill: ["white"],
+                    })
+                  }
+                />
+                {confirmQuitBtnItems?.map((item: any, index: number) => {
+                  return (
+                    <Container
+                      key={index}
+                      position={[(index % 2) * 120, Math.floor(index / 2) * 55]}
                       eventMode="static"
-                      onpointertap={() => setConfirmQuitPanelVisible(false)}
-                    />
-                  </Container>
-
-                  {/* Action Button */}
-                  <Container
-                    position={[
-                      0,
-                      confirmQuitPanelBounds?.height *
-                        (isNotMobile ? 0.27 : 0.35),
-                    ]}
-                  >
-                    <Text
-                      text={"Log Out?"}
-                      position={[
-                        0,
-                        isNotMobile
-                          ? -100
-                          : -confirmQuitPanelBounds?.height * 0.4,
-                      ]}
-                      anchor={[0.5, 0.5]}
-                      style={
-                        new PIXI.TextStyle({
-                          fontFamily: "Magra Bold",
-                          fontSize: isNotMobile ? 20 : 18,
-                          fontWeight: "600",
-                          strokeThickness: 1,
-                          fill: ["white"],
-                        })
-                      }
-                    />
-                    {confirmQuitBtnItems?.map((item: any, index: number) => {
-                      return (
-                        <Container
-                          key={index}
-                          position={[
-                            (index % 2) * 120,
-                            Math.floor(index / 2) * 55,
-                          ]}
-                          eventMode="static"
-                          onpointertap={() => {
-                            if (item?.title === "Confirm") {
-                              logout();
-                              changeScene("REGISTER");
-                            } else {
-                              setConfirmQuitPanelVisible(false);
-                            }
-                          }}
-                        >
-                          <Sprite
-                            texture={
-                              PIXI.Assets.get("RarityBtnFilter") ||
-                              PIXI.Texture.EMPTY
-                            }
-                            anchor={[1, 0.5]}
-                            position={[0, 0]}
-                          />
-                          <Text
-                            text={item?.title}
-                            position={[-55, 0]}
-                            anchor={[0.5, 0.5]}
-                            style={
-                              new PIXI.TextStyle({
-                                fontFamily: "Magra Bold",
-                                fontSize: isNotMobile ? 20 : 18,
-                                fontWeight: "600",
-                                strokeThickness: 1,
-                                fill: ["white"],
-                              })
-                            }
-                          />
-                        </Container>
-                      );
-                    })}
-                  </Container>
-                </Container>
+                      onpointertap={() => {
+                        if (item?.title === "Confirm") {
+                          logout();
+                          changeScene("REGISTER");
+                        } else {
+                          setConfirmQuitPanelVisible(false);
+                        }
+                      }}
+                    >
+                      <Sprite
+                        texture={
+                          PIXI.Assets.get("RarityBtnFilter") ||
+                          PIXI.Texture.EMPTY
+                        }
+                        anchor={[1, 0.5]}
+                        position={[0, 0]}
+                      />
+                      <Text
+                        text={item?.title}
+                        position={[-55, 0]}
+                        anchor={[0.5, 0.5]}
+                        style={
+                          new PIXI.TextStyle({
+                            fontFamily: "Magra Bold",
+                            fontSize: isNotMobile ? 20 : 18,
+                            fontWeight: "600",
+                            strokeThickness: 1,
+                            fill: ["white"],
+                          })
+                        }
+                      />
+                    </Container>
+                  );
+                })}
               </Container>
             </Container>
           </Container>
