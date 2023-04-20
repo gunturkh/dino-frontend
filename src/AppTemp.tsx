@@ -1,12 +1,23 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useFormik } from "formik";
-import { useEtherBalance, useEthers, BSC, BSCTestnet, useToken, useTokenBalance, useTokenAllowance, useSendTransaction } from "@usedapp/core";
+import {
+  useEtherBalance,
+  useEthers,
+  BSC,
+  BSCTestnet,
+  useToken,
+  useTokenBalance,
+  useTokenAllowance,
+  useSendTransaction,
+} from "@usedapp/core";
 import { Stage } from "@pixi/react";
-import { useState, Suspense, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { axiosInstance } from "./utils/api";
+import { getCountries } from "react-phone-number-input/input";
+import en from "react-phone-number-input/locale/en.json";
 // @ts-ignore
 // import WalletConnectProvider from '@walletconnect/web3-provider/dist/umd/index.min.js'
-import { formatEther, formatUnits } from '@ethersproject/units'
+import { formatEther, formatUnits } from "@ethersproject/units";
 import Home from "./components/scene/Home";
 import Register from "./components/scene/Register";
 import Loading from "./components/scene/Loader";
@@ -31,20 +42,28 @@ type loginReqFormat = {
 
 type registerReqFormat = {
   email: string;
-  username: string;
-  password: string;
-  referal: string;
+  username: string | undefined;
+  password: string | undefined;
+  referal: string | undefined;
   address: string;
   otp: string;
+  countryCode: string | undefined;
 };
 
 type otpReqFormat = {
   email: string;
 };
-const USDT_ADDRESS = '0x0ed04d340a054382383ee2edff0ced66ead7496c'
+const USDT_ADDRESS = "0x0ed04d340a054382383ee2edff0ced66ead7496c";
 
 export const AppTemp = () => {
-  const { account, active, deactivate, activateBrowserWallet, chainId, switchNetwork } = useEthers();
+  const {
+    account,
+    active,
+    deactivate,
+    activateBrowserWallet,
+    chainId,
+    switchNetwork,
+  } = useEthers();
   const token = useAuthStore((state) => state.token);
   const saveToken = useAuthStore((state) => state.saveToken);
   const userData = useStore((state) => state.userData);
@@ -54,17 +73,39 @@ export const AppTemp = () => {
   const setWalletBalance = useStore((state) => state.setWalletBalance);
   const approved = useStore((state) => state.approved);
   const setApproved = useStore((state) => state.setApproved);
-  const usdtInfo = useToken(USDT_ADDRESS)
-  const usdtBalance = useTokenBalance(USDT_ADDRESS, account)
-  const tokenBalance = useTokenBalance('0x1D2F0da169ceB9fC7B3144628dB156f3F6c60dBE', account)
-  const etherBalance = useEtherBalance(account, { chainId: BSCTestnet.chainId })
-  const mainnetBalance = useEtherBalance(account, { chainId: BSC.chainId })
-  const testnetBalance = useEtherBalance(account, { chainId: BSCTestnet.chainId })
-  const allowance = useTokenAllowance(USDT_ADDR, walletAddress, PAYGATEWAY_ADDR)
+  const usdtInfo = useToken(USDT_ADDRESS);
+  const usdtBalance = useTokenBalance(USDT_ADDRESS, account);
+  const tokenBalance = useTokenBalance(
+    "0x1D2F0da169ceB9fC7B3144628dB156f3F6c60dBE",
+    account
+  );
+  const etherBalance = useEtherBalance(account, {
+    chainId: BSCTestnet.chainId,
+  });
+  const mainnetBalance = useEtherBalance(account, { chainId: BSC.chainId });
+  const testnetBalance = useEtherBalance(account, {
+    chainId: BSCTestnet.chainId,
+  });
+  const allowance = useTokenAllowance(
+    USDT_ADDR,
+    walletAddress,
+    PAYGATEWAY_ADDR
+  );
   const [googleAuthVisible, setGoogleAuthVisible] = useState(false);
-  const [googleAuthData, setGoogleAuthData] = useState<{ qr: string, secret: string } | null>();
-  const { sendTransaction, state: sendTransactionState, resetState: resetSendTransactionState } = useSendTransaction({ transactionName: 'Egg Approval' })
-  const { sendTransaction: sendTransactionPay, state: sendTransactionPayState, resetState: resetSendTransactionPayState } = useSendTransaction({ transactionName: 'Egg Pay' })
+  const [googleAuthData, setGoogleAuthData] = useState<{
+    qr: string;
+    secret: string;
+  } | null>();
+  const {
+    sendTransaction,
+    state: sendTransactionState,
+    resetState: resetSendTransactionState,
+  } = useSendTransaction({ transactionName: "Egg Approval" });
+  const {
+    sendTransaction: sendTransactionPay,
+    state: sendTransactionPayState,
+    resetState: resetSendTransactionPayState,
+  } = useSendTransaction({ transactionName: "Egg Pay" });
 
   const changeScene = useStore((state) => state.changeScene);
   const [authMode, setAuthMode] = useState<
@@ -73,50 +114,55 @@ export const AppTemp = () => {
   const [otp, setOtp] = useState("");
   // const [activateError, setActivateError] = useState('')
   const [registerCheckbox, setRegisterCheckbox] = useState(false);
+  const [countryCodeValue, setCountryCodeValue] = useState();
 
   // console.log('usdtBalance', usdtBalance)
-  console.log('tokenBalance', tokenBalance)
-  console.log('etherBalance', etherBalance)
-  console.log('usdtInfo', usdtInfo)
-  console.log('sendTransaction state', sendTransactionState)
-  console.log({ mainnetBalance: mainnetBalance && formatEther(mainnetBalance as any), testnetBalance: testnetBalance && formatEther(testnetBalance as any), chainId })
+  console.log("tokenBalance", tokenBalance);
+  console.log("etherBalance", etherBalance);
+  console.log("usdtInfo", usdtInfo);
+  console.log("sendTransaction state", sendTransactionState);
+  console.log({
+    mainnetBalance: mainnetBalance && formatEther(mainnetBalance as any),
+    testnetBalance: testnetBalance && formatEther(testnetBalance as any),
+    chainId,
+  });
   // console.log({ testnetBalance: testnetBalance && formatEther(testnetBalance as any) })
   useEffect(() => {
     let options = {
       headers: {
-        'my-auth-key': token
-      }
-    }
+        "my-auth-key": token,
+      },
+    };
     const create2FAtoken = async () => {
       const result = await axiosInstance({
         url: "/auth/create2FAtoken",
         method: "GET",
-        headers: options.headers
+        headers: options.headers,
       });
-      console.log('create2FAtoken Result:', result)
+      console.log("create2FAtoken Result:", result);
       if (result && result.data && result.data.result) {
-        setGoogleAuthData(result.data.result)
+        setGoogleAuthData(result.data.result);
       }
     };
-    if (userData && userData?.username !== '' && userData?.ga_key === false) {
-      create2FAtoken()
-      setGoogleAuthVisible(true)
+    if (userData && userData?.username !== "" && userData?.ga_key === false) {
+      create2FAtoken();
+      setGoogleAuthVisible(true);
     }
-  }, [userData])
+  }, [userData]);
 
   useEffect(() => {
-    if (sendTransactionState.status === 'Success' && allowance) {
-      setApproved(allowance)
-      resetSendTransactionState()
+    if (sendTransactionState.status === "Success" && allowance) {
+      setApproved(allowance);
+      resetSendTransactionState();
     }
-  }, [sendTransactionState])
+  }, [sendTransactionState]);
 
   const checkValidation = async (id: string) => {
     let options = {
       headers: {
-        'my-auth-key': token
-      }
-    }
+        "my-auth-key": token,
+      },
+    };
     const result = await axiosInstance({
       url: "/egg/validate",
       method: "POST",
@@ -125,20 +171,22 @@ export const AppTemp = () => {
     });
     console.log(result.data);
     if (result.data.result === 1) {
-      alert('Transaction Confirmed');
+      alert("Transaction Confirmed");
       // window.location = '/pending-list';
     } else {
       setTimeout(() => checkValidation(id), 5000);
     }
-  }
+  };
 
-
-  const connectToWallet = async (e: React.MouseEvent<HTMLElement>, type: string) => {
+  const connectToWallet = async (
+    e: React.MouseEvent<HTMLElement>,
+    type: string
+  ) => {
     e.stopPropagation();
     // setActivateError('')
-    if (type === 'metamask') {
+    if (type === "metamask") {
       activateBrowserWallet({ type });
-    } else if (type === 'walletConnect') {
+    } else if (type === "walletConnect") {
       // const provider = new WalletConnectProvider({
       //   infuraId: 'd8df2cb7844e4a54ab0a782f608749dd',
       // })
@@ -198,7 +246,7 @@ export const AppTemp = () => {
           // onClick={() => connect()}
           onClick={(e) => connectToWallet(e, type)}
         >
-          Connect {type === 'metamask' ? 'Metamask' : 'WalletConnect'}
+          Connect {type === "metamask" ? "Metamask" : "WalletConnect"}
         </button>
       );
   };
@@ -216,6 +264,7 @@ export const AppTemp = () => {
     password?: string;
     retypePassword?: string;
     referralCode?: string;
+    countryCode?: string;
   };
 
   const loginFormValidate = (values: LoginFormValidate) => {
@@ -305,12 +354,15 @@ export const AppTemp = () => {
     },
   });
 
-  const googleAuthenticationFormValidate = (values: { validation?: string }) => {
+  const googleAuthenticationFormValidate = (values: {
+    validation?: string;
+  }) => {
     console.log("validate 2FA", values);
     const errors: { validation?: string } = {};
     if (!values.validation) {
       errors.validation = "Required";
-    } console.log("errors", errors);
+    }
+    console.log("errors", errors);
     return errors;
   };
 
@@ -363,27 +415,26 @@ export const AppTemp = () => {
       setSubmitting(false);
       let options = {
         headers: {
-          'my-auth-key': token
-        }
-      }
+          "my-auth-key": token,
+        },
+      };
       const validate2FA = async () => {
         const result = await axiosInstance({
           url: "/auth/confirm2FA",
           method: "POST",
           headers: options.headers,
-          data: { key: values.validation }
+          data: { key: values.validation },
         });
-        console.log('validate2FA Result:', result)
+        console.log("validate2FA Result:", result);
         if (result && result.data && result.data.result) {
-          alert('2FA Confirmed');
-          setGoogleAuthVisible(false)
-        }
-        else {
-          alert(result.data.message)
+          alert("2FA Confirmed");
+          setGoogleAuthVisible(false);
+        } else {
+          alert(result.data.message);
         }
       };
 
-      validate2FA()
+      validate2FA();
     },
   });
 
@@ -391,8 +442,8 @@ export const AppTemp = () => {
     console.log("active", active);
     console.log("account", account);
     if (!!account) {
-      setWalletAddress(account)
-      if (chainId !== BSCTestnet.chainId) switchNetwork(BSCTestnet.chainId)
+      setWalletAddress(account);
+      if (chainId !== BSCTestnet.chainId) switchNetwork(BSCTestnet.chainId);
     }
     if (active && !!account && authMode === "OTPEMAIL")
       otpForm.setFieldValue("walletAddress", account);
@@ -406,11 +457,11 @@ export const AppTemp = () => {
 
   useEffect(() => {
     if (usdtBalance) {
-      const balance = formatUnits(usdtBalance, 18)
-      console.log('usdtBalance', balance)
-      setWalletBalance(balance)
+      const balance = formatUnits(usdtBalance, 18);
+      console.log("usdtBalance", balance);
+      setWalletBalance(balance);
     }
-  }, [setWalletBalance, usdtBalance])
+  }, [setWalletBalance, usdtBalance]);
 
   const options = {
     backgroundColor: 0x1099bb,
@@ -433,11 +484,8 @@ export const AppTemp = () => {
       node.forceUpdate(() => {
         node.render();
       });
-
-
     }
   }, []);
-
 
   const loginHandler = async () => {
     // TODO: to change scene to home
@@ -468,6 +516,7 @@ export const AppTemp = () => {
       referal: registerForm.values.referralCode,
       address: otpForm.values.walletAddress,
       otp,
+      countryCode: registerForm.values.countryCode,
     };
     // console.log("submit values", registerRequestData);
     const result = await axiosInstance({
@@ -492,6 +541,36 @@ export const AppTemp = () => {
     if (!data.success) window.alert(`${data.message}`);
   };
 
+  const [country, setCountry] = useState();
+  console.log("🚀 ~ file: AppTemp.tsx:548 ~ country:", country);
+
+  const CountrySelect = ({
+    value,
+    onChange,
+    placeholder,
+    labels,
+    ...rest
+  }: any) => (
+    <select
+      {...rest}
+      value={value}
+      onChange={(event) => onChange(event.target.value || undefined)}
+      className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] appearance-none text-white font-Magra font-bold"
+      style={{
+        background: `url(image/InputBox.png) no-repeat `,
+      }}
+    >
+      <option disabled selected value="">
+        {placeholder}
+      </option>
+      {getCountries().map((country) => (
+        <option key={country} value={country} className="text-white">
+          {labels[country]}
+        </option>
+      ))}
+    </select>
+  );
+
   // const walletStatus = (status: string) => {
   //   switch (status) {
   //     case "initializing":
@@ -510,7 +589,7 @@ export const AppTemp = () => {
     <div className="relative flex justify-center items-center">
       {scene === "REGISTER" && (
         <div className="absolute h-full flex">
-          <div className=" my-5 flex backdrop-blur-sm  justify-center items-center flex-col bg-white/10 px-3.5 py-2.5 shadow-sm rounded-sm ">
+          <div className="flex z-20 sm:backdrop-blur-sm justify-center items-center flex-col sm:bg-white/10  sm:px-8 py-2.5 shadow-sm rounded-sm ">
             <div className="flex w-full justify-end">
               <img
                 src="image/BtnLanguage.png"
@@ -532,7 +611,7 @@ export const AppTemp = () => {
               alt="Project Dino Logo"
             />
             <div
-              className="flex justify-start items-center flex-col gap-4 bg-white/50 px-3.5 py-6 shadow-sm rounded-xl "
+              className={`flex justify-start items-center flex-col gap-4 bg-white/50 px-2 py-6 shadow-sm rounded-xl`}
               style={{
                 background: `url(image/formBackground.png) no-repeat `,
                 backgroundSize: "cover",
@@ -669,6 +748,13 @@ export const AppTemp = () => {
                           registerForm.touched.retypePassword &&
                           registerForm.errors.retypePassword}
                       </p>
+                      <CountrySelect
+                        labels={en}
+                        placeholder="Select Country"
+                        value={country}
+                        onChange={setCountry}
+                      />
+
                       <input
                         name="referralCode"
                         type="text"
@@ -752,7 +838,7 @@ export const AppTemp = () => {
                     )}
                     {/* {otpForm.values?.walletAddress?.length === 0 && ( */}
                     <div className="flex flex-col">
-                      <ConnectButton type='metamask' />
+                      <ConnectButton type="metamask" />
                       {/* <ConnectButton type='walletConnect' /> */}
                     </div>
                     {/* )} */}
@@ -806,7 +892,7 @@ export const AppTemp = () => {
                         </div>
                       )}
                       <div className="flex flex-col">
-                        <ConnectButton type='metamask' />
+                        <ConnectButton type="metamask" />
                         {/* <ConnectButton type='walletConnect' /> */}
                       </div>
                       <p className="text-red-500 font-bold font-magra">
@@ -829,7 +915,7 @@ export const AppTemp = () => {
           </div>
         </div>
       )}
-      {googleAuthVisible && scene === 'HOME' && (
+      {googleAuthVisible && scene === "HOME" && (
         <div className="absolute h-full flex">
           <div className=" my-5 flex backdrop-blur-sm  justify-center items-center flex-col bg-white/10 px-3.5 py-2.5 shadow-sm rounded-sm ">
             <div
@@ -855,7 +941,9 @@ export const AppTemp = () => {
                   height={177}
                   alt="2FA QR"
                 />
-                <p className="font-Magra text-white">Secret : {googleAuthData?.secret}</p>
+                <p className="font-Magra text-white">
+                  Secret : {googleAuthData?.secret}
+                </p>
                 <form onSubmit={googleAuthenticationForm.handleSubmit}>
                   <div className="flex flex-col">
                     <input
@@ -882,7 +970,9 @@ export const AppTemp = () => {
                   // src={"image/BtnConfirm.png"}
                   onClick={googleAuthenticationForm.submitForm}
                   className="bg-green-500 text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                >Validation</button>
+                >
+                  Validation
+                </button>
               </>
             </div>
           </div>
@@ -894,31 +984,34 @@ export const AppTemp = () => {
           width={appWidth}
           height={appHeight}
           options={options}
-          raf={true}
+          // raf={true}
           // renderOnComponentChange={true}
           onAnimationIteration={() => {
             console.log("animation iteration");
           }}
-        // onMount={(_app) => setApp(_app)}
+          // onMount={(_app) => setApp(_app)}
         >
           {/* @ts-ignore */}
 
-          <Suspense fallback={<p>loading...</p>}>
-            {scene === "LOADING" && (
-              <Loading
-                onFinishLoading={() => {
-                  console.log("finish loading");
-                  if (token && token !== '') changeScene('HOME')
-                  else changeScene("REGISTER");
-                }}
-                visible={scene === "LOADING"}
-              />
-            )}
-          </Suspense>
+          {/* <Suspense fallback={<p>loading...</p>}> */}
+          {scene === "LOADING" && (
+            <Loading
+              onFinishLoading={() => {
+                console.log("finish loading");
+                if (token && token !== "") changeScene("HOME");
+                else changeScene("REGISTER");
+              }}
+              visible={scene === "LOADING"}
+            />
+          )}
+          {/* </Suspense> */}
           {scene === "REGISTER" && <Register />}
           {scene === "HOME" && (
             <>
-              <Home onProfileClick={() => changeScene("PROFILE")} scene={scene} />
+              <Home
+                onProfileClick={() => changeScene("PROFILE")}
+                scene={scene}
+              />
             </>
           )}
 
@@ -941,28 +1034,30 @@ export const AppTemp = () => {
                   console.log("back");
                 }}
                 sendTransaction={async (data: any) => {
-                  console.log('sendTransaction triggered from appTemp', data)
-                  const txSend = await sendTransaction(data)
-                  console.log('txSend from appTemp', txSend)
+                  console.log("sendTransaction triggered from appTemp", data);
+                  const txSend = await sendTransaction(data);
+                  console.log("txSend from appTemp", txSend);
                 }}
                 sendPayTransaction={async (req: any, transactionData: any) => {
-                  const txSend = await sendTransactionPay(req)
-                  console.log('sendPayTransaction from appTemp', txSend)
+                  const txSend = await sendTransactionPay(req);
+                  console.log("sendPayTransaction from appTemp", txSend);
                   if (txSend) {
-
                     let options = {
                       headers: {
-                        'my-auth-key': token
-                      }
-                    }
+                        "my-auth-key": token,
+                      },
+                    };
                     const result = await axiosInstance({
                       url: "/egg/finished",
                       method: "POST",
                       headers: options.headers,
-                      data: { id: transactionData.id, hash: txSend.transactionHash },
+                      data: {
+                        id: transactionData.id,
+                        hash: txSend.transactionHash,
+                      },
                     });
                     const { data } = result;
-                    console.log('payment finished', data);
+                    console.log("payment finished", data);
                     setTimeout(() => checkValidation(transactionData.id), 3000);
                   }
                 }}
