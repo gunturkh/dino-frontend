@@ -6,8 +6,10 @@ import {
   Text,
   useApp,
 } from "@pixi/react";
+import { EggTransactionData, useStore } from "../utils/store";
 
 type props = {
+  data?: EggTransactionData
   id?: string;
   priceText?: string;
   timerText?: string;
@@ -17,6 +19,7 @@ type props = {
   eggType: number,
   onBtnKeepPress: (idx: number) => void,
   onBtnPurchasePress: (idx: number) => void,
+  onBtnPayPress?: (raw: string) => void,
   selectedPanel: string,
   calculateEggXPosition: number,
   calculateEggYPosition: number,
@@ -30,6 +33,7 @@ type props = {
 };
 
 const EggListingComponent = ({
+  data,
   id,
   priceText,
   timerText,
@@ -39,6 +43,7 @@ const EggListingComponent = ({
   eggType,
   onBtnKeepPress,
   onBtnPurchasePress,
+  onBtnPayPress,
   selectedPanel,
   calculateEggXPosition,
   calculateEggYPosition,
@@ -47,6 +52,8 @@ const EggListingComponent = ({
 }: props) => {
   const app = useApp();
   const isNotMobile = app.screen.width >= 430;
+  const approved = useStore((state) => state.approved);
+  console.log('egg approved', approved?.toString(), data)
 
   const listingActionBtnRef = useCallback((node: any) => {
     if (node !== null && listingItemBounds.height > 0) {
@@ -195,9 +202,12 @@ const EggListingComponent = ({
         eventMode="static"
         onpointertap={() => {
           if (countdownText() === 'Keep') return
+          else if (approved && data && approved.toString() >= data.total && onBtnPayPress) {
+            onBtnPayPress(data.TxRawPayment)
+          }
           else return onBtnPurchasePress(idx);
         }}
-        visible={selectedPanel=== 'My Listing'}
+        visible={selectedPanel === 'My Listing'}
       >
         <Container position={[0, isNotMobile ? 60 : 55]}>
           <Sprite
@@ -206,7 +216,7 @@ const EggListingComponent = ({
             position={[0, 0]}
           />
           <Text
-            text={'Purchase'}
+            text={approved && data && approved.toString() >= data.total ? 'Pay' : 'Purchase'}
             position={[0, isNotMobile ? 2.5 : 2.5]}
             anchor={[0.5, 0]}
             style={new PIXI.TextStyle({

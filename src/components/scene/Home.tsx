@@ -38,7 +38,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
   const setEggListsData = useStore((state) => state.setEggListsData);
   const token = useAuthStore((state) => state.token);
   // const { sendTransaction, state } = useSendTransaction({ transactionName: 'Buy Ticket' })
-  console.log("token", token);
+  console.log("token from home", token);
   const isNotMobile = app.screen.width > 450;
   // @ts-ignore
   globalThis.__PIXI_APP__ = app;
@@ -221,10 +221,16 @@ const Home = ({ onProfileClick, scene }: Props) => {
 
   useEffect(() => {
     // /user/getUserData
+    let options = {
+      headers: {
+        'my-auth-key': token
+      }
+    }
     const getUserData = async () => {
       const result = await axiosInstance({
         url: "/user/getUserData",
         method: "GET",
+        headers: options.headers
       });
       console.log('getUserData Result:', result)
       if (result && result.data && result.data.result) {
@@ -236,6 +242,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
       const data: any = await axiosInstance({
         url: "/egg/lists",
         method: "GET",
+        headers: options.headers
       });
       console.log("getEggList Result:", data);
       if (data?.status === 200 && data?.data?.result?.lists) {
@@ -243,8 +250,10 @@ const Home = ({ onProfileClick, scene }: Props) => {
       }
     };
 
-    getUserData();
-    getEggList();
+    if (token && token?.length > 0) {
+      getUserData();
+      getEggList();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
@@ -865,7 +874,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
 
                 {/* upper panel component */}
                 <Container
-                  position={[0, -(buyTicketPanelBounds?.height * 0.39) ]}
+                  position={[0, -(buyTicketPanelBounds?.height * 0.39)]}
                 >
                   <Text
                     text={'Buy Ticket'}
@@ -887,7 +896,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     position={[buyTicketPanelBounds?.width * 0.5 - (isNotMobile ? 50 : 25), 0]}
                     eventMode='static'
                     onpointertap={() => setBuyTicketPanelVisible(false)}
-                  />          
+                  />
                 </Container>
               </Container>
             </Container>
@@ -922,10 +931,10 @@ const Home = ({ onProfileClick, scene }: Props) => {
 
                 {/* upper panel component */}
                 <Container
-                  position={[0, -(buyTicketPanelBounds?.height * 0.39) ]}
+                  position={[0, -(buyTicketPanelBounds?.height * 0.29)]}
                 >
                   <Text
-                    text={'Buy Ticket'}
+                    text={'Set 2FA'}
                     position={[0, 0]}
                     anchor={[0.5, 0.5]}
                     style={new PIXI.TextStyle({
@@ -943,7 +952,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[buyTicketPanelBounds?.width * 0.5 - (isNotMobile ? 50 : 25), 0]}
                     eventMode='static'
-                    onpointertap={() => setBuyTicketPanelVisible(false)}
+                    // onpointertap={() => setGoogleAuthVisible(false)}
                   />
                 </Container>
 
@@ -952,10 +961,24 @@ const Home = ({ onProfileClick, scene }: Props) => {
                   position={[0, 0]}
                 >
                   {/* put content here */}
-                  {/* <Text
-                    text={'Log Out?'}
+                  {/* {googleAuthData && googleAuthData.qr &&
+                    <Sprite
+                      // texture={PIXI.Assets.get('LogoutBtn')}
+                      width={150}
+                      height={150}
+                      anchor={[0.5, 0.5]}
+                      // position={[buyTicketPanelBounds?.width * 0.5 - (isNotMobile ? 50 : 25), 0]}
+                      position={[0, 0]}
+                      // eventMode='static'
+                      // onpointertap={() => setGoogleAuthVisible(false)}
+                      image={googleAuthData?.qr}
+                    />
+                  } */}
+                  <Text
+                    // text={`SECRET : ${googleAuthData?.secret}`}
+                    text={``}
                     // position={[0, isNotMobile ? -100 : -confirmQuitPanelBounds?.height * 0.4]}
-                    position={[0, 0]}
+                    position={[0, 100]}
                     anchor={[0.5, 0.5]}
                     style={new PIXI.TextStyle({
                       fontFamily: 'Magra Bold',
@@ -964,8 +987,9 @@ const Home = ({ onProfileClick, scene }: Props) => {
                       strokeThickness: 1,
                       fill: ['white'],
                     })}
-                  /> */}
-                  
+                  />
+                  {/* <input type="text" placeholder="validation" />  */}
+
                 </Container>
               </Container>
             </Container>

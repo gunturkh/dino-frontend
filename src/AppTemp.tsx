@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useFormik } from "formik";
-import { useEtherBalance, useEthers, BSC, BSCTestnet, useToken, useTokenBalance } from "@usedapp/core";
+import { useEtherBalance, useEthers, BSC, BSCTestnet, useToken, useTokenBalance, useTokenAllowance, useSendTransaction } from "@usedapp/core";
 import { Stage } from "@pixi/react";
 import { useState, Suspense, useEffect, useCallback } from "react";
 import { axiosInstance } from "./utils/api";
@@ -15,6 +15,8 @@ import Album from "./components/scene/Album";
 
 import DinoCenter from "./components/scene/DinoCenter";
 import { useAuthStore, useStore } from "./utils/store";
+import { USDT_ADDR, PAYGATEWAY_ADDR } from "./utils/config";
+import { BigNumber } from "ethers";
 // import { BigNumber, BigNumberish, Contract, utils } from "ethers";
 // import { Interface } from "ethers/lib/utils";
 
@@ -45,16 +47,24 @@ export const AppTemp = () => {
   const { account, active, deactivate, activateBrowserWallet, chainId, switchNetwork } = useEthers();
   const token = useAuthStore((state) => state.token);
   const saveToken = useAuthStore((state) => state.saveToken);
+  const userData = useStore((state) => state.userData);
   const scene = useStore((state) => state.scene);
-  // const walletAddress = useStore((state) => state.walletAddress);
+  const walletAddress = useStore((state) => state.walletAddress);
   const setWalletAddress = useStore((state) => state.setWalletAddress);
   const setWalletBalance = useStore((state) => state.setWalletBalance);
+  const approved = useStore((state) => state.approved);
+  const setApproved = useStore((state) => state.setApproved);
   const usdtInfo = useToken(USDT_ADDRESS)
   const usdtBalance = useTokenBalance(USDT_ADDRESS, account)
   const tokenBalance = useTokenBalance('0x1D2F0da169ceB9fC7B3144628dB156f3F6c60dBE', account)
   const etherBalance = useEtherBalance(account, { chainId: BSCTestnet.chainId })
   const mainnetBalance = useEtherBalance(account, { chainId: BSC.chainId })
   const testnetBalance = useEtherBalance(account, { chainId: BSCTestnet.chainId })
+  const allowance = useTokenAllowance(USDT_ADDR, walletAddress, PAYGATEWAY_ADDR)
+  const [googleAuthVisible, setGoogleAuthVisible] = useState(false);
+  const [googleAuthData, setGoogleAuthData] = useState<{ qr: string, secret: string } | null>();
+  const { sendTransaction, state: sendTransactionState, resetState: resetSendTransactionState } = useSendTransaction({ transactionName: 'Egg Approval' })
+  const { sendTransaction: sendTransactionPay, state: sendTransactionPayState, resetState: resetSendTransactionPayState } = useSendTransaction({ transactionName: 'Egg Pay' })
 
   const changeScene = useStore((state) => state.changeScene);
   const [authMode, setAuthMode] = useState<
@@ -68,8 +78,61 @@ export const AppTemp = () => {
   console.log('tokenBalance', tokenBalance)
   console.log('etherBalance', etherBalance)
   console.log('usdtInfo', usdtInfo)
+  console.log('sendTransaction state', sendTransactionState)
   console.log({ mainnetBalance: mainnetBalance && formatEther(mainnetBalance as any), testnetBalance: testnetBalance && formatEther(testnetBalance as any), chainId })
   // console.log({ testnetBalance: testnetBalance && formatEther(testnetBalance as any) })
+  useEffect(() => {
+    let options = {
+      headers: {
+        'my-auth-key': token
+      }
+    }
+    const create2FAtoken = async () => {
+      const result = await axiosInstance({
+        url: "/auth/create2FAtoken",
+        method: "GET",
+        headers: options.headers
+      });
+      console.log('create2FAtoken Result:', result)
+      if (result && result.data && result.data.result) {
+        setGoogleAuthData(result.data.result)
+      }
+    };
+    if (userData && userData?.username !== '' && userData?.ga_key === false) {
+      create2FAtoken()
+      setGoogleAuthVisible(true)
+    }
+  }, [userData])
+
+  useEffect(() => {
+    if (sendTransactionState.status === 'Success' && allowance) {
+      setApproved(allowance)
+      resetSendTransactionState()
+    }
+  }, [sendTransactionState])
+
+  const checkValidation = async (id: string) => {
+    let options = {
+      headers: {
+        'my-auth-key': token
+      }
+    }
+    const result = await axiosInstance({
+      url: "/egg/validate",
+      method: "POST",
+      headers: options.headers,
+      data: { id: id },
+    });
+    console.log(result.data);
+    if (result.data.result === 1) {
+      alert('Transaction Confirmed');
+      // window.location = '/pending-list';
+    } else {
+      setTimeout(() => checkValidation(id), 5000);
+    }
+  }
+
+
   const connectToWallet = async (e: React.MouseEvent<HTMLElement>, type: string) => {
     e.stopPropagation();
     // setActivateError('')
@@ -241,6 +304,16 @@ export const AppTemp = () => {
       setAuthMode("LOGINWALLET");
     },
   });
+
+  const googleAuthenticationFormValidate = (values: { validation?: string }) => {
+    console.log("validate 2FA", values);
+    const errors: { validation?: string } = {};
+    if (!values.validation) {
+      errors.validation = "Required";
+    } console.log("errors", errors);
+    return errors;
+  };
+
   const loginWalletForm = useFormik({
     initialValues: {
       walletAddress: "",
@@ -281,6 +354,38 @@ export const AppTemp = () => {
       setSubmitting(false);
     },
   });
+  const googleAuthenticationForm = useFormik({
+    initialValues: {
+      validation: "",
+    },
+    validate: googleAuthenticationFormValidate,
+    onSubmit: (values, { setSubmitting }) => {
+      setSubmitting(false);
+      let options = {
+        headers: {
+          'my-auth-key': token
+        }
+      }
+      const validate2FA = async () => {
+        const result = await axiosInstance({
+          url: "/auth/confirm2FA",
+          method: "POST",
+          headers: options.headers,
+          data: { key: values.validation }
+        });
+        console.log('validate2FA Result:', result)
+        if (result && result.data && result.data.result) {
+          alert('2FA Confirmed');
+          setGoogleAuthVisible(false)
+        }
+        else {
+          alert(result.data.message)
+        }
+      };
+
+      validate2FA()
+    },
+  });
 
   useEffect(() => {
     console.log("active", active);
@@ -307,12 +412,6 @@ export const AppTemp = () => {
     }
   }, [setWalletBalance, usdtBalance])
 
-  // useEffect(() => {
-  //   if (error) {
-  //     setActivateError(error.message)
-  //     window.alert(error.message)
-  //   }
-  // }, [error])
   const options = {
     backgroundColor: 0x1099bb,
     antialias: true,
@@ -730,6 +829,65 @@ export const AppTemp = () => {
           </div>
         </div>
       )}
+      {googleAuthVisible && scene === 'HOME' && (
+        <div className="absolute h-full flex">
+          <div className=" my-5 flex backdrop-blur-sm  justify-center items-center flex-col bg-white/10 px-3.5 py-2.5 shadow-sm rounded-sm ">
+            <div
+              className="flex justify-start items-center flex-col gap-4 bg-white/50 px-3.5 py-6 shadow-sm rounded-xl "
+              style={{
+                background: `url(image/formBackground.png) no-repeat `,
+                backgroundSize: "cover",
+              }}
+            >
+              <>
+                <div className="flex w-full justify-end">
+                  <img
+                    src="image/logoutBtn.png"
+                    width={30}
+                    height={30}
+                    alt="Close 2FA"
+                    onClick={() => setGoogleAuthVisible(false)}
+                  />
+                </div>
+                <img
+                  src={googleAuthData?.qr}
+                  width={177}
+                  height={177}
+                  alt="2FA QR"
+                />
+                <p className="font-Magra text-white">Secret : {googleAuthData?.secret}</p>
+                <form onSubmit={googleAuthenticationForm.handleSubmit}>
+                  <div className="flex flex-col">
+                    <input
+                      name="validation"
+                      type="text"
+                      placeholder="Validation"
+                      className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                      style={{
+                        background: `url(image/InputBox.png) no-repeat `,
+                      }}
+                      onChange={googleAuthenticationForm.handleChange}
+                      onBlur={googleAuthenticationForm.handleBlur}
+                      value={googleAuthenticationForm.values.validation}
+                    />
+                    <p className="text-red-500 font-bold font-magra">
+                      {googleAuthenticationForm.errors.validation &&
+                        googleAuthenticationForm.touched.validation &&
+                        googleAuthenticationForm.errors.validation}
+                    </p>
+                  </div>
+                </form>
+                <button
+                  type={"submit"}
+                  // src={"image/BtnConfirm.png"}
+                  onClick={googleAuthenticationForm.submitForm}
+                  className="bg-green-500 text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                >Validation</button>
+              </>
+            </div>
+          </div>
+        </div>
+      )}
       <div>
         <Stage
           ref={stageRef}
@@ -763,6 +921,7 @@ export const AppTemp = () => {
               <Home onProfileClick={() => changeScene("PROFILE")} scene={scene} />
             </>
           )}
+
           {scene === "PROFILE" && (
             <>
               <ProfileTemp
@@ -780,6 +939,32 @@ export const AppTemp = () => {
                 onBackBtnClick={() => {
                   changeScene("HOME");
                   console.log("back");
+                }}
+                sendTransaction={async (data: any) => {
+                  console.log('sendTransaction triggered from appTemp', data)
+                  const txSend = await sendTransaction(data)
+                  console.log('txSend from appTemp', txSend)
+                }}
+                sendPayTransaction={async (req: any, transactionData: any) => {
+                  const txSend = await sendTransactionPay(req)
+                  console.log('sendPayTransaction from appTemp', txSend)
+                  if (txSend) {
+
+                    let options = {
+                      headers: {
+                        'my-auth-key': token
+                      }
+                    }
+                    const result = await axiosInstance({
+                      url: "/egg/finished",
+                      method: "POST",
+                      headers: options.headers,
+                      data: { id: transactionData.id, hash: txSend.transactionHash },
+                    });
+                    const { data } = result;
+                    console.log('payment finished', data);
+                    setTimeout(() => checkValidation(transactionData.id), 3000);
+                  }
                 }}
               />
             </>

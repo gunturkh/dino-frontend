@@ -5,7 +5,7 @@ import { Container, Sprite, useApp, Text } from "@pixi/react";
 import { ProgressBar } from "@pixi/ui";
 
 import EggListingComponent from "../EggListingComponent";
-import { EggTransactionData, useStore } from "../../utils/store";
+import { EggTransactionData, useAuthStore, useStore } from "../../utils/store";
 import { axiosInstance } from "../../utils/api";
 import { useSendTransaction, useTokenAllowance } from "@usedapp/core";
 import { PAYGATEWAY_ADDR, RPC_ENDPOINT, USDT_ABI, USDT_ADDR } from "../../utils/config";
@@ -149,7 +149,7 @@ const duplicateListingData = [
 console.log("🚀 ~ file: DinoCenter.tsx:91 ~ duplicateListingData:", duplicateListingData)
 
 
-const DinoCenter = ({ scene, onBackBtnClick }: any) => {
+const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction }: any) => {
   const app = useApp();
   // const { account } = useEthers()
   const isNotMobile = app.screen.width >= 430;
@@ -161,11 +161,13 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
   });
 
   console.log("rankDetailBounds:", rankDetailBounds)
+  const token = useAuthStore(state => state.token)
   const walletAddress = useStore(state => state.walletAddress)
   const eggListsData = useStore(state => state.eggListsData)
   const setEggListsData = useStore(state => state.setEggListsData)
   const eggTransactionData = useStore(state => state.eggTransactionData)
   const setEggTransactionData = useStore(state => state.setEggTransactionData)
+  const approved = useStore(state => state.approved)
   const [isLoaded, setIsLoaded] = useState(false);
   const [selectedPanel, setSelectedPanel] = useState("Listing");
   // const [eggLists, setEggLists] = useState([]);
@@ -181,10 +183,10 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
   const currentEggs = eggListsData.slice(startIndex, endIndex);
 
   const allowance = useTokenAllowance(USDT_ADDR, walletAddress, PAYGATEWAY_ADDR)
-  const { sendTransaction, state } = useSendTransaction({ transactionName: 'Send Ethereum' })
+  // const { sendTransaction, state } = useSendTransaction({ transactionName: 'Send Ethereum' })
   console.log('allowance token', allowance)
   console.log('account', walletAddress)
-  console.log('transaction state', state)
+  console.log('approved state', approved?.toString())
   const [listingItemBounds, setListingItemBounds] = useState({
     x: 0, y: 0, width: 0, height: 0
   });
@@ -306,9 +308,15 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
   }, []);
 
   const getEggList = async () => {
+    let options = {
+      headers: {
+        'my-auth-key': token
+      }
+    }
     const data: any = await axiosInstance({
       url: "/egg/lists",
       method: "GET",
+      headers: options.headers
     });
     console.log("getEggList Result:", data);
     if (data?.status === 200 && data?.data?.result?.lists) {
@@ -317,9 +325,15 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
   };
 
   const processTransaction = async (id: string, ticket: number) => {
+    let options = {
+      headers: {
+        'my-auth-key': token
+      }
+    }
     const data: any = await axiosInstance({
       url: `/egg/detail?id=${id}`,
       method: "GET",
+      headers: options.headers
     });
     console.log("processTransaction Result:", data);
     if (data?.data?.success) {
@@ -329,9 +343,15 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
   };
 
   const handleKeep = async (id: string, ticket: number) => {
+    let options = {
+      headers: {
+        'my-auth-key': token
+      }
+    }
     const { data }: any = await axiosInstance({
       url: "/egg/keep",
       method: "POST",
+      headers: options.headers,
       data: { id }
     });
     console.log("handleKeep Result:", data);
@@ -803,6 +823,7 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
                   return (
                     <>
                       <EggListingComponent
+                        data={d}
                         id={`${d.id}`}
                         key={`egg-transaction-${idx + ((currentPage - 1) * 12)}`}
                         index={`egg-transaction-${idx + ((currentPage - 1) * 12)}`}
@@ -823,15 +844,19 @@ const DinoCenter = ({ scene, onBackBtnClick }: any) => {
                         onBtnPurchasePress={async (idx) => {
                           console.log('allowance ', allowance)
                           console.log('account approve', walletAddress)
-                          const contract = new ethers.Contract(USDT_ADDR, USDT_ABI, ethProvider);
-                          console.log('contract', contract)
-                          let checkallw = await contract?.allowance(walletAddress, PAYGATEWAY_ADDR);
-                          checkallw = checkallw.toString();
-                          console.log('checkallw', checkallw)
-                          const txReq = { to: USDT_ADDR, from: walletAddress, data: d.TxRawApproval, value: utils.parseEther(d.total) }
+                          const txReq = { to: USDT_ADDR, from: walletAddress, data: d.TxRawApproval }
                           console.log('txReq', txReq)
                           const txSend = await sendTransaction(txReq)
                           console.log('txSend', txSend)
+                        }}
+                        onBtnPayPress={async (raw) => {
+                          const txReq = {
+                            data: raw,
+                            to: PAYGATEWAY_ADDR,
+                            from: walletAddress,
+                          }
+                          const txSend = await sendPayTransaction(txReq, d)
+                          console.log('txSend payment', txSend)
                         }}
                       />
                     </>

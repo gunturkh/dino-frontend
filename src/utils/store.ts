@@ -1,12 +1,22 @@
+import { BigNumber } from 'ethers'
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
 type User = {
-    bonuses: string
-    ga_key: boolean
-    sponsor: string
-    tickets: number
     username: string
+    ga_key: boolean
+    tickets: number
+    bonuses: string
+    sponsor: string
+    daily: number
+    tf_ticket: boolean
+    title: string
+    ability_end: number
+    bought: {
+        total: string
+        period: string
+        group: string
+    }
 }
 
 type Egg = {
@@ -38,6 +48,8 @@ type Store = {
     setEggListsData: (data: Egg[]) => void,
     eggTransactionData: EggTransactionData[]
     setEggTransactionData: (data: EggTransactionData) => void,
+    approved: BigNumber | undefined,
+    setApproved: (data: BigNumber) => void,
 }
 type AuthStore = {
     token: string | null,
@@ -58,7 +70,16 @@ export const useStore = create<Store>((set, get) => ({
         ga_key: false,
         sponsor: '',
         tickets: 0,
-        username: ''
+        username: '',
+        daily: 0,
+        tf_ticket: false,
+        title: '',
+        ability_end: 0,
+        bought: {
+            total: "0",
+            period: "0",
+            group: "0",
+        }
     },
     setUserData: (data) => set(() => ({ userData: data })),
     eggListsData: [],
@@ -70,14 +91,16 @@ export const useStore = create<Store>((set, get) => ({
         return {
             eggTransactionData: currentEggTransactionData
         }
-    })
+    }),
+    approved: undefined,
+    setApproved: (data) => set(() => ({ approved: data }))
 }))
 
 export const useAuthStore = create(persist<AuthStore>((set, _get) => ({
     token: null,
     saveToken: (token, callback) => {
         set(() => ({ token }))
-        if (callback) callback()
+        if (callback && _get()?.token) callback()
     },
     logout: () => set(() => ({ token: null }))
 }), {
