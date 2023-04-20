@@ -25,6 +25,8 @@ import ProfileTemp from "./components/scene/ProfileTemp";
 import Album from "./components/scene/Album";
 
 import DinoCenter from "./components/scene/DinoCenter";
+import GameGuide from "./components/scene/GameGuide";
+
 import { useAuthStore, useStore } from "./utils/store";
 import { USDT_ADDR, PAYGATEWAY_ADDR } from "./utils/config";
 import { BigNumber } from "ethers";
@@ -1021,6 +1023,15 @@ export const AppTemp = () => {
                 onBackBtnClick={() => {
                   changeScene("HOME");
                   console.log("back");
+                }}
+              />
+            </>
+          )}
+          {scene === "GAMEGUIDE" && (
+            <>
+              <GameGuide
+                onBackBtnClick={() => {
+                  changeScene("PROFILE");
                 }}
               />
             </>
