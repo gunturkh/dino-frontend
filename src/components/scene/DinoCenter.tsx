@@ -7,10 +7,10 @@ import { ProgressBar } from "@pixi/ui";
 import EggListingComponent from "../EggListingComponent";
 import { EggTransactionData, useAuthStore, useStore } from "../../utils/store";
 import { axiosInstance } from "../../utils/api";
-import { useSendTransaction, useTokenAllowance } from "@usedapp/core";
-import { PAYGATEWAY_ADDR, RPC_ENDPOINT, USDT_ABI, USDT_ADDR } from "../../utils/config";
-import { ethers, utils } from "ethers";
-const ethProvider = new ethers.providers.JsonRpcProvider(RPC_ENDPOINT);
+import { useTokenAllowance } from "@usedapp/core";
+import { PAYGATEWAY_ADDR, USDT_ADDR } from "../../utils/config";
+// import { ethers } from "ethers";
+// const ethProvider = new ethers.providers.JsonRpcProvider(RPC_ENDPOINT);
 const dummyListingData = [
   {
     id: "43d0dc7559ab1d630b1255b4bc073368",

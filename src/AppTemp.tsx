@@ -79,7 +79,7 @@ export const AppTemp = () => {
   const walletAddress = useStore((state) => state.walletAddress);
   const setWalletAddress = useStore((state) => state.setWalletAddress);
   const setWalletBalance = useStore((state) => state.setWalletBalance);
-  const approved = useStore((state) => state.approved);
+  // const approved = useStore((state) => state.approved);
   const setApproved = useStore((state) => state.setApproved);
   const ticketPanel = useStore((state) => state.ticketPanel);
   const setTicketPanel = useStore((state) => state.setTicketPanel);
@@ -91,7 +91,7 @@ export const AppTemp = () => {
   const testnetBalance = useEtherBalance(account, { chainId: BSCTestnet.chainId })
   const allowance = useTokenAllowance(USDT_ADDR, walletAddress, PAYGATEWAY_ADDR)
   const ticketAllowance = useTokenAllowance(USDT_ADDR, walletAddress, TICKET_ADDR)
-  const [ticketApproved, setTicketApproved] = useState<any>()
+  // const [ticketApproved, setTicketApproved] = useState<any>()
   const [googleAuthVisible, setGoogleAuthVisible] = useState(false);
   const [googleAuthData, setGoogleAuthData] = useState<{
     qr: string;
@@ -104,8 +104,8 @@ export const AppTemp = () => {
   } = useSendTransaction({ transactionName: "Egg Approval" });
   const {
     sendTransaction: sendTransactionPay,
-    state: sendTransactionPayState,
-    resetState: resetSendTransactionPayState,
+    // state: sendTransactionPayState,
+    // resetState: resetSendTransactionPayState,
   } = useSendTransaction({ transactionName: "Egg Pay" });
 
   // const {
@@ -166,7 +166,7 @@ export const AppTemp = () => {
   const [transferUsername, setTransferUsername] = useState('');
   const [transferQty, setTransferQty] = useState(1);
   const [GAValue, setGAValue] = useState('');
-  const [countryCodeValue, setCountryCodeValue] = useState();
+  // const [countryCodeValue, setCountryCodeValue] = useState();
   const [buyWithBonus, setBuyWithBonus] = useState(false);
 
   console.log('usd', usd && BigInt(usd * 1e18), 'ticketAllowance', ticketAllowance && BigInt(ticketAllowance.toString()))
