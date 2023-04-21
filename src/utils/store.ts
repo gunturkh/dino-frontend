@@ -37,7 +37,7 @@ export type EggTransactionData = {
 
 export type TicketPanelData = {
     show: boolean,
-    mode: 'BUY' | 'TRANSFER'
+    mode: 'BUY' | 'TRANSFER' | 'HISTORY'
 }
 
 type Store = {

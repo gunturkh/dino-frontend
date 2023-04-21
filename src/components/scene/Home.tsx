@@ -8,6 +8,7 @@ import DetailsComponent from "../DetailsComponent";
 import LowerButtonComponent from "../LowerButtonComponent";
 import { useAuthStore, useStore } from "../../utils/store";
 import { axiosInstance } from "../../utils/api";
+import { ethers } from "ethers";
 // import { TICKET_ADDR } from "../../utils/config";
 
 type Props = {
@@ -563,7 +564,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 <DetailsComponent
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
                   IconTexture={PIXI?.Assets?.get("BonusIcon")}
-                  text={"123.123.123"}
+                  text={ethers.utils.formatUnits(userData.bonuses, 18)}
                   posX={0}
                   posY={35}
                   scaleX={isNotMobile ? 1 : 0.8}
@@ -644,7 +645,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 <DetailsComponent
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
                   IconTexture={PIXI?.Assets?.get("DinoEggIcon")}
-                  text={"123.123.123"}
+                  text={userData.daily.toString()}
                   posX={0}
                   posY={70}
                   scaleX={isNotMobile ? 1 : 0.85}
