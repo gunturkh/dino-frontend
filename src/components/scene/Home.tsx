@@ -208,13 +208,13 @@ const Home = ({ onProfileClick, scene }: Props) => {
       if (node !== null && isLoaded) {
         // setLowerContainerBounds(node.getBounds(true))
         // node.y = 0
-        console.log("lowerBounds local bounds", node.getLocalBounds());
-        console.log("lowerBounds get bounds", node.getBounds());
-        const localBounds = node.getLocalBounds();
-        console.log(
-          "🚀 ~ file: home.tsx:136 ~ lowerSectionContainerRef ~ localBounds:",
-          localBounds
-        );
+        // console.log("lowerBounds local bounds", node.getLocalBounds());
+        // console.log("lowerBounds get bounds", node.getBounds());
+        // const localBounds = node.getLocalBounds();
+        // console.log(
+        //   "🚀 ~ file: home.tsx:136 ~ lowerSectionContainerRef ~ localBounds:",
+        //   localBounds
+        // );
 
         if (app.screen.width > 430) {
           node.y = app.screen.height * 0.8;
@@ -264,13 +264,13 @@ const Home = ({ onProfileClick, scene }: Props) => {
           node.width = app.screen.width * 0.7;
           node.scale.set(0.8, 0.8);
         }
-        console.log(
-          "eggplate node.height",
-          node.height,
-          node.width,
-          node.y,
-          node.x
-        );
+        // console.log(
+        //   "eggplate node.height",
+        //   node.height,
+        //   node.width,
+        //   node.y,
+        //   node.x
+        // );
         // setEggPlateContainerBounds(node.getBounds());
       }
     },

@@ -146,10 +146,17 @@ const duplicateListingData = [
   // dummyListingData,
   // dummyListingData,
 ].flat();
-console.log("🚀 ~ file: DinoCenter.tsx:91 ~ duplicateListingData:", duplicateListingData)
+console.log(
+  "🚀 ~ file: DinoCenter.tsx:91 ~ duplicateListingData:",
+  duplicateListingData
+);
 
-
-const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction }: any) => {
+const DinoCenter = ({
+  scene,
+  onBackBtnClick,
+  sendTransaction,
+  sendPayTransaction,
+}: any) => {
   const app = useApp();
   // const { account } = useEthers()
   const isNotMobile = app.screen.width >= 430;
@@ -157,17 +164,22 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
   console.log("scene", scene);
 
   const [rankDetailBounds, setRankDetailBounds] = useState({
-    x: 0, y: 0, width: 0, height: 0,
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
   });
 
-  console.log("rankDetailBounds:", rankDetailBounds)
-  const token = useAuthStore(state => state.token)
-  const walletAddress = useStore(state => state.walletAddress)
-  const eggListsData = useStore(state => state.eggListsData)
-  const setEggListsData = useStore(state => state.setEggListsData)
-  const eggTransactionData = useStore(state => state.eggTransactionData)
-  const setEggTransactionData = useStore(state => state.setEggTransactionData)
-  const approved = useStore(state => state.approved)
+  console.log("rankDetailBounds:", rankDetailBounds);
+  const token = useAuthStore((state) => state.token);
+  const walletAddress = useStore((state) => state.walletAddress);
+  const eggListsData = useStore((state) => state.eggListsData);
+  const setEggListsData = useStore((state) => state.setEggListsData);
+  const eggTransactionData = useStore((state) => state.eggTransactionData);
+  const setEggTransactionData = useStore(
+    (state) => state.setEggTransactionData
+  );
+  const approved = useStore((state) => state.approved);
   const [isLoaded, setIsLoaded] = useState(false);
   const [selectedPanel, setSelectedPanel] = useState("Listing");
   // const [eggLists, setEggLists] = useState([]);
@@ -182,18 +194,25 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
   const endIndex = startIndex + eggPerPage;
   const currentEggs = eggListsData.slice(startIndex, endIndex);
 
-  const allowance = useTokenAllowance(USDT_ADDR, walletAddress, PAYGATEWAY_ADDR)
+  const allowance = useTokenAllowance(
+    USDT_ADDR,
+    walletAddress,
+    PAYGATEWAY_ADDR
+  );
   // const { sendTransaction, state } = useSendTransaction({ transactionName: 'Send Ethereum' })
-  console.log('allowance token', allowance)
-  console.log('account', walletAddress)
-  console.log('approved state', approved?.toString())
+  console.log("allowance token", allowance);
+  console.log("account", walletAddress);
+  console.log("approved state", approved?.toString());
   const [listingItemBounds, setListingItemBounds] = useState({
-    x: 0, y: 0, width: 0, height: 0
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
   });
 
-  const [eggListingBounds, setEggListingBounds] = useState({
-    x: 0, y: 0, width: 0, height: 0,
-  });
+  // const [eggListingBounds, setEggListingBounds] = useState({
+  //   x: 0, y: 0, width: 0, height: 0,
+  // });
 
   const listingItemBgRef = useCallback((node: any) => {
     if (node !== null) {
@@ -201,52 +220,54 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
     }
   }, []);
 
-  const eggListingComponentRef = useCallback((node: any) => {
-    if (node !== null) {
-      // node.height = app.screen.height * (isNotMobile ? 0.6 : 0.57);
+  // const eggListingComponentRef = useCallback((node: any) => {
+  //   if (node !== null) {
+  //     // node.height = app.screen.height * (isNotMobile ? 0.6 : 0.57);
 
-      if (app.screen.width > 430) {
-        node.x = -(node.width / 2 + listingItemBounds.width * 0.5)
-        node.y = app.screen.height * 0.3
-        node.height = app.screen.height * 0.6
-        // node.width = 450 * 1;
-      } else if (app.screen.width > 400 && app.screen.width <= 430) {
-        node.x = -(node.width / 2 + listingItemBounds.width * 0.5)
-        node.y = app.screen.height * 0.3
-        node.height = app.screen.height * 0.6
-        // node.width = 450 * 0.94;
-      } else if (app.screen.width < 400) {
-        node.x = -(node.width / 2 + rankDetailBounds.width * 0.12)
-        node.y = app.screen.height * 0.44
-        node.height = app.screen.height * 0.5
-        // node.width = app.screen.width * 0.95;
+  //     if (app.screen.width > 430) {
+  //       node.x = -(node.width / 2 + listingItemBounds.width * 0.5)
+  //       node.y = app.screen.height * 0.3
+  //       node.height = app.screen.height * 0.6
+  //       // node.width = 450 * 1;
+  //     } else if (app.screen.width > 400 && app.screen.width <= 430) {
+  //       node.x = -(node.width / 2 + listingItemBounds.width * 0.5)
+  //       node.y = app.screen.height * 0.3
+  //       node.height = app.screen.height * 0.6
+  //       // node.width = 450 * 0.94;
+  //     } else if (app.screen.width < 400) {
+  //       node.x = -(node.width / 2 + rankDetailBounds.width * 0.12)
+  //       node.y = app.screen.height * 0.44
+  //       node.height = app.screen.height * 0.5
+  //       // node.width = app.screen.width * 0.95;
+  //     }
+  //     setEggListingBounds(node.getBounds())
+  //     // node.x = -(node.width / 2 + rankDetailBounds.width * 0.125)
+  //     console.log('eggListingComponentRef bounds', node.getBounds())
+  //   }
+  // }, [app.screen.height, app.screen.width, listingItemBounds.width, rankDetailBounds.width]);
+
+  const paginationRef = useCallback(
+    (node: any) => {
+      if (node !== null) {
+        // x={app.screen.width * 0.4}
+
+        if (app.screen.width > 430) {
+          node.width = 450 * 0.5;
+          node.x = app.screen.width * 0.47;
+          node.y = app.screen.height * 0.92;
+        } else if (app.screen.width > 400 && app.screen.width <= 430) {
+          node.width = 450 * 0.58;
+          node.x = app.screen.width * 0.42;
+          node.y = app.screen.height * 0.92;
+        } else if (app.screen.width < 400) {
+          node.width = app.screen.width * 0.6;
+          node.x = app.screen.width * 0.4;
+          node.y = app.screen.height * 0.935;
+        }
       }
-      setEggListingBounds(node.getBounds())
-      // node.x = -(node.width / 2 + rankDetailBounds.width * 0.125)
-      console.log('eggListingComponentRef bounds', node.getBounds())
-    }
-  }, [app.screen.height, app.screen.width, listingItemBounds.width, rankDetailBounds.width]);
-
-  const paginationRef = useCallback((node: any) => {
-    if (node !== null) {
-
-      // x={app.screen.width * 0.4}
-
-      if (app.screen.width > 430) {
-        node.width = 450 * 0.5;
-        node.x = app.screen.width * 0.47
-        node.y = app.screen.height * 0.92
-      } else if (app.screen.width > 400 && app.screen.width <= 430) {
-        node.width = 450 * 0.58;
-        node.x = app.screen.width * 0.42
-        node.y = app.screen.height * 0.92
-      } else if (app.screen.width < 400) {
-        node.width = app.screen.width * 0.6;
-        node.x = app.screen.width * 0.4
-        node.y = app.screen.height * 0.935
-      }
-    }
-  }, [app.screen.height, app.screen.width]);
+    },
+    [app.screen.height, app.screen.width]
+  );
 
   // running this once to get the first 12 eggs
   // useEffect(() => {
@@ -269,36 +290,35 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
         pageNumbers.push(currentPage - 1, currentPage, currentPage + 1);
       }
     }
-    setPaginationPageNumbers(pageNumbers)
-  }, [currentPage, eggPerPage, totalPages])
+    setPaginationPageNumbers(pageNumbers);
+  }, [currentPage, eggPerPage, totalPages]);
 
   const paginate = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
 
-  const RankDetailsRef = useCallback((node: any) => {
-    if (node !== null) {
-      setRankDetailBounds(node.getBounds());
-      if (app.screen.width > 430) {
-        node.width = 450 * 1;
-      } else if (app.screen.width > 400 && app.screen.width <= 430) {
-        node.width = 450 * 0.94;
-      } else if (app.screen.width < 400) {
-        node.width = app.screen.width * 0.95;
+  const RankDetailsRef = useCallback(
+    (node: any) => {
+      if (node !== null) {
+        setRankDetailBounds(node.getBounds());
+        if (app.screen.width > 430) {
+          node.width = 450 * 1;
+        } else if (app.screen.width > 400 && app.screen.width <= 430) {
+          node.width = 450 * 0.94;
+        } else if (app.screen.width < 400) {
+          node.width = app.screen.width * 0.95;
+        }
       }
-    }
-  }, [app.screen.width]);
-
-
-
+    },
+    [app.screen.width]
+  );
 
   const calculateEggXPosition = (index: number) => {
-    return listingItemBounds.width + 95 * (index % 4) as number;
+    return (listingItemBounds.width + 95 * (index % 4)) as number;
   };
   const calculateEggYPosition = (index: number) => {
-    return Math.floor(index / 4) * 135 as number;
+    return (Math.floor(index / 4) * 135) as number;
   };
-
 
   useEffect(() => {
     setIsLoaded(true);
@@ -310,13 +330,13 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
   const getEggList = async () => {
     let options = {
       headers: {
-        'my-auth-key': token
-      }
-    }
+        "my-auth-key": token,
+      },
+    };
     const data: any = await axiosInstance({
       url: "/egg/lists",
       method: "GET",
-      headers: options.headers
+      headers: options.headers,
     });
     console.log("getEggList Result:", data);
     if (data?.status === 200 && data?.data?.result?.lists) {
@@ -328,39 +348,38 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
   const processTransaction = async (id: string, ticket: number) => {
     let options = {
       headers: {
-        'my-auth-key': token
-      }
-    }
+        "my-auth-key": token,
+      },
+    };
     const data: any = await axiosInstance({
       url: `/egg/detail?id=${id}`,
       method: "GET",
-      headers: options.headers
+      headers: options.headers,
     });
     console.log("processTransaction Result:", data);
     if (data?.data?.success) {
-      setEggTransactionData({ ...data?.data?.result, ticket })
-      setSelectedPanel("My Listing")
+      setEggTransactionData({ ...data?.data?.result, ticket });
+      setSelectedPanel("My Listing");
     }
   };
 
   const handleKeep = async (id: string, ticket: number) => {
     let options = {
       headers: {
-        'my-auth-key': token
-      }
-    }
+        "my-auth-key": token,
+      },
+    };
     const { data }: any = await axiosInstance({
       url: "/egg/keep",
       method: "POST",
       headers: options.headers,
-      data: { id }
+      data: { id },
     });
     console.log("handleKeep Result:", data);
     if (data?.success) {
-      processTransaction(id, ticket)
-    }
-    else {
-      window.alert(data.message)
+      processTransaction(id, ticket);
+    } else {
+      window.alert(data.message);
     }
   };
   useEffect(() => {
@@ -368,55 +387,55 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
     getEggList();
   }, []);
 
-
-
   console.log("data::", {
     currentPage,
     currentEggs,
-  })
+  });
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const barView = new PIXI.Container();
   // const barAssets = [PIXI.Assets.get('RankExpBarBg'), PIXI.Assets.get('RankExpBarFill')];
-  const barAssets = ['image/rankExpBarBg.png', 'image/imgRankExpBarFill.png'];
+  const barAssets = ["image/rankExpBarBg.png", "image/imgRankExpBarFill.png"];
 
   const progressBarComponent = new ProgressBar({
     bg: barAssets[0],
     fill: barAssets[1],
     progress: 50,
   });
-  progressBarComponent.width = 230
+  progressBarComponent.width = 230;
   // progressBarComponent.width = rankDetailBounds.width * 0.5;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const expText = new PIXI.Text('1000/2000', {
-    align: 'center',
-    fontFamily: 'Magra Bold',
+  const expText = new PIXI.Text("1000/2000", {
+    align: "center",
+    fontFamily: "Magra Bold",
     fontSize: isNotMobile ? 15 : 14,
-    fontWeight: '600',
+    fontWeight: "600",
     // strokeThickness: 1,
-    fill: ['white'],
+    fill: ["white"],
   });
   barView.addChild(progressBarComponent);
 
-  const progressBarComponentRef = useCallback((node: any) => {
-    if (node !== null) {
-      expText.anchor.set(0, 0.5);
-      // barView.width = rankDetailBounds.width * 0.4;
-      expText.position.set(-expText.width / 2, 10);
-      barView.position.set(-barView.width / 2, 0);
-      // barView
-      node.addChild(barView);
-      node.addChild(expText)
-    }
-  }, [barView, expText]);
+  const progressBarComponentRef = useCallback(
+    (node: any) => {
+      if (node !== null) {
+        expText.anchor.set(0, 0.5);
+        // barView.width = rankDetailBounds.width * 0.4;
+        expText.position.set(-expText.width / 2, 10);
+        barView.position.set(-barView.width / 2, 0);
+        // barView
+        node.addChild(barView);
+        node.addChild(expText);
+      }
+    },
+    [barView, expText]
+  );
 
   return (
     <>
       {isLoaded && (
-        <Container
-        >
+        <Container>
           <Sprite
-            texture={PIXI.Assets.get('ListingBackground')}
+            texture={PIXI.Assets.get("ListingBackground")}
             width={isNotMobile ? app.screen.width : app.screen.width * 1.1}
             height={app.screen.height}
             anchor={[0.5, 0.5]}
@@ -432,7 +451,7 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
             // scale={isNotMobile ? [1, 1] : [0.5, 1]}
             position={[app.screen.width / 2, app.screen.height / 2]}
             filters={[new PIXI.BlurFilter(10)]}
-            tint={'white'}
+            tint={"white"}
             alpha={0.3}
           />
 
@@ -445,8 +464,7 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
             visible={false}
           />
 
-          <Container position={[app.screen.width / 2, 0]}
-          >
+          <Container position={[app.screen.width / 2, 0]}>
             {/* Upper Button */}
             <Container
               x={0}
@@ -454,53 +472,49 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
               width={isNotMobile ? 450 : app.screen.width * 0.9}
             >
               {/* left side */}
-              <Container
-                position={isNotMobile ? [-190, 30] : [-150, 40]}
-              >
+              <Container position={isNotMobile ? [-190, 30] : [-150, 40]}>
                 <Sprite
-                  texture={PIXI.Assets.get('BackBtn')}
-                  width={isNotMobile ? 40 : 30}
-                  height={isNotMobile ? 40 : 30}
-                  anchor={[0.5, 0.5]}
-                  position={[0, 0]}
-                  eventMode='static'
-                  onpointertap={() => onBackBtnClick()}
-                />
-              </Container>
-
-              {/* Text */}
-              <Container
-                position={[0, isNotMobile ? 30 : 40]}
-              >
-                <Text
-                  text={'Jurassic Market'}
-                  position={[-2, 0]}
-                  anchor={[0.5, 0.5]}
-                  style={new PIXI.TextStyle({
-                    fontFamily: 'Magra Bold',
-                    fontSize: isNotMobile ? 24 : 18,
-                    fontWeight: '600',
-                    strokeThickness: 1,
-                    fill: ['white'],
-                  })}
-                />
-              </Container>
-
-              {/* right side */}
-              <Container
-                position={isNotMobile ? [190, 30] : [150, 40]}
-              >
-                < Sprite
-                  texture={PIXI.Assets.get('LogoutBtn')}
+                  texture={PIXI.Assets.get("BackBtn")}
                   width={isNotMobile ? 40 : 30}
                   height={isNotMobile ? 40 : 30}
                   anchor={[0.5, 0.5]}
                   position={[0, 0]}
                   eventMode="static"
-                // onpointertap={() => {
-                //   console.log("logout clicked");
-                //   setConfirmQuitPanelVisible(true);
-                // }}
+                  onpointertap={() => onBackBtnClick()}
+                />
+              </Container>
+
+              {/* Text */}
+              <Container position={[0, isNotMobile ? 30 : 40]}>
+                <Text
+                  text={"Jurassic Market"}
+                  position={[-2, 0]}
+                  anchor={[0.5, 0.5]}
+                  style={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: isNotMobile ? 24 : 18,
+                      fontWeight: "600",
+                      strokeThickness: 1,
+                      fill: ["white"],
+                    })
+                  }
+                />
+              </Container>
+
+              {/* right side */}
+              <Container position={isNotMobile ? [190, 30] : [150, 40]}>
+                <Sprite
+                  texture={PIXI.Assets.get("LogoutBtn")}
+                  width={isNotMobile ? 40 : 30}
+                  height={isNotMobile ? 40 : 30}
+                  anchor={[0.5, 0.5]}
+                  position={[0, 0]}
+                  eventMode="static"
+                  // onpointertap={() => {
+                  //   console.log("logout clicked");
+                  //   setConfirmQuitPanelVisible(true);
+                  // }}
                 />
               </Container>
               {/* divider */}
@@ -521,116 +535,133 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
               ref={RankDetailsRef}
             >
               <Sprite
-                texture={PIXI.Assets.get('PnlJurassicMarketBackground')}
+                texture={PIXI.Assets.get("PnlJurassicMarketBackground")}
                 anchor={[0.5, 0.5]}
               />
               <Text
-                text={'Trainer\'s Rank'}
+                text={"Trainer's Rank"}
                 position={[0, -rankDetailBounds?.height / 2 + 28]}
                 anchor={[0.5, 0.5]}
-                style={new PIXI.TextStyle({
-                  fontFamily: 'Magra Bold',
-                  fontSize: isNotMobile ? 18 : 16,
-                  fontWeight: '600',
-                  strokeThickness: 1,
-                  fill: ['white'],
-                })}
+                style={
+                  new PIXI.TextStyle({
+                    fontFamily: "Magra Bold",
+                    fontSize: isNotMobile ? 18 : 16,
+                    fontWeight: "600",
+                    strokeThickness: 1,
+                    fill: ["white"],
+                  })
+                }
               />
               {/* left side */}
               <Container
-                x={-rankDetailBounds?.width / 2 + (rankDetailBounds?.width * 0.01)}
-                y={-rankDetailBounds?.height / 2 + (rankDetailBounds?.height * 0.43)}
+                x={
+                  -rankDetailBounds?.width / 2 + rankDetailBounds?.width * 0.01
+                }
+                y={
+                  -rankDetailBounds?.height / 2 +
+                  rankDetailBounds?.height * 0.43
+                }
               >
                 <Text
-                  text={'Requalification'}
+                  text={"Requalification"}
                   position={[0, 0]}
                   anchor={[0, 0.5]}
-                  style={new PIXI.TextStyle({
-                    fontFamily: 'Magra Bold',
-                    fontSize: isNotMobile ? 16 : 14,
-                    fontWeight: '600',
-                    fill: ['white'],
-                  })}
+                  style={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: isNotMobile ? 16 : 14,
+                      fontWeight: "600",
+                      fill: ["white"],
+                    })
+                  }
                 />
                 <Text
-                  text={'10050'}
+                  text={"10050"}
                   position={[0, 15]}
                   anchor={[0, 0.5]}
-                  style={new PIXI.TextStyle({
-                    fontFamily: 'Magra Bold',
-                    fontSize: isNotMobile ? 16 : 14,
-                    fontWeight: '600',
-                    fill: ['white'],
-                  })}
+                  style={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: isNotMobile ? 16 : 14,
+                      fontWeight: "600",
+                      fill: ["white"],
+                    })
+                  }
                 />
-
               </Container>
 
               {/* progressbar component */}
-              <Container
-                ref={progressBarComponentRef}
-              >
+              <Container ref={progressBarComponentRef}>
                 <Container
                   y={rankDetailBounds.width * (isNotMobile ? 0.072 : 0.082)}
                 >
                   <Text
-                    text={'Novice'}
+                    text={"Novice"}
                     y={0}
                     x={-(barView.width / 2)}
                     anchor={[0.5, 0.5]}
-                    style={new PIXI.TextStyle({
-                      fontFamily: 'Magra Bold',
-                      fontSize: isNotMobile ? 15 : 14,
-                      fontWeight: '600',
-                      fill: ['0xF82424'],
-                    })}
+                    style={
+                      new PIXI.TextStyle({
+                        fontFamily: "Magra Bold",
+                        fontSize: isNotMobile ? 15 : 14,
+                        fontWeight: "600",
+                        fill: ["0xF82424"],
+                      })
+                    }
                   />
                   <Text
-                    text={'Rookie'}
+                    text={"Rookie"}
                     y={0}
                     x={barView.width / 2}
                     anchor={[0.5, 0.5]}
-                    style={new PIXI.TextStyle({
-                      fontFamily: 'Magra Bold',
-                      fontSize: isNotMobile ? 15 : 14,
-                      fontWeight: '600',
-                      fill: ['white'],
-                    })}
+                    style={
+                      new PIXI.TextStyle({
+                        fontFamily: "Magra Bold",
+                        fontSize: isNotMobile ? 15 : 14,
+                        fontWeight: "600",
+                        fill: ["white"],
+                      })
+                    }
                   />
                 </Container>
-
               </Container>
 
               {/* right side */}
               <Container
-                x={rankDetailBounds?.width / 2 - (rankDetailBounds?.width * 0.01)}
-                y={-rankDetailBounds?.height / 2 + (rankDetailBounds?.height * 0.43)}
+                x={rankDetailBounds?.width / 2 - rankDetailBounds?.width * 0.01}
+                y={
+                  -rankDetailBounds?.height / 2 +
+                  rankDetailBounds?.height * 0.43
+                }
               >
                 <Text
-                  text={'Current Rank'}
+                  text={"Current Rank"}
                   position={[0, 0]}
                   anchor={[1, 0.5]}
-                  style={new PIXI.TextStyle({
-                    fontFamily: 'Magra Bold',
-                    fontSize: isNotMobile ? 16 : 14,
-                    fontWeight: '600',
-                    strokeThickness: 1,
-                    fill: ['white'],
-                  })}
+                  style={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: isNotMobile ? 16 : 14,
+                      fontWeight: "600",
+                      strokeThickness: 1,
+                      fill: ["white"],
+                    })
+                  }
                 />
                 <Text
-                  text={'Novice'}
+                  text={"Novice"}
                   position={[0, 15]}
                   anchor={[1, 0.5]}
-                  style={new PIXI.TextStyle({
-                    fontFamily: 'Magra Bold',
-                    fontSize: isNotMobile ? 16 : 14,
-                    fontWeight: '600',
-                    strokeThickness: 1,
-                    fill: ['white'],
-                  })}
+                  style={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: isNotMobile ? 16 : 14,
+                      fontWeight: "600",
+                      strokeThickness: 1,
+                      fill: ["white"],
+                    })
+                  }
                 />
-
               </Container>
             </Container>
 
@@ -638,41 +669,48 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
             <Container
               y={rankDetailBounds?.height * (isNotMobile ? 1.85 : 1.65)}
             >
-              <Container
-                position={[0, 0]}
-              >
+              <Container position={[0, 0]}>
                 {/* Listing */}
                 <Container
                   y={0}
                   x={rankDetailBounds?.width * (isNotMobile ? -0.4 : -0.35)}
                   anchor={[0.5, 0.5]}
-                  eventMode='static'
+                  eventMode="static"
                   onpointerup={() => {
-                    setSelectedPanel('Listing')
-                    console.log('Listing')
+                    setSelectedPanel("Listing");
+                    console.log("Listing");
                   }}
                 >
                   <Text
-                    text={'Listings'}
+                    text={"Listings"}
                     position={[0, 0]}
                     anchor={[0.5, 0.5]}
-                    style={new PIXI.TextStyle({
-                      fontFamily: 'Magra Bold',
-                      fontSize: isNotMobile ? 22 : 15,
-                      fontWeight: '600',
-                      fill: [selectedPanel === 'Listing' ? '0xFFB800' : 'white'],
-                    })}
+                    style={
+                      new PIXI.TextStyle({
+                        fontFamily: "Magra Bold",
+                        fontSize: isNotMobile ? 22 : 15,
+                        fontWeight: "600",
+                        fill: [
+                          selectedPanel === "Listing" ? "0xFFB800" : "white",
+                        ],
+                      })
+                    }
                   />
                   <Text
-                    text={'/'}
-                    position={[rankDetailBounds.width * (isNotMobile ? 0.1 : 0.085), 0]}
+                    text={"/"}
+                    position={[
+                      rankDetailBounds.width * (isNotMobile ? 0.1 : 0.085),
+                      0,
+                    ]}
                     anchor={[0.5, 0.5]}
-                    style={new PIXI.TextStyle({
-                      fontFamily: 'Magra Bold',
-                      fontSize: isNotMobile ? 22 : 15,
-                      fontWeight: '600',
-                      fill: ['white'],
-                    })}
+                    style={
+                      new PIXI.TextStyle({
+                        fontFamily: "Magra Bold",
+                        fontSize: isNotMobile ? 22 : 15,
+                        fontWeight: "600",
+                        fill: ["white"],
+                      })
+                    }
                   />
                 </Container>
 
@@ -681,22 +719,26 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
                   y={0}
                   x={rankDetailBounds?.width * (isNotMobile ? -0.15 : -0.15)}
                   anchor={[0.5, 0.5]}
-                  eventMode='static'
+                  eventMode="static"
                   onpointerup={() => {
-                    setSelectedPanel('My Listing')
-                    console.log('My Listings')
+                    setSelectedPanel("My Listing");
+                    console.log("My Listings");
                   }}
                 >
                   <Text
-                    text={'My Listings'}
+                    text={"My Listings"}
                     position={[0, 0]}
                     anchor={[0.5, 0.5]}
-                    style={new PIXI.TextStyle({
-                      fontFamily: 'Magra Bold',
-                      fontSize: isNotMobile ? 22 : 15,
-                      fontWeight: '600',
-                      fill: [selectedPanel === 'My Listing' ? '0xFFB800' : 'white'],
-                    })}
+                    style={
+                      new PIXI.TextStyle({
+                        fontFamily: "Magra Bold",
+                        fontSize: isNotMobile ? 22 : 15,
+                        fontWeight: "600",
+                        fill: [
+                          selectedPanel === "My Listing" ? "0xFFB800" : "white",
+                        ],
+                      })
+                    }
                   />
                 </Container>
               </Container>
@@ -706,22 +748,26 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
                 y={0}
                 x={rankDetailBounds?.width * (isNotMobile ? 0.15 : 0.15)}
                 anchor={[0.5, 0.5]}
-                eventMode='static'
-              // onpointertap={() => setIsRarityPanelVisible(!isRarityPanelVisible)}
+                eventMode="static"
+                // onpointertap={() => setIsRarityPanelVisible(!isRarityPanelVisible)}
               >
                 <Text
-                  text={'Price'}
+                  text={"Price"}
                   position={[0, 0]}
                   anchor={[0.5, 0.5]}
-                  style={new PIXI.TextStyle({
-                    fontFamily: 'Magra Bold',
-                    fontSize: isNotMobile ? 22 : 15,
-                    fontWeight: '600',
-                    fill: ['white'],
-                  })}
+                  style={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: isNotMobile ? 22 : 15,
+                      fontWeight: "600",
+                      fill: ["white"],
+                    })
+                  }
                 />
                 <Sprite
-                  texture={PIXI.Assets.get('AlbumPrevPageBtn') || PIXI.Texture.EMPTY}
+                  texture={
+                    PIXI.Assets.get("AlbumPrevPageBtn") || PIXI.Texture.EMPTY
+                  }
                   anchor={[0.5, 0.5]}
                   rotation={Math.PI * 1.5}
                   scale={isNotMobile ? [0.4, 0.4] : [0.25, 0.25]}
@@ -734,22 +780,26 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
                 y={0}
                 x={rankDetailBounds?.width * (isNotMobile ? 0.35 : 0.35)}
                 anchor={[0.5, 0.5]}
-                eventMode='static'
-              // onpointertap={() => setIsRarityPanelVisible(!isRarityPanelVisible)}
+                eventMode="static"
+                // onpointertap={() => setIsRarityPanelVisible(!isRarityPanelVisible)}
               >
                 <Text
-                  text={'Time'}
+                  text={"Time"}
                   position={[0, 0]}
                   anchor={[0.5, 0.5]}
-                  style={new PIXI.TextStyle({
-                    fontFamily: 'Magra Bold',
-                    fontSize: isNotMobile ? 22 : 15,
-                    fontWeight: '600',
-                    fill: ['white'],
-                  })}
+                  style={
+                    new PIXI.TextStyle({
+                      fontFamily: "Magra Bold",
+                      fontSize: isNotMobile ? 22 : 15,
+                      fontWeight: "600",
+                      fill: ["white"],
+                    })
+                  }
                 />
                 <Sprite
-                  texture={PIXI.Assets.get('AlbumPrevPageBtn') || PIXI.Texture.EMPTY}
+                  texture={
+                    PIXI.Assets.get("AlbumPrevPageBtn") || PIXI.Texture.EMPTY
+                  }
                   anchor={[0.5, 0.5]}
                   rotation={Math.PI * 1.5}
                   scale={isNotMobile ? [0.4, 0.4] : [0.25, 0.25]}
@@ -761,24 +811,29 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
             {/* Listing Component */}
             <Container
               // ref={eggListingComponentRef}
-              y={app.screen.height * (isNotMobile ? 0.28 : app.screen.width >= 430 ? 0.3 : 0.38)}
+              y={
+                app.screen.height *
+                (isNotMobile ? 0.28 : app.screen.width >= 430 ? 0.3 : 0.38)
+              }
               anchor={[0, 0.5]}
               // anchor={[0.5, 0.5]}
-              visible={selectedPanel === 'Listing'}
-            // width={eggListingBounds?.width}
+              visible={selectedPanel === "Listing"}
+              // width={eggListingBounds?.width}
             >
               <Text
-                text={'Coming Soon'}
+                text={"Coming Soon"}
                 position={[0, isNotMobile ? 10 : 7]}
                 anchor={[0.5, 0.5]}
-                style={new PIXI.TextStyle({
-                  fontFamily: 'Magra Bold',
-                  fontSize: isNotMobile ? 24 : 20,
-                  fontWeight: '600',
-                  strokeThickness: 1,
-                  fill: ['white'],
-                })}
-              // visible={eggTransactionData?.length === 0}
+                style={
+                  new PIXI.TextStyle({
+                    fontFamily: "Magra Bold",
+                    fontSize: isNotMobile ? 24 : 20,
+                    fontWeight: "600",
+                    strokeThickness: 1,
+                    fill: ["white"],
+                  })
+                }
+                // visible={eggTransactionData?.length === 0}
               />
               {/* {currentEggs.length > 0 &&
                 currentEggs?.map((d: any, idx: number) => {
@@ -815,102 +870,122 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
 
             {/* My Listing Component */}
             <Container
-              y={app.screen.height * (isNotMobile ? 0.28 : app.screen.width >= 430 ? 0.3 : 0.38)}
+              y={
+                app.screen.height *
+                (isNotMobile ? 0.28 : app.screen.width >= 430 ? 0.3 : 0.38)
+              }
               anchor={[0, 0.5]}
-              visible={selectedPanel === 'My Listing'}
+              visible={selectedPanel === "My Listing"}
             >
               <Text
-                text={'No Data'}
+                text={"No Data"}
                 position={[0, isNotMobile ? 10 : 7]}
                 anchor={[0.5, 0.5]}
-                style={new PIXI.TextStyle({
-                  fontFamily: 'Magra Bold',
-                  fontSize: isNotMobile ? 24 : 20,
-                  fontWeight: '600',
-                  strokeThickness: 1,
-                  fill: ['white'],
-                })}
+                style={
+                  new PIXI.TextStyle({
+                    fontFamily: "Magra Bold",
+                    fontSize: isNotMobile ? 24 : 20,
+                    fontWeight: "600",
+                    strokeThickness: 1,
+                    fill: ["white"],
+                  })
+                }
                 visible={eggTransactionData?.length === 0}
               />
 
               {eggTransactionData.length > 0 &&
-                eggTransactionData?.map((d: EggTransactionData, idx: number) => {
-                  // setExpiryTime(d.openat)
-                  return (
-                    <>
-                      <EggListingComponent
-                        data={d}
-                        id={`${d.id}`}
-                        key={`egg-transaction-${idx + ((currentPage - 1) * 12)}`}
-                        index={`egg-transaction-${idx + ((currentPage - 1) * 12)}`}
-                        idx={idx}
-                        priceText={d?.total}
-                        timerText={d?.expired.toString()}
-                        eggType={d?.ticket}
-                        listingItemBgRef={listingItemBgRef}
-                        listingItemBounds={listingItemBounds}
-                        selectedPanel={selectedPanel}
-                        calculateEggXPosition={calculateEggXPosition(idx)}
-                        calculateEggYPosition={calculateEggYPosition(idx)}
-                        onBtnKeepPress={(eggIndex) => {
-                          // TODO: action button for keep, using idx from props as a differentiator
-                          console.log('onBtnKeepPress', d.id)
-                          handleKeep(d.id, d.ticket)
-                        }}
-                        onBtnPurchasePress={async (idx) => {
-                          console.log('allowance ', allowance)
-                          console.log('account approve', walletAddress)
-                          const txReq = { to: USDT_ADDR, from: walletAddress, data: d.TxRawApproval }
-                          console.log('txReq', txReq)
-                          const txSend = await sendTransaction(txReq)
-                          console.log('txSend', txSend)
-                        }}
-                        onBtnPayPress={async (raw) => {
-                          const txReq = {
-                            data: raw,
-                            to: PAYGATEWAY_ADDR,
-                            from: walletAddress,
-                          }
-                          const txSend = await sendPayTransaction(txReq, d)
-                          console.log('txSend payment', txSend)
-                        }}
-                      />
-                    </>
-                  );
-                })}
+                eggTransactionData?.map(
+                  (d: EggTransactionData, idx: number) => {
+                    // setExpiryTime(d.openat)
+                    return (
+                      <>
+                        <EggListingComponent
+                          data={d}
+                          id={`${d.id}`}
+                          key={`egg-transaction-${
+                            idx + (currentPage - 1) * 12
+                          }`}
+                          index={`egg-transaction-${
+                            idx + (currentPage - 1) * 12
+                          }`}
+                          idx={idx}
+                          priceText={d?.total}
+                          timerText={d?.expired.toString()}
+                          eggType={d?.ticket}
+                          listingItemBgRef={listingItemBgRef}
+                          listingItemBounds={listingItemBounds}
+                          selectedPanel={selectedPanel}
+                          calculateEggXPosition={calculateEggXPosition(idx)}
+                          calculateEggYPosition={calculateEggYPosition(idx)}
+                          onBtnKeepPress={(eggIndex) => {
+                            // TODO: action button for keep, using idx from props as a differentiator
+                            console.log("onBtnKeepPress", d.id);
+                            handleKeep(d.id, d.ticket);
+                          }}
+                          onBtnPurchasePress={async (idx) => {
+                            console.log("allowance ", allowance);
+                            console.log("account approve", walletAddress);
+                            const txReq = {
+                              to: USDT_ADDR,
+                              from: walletAddress,
+                              data: d.TxRawApproval,
+                            };
+                            console.log("txReq", txReq);
+                            const txSend = await sendTransaction(txReq);
+                            console.log("txSend", txSend);
+                          }}
+                          onBtnPayPress={async (raw) => {
+                            const txReq = {
+                              data: raw,
+                              to: PAYGATEWAY_ADDR,
+                              from: walletAddress,
+                            };
+                            const txSend = await sendPayTransaction(txReq, d);
+                            console.log("txSend payment", txSend);
+                          }}
+                        />
+                      </>
+                    );
+                  }
+                )}
             </Container>
           </Container>
 
           {/* Pagination & Refresh */}
-          <Container
-            ref={paginationRef}
-          >
+          <Container ref={paginationRef}>
             {/* Pagination */}
-            <Container
-              x={isNotMobile ? 0 : 0}
-              anchor={[0.5, 0.5]}
-
-            >
+            <Container x={isNotMobile ? 0 : 0} anchor={[0.5, 0.5]}>
               <Sprite
-                texture={currentPage <= 2 ? PIXI.Texture.EMPTY : PIXI.Assets.get('BtnPagePaginationRest')}
+                texture={
+                  currentPage <= 2
+                    ? PIXI.Texture.EMPTY
+                    : PIXI.Assets.get("BtnPagePaginationRest")
+                }
                 position={[isNotMobile ? -120 : -120, 0]}
                 anchor={[0.5, 0.5]}
                 width={50}
                 height={50}
               />
               {paginationPageNumbers?.map((pageNumber, index) => {
-                console.log('pageNumber', pageNumber)
+                console.log("pageNumber", pageNumber);
                 return (
                   <Container
                     key={`page-${pageNumber}`}
-                    position={[isNotMobile ? -60 + ((index) * 60) : -60 + ((index) * 60), 0]}
+                    position={[
+                      isNotMobile ? -60 + index * 60 : -60 + index * 60,
+                      0,
+                    ]}
                     eventMode="static"
                     onpointertap={() => {
-                      paginate(pageNumber)
+                      paginate(pageNumber);
                     }}
                   >
                     <Sprite
-                      texture={PIXI.Assets.get(pageNumber === currentPage ? 'BtnPagePaginationActive' : 'BtnPagePaginationNumberInactive')}
+                      texture={PIXI.Assets.get(
+                        pageNumber === currentPage
+                          ? "BtnPagePaginationActive"
+                          : "BtnPagePaginationNumberInactive"
+                      )}
                       anchor={[0.5, 0.5]}
                       width={55}
                       height={55}
@@ -919,19 +994,21 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
                       text={pageNumber.toString()}
                       position={[0, 0]}
                       anchor={[0.5, 0.6]}
-                      style={new PIXI.TextStyle({
-                        fontFamily: 'Magra Bold',
-                        fontSize: isNotMobile ? 26 : 20,
-                        fontWeight: '600',
-                        strokeThickness: 1,
-                        fill: ['white'],
-                      })}
+                      style={
+                        new PIXI.TextStyle({
+                          fontFamily: "Magra Bold",
+                          fontSize: isNotMobile ? 26 : 20,
+                          fontWeight: "600",
+                          strokeThickness: 1,
+                          fill: ["white"],
+                        })
+                      }
                     />
                   </Container>
-                )
+                );
               })}
               <Sprite
-                texture={PIXI.Assets.get('BtnPagePaginationRest')}
+                texture={PIXI.Assets.get("BtnPagePaginationRest")}
                 // texture={paginationPageNumbers.length < 3 ? PIXI.Texture.EMPTY : PIXI.Assets.get('BtnPagePaginationRest')}
                 position={[isNotMobile ? 120 : 120, 0]}
                 anchor={[0.5, 0.5]}
@@ -942,17 +1019,28 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
 
             {/* Refresh button */}
             <Sprite
-              texture={PIXI.Assets.get('BtnRefreshListing')}
+              texture={PIXI.Assets.get("BtnRefreshListing")}
               anchor={[0.5, 0.5]}
-              x={rankDetailBounds?.width *
-                (app.screen.width > 430 ? 0.5 : app.screen.width > 400 ? 0.44 : 0.42)}
-              scale={app.screen.width > 430 ? [1.7, 1.7] : app.screen.width > 400 ? [1.5, 1.5] : [1.2, 1.2]}
+              x={
+                rankDetailBounds?.width *
+                (app.screen.width > 430
+                  ? 0.5
+                  : app.screen.width > 400
+                  ? 0.44
+                  : 0.42)
+              }
+              scale={
+                app.screen.width > 430
+                  ? [1.7, 1.7]
+                  : app.screen.width > 400
+                  ? [1.5, 1.5]
+                  : [1.2, 1.2]
+              }
               eventMode="static"
               onpointertap={() => {
-                getEggList()
+                getEggList();
               }}
             />
-
           </Container>
         </Container>
       )}
