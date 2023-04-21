@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from "react";
 import * as PIXI from "pixi.js";
 import { Container, Sprite, Text, useApp, useTick } from "@pixi/react";
-import { useStore } from "../../utils/store";
+// import { useStore } from "../../utils/store";
 
 type Props = {
   onBackBtnClick: () => void;
@@ -13,7 +13,7 @@ const GameGuide = ({ onBackBtnClick }: Props) => {
   // @ts-ignore
   globalThis.__PIXI_APP__ = app;
 
-  const changeScene = useStore((state) => state.changeScene);
+  // const changeScene = useStore((state) => state.changeScene);
   const isNotMobile = app.screen.width > 450;
 
   const [isLoaded, setIsLoaded] = useState(false);
