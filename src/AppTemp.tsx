@@ -31,8 +31,9 @@ import DinoCenter from "./components/scene/DinoCenter";
 import GameGuide from "./components/scene/GameGuide";
 
 import { useAuthStore, useStore } from "./utils/store";
-import { USDT_ADDR, PAYGATEWAY_ADDR, TICKET_ADDR, USDT_ABI } from "./utils/config";
+import { USDT_ADDR, PAYGATEWAY_ADDR, TICKET_ADDR, USDT_ABI, CAPTCHA_KEY } from "./utils/config";
 import { Contract } from "ethers";
+import ReCAPTCHA from 'react-google-recaptcha';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import { BigNumber, BigNumberish, Contract, utils } from "ethers";
@@ -41,6 +42,7 @@ import 'react-toastify/dist/ReactToastify.css';
 type loginReqFormat = {
   username: string;
   password: string;
+  captcha: string;
 };
 
 // type loginWalletReqFormat = {
@@ -55,6 +57,7 @@ type registerReqFormat = {
   address: string;
   otp: string;
   country: string | undefined;
+  captcha: string | undefined;
 };
 
 type otpReqFormat = {
@@ -91,7 +94,8 @@ export const AppTemp = () => {
   const testnetBalance = useEtherBalance(account, { chainId: BSCTestnet.chainId })
   const allowance = useTokenAllowance(USDT_ADDR, walletAddress, PAYGATEWAY_ADDR)
   const ticketAllowance = useTokenAllowance(USDT_ADDR, walletAddress, TICKET_ADDR)
-  // const [ticketApproved, setTicketApproved] = useState<any>()
+  const [captcha, setCaptcha] = useState('')
+  const [registerCaptcha, setRegisterCaptcha] = useState('')
   const [googleAuthVisible, setGoogleAuthVisible] = useState(false);
   const [googleAuthData, setGoogleAuthData] = useState<{
     qr: string;
@@ -131,6 +135,15 @@ export const AppTemp = () => {
     headers: {
       'my-auth-key': token
     }
+  }
+
+  const verifiedCallback = (token: string) => {
+    console.log(token);
+    setCaptcha(token)
+  }
+  const verifiedRegisterCallback = (token: string) => {
+    console.log(token);
+    setRegisterCaptcha(token)
   }
 
   const getUserData = async () => {
@@ -522,7 +535,7 @@ export const AppTemp = () => {
   const otpForm = useFormik({
     initialValues: {
       email: "",
-      walletAddress: "",
+      // walletAddress: "",
     },
     validate: otpFormValidate,
     onSubmit: (values, { setSubmitting }) => {
@@ -619,6 +632,7 @@ export const AppTemp = () => {
     const loginRequestData: loginReqFormat = {
       username: loginForm.values.username,
       password: loginForm.values.password,
+      captcha: captcha
     };
     const result = await axiosInstance({
       url: "/user/authentication",
@@ -627,7 +641,7 @@ export const AppTemp = () => {
     });
 
     const { data } = result;
-    if (!data.success) window.alert(`${data.message}`);
+    if (!data.success) toast(`${data.message}`);
     if (data && data.result) {
       saveToken(data.result?.jwt, () => changeScene("HOME"));
     }
@@ -639,9 +653,11 @@ export const AppTemp = () => {
       username: registerForm.values.username,
       password: registerForm.values.password,
       referal: registerForm.values.referralCode,
-      address: otpForm.values.walletAddress,
+      // address: otpForm.values.walletAddress,
+      address: '',
       otp,
       country: registerForm.values.countryCode,
+      captcha: registerCaptcha,
     };
     // console.log("submit values", registerRequestData);
     const result = await axiosInstance({
@@ -651,7 +667,7 @@ export const AppTemp = () => {
     });
     const { data } = result;
     // @ts-ignore
-    if (data.success) toast(`${result.message}`);
+    if (data.success) toast(`Register Success`);
     if (!data.success) toast(`${data.message}`);
   };
 
@@ -659,13 +675,21 @@ export const AppTemp = () => {
     const otpRequestData: otpReqFormat = {
       email,
     };
+    let options = {
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    }
     const result = await axiosInstance({
       url: "/otp/getRegisterOtp",
       method: "POST",
       data: otpRequestData,
+      headers: options.headers,
+      // withCredentials: true
     });
     const { data } = result;
-    if (!data.success) window.alert(`${data.message}`);
+    if (!data.success) toast(`${data.message}`);
+    if (data.success) toast('OTP Sent');
   };
 
   const [country, setCountry] = useState();
@@ -1045,6 +1069,10 @@ export const AppTemp = () => {
                     )}
                     <span className="font-Magra ml-2 text-white font-bold">{`I have read and agreed to <User Agreement and Privacy Policy>`}</span>
                   </div>
+                  <ReCAPTCHA
+                    sitekey={CAPTCHA_KEY}
+                    onChange={(e) => verifiedRegisterCallback(e as string)}
+                  />
                   <input
                     alt="btnRegister"
                     type="image"
@@ -1077,7 +1105,7 @@ export const AppTemp = () => {
                       </p>
                     </div>
                     {/* {!!walletAddress && ( */}
-                    {account && (
+                    {/* {account && (
                       <div
                         placeholder="Wallet Address"
                         className="mt-4 py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white text-sm font-Magra font-bold flex items-center"
@@ -1087,18 +1115,17 @@ export const AppTemp = () => {
                       >
                         {account}
                       </div>
-                    )}
+                    )} */}
                     {/* {otpForm.values?.walletAddress?.length === 0 && ( */}
-                    <div className="flex flex-col">
+                    {/* <div className="flex flex-col">
                       <ConnectButton type="metamask" />
-                      {/* <ConnectButton type='walletConnect' /> */}
-                    </div>
+                    </div> */}
                     {/* )} */}
-                    <p className="text-red-500 font-bold font-magra">
+                    {/* <p className="text-red-500 font-bold font-magra">
                       {otpForm.errors.walletAddress &&
                         otpForm.touched.walletAddress &&
                         otpForm.errors.walletAddress}
-                    </p>
+                    </p> */}
                     <div className="relative mt-4">
                       <input
                         type="text"
@@ -1111,7 +1138,7 @@ export const AppTemp = () => {
                       />
                       <button
                         className="absolute right-[20px] top-[15px] font-Magra font-bold text-[#00C2FF] hover:cursor-pointer"
-                        type="submit"
+                        type="button"
                         disabled={otpForm.isSubmitting}
                         onClick={otpForm.submitForm}
                       >
@@ -1124,6 +1151,7 @@ export const AppTemp = () => {
                     type={"image"}
                     src={"image/BtnSubmit.png"}
                     onClick={registerHandler}
+                    disabled={registerCaptcha.length === 0}
                     className="mt-12 px-3.5 py-2.5 text-sm"
                   />
                 </>
@@ -1160,6 +1188,11 @@ export const AppTemp = () => {
                     src={"image/BtnSubmit.png"}
                     onClick={loginWalletForm.submitForm}
                     className="mt-12 px-3.5 py-2.5 text-sm"
+                    disabled={captcha.length === 0}
+                  />
+                  <ReCAPTCHA
+                    sitekey={CAPTCHA_KEY}
+                    onChange={(e) => verifiedCallback(e as string)}
                   />
                 </>
               )}
@@ -1458,7 +1491,7 @@ export const AppTemp = () => {
                         },
                       };
                       if (
-                        window.confirm(`Are you sure to transfer ${qty} ticket(s) to ${transferUsername}`)
+                        window.confirm(`Are you sure to transfer ${transferQty} ticket(s) to ${transferUsername}`)
                       ) {
 
                         const response = await axiosInstance({

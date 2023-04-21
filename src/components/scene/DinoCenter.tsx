@@ -249,9 +249,9 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
   }, [app.screen.height, app.screen.width]);
 
   // running this once to get the first 12 eggs
-  useEffect(() => {
-    if (duplicateListingData) setEggListsData(duplicateListingData)
-  }, [])
+  // useEffect(() => {
+  //   if (duplicateListingData) setEggListsData(duplicateListingData)
+  // }, [])
 
   useEffect(() => {
     const pageNumbers = [];
@@ -320,7 +320,8 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
     });
     console.log("getEggList Result:", data);
     if (data?.status === 200 && data?.data?.result?.lists) {
-      setEggListsData(data?.data?.result.lists);
+      // setEggListsData(data?.data?.result.lists);
+      setEggListsData([]);
     }
   };
 
@@ -759,12 +760,27 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
 
             {/* Listing Component */}
             <Container
-              ref={eggListingComponentRef}
-              anchor={[0.5, 0.5]}
+              // ref={eggListingComponentRef}
+              y={app.screen.height * (isNotMobile ? 0.28 : app.screen.width >= 430 ? 0.3 : 0.38)}
+              anchor={[0, 0.5]}
+              // anchor={[0.5, 0.5]}
               visible={selectedPanel === 'Listing'}
-              width={eggListingBounds?.width}
+            // width={eggListingBounds?.width}
             >
-              {currentEggs.length > 0 &&
+              <Text
+                text={'Coming Soon'}
+                position={[0, isNotMobile ? 10 : 7]}
+                anchor={[0.5, 0.5]}
+                style={new PIXI.TextStyle({
+                  fontFamily: 'Magra Bold',
+                  fontSize: isNotMobile ? 24 : 20,
+                  fontWeight: '600',
+                  strokeThickness: 1,
+                  fill: ['white'],
+                })}
+              // visible={eggTransactionData?.length === 0}
+              />
+              {/* {currentEggs.length > 0 &&
                 currentEggs?.map((d: any, idx: number) => {
                   // setExpiryTime(d.openat)
                   return (
@@ -794,7 +810,7 @@ const DinoCenter = ({ scene, onBackBtnClick, sendTransaction, sendPayTransaction
                       />
                     </>
                   );
-                })}
+                })} */}
             </Container>
 
             {/* My Listing Component */}
