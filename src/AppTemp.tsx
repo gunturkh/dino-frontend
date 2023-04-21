@@ -92,31 +92,17 @@ export const AppTemp = () => {
   const setApproved = useStore((state) => state.setApproved);
   const ticketPanel = useStore((state) => state.ticketPanel);
   const setTicketPanel = useStore((state) => state.setTicketPanel);
-  const usdtInfo = useToken(USDT_ADDRESS);
-  const usdtBalance = useTokenBalance(USDT_ADDRESS, account);
-  const tokenBalance = useTokenBalance(
-    "0x1D2F0da169ceB9fC7B3144628dB156f3F6c60dBE",
-    account
-  );
-  const etherBalance = useEtherBalance(account, {
-    chainId: BSCTestnet.chainId,
-  });
-  const mainnetBalance = useEtherBalance(account, { chainId: BSC.chainId });
-  const testnetBalance = useEtherBalance(account, {
-    chainId: BSCTestnet.chainId,
-  });
-  const allowance = useTokenAllowance(
-    USDT_ADDR,
-    walletAddress,
-    PAYGATEWAY_ADDR
-  );
-  const ticketAllowance = useTokenAllowance(
-    USDT_ADDR,
-    walletAddress,
-    TICKET_ADDR
-  );
-  const [captcha, setCaptcha] = useState("");
-  const [registerCaptcha, setRegisterCaptcha] = useState("");
+  const usdtInfo = useToken(USDT_ADDRESS)
+  const usdtBalance = useTokenBalance(USDT_ADDRESS, account)
+  const tokenBalance = useTokenBalance('0x1D2F0da169ceB9fC7B3144628dB156f3F6c60dBE', account)
+  const etherBalance = useEtherBalance(account, { chainId: BSCTestnet.chainId })
+  const mainnetBalance = useEtherBalance(account, { chainId: BSC.chainId })
+  const testnetBalance = useEtherBalance(account, { chainId: BSCTestnet.chainId })
+  const allowance = useTokenAllowance(USDT_ADDR, walletAddress, PAYGATEWAY_ADDR)
+  const ticketAllowance = useTokenAllowance(USDT_ADDR, walletAddress, TICKET_ADDR)
+  const [captcha, setCaptcha] = useState('')
+  const [registerCaptcha, setRegisterCaptcha] = useState('')
+  const [ticketHistories, setTicketHistories] = useState([])
   const [googleAuthVisible, setGoogleAuthVisible] = useState(false);
   const [googleAuthData, setGoogleAuthData] = useState<{
     qr: string;
@@ -178,6 +164,24 @@ export const AppTemp = () => {
       setUserData(result.data.result);
     }
   };
+
+  const getTicketHistories = async () => {
+    const result = await axiosInstance({
+      url: "/ticket/history",
+      method: "GET",
+      headers: getUserDataOptions.headers
+    });
+    console.log('getTicketHistories Result:', result)
+    if (result && result.data && result.data.result) {
+      setTicketHistories(result.data.result)
+    }
+  };
+
+  useEffect(() => {
+    getTicketHistories()
+  }, [ticketPanel.show])
+
+  console.log('ticketHistories', ticketHistories)
 
   const {
     sendTransaction: sendTicketBuy,
@@ -1296,7 +1300,7 @@ export const AppTemp = () => {
         </div>
       )}
       {ticketPanel.show && scene === "HOME" && (
-        <div className="absolute h-full flex">
+        <div className="absolute h-[80vh] flex">
           <div className=" my-5 flex backdrop-blur-sm  justify-center items-center flex-col bg-white/10 px-3.5 py-2.5 shadow-sm rounded-sm ">
             <div className="flex w-full justify-end">
               <img
@@ -1312,6 +1316,7 @@ export const AppTemp = () => {
               style={{
                 background: `url(image/formBackground.png) no-repeat `,
                 backgroundSize: "cover",
+                overflow: 'auto'
               }}
             >
               <div className="flex gap-2 justify-start py-5 w-full">
@@ -1552,7 +1557,7 @@ export const AppTemp = () => {
                     </div>
                   </form>
                   <button
-                    type={"submit"}
+                    type={"button"}
                     // src={"image/BtnConfirm.png"}
                     onClick={async () => {
                       let options = {
@@ -1575,11 +1580,14 @@ export const AppTemp = () => {
                             facode: GAValue.toString(),
                           },
                         });
-                        console.log(response.data);
+                        console.log('transfer ticket', response.data);
                         if (response.data.success) {
-                          alert("Ticket Transfer Success");
-                          getUserData();
+                          toast('Ticket Transfer Success')
+                          getUserData()
+                          setTicketPanel({ show: false, mode: 'BUY' })
+                          setGAValue('')
                         }
+                        else if (!response.data.success) toast(response.data.message)
                       }
                     }}
                     className="bg-green-500 text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
@@ -1592,17 +1600,25 @@ export const AppTemp = () => {
               {ticketPanel.mode === "HISTORY" && (
                 <table>
                   <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Timestamp</th>
+                    <tr className="text-yellow-500 font-Magra">
+                      <th className="w-[160px]">Timestamp</th>
+                      <th className="w-[80px]">Type</th>
+                      <th className="w-[100px]">Qty</th>
+                      <th className="w-[280px]">Desc</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {transactionList.transactions.map((t) => {
+                    {ticketHistories.map((t: any) => {
+                      var date = new Date(t.timestamp * 1000);
+
+                      // Will display time in 10:30:23 format
+                      var formattedTime = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
                       return (
-                        <tr className="text-white">
-                          <td>{t.transactionName}</td>
-                          <td>{t.submittedAt}</td>
+                        <tr className="text-white text-center">
+                          <td>{formattedTime}</td>
+                          <td className={`${t.amount < 0 ? 'text-red-500' : 'text-green-500'}`}>{t.amount < 0 ? 'OUT' : 'IN'}</td>
+                          <td className={`${t.amount < 0 ? 'text-red-500' : 'text-green-500'}`}>{t.amount}</td>
+                          <td>{t.description}</td>
                         </tr>
                       );
                     })}
