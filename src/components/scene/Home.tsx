@@ -63,12 +63,57 @@ const Home = ({ onProfileClick, scene }: Props) => {
   console.log("scene", scene);
 
   const ProfileBgBounds = PIXI?.Assets?.get("ProfileBg")?.orig || defaultBounds;
-  const ProfileAvatarDefaultBounds = PIXI?.Assets?.get(
-    "ProfileAvatarDefault"
-  )?.orig || defaultBounds;
-  const DinoFundBgBounds = PIXI?.Assets?.get("DinoFundBg")?.orig || defaultBounds;
-  const BtnSmallBounds = PIXI?.Assets?.get("LowerBtnSmallBg")?.orig || defaultBounds;
-  const BtnBigBounds = PIXI?.Assets?.get("LowerBtnBigBg")?.orig || defaultBounds;
+  const ProfileAvatarDefaultBounds =
+    PIXI?.Assets?.get("ProfileAvatarDefault")?.orig || defaultBounds;
+  const DinoFundBgBounds =
+    PIXI?.Assets?.get("DinoFundBg")?.orig || defaultBounds;
+  const BtnSmallBounds =
+    PIXI?.Assets?.get("LowerBtnSmallBg")?.orig || defaultBounds;
+  const BtnBigBounds =
+    PIXI?.Assets?.get("LowerBtnBigBg")?.orig || defaultBounds;
+
+  const dummyEggLists = [
+    {
+      id: 1,
+      type: 1,
+      hidden: true,
+    },
+    {
+      id: 2,
+      type: 1,
+      hidden: true,
+    },
+    {
+      id: 3,
+      type: 1,
+      hidden: true,
+    },
+    {
+      id: 4,
+      type: 1,
+      hidden: true,
+    },
+    {
+      id: 5,
+      type: 1,
+      hidden: true,
+    },
+    {
+      id: 6,
+      type: 1,
+      hidden: true,
+    },
+    {
+      id: 7,
+      type: 1,
+      hidden: true,
+    },
+    {
+      id: 8,
+      type: 1,
+      hidden: true,
+    },
+  ];
 
   const upperContainerRef = useCallback((node: any) => {
     // if (node !== null) {
@@ -81,162 +126,189 @@ const Home = ({ onProfileClick, scene }: Props) => {
     //   }
     //   console.log('upperContainerRef node.height', node.height, node.width, node.y, node.x)
     // }
-
   }, []);
 
-  const homecontainerRef = useCallback((node: any) => {
-    if (node !== null) {
-      node.x = app.screen.width / 2
-      node.y = 0
+  const homecontainerRef = useCallback(
+    (node: any) => {
+      if (node !== null) {
+        node.x = app.screen.width / 2;
+        node.y = 0;
 
-      if (app.screen.width > 430) {
-        node.scale.set(1.1, 1)
-      } else if (app.screen.width > 400 && app.screen.width <= 430) {
-        // node.width = 450 * 0.95;
-        node.scale.set(0.95, 1)
-        // node.height = app.screen.height * 0.97
-      } else if (app.screen.width < 400) {
-        node.scale.set(0.9, 1)
-        if (app.screen.height > 800) {
-          node.scale.set(0.9, 1)
-        } else if (app.screen.height >= 700 && app.screen.height <= 800) {
-          node.scale.set(0.9, 1)
-        } else if (app.screen.height >= 400 && app.screen.height <= 500) {
-          node.scale.set(0.9, 1)
-        } else if (app.screen.height < 400) {
-          node.scale.set(0.9, 1)
-
+        if (app.screen.width > 430) {
+          node.scale.set(1.1, 1);
+        } else if (app.screen.width > 400 && app.screen.width <= 430) {
+          // node.width = 450 * 0.95;
+          node.scale.set(0.95, 1);
+          // node.height = app.screen.height * 0.97
+        } else if (app.screen.width < 400) {
+          node.scale.set(0.9, 1);
+          if (app.screen.height > 800) {
+            node.scale.set(0.9, 1);
+          } else if (app.screen.height >= 700 && app.screen.height <= 800) {
+            node.scale.set(0.9, 1);
+          } else if (app.screen.height >= 400 && app.screen.height <= 500) {
+            node.scale.set(0.9, 1);
+          } else if (app.screen.height < 400) {
+            node.scale.set(0.9, 1);
+          }
         }
+        // else if (app.screen.width < 400) {
+        //   // node.width = app.screen.width * 0.95;
+        //   node.height = app.screen.height * 0.9
+        //   node.scale.set(0.9, 1)
+        // }
+        console.log(
+          "upperContainerRef node.height",
+          node.height,
+          node.width,
+          node.y,
+          node.x
+        );
       }
-      // else if (app.screen.width < 400) {
-      //   // node.width = app.screen.width * 0.95;
-      //   node.height = app.screen.height * 0.9
-      //   node.scale.set(0.9, 1)
-      // }
-      console.log('upperContainerRef node.height', node.height, node.width, node.y, node.x)
-    }
-  }, [app.screen.height, app.screen.width]);
+    },
+    [app.screen.height, app.screen.width]
+  );
 
-  const detailsContainerRef = useCallback((node: any) => {
-    if (node !== null) {
-      // y={app.screen?.width > 450 ? 130 : 110}
-      if (app.screen.width > 430) {
-        node.y = app.screen.height * 0.15
-      } else if (app.screen.width > 400 && app.screen.width <= 430) {
-        node.y = app.screen.height * 0.12
-      } else if (app.screen.width < 400) {
-        node.y = app.screen.height * 0.15
-        if (app.screen.height > 800) {
-          node.scale.set(0.9, 1)
-        } else if (app.screen.height >= 700 && app.screen.height <= 800) {
-          node.scale.set(0.9, 1)
-        } else if (app.screen.height >= 400 && app.screen.height <= 500) {
-          node.scale.set(0.9, 1)
-        } else if (app.screen.height < 400) {
-          node.scale.set(0.9, 1)
-
+  const detailsContainerRef = useCallback(
+    (node: any) => {
+      if (node !== null) {
+        // y={app.screen?.width > 450 ? 130 : 110}
+        if (app.screen.width > 430) {
+          node.y = app.screen.height * 0.15;
+        } else if (app.screen.width > 400 && app.screen.width <= 430) {
+          node.y = app.screen.height * 0.12;
+        } else if (app.screen.width < 400) {
+          node.y = app.screen.height * 0.15;
+          if (app.screen.height > 800) {
+            node.scale.set(0.9, 1);
+          } else if (app.screen.height >= 700 && app.screen.height <= 800) {
+            node.scale.set(0.9, 1);
+          } else if (app.screen.height >= 400 && app.screen.height <= 500) {
+            node.scale.set(0.9, 1);
+          } else if (app.screen.height < 400) {
+            node.scale.set(0.9, 1);
+          }
         }
+        console.log(
+          "upperContainerRef node.height",
+          node.height,
+          node.width,
+          node.y,
+          node.x
+        );
       }
-      console.log('upperContainerRef node.height', node.height, node.width, node.y, node.x)
-    }
-  }, [app.screen.height, app.screen.width]);
+    },
+    [app.screen.height, app.screen.width]
+  );
 
   // const [lowerContainerBounds, setLowerContainerBounds] = useState(defaultBounds);
 
-  const lowerSectionContainerRef = useCallback((node: any) => {
-    if (node !== null && isLoaded) {
-      // setLowerContainerBounds(node.getBounds(true))
-      // node.y = 0
-      console.log('lowerBounds local bounds', node.getLocalBounds())
-      console.log('lowerBounds get bounds', node.getBounds())
-      const localBounds = node.getLocalBounds()
-      console.log("🚀 ~ file: home.tsx:136 ~ lowerSectionContainerRef ~ localBounds:", localBounds)
+  const lowerSectionContainerRef = useCallback(
+    (node: any) => {
+      if (node !== null && isLoaded) {
+        // setLowerContainerBounds(node.getBounds(true))
+        // node.y = 0
+        console.log("lowerBounds local bounds", node.getLocalBounds());
+        console.log("lowerBounds get bounds", node.getBounds());
+        const localBounds = node.getLocalBounds();
+        console.log(
+          "🚀 ~ file: home.tsx:136 ~ lowerSectionContainerRef ~ localBounds:",
+          localBounds
+        );
 
-      if (app.screen.width > 430) {
-        node.y = app.screen.height * 0.8
-      }
-      else if (app.screen.width > 400 && app.screen.width <= 430) {
-        node.y = app.screen.height * 0.8
-      }
-      else if (app.screen.width < 400) {
-        node.y = app.screen.height * 0.61
-        if (app.screen.height > 800) {
-          node.y = app.screen.height * 0.78
-        } else if (app.screen.height >= 700 && app.screen.height <= 800) {
-          node.y = app.screen.height * 0.7
-        } else if (app.screen.height > 500 && app.screen.height <= 700) {
-          node.y = app.screen.height * 0.7
-        } else if (app.screen.height >= 400 && app.screen.height <= 500) {
-          node.y = app.screen.height * 0.65
-        } else if (app.screen.height < 400) {
-          node.y = app.screen.height * 0.57
+        if (app.screen.width > 430) {
+          node.y = app.screen.height * 0.8;
+        } else if (app.screen.width > 400 && app.screen.width <= 430) {
+          node.y = app.screen.height * 0.8;
+        } else if (app.screen.width < 400) {
+          node.y = app.screen.height * 0.61;
+          if (app.screen.height > 800) {
+            node.y = app.screen.height * 0.78;
+          } else if (app.screen.height >= 700 && app.screen.height <= 800) {
+            node.y = app.screen.height * 0.7;
+          } else if (app.screen.height > 500 && app.screen.height <= 700) {
+            node.y = app.screen.height * 0.7;
+          } else if (app.screen.height >= 400 && app.screen.height <= 500) {
+            node.y = app.screen.height * 0.65;
+          } else if (app.screen.height < 400) {
+            node.y = app.screen.height * 0.57;
+          }
         }
+
+        // console.log('lowerSectionContainerRef node.height', node.height, node.width, node.y, node.x)
       }
-
-      // console.log('lowerSectionContainerRef node.height', node.height, node.width, node.y, node.x)
-    }
-  }, [app.screen.height, app.screen.width, isLoaded]);
-
+    },
+    [app.screen.height, app.screen.width, isLoaded]
+  );
 
   // const [eggPlateContainerBounds, setEggPlateContainerBounds] = useState({
   //   x: 0, y: 0, width: 0, height: 0
   // });
 
-  const eggPlateContainerRef = useCallback((node: any) => {
-    if (node !== null) {
-      if (app.screen.width > 430) {
-        node.y = app.screen.height / 2
-        node.scale.set(1, 1)
-        // node.height = app.screen.height * 0.6
-        node.width = 450 * 1;
-      } else if (app.screen.width > 400 && app.screen.width <= 430) {
-        node.y = app.screen.height / 2
-        node.scale.set(1, 1)
-        // node.height = app.screen.height * 0.6
-        // node.width = 450 * 0.94;
-      } else if (app.screen.width < 400) {
-        node.y = app.screen.height / 2 + 20
-        node.height = app.screen.height * 0.35
-        node.width = app.screen.width * 0.7;
-        node.scale.set(0.8, 0.8)
+  const eggPlateContainerRef = useCallback(
+    (node: any) => {
+      if (node !== null) {
+        if (app.screen.width > 430) {
+          node.y = app.screen.height / 2;
+          node.scale.set(1, 1);
+          // node.height = app.screen.height * 0.6
+          node.width = 450 * 1;
+        } else if (app.screen.width > 400 && app.screen.width <= 430) {
+          node.y = app.screen.height / 2;
+          node.scale.set(1, 1);
+          // node.height = app.screen.height * 0.6
+          // node.width = 450 * 0.94;
+        } else if (app.screen.width < 400) {
+          node.y = app.screen.height / 2 + 20;
+          node.height = app.screen.height * 0.35;
+          node.width = app.screen.width * 0.7;
+          node.scale.set(0.8, 0.8);
+        }
+        console.log(
+          "eggplate node.height",
+          node.height,
+          node.width,
+          node.y,
+          node.x
+        );
+        // setEggPlateContainerBounds(node.getBounds());
       }
-      console.log('eggplate node.height', node.height, node.width, node.y, node.x)
-      // setEggPlateContainerBounds(node.getBounds());
+    },
+    [app.screen.height, app.screen.width]
+  );
 
-    }
-  }, [app.screen.height, app.screen.width]);
+  const [buyTicketPanelBounds, setBuyTicketPanelBounds] =
+    useState(defaultBounds);
 
-  const [buyTicketPanelBounds, setBuyTicketPanelBounds] = useState(defaultBounds);
+  const buyTicketPanelRef = useCallback(
+    (node: any) => {
+      if (node !== null) {
+        setBuyTicketPanelBounds(node.getBounds());
 
-  const buyTicketPanelRef = useCallback((node: any) => {
-    if (node !== null) {
-      setBuyTicketPanelBounds(node.getBounds());
-
-      if (app.screen.height > 600) {
-        node.scale.set(1, 1.2)
+        if (app.screen.height > 600) {
+          node.scale.set(1, 1.2);
+        }
       }
-
-
-    }
-  }, [app.screen.height]);
-
+    },
+    [app.screen.height]
+  );
 
   useEffect(() => {
     // /user/getUserData
     let options = {
       headers: {
-        'my-auth-key': token
-      }
-    }
+        "my-auth-key": token,
+      },
+    };
     const getUserData = async () => {
       const result = await axiosInstance({
         url: "/user/getUserData",
         method: "GET",
-        headers: options.headers
+        headers: options.headers,
       });
-      console.log('getUserData Result:', result)
+      console.log("getUserData Result:", result);
       if (result && result.data && result.data.result) {
-        setUserData(result.data.result)
+        setUserData(result.data.result);
       }
     };
 
@@ -244,7 +316,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
       const data: any = await axiosInstance({
         url: "/egg/lists",
         method: "GET",
-        headers: options.headers
+        headers: options.headers,
       });
       console.log("getEggList Result:", data);
       if (data?.status === 200 && data?.data?.result?.lists) {
@@ -261,14 +333,22 @@ const Home = ({ onProfileClick, scene }: Props) => {
 
   const NormalEggComponent = ({
     eggTexture,
-    ref, posX, posY, onPress, scaleEgg, scaleBtn, posBtn,
+    ref,
+    posX,
+    posY,
+    onPress,
+    scaleEgg,
+    scaleBtn,
+    posBtn,
     text,
+    visible,
   }: any) => {
     return (
       <Container
         ref={ref || null}
         x={posX || 0}
         y={posY || 0}
+        visible={visible}
       >
         <Sprite
           texture={eggTexture || PIXI.Texture.EMPTY}
@@ -286,34 +366,40 @@ const Home = ({ onProfileClick, scene }: Props) => {
         >
           <Sprite
             position={[0, 0]}
-            texture={PIXI.Assets.get(true ? "BtnPurchaseActive" : "BtnPurchaseCountdown") || PIXI.Texture.EMPTY}
+            texture={
+              PIXI.Assets.get(
+                true ? "BtnPurchaseActive" : "BtnPurchaseCountdown"
+              ) || PIXI.Texture.EMPTY
+            }
             anchor={[0.5, 0.5]}
           />
           <Text
-            text={text ? text : '00:00:00'}
+            text={text ? text : "00:00:00"}
             position={[0, 0]}
             anchor={[0.5, 0.5]}
-            style={new PIXI.TextStyle({
-              fontFamily: 'Magra Bold',
-              fontSize: 13,
-              fontWeight: '600',
-              strokeThickness: 1,
-              fill: ['white'],
-            })}
+            style={
+              new PIXI.TextStyle({
+                fontFamily: "Magra Bold",
+                fontSize: 13,
+                fontWeight: "600",
+                strokeThickness: 1,
+                fill: ["white"],
+              })
+            }
           />
         </Container>
       </Container>
-    )
-  }
+    );
+  };
 
-  const EggPlateComponent = () => {
+  const EggPlateComponent = (eggData: any) => {
     return (
       <Container
         ref={eggPlateContainerRef}
         x={-5}
         scale={[0.9, 0.9]}
         height={app.screen.height * 0.4}
-      // width={app.screen.width * 0.9}
+        // width={app.screen.width * 0.9}
       >
         <Sprite
           texture={PIXI.Assets.get("EggPlate") || PIXI.Texture.EMPTY}
@@ -326,8 +412,9 @@ const Home = ({ onProfileClick, scene }: Props) => {
           posX={-53}
           posY={-112}
           posBtn={[-3, 25]}
-          text={'Pre-List'}
-          onPress={() => console.log('egg 2 clicked')}
+          text={"Pre-List"}
+          onPress={() => console.log("egg 2 clicked")}
+          visible={!eggData[1].hidden}
         />
 
         {/* egg 3 */}
@@ -335,8 +422,9 @@ const Home = ({ onProfileClick, scene }: Props) => {
           eggTexture={PIXI.Assets.get("EggIcon2")}
           posX={-92}
           posY={-65}
-          text={'Reveal'}
-          onPress={() => console.log('egg 3 clicked')}
+          text={"Reveal"}
+          onPress={() => console.log("egg 3 clicked")}
+          visible={!eggData[2].hidden}
         />
 
         {/* egg 4 */}
@@ -344,7 +432,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
           eggTexture={PIXI.Assets.get("EggIcon1")}
           posX={-79}
           posY={-2}
-          onPress={() => console.log('egg 4 clicked')}
+          onPress={() => console.log("egg 4 clicked")}
+          visible={!eggData[3].hidden}
         />
 
         {/* egg 5 */}
@@ -353,7 +442,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
           eggTexture={PIXI.Assets.get("EggIcon3")}
           posX={7}
           posY={29}
-          onPress={() => console.log('egg 5 clicked')}
+          onPress={() => console.log("egg 5 clicked")}
+          visible={!eggData[4].hidden}
         />
 
         {/* egg 6 */}
@@ -361,7 +451,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
           eggTexture={PIXI.Assets.get("EggIcon2")}
           posX={98}
           posY={-2}
-          onPress={() => console.log('egg 6 clicked')}
+          onPress={() => console.log("egg 6 clicked")}
+          visible={!eggData[5].hidden}
         />
 
         {/* egg 7 */}
@@ -369,7 +460,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
           eggTexture={PIXI.Assets.get("EggIcon1")}
           posX={109}
           posY={-65}
-          onPress={() => console.log('egg 7 clicked')}
+          onPress={() => console.log("egg 7 clicked")}
+          visible={!eggData[6].hidden}
         />
 
         {/* egg 8 */}
@@ -378,7 +470,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
           posX={70}
           posY={-112}
           posBtn={[5, 25]}
-          onPress={() => console.log('egg 8 clicked')}
+          onPress={() => console.log("egg 8 clicked")}
+          visible={!eggData[7].hidden}
         />
 
         {/* egg 1 (big) */}
@@ -389,19 +482,17 @@ const Home = ({ onProfileClick, scene }: Props) => {
           posBtn={[0, 50]}
           scaleBtn={[1.2, 1.3]}
           scaleEgg={[0.95, 0.95]}
-          onPress={() => console.log('egg 1 clicked')}
+          onPress={() => console.log("egg 1 clicked")}
+          visible={!eggData[0].hidden}
         />
-
       </Container>
-    )
-  }
+    );
+  };
   return (
     <>
       {/* {isLoaded && */}
-      {true &&
-        <Container
-          height={app.screen.height}
-        >
+      {true && (
+        <Container height={app.screen.height}>
           <Sprite
             texture={PIXI?.Assets?.get("MainBg") || PIXI.Texture.EMPTY}
             width={
@@ -411,10 +502,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
             anchor={[0.5, 0.5]}
             position={[app.screen.width / 2, app.screen.height / 2]}
           />
-          <Container
-            ref={homecontainerRef}
-
-          >
+          <Container ref={homecontainerRef}>
             {/* Upper  Container */}
             <Container
               ref={upperContainerRef}
@@ -425,8 +513,13 @@ const Home = ({ onProfileClick, scene }: Props) => {
               anchor={[0.5, 0.5]}
             >
               <ProfileComponent
-                spriteTexture={PIXI?.Assets?.get("ProfileBg") || PIXI.Texture.EMPTY}
-                avatarTexture={PIXI?.Assets?.get("ProfileAvatarDefault") || PIXI.Texture.EMPTY}
+                spriteTexture={
+                  PIXI?.Assets?.get("ProfileBg") || PIXI.Texture.EMPTY
+                }
+                avatarTexture={
+                  PIXI?.Assets?.get("ProfileAvatarDefault") ||
+                  PIXI.Texture.EMPTY
+                }
                 text={userData.username}
                 componentPosX={
                   app.screen?.width > 450
@@ -475,13 +568,15 @@ const Home = ({ onProfileClick, scene }: Props) => {
               <Container
                 position={[
                   (DinoFundBgBounds?.width / 2) *
-                  (app.screen?.width > 450 ? 1.05 : 1),
+                    (app.screen?.width > 450 ? 1.05 : 1),
                   DinoFundBgBounds?.height / 2 - 7,
                 ]}
               >
                 {/* Button Language */}
                 <Sprite
-                  texture={PIXI?.Assets?.get("BtnLngHome") || PIXI.Texture.EMPTY}
+                  texture={
+                    PIXI?.Assets?.get("BtnLngHome") || PIXI.Texture.EMPTY
+                  }
                   width={app.screen?.width > 450 ? 35 : 30}
                   height={app.screen?.width > 450 ? 35 : 30}
                   anchor={[0.5, 0.5]}
@@ -494,7 +589,9 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 />
                 {/* Button Share */}
                 <Sprite
-                  texture={PIXI?.Assets?.get("BtnShareHome") || PIXI.Texture.EMPTY}
+                  texture={
+                    PIXI?.Assets?.get("BtnShareHome") || PIXI.Texture.EMPTY
+                  }
                   width={app.screen?.width > 450 ? 35 : 30}
                   height={app.screen?.width > 450 ? 35 : 30}
                   anchor={[0.5, 0.5]}
@@ -507,9 +604,11 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 />
                 {/* Button Audio on/mute */}
                 <Sprite
-                  texture={PIXI?.Assets?.get(
-                    toggleBtnAudio ? "BtnAudioHomeOn" : "BtnAudioHomeMute"
-                  ) || PIXI.Texture.EMPTY}
+                  texture={
+                    PIXI?.Assets?.get(
+                      toggleBtnAudio ? "BtnAudioHomeOn" : "BtnAudioHomeMute"
+                    ) || PIXI.Texture.EMPTY
+                  }
                   width={app.screen?.width > 450 ? 35 : 30}
                   height={app.screen?.width > 450 ? 35 : 30}
                   anchor={[0.5, 0.5]}
@@ -528,17 +627,15 @@ const Home = ({ onProfileClick, scene }: Props) => {
             <Container
               ref={detailsContainerRef}
               x={0}
-
               // width={app.screen.width > 450 ? 450 : app.screen.width}
               anchor={[0.5, 0.5]}
-
             >
               {/* right side */}
               <Container
                 // position={[app.screen.width / 2 - (lfSideBounds.width / 2), 0]}
                 position={[isNotMobile ? 110 : 90, 10]}
                 anchor={[0.5, 0.5]}
-              // width={app.screen.width > 450 ? 450 : app.screen.width}
+                // width={app.screen.width > 450 ? 450 : app.screen.width}
               >
                 <DetailsComponent
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
@@ -595,7 +692,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                   isVisible={false}
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
                   IconTexture={PIXI?.Assets?.get("EventFragmentIcon")}
-                  text={userData?.bonuses.toString() || '0'}
+                  text={userData?.bonuses.toString() || "0"}
                   posX={0}
                   posY={0}
                   scaleX={isNotMobile ? 1 : 0.85}
@@ -616,7 +713,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 <DetailsComponent
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
                   IconTexture={PIXI?.Assets?.get("DinoTicketIcon")}
-                  text={userData?.tickets.toString() || '0'}
+                  text={userData?.tickets.toString() || "0"}
                   posX={0}
                   posY={35}
                   scaleX={isNotMobile ? 1 : 0.85}
@@ -633,7 +730,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                   onPress={async () => {
                     // await rawBuyTickets(100)
                     // setBuyTicketPanelVisible(true)
-                    setTicketPanel({ show: true, mode: 'BUY' })
+                    setTicketPanel({ show: true, mode: "BUY" });
                     // console.log("onPress DinoTicketDetails");
                     // const txReq = { to: TICKET_ADDR, from: walletAddress, data: d.TxRawApproval, value: utils.parseEther(d.total) }
                     // console.log('txReq', txReq)
@@ -667,16 +764,14 @@ const Home = ({ onProfileClick, scene }: Props) => {
             </Container>
 
             {/* Egg Panel */}
-            {EggPlateComponent()}
-
-
+            {EggPlateComponent(dummyEggLists)}
 
             {/* Lower Button Container */}
             <Container
               ref={lowerSectionContainerRef}
               anchor={[0.5, 0.5]}
               x={0}
-            // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
+              // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
             >
               {/* left side */}
               <LowerButtonComponent
@@ -722,9 +817,9 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 imageIcon={PIXI?.Assets?.get("ImgBulletin")}
                 text={"Bulletin"}
                 posX={-155}
-                posY={BtnSmallBounds?.height + 10}
+                posY={BtnSmallBounds?.height + 6}
                 imageYOffset={10}
-                textYOffset={BtnSmallBounds?.height / 2 + 13}
+                textYOffset={BtnSmallBounds?.height / 2 + 17}
                 textStyle={
                   new PIXI.TextStyle({
                     fontFamily: "Magra Bold",
@@ -756,13 +851,13 @@ const Home = ({ onProfileClick, scene }: Props) => {
               <LowerButtonComponent
                 spriteTexture={PIXI?.Assets?.get("LowerBtnBigBg")}
                 imageIcon={PIXI?.Assets?.get("ImgUpass")}
-                text={"Dino Pass"}
+                text={"J-Pass"}
                 posX={0}
-                posY={BtnSmallBounds?.height + 0}
-                scaleX={0.8}
-                scaleY={0.8}
+                posY={BtnSmallBounds?.height - 30}
+                scaleX={1}
+                scaleY={1}
                 imageYOffset={13}
-                textYOffset={BtnBigBounds?.height / 2 + 20}
+                textYOffset={BtnBigBounds?.height / 2 + 30}
                 textStyle={
                   new PIXI.TextStyle({
                     fontFamily: "Magra Bold",
@@ -833,9 +928,9 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 imageIcon={PIXI?.Assets?.get("ImgHistory")}
                 text={"History"}
                 posX={155 - BtnSmallBounds?.width}
-                posY={BtnSmallBounds?.height + 10}
+                posY={BtnSmallBounds?.height + 2}
                 imageYOffset={10}
-                textYOffset={BtnSmallBounds?.height / 2 + 13}
+                textYOffset={BtnSmallBounds?.height / 2 + 20}
                 textStyle={
                   new PIXI.TextStyle({
                     fontFamily: "Magra Bold",
@@ -861,16 +956,13 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 // scale={isNotMobile ? [1, 1] : [0.5, 1]}
                 position={[0, 0]}
                 filters={[new PIXI.BlurFilter(10)]}
-                tint={'black'}
+                tint={"black"}
                 alpha={0.7}
-                eventMode={'static'}
+                eventMode={"static"}
               />
-              <Container
-                ref={buyTicketPanelRef}
-                position={[0, 0]}
-              >
+              <Container ref={buyTicketPanelRef} position={[0, 0]}>
                 <Sprite
-                  texture={PIXI.Assets.get('RarityPanelBg')}
+                  texture={PIXI.Assets.get("RarityPanelBg")}
                   anchor={[0.5, 0.5]}
                   position={[0, 0]}
                 />
@@ -880,24 +972,30 @@ const Home = ({ onProfileClick, scene }: Props) => {
                   position={[0, -(buyTicketPanelBounds?.height * 0.39)]}
                 >
                   <Text
-                    text={'Buy Ticket'}
+                    text={"Buy Ticket"}
                     position={[0, 0]}
                     anchor={[0.5, 0.5]}
-                    style={new PIXI.TextStyle({
-                      fontFamily: 'Magra Bold',
-                      fontSize: isNotMobile ? 20 : 18,
-                      fontWeight: '600',
-                      strokeThickness: 1,
-                      fill: ['white'],
-                    })}
+                    style={
+                      new PIXI.TextStyle({
+                        fontFamily: "Magra Bold",
+                        fontSize: isNotMobile ? 20 : 18,
+                        fontWeight: "600",
+                        strokeThickness: 1,
+                        fill: ["white"],
+                      })
+                    }
                   />
                   <Sprite
-                    texture={PIXI.Assets.get('LogoutBtn')}
+                    texture={PIXI.Assets.get("LogoutBtn")}
                     width={isNotMobile ? 40 : 40}
                     height={isNotMobile ? 40 : 40}
                     anchor={[0.5, 0.5]}
-                    position={[buyTicketPanelBounds?.width * 0.5 - (isNotMobile ? 50 : 25), 0]}
-                    eventMode='static'
+                    position={[
+                      buyTicketPanelBounds?.width * 0.5 -
+                        (isNotMobile ? 50 : 25),
+                      0,
+                    ]}
+                    eventMode="static"
                     onpointertap={() => setBuyTicketPanelVisible(false)}
                   />
                 </Container>
@@ -918,16 +1016,13 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 // scale={isNotMobile ? [1, 1] : [0.5, 1]}
                 position={[0, 0]}
                 filters={[new PIXI.BlurFilter(10)]}
-                tint={'black'}
+                tint={"black"}
                 alpha={0.7}
-                eventMode={'static'}
+                eventMode={"static"}
               />
-              <Container
-                ref={buyTicketPanelRef}
-                position={[0, 0]}
-              >
+              <Container ref={buyTicketPanelRef} position={[0, 0]}>
                 <Sprite
-                  texture={PIXI.Assets.get('RarityPanelBg')}
+                  texture={PIXI.Assets.get("RarityPanelBg")}
                   anchor={[0.5, 0.5]}
                   position={[0, 0]}
                 />
@@ -937,32 +1032,36 @@ const Home = ({ onProfileClick, scene }: Props) => {
                   position={[0, -(buyTicketPanelBounds?.height * 0.29)]}
                 >
                   <Text
-                    text={'Set 2FA'}
+                    text={"Set 2FA"}
                     position={[0, 0]}
                     anchor={[0.5, 0.5]}
-                    style={new PIXI.TextStyle({
-                      fontFamily: 'Magra Bold',
-                      fontSize: isNotMobile ? 20 : 18,
-                      fontWeight: '600',
-                      strokeThickness: 1,
-                      fill: ['white'],
-                    })}
+                    style={
+                      new PIXI.TextStyle({
+                        fontFamily: "Magra Bold",
+                        fontSize: isNotMobile ? 20 : 18,
+                        fontWeight: "600",
+                        strokeThickness: 1,
+                        fill: ["white"],
+                      })
+                    }
                   />
                   <Sprite
-                    texture={PIXI.Assets.get('LogoutBtn')}
+                    texture={PIXI.Assets.get("LogoutBtn")}
                     width={isNotMobile ? 40 : 40}
                     height={isNotMobile ? 40 : 40}
                     anchor={[0.5, 0.5]}
-                    position={[buyTicketPanelBounds?.width * 0.5 - (isNotMobile ? 50 : 25), 0]}
-                    eventMode='static'
-                  // onpointertap={() => setGoogleAuthVisible(false)}
+                    position={[
+                      buyTicketPanelBounds?.width * 0.5 -
+                        (isNotMobile ? 50 : 25),
+                      0,
+                    ]}
+                    eventMode="static"
+                    // onpointertap={() => setGoogleAuthVisible(false)}
                   />
                 </Container>
 
                 {/* Action Button */}
-                <Container
-                  position={[0, 0]}
-                >
+                <Container position={[0, 0]}>
                   {/* put content here */}
                   {/* {googleAuthData && googleAuthData.qr &&
                     <Sprite
@@ -983,22 +1082,23 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     // position={[0, isNotMobile ? -100 : -confirmQuitPanelBounds?.height * 0.4]}
                     position={[0, 100]}
                     anchor={[0.5, 0.5]}
-                    style={new PIXI.TextStyle({
-                      fontFamily: 'Magra Bold',
-                      fontSize: isNotMobile ? 20 : 18,
-                      fontWeight: '600',
-                      strokeThickness: 1,
-                      fill: ['white'],
-                    })}
+                    style={
+                      new PIXI.TextStyle({
+                        fontFamily: "Magra Bold",
+                        fontSize: isNotMobile ? 20 : 18,
+                        fontWeight: "600",
+                        strokeThickness: 1,
+                        fill: ["white"],
+                      })
+                    }
                   />
                   {/* <input type="text" placeholder="validation" />  */}
-
                 </Container>
               </Container>
             </Container>
           </Container>
         </Container>
-      }
+      )}
     </>
   );
 };

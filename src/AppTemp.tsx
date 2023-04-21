@@ -31,11 +31,17 @@ import DinoCenter from "./components/scene/DinoCenter";
 import GameGuide from "./components/scene/GameGuide";
 
 import { useAuthStore, useStore } from "./utils/store";
-import { USDT_ADDR, PAYGATEWAY_ADDR, TICKET_ADDR, USDT_ABI, CAPTCHA_KEY } from "./utils/config";
+import {
+  USDT_ADDR,
+  PAYGATEWAY_ADDR,
+  TICKET_ADDR,
+  USDT_ABI,
+  CAPTCHA_KEY,
+} from "./utils/config";
 import { Contract } from "ethers";
-import ReCAPTCHA from 'react-google-recaptcha';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import ReCAPTCHA from "react-google-recaptcha";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 // import { BigNumber, BigNumberish, Contract, utils } from "ethers";
 // import { Interface } from "ethers/lib/utils";
 
@@ -86,16 +92,31 @@ export const AppTemp = () => {
   const setApproved = useStore((state) => state.setApproved);
   const ticketPanel = useStore((state) => state.ticketPanel);
   const setTicketPanel = useStore((state) => state.setTicketPanel);
-  const usdtInfo = useToken(USDT_ADDRESS)
-  const usdtBalance = useTokenBalance(USDT_ADDRESS, account)
-  const tokenBalance = useTokenBalance('0x1D2F0da169ceB9fC7B3144628dB156f3F6c60dBE', account)
-  const etherBalance = useEtherBalance(account, { chainId: BSCTestnet.chainId })
-  const mainnetBalance = useEtherBalance(account, { chainId: BSC.chainId })
-  const testnetBalance = useEtherBalance(account, { chainId: BSCTestnet.chainId })
-  const allowance = useTokenAllowance(USDT_ADDR, walletAddress, PAYGATEWAY_ADDR)
-  const ticketAllowance = useTokenAllowance(USDT_ADDR, walletAddress, TICKET_ADDR)
-  const [captcha, setCaptcha] = useState('')
-  const [registerCaptcha, setRegisterCaptcha] = useState('')
+  const usdtInfo = useToken(USDT_ADDRESS);
+  const usdtBalance = useTokenBalance(USDT_ADDRESS, account);
+  const tokenBalance = useTokenBalance(
+    "0x1D2F0da169ceB9fC7B3144628dB156f3F6c60dBE",
+    account
+  );
+  const etherBalance = useEtherBalance(account, {
+    chainId: BSCTestnet.chainId,
+  });
+  const mainnetBalance = useEtherBalance(account, { chainId: BSC.chainId });
+  const testnetBalance = useEtherBalance(account, {
+    chainId: BSCTestnet.chainId,
+  });
+  const allowance = useTokenAllowance(
+    USDT_ADDR,
+    walletAddress,
+    PAYGATEWAY_ADDR
+  );
+  const ticketAllowance = useTokenAllowance(
+    USDT_ADDR,
+    walletAddress,
+    TICKET_ADDR
+  );
+  const [captcha, setCaptcha] = useState("");
+  const [registerCaptcha, setRegisterCaptcha] = useState("");
   const [googleAuthVisible, setGoogleAuthVisible] = useState(false);
   const [googleAuthData, setGoogleAuthData] = useState<{
     qr: string;
@@ -118,43 +139,43 @@ export const AppTemp = () => {
   //   resetState: resetSendTicketApprovalState,
   // } = useSendTransaction({ transactionName: "Ticket Approve" });
 
-  const transactionList = useTransactions()
-  const { notifications } = useNotifications()
+  const transactionList = useTransactions();
+  const { notifications } = useNotifications();
 
   useEffect(() => {
     if (notifications.length > 0) {
-      console.log('notifications', notifications)
-      toast(notifications[0].type)
+      console.log("notifications", notifications);
+      toast(notifications[0].type);
     }
-  }, [notifications])
+  }, [notifications]);
 
-  console.log('transactionList', transactionList)
+  console.log("transactionList", transactionList);
   const USDTContract = new Contract(USDT_ADDR, USDT_ABI);
 
   let getUserDataOptions = {
     headers: {
-      'my-auth-key': token
-    }
-  }
+      "my-auth-key": token,
+    },
+  };
 
   const verifiedCallback = (token: string) => {
     console.log(token);
-    setCaptcha(token)
-  }
+    setCaptcha(token);
+  };
   const verifiedRegisterCallback = (token: string) => {
     console.log(token);
-    setRegisterCaptcha(token)
-  }
+    setRegisterCaptcha(token);
+  };
 
   const getUserData = async () => {
     const result = await axiosInstance({
       url: "/user/getUserData",
       method: "GET",
-      headers: getUserDataOptions.headers
+      headers: getUserDataOptions.headers,
     });
-    console.log('getUserData Result:', result)
+    console.log("getUserData Result:", result);
     if (result && result.data && result.data.result) {
-      setUserData(result.data.result)
+      setUserData(result.data.result);
     }
   };
 
@@ -164,8 +185,10 @@ export const AppTemp = () => {
     resetState: resetSendTicketBuyState,
   } = useSendTransaction({ transactionName: "Ticket Buy" });
 
-  const { state, send } = useContractFunction(USDTContract, 'approve', { transactionName: 'Ticket Approval' })
-  console.log('contractFunction state', state)
+  const { state, send } = useContractFunction(USDTContract, "approve", {
+    transactionName: "Ticket Approval",
+  });
+  console.log("contractFunction state", state);
 
   const changeScene = useStore((state) => state.changeScene);
   const [authMode, setAuthMode] = useState<
@@ -174,15 +197,20 @@ export const AppTemp = () => {
   const [otp, setOtp] = useState("");
   // const [activateError, setActivateError] = useState('')
   const [registerCheckbox, setRegisterCheckbox] = useState(false);
-  const [usd, setUsd] = useState(price)
+  const [usd, setUsd] = useState(price);
   const [qty, setQty] = useState<number | string>(1);
-  const [transferUsername, setTransferUsername] = useState('');
+  const [transferUsername, setTransferUsername] = useState("");
   const [transferQty, setTransferQty] = useState(1);
-  const [GAValue, setGAValue] = useState('');
+  const [GAValue, setGAValue] = useState("");
   // const [countryCodeValue, setCountryCodeValue] = useState();
   const [buyWithBonus, setBuyWithBonus] = useState(false);
 
-  console.log('usd', usd && BigInt(usd * 1e18), 'ticketAllowance', ticketAllowance && BigInt(ticketAllowance.toString()))
+  console.log(
+    "usd",
+    usd && BigInt(usd * 1e18),
+    "ticketAllowance",
+    ticketAllowance && BigInt(ticketAllowance.toString())
+  );
   const checkUsername = async (e: any) => {
     setTransferUsername(e.target.value);
     const cusr = e.target.value;
@@ -190,7 +218,7 @@ export const AppTemp = () => {
       const response = await axiosInstance({
         url: "/user/checkUser",
         method: "POST",
-        data: { username: cusr }
+        data: { username: cusr },
       });
       console.log(response.data);
     }
@@ -198,12 +226,12 @@ export const AppTemp = () => {
   const changeQuantity = (e: any) => {
     let psx = e.target.value;
     if (psx > 10000) psx = 10000;
-    console.log('psx', psx)
+    console.log("psx", psx);
     setQty(psx);
     if (psx < 0) psx = 0;
     let total_usd = psx * price;
     setUsd(total_usd);
-  }
+  };
 
   // console.log('usdtBalance', usdtBalance)
   console.log("tokenBalance", tokenBalance);
@@ -255,12 +283,12 @@ export const AppTemp = () => {
   // }, [sendTicketApprovalState]);
 
   const checkValidateTx = (hash: string) => {
-    console.log('checkValidateTx', hash)
+    console.log("checkValidateTx", hash);
     let options = {
       headers: {
-        'my-auth-key': token
-      }
-    }
+        "my-auth-key": token,
+      },
+    };
     axiosInstance({
       url: "/ticket/validate",
       method: "POST",
@@ -268,27 +296,32 @@ export const AppTemp = () => {
       data: {
         hash: hash,
       },
-    }).then((response) => {
-      console.log(response.data);
-      if (response.data.result === 1) {
-        alert('Buy Ticket Confirmed');
-        getUserData()
-      } else {
-        setTimeout(() => checkValidateTx(hash), 5000);
-      }
     })
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.result === 1) {
+          alert("Buy Ticket Confirmed");
+          getUserData();
+        } else {
+          setTimeout(() => checkValidateTx(hash), 5000);
+        }
+      })
       .catch((err) => {
         console.log(err);
       });
     // axios.post(API_ENDPOINT + '/ticket/validate', { hash: hash }, options)
-
-  }
+  };
   useEffect(() => {
-    if (sendTicketBuyState && sendTicketBuyState.transaction && sendTicketBuyState.status === "Success" && ticketAllowance) {
-      checkValidateTx(sendTicketBuyState.transaction.hash)
+    if (
+      sendTicketBuyState &&
+      sendTicketBuyState.transaction &&
+      sendTicketBuyState.status === "Success" &&
+      ticketAllowance
+    ) {
+      checkValidateTx(sendTicketBuyState.transaction.hash);
       resetSendTicketBuyState();
     }
-    console.log('sendTicketBuyState', sendTicketBuyState)
+    console.log("sendTicketBuyState", sendTicketBuyState);
   }, [sendTicketBuyState]);
 
   const checkValidation = async (id: string) => {
@@ -632,7 +665,7 @@ export const AppTemp = () => {
     const loginRequestData: loginReqFormat = {
       username: loginForm.values.username,
       password: loginForm.values.password,
-      captcha: captcha
+      captcha: captcha,
     };
     const result = await axiosInstance({
       url: "/user/authentication",
@@ -654,7 +687,7 @@ export const AppTemp = () => {
       password: registerForm.values.password,
       referal: registerForm.values.referralCode,
       // address: otpForm.values.walletAddress,
-      address: '',
+      address: "",
       otp,
       country: registerForm.values.countryCode,
       captcha: registerCaptcha,
@@ -677,9 +710,9 @@ export const AppTemp = () => {
     };
     let options = {
       headers: {
-        'Content-Type': 'application/json',
-      }
-    }
+        "Content-Type": "application/json",
+      },
+    };
     const result = await axiosInstance({
       url: "/otp/getRegisterOtp",
       method: "POST",
@@ -689,13 +722,13 @@ export const AppTemp = () => {
     });
     const { data } = result;
     if (!data.success) toast(`${data.message}`);
-    if (data.success) toast('OTP Sent');
+    if (data.success) toast("OTP Sent");
   };
 
   const [country, setCountry] = useState();
   useEffect(() => {
     registerForm.setFieldValue("countryCode", country);
-  }, [country])
+  }, [country]);
 
   console.log("🚀 ~ file: AppTemp.tsx:548 ~ country:", country);
 
@@ -710,9 +743,8 @@ export const AppTemp = () => {
       {...rest}
       value={value}
       onChange={(event) => {
-        onChange(event.target.value || undefined)
-      }
-      }
+        onChange(event.target.value || undefined);
+      }}
       className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] appearance-none text-white font-Magra font-bold"
       style={{
         background: `url(image/InputBox.png) no-repeat `,
@@ -1071,7 +1103,7 @@ export const AppTemp = () => {
                   </div>
                   <ReCAPTCHA
                     sitekey={CAPTCHA_KEY}
-                    onChange={(e) => verifiedRegisterCallback(e as string)}
+                    onChange={(e: any) => verifiedRegisterCallback(e as string)}
                   />
                   <input
                     alt="btnRegister"
@@ -1192,7 +1224,7 @@ export const AppTemp = () => {
                   />
                   <ReCAPTCHA
                     sitekey={CAPTCHA_KEY}
-                    onChange={(e) => verifiedCallback(e as string)}
+                    onChange={(e: any) => verifiedCallback(e as string)}
                   />
                 </>
               )}
@@ -1272,7 +1304,7 @@ export const AppTemp = () => {
                 width={30}
                 height={30}
                 alt="Close Ticket"
-                onClick={() => setTicketPanel({ show: false, mode: 'BUY' })}
+                onClick={() => setTicketPanel({ show: false, mode: "BUY" })}
               />
             </div>
             <div
@@ -1285,27 +1317,51 @@ export const AppTemp = () => {
               <div className="flex gap-2 justify-start py-5 w-full">
                 <button
                   type="button"
-                  onClick={() => setTicketPanel({ ...ticketPanel, mode: 'BUY' })}
-                  className={`${ticketPanel.mode === 'BUY' ? 'text-blue-500' : 'text-white'} font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
-                >Buy</button>
+                  onClick={() =>
+                    setTicketPanel({ ...ticketPanel, mode: "BUY" })
+                  }
+                  className={`${
+                    ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
+                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                >
+                  Buy
+                </button>
                 {/* {userData.tf_ticket && */}
                 <button
                   type="button"
-                  onClick={() => setTicketPanel({ ...ticketPanel, mode: 'TRANSFER' })}
-                  className={`${ticketPanel.mode === 'TRANSFER' ? 'text-blue-500' : 'text-white'} font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
-                >Transfer</button>
+                  onClick={() =>
+                    setTicketPanel({ ...ticketPanel, mode: "TRANSFER" })
+                  }
+                  className={`${
+                    ticketPanel.mode === "TRANSFER"
+                      ? "text-blue-500"
+                      : "text-white"
+                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                >
+                  Transfer
+                </button>
                 {/* } */}
                 <button
                   type="button"
-                  onClick={() => setTicketPanel({ ...ticketPanel, mode: 'HISTORY' })}
-                  className={`${ticketPanel.mode === 'HISTORY' ? 'text-blue-500' : 'text-white'} font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
-                >History</button>
+                  onClick={() =>
+                    setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
+                  }
+                  className={`${
+                    ticketPanel.mode === "HISTORY"
+                      ? "text-blue-500"
+                      : "text-white"
+                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                >
+                  History
+                </button>
               </div>
               {ticketPanel.mode === "BUY" && (
                 <>
                   <form onSubmit={loginForm.handleSubmit}>
                     <div className="flex flex-col">
-                      <p className="text-white font-Magra mb-3">Ticket Quantity</p>
+                      <p className="text-white font-Magra mb-3">
+                        Ticket Quantity
+                      </p>
                       <input
                         name="quantity"
                         type="number"
@@ -1342,17 +1398,18 @@ export const AppTemp = () => {
                           // }}
                           checked={buyWithBonus}
                           onChange={(e: any) => {
-                            console.log('buy with bonus', e)
-                            setBuyWithBonus(!buyWithBonus)
-                          }
-                          }
-                        // onBlur={loginForm.handleBlur}
-                        // value={usd}
+                            console.log("buy with bonus", e);
+                            setBuyWithBonus(!buyWithBonus);
+                          }}
+                          // onBlur={loginForm.handleBlur}
+                          // value={usd}
                         />
-                        <p className="font-Magra text-md text-white ml-3">Buy with Bonus</p>
+                        <p className="font-Magra text-md text-white ml-3">
+                          Buy with Bonus
+                        </p>
                       </div>
 
-                      {buyWithBonus &&
+                      {buyWithBonus && (
                         <input
                           name="2FA"
                           type="number"
@@ -1364,21 +1421,24 @@ export const AppTemp = () => {
                           onChange={(e: any) => setGAValue(e.target.value)}
                           value={GAValue}
                         />
-                      }
+                      )}
                     </div>
                   </form>
                   <button
                     type={"submit"}
                     // src={"image/BtnConfirm.png"}
                     onClick={async () => {
-                      console.log('usd amount approval', usd)
+                      console.log("usd amount approval", usd);
                       if (buyWithBonus) {
-                        console.log('Buy with bonus clicked', { qty: parseInt(qty as string), facode: GAValue.toString() })
+                        console.log("Buy with bonus clicked", {
+                          qty: parseInt(qty as string),
+                          facode: GAValue.toString(),
+                        });
                         let options = {
                           headers: {
-                            'my-auth-key': token
-                          }
-                        }
+                            "my-auth-key": token,
+                          },
+                        };
                         const response = await axiosInstance({
                           url: "/ticket/buyWithBonuses",
                           method: "POST",
@@ -1390,22 +1450,25 @@ export const AppTemp = () => {
                         });
                         if (response.data.success) {
                           alert("Buy Ticket Confirmed");
-                          getUserData()
-                        } else alert(response.data.message)
-                      }
-                      else if (!buyWithBonus) {
-                        if (ticketAllowance && ticketAllowance.toBigInt() < BigInt(usd * 1e18)) {
+                          getUserData();
+                        } else alert(response.data.message);
+                      } else if (!buyWithBonus) {
+                        if (
+                          ticketAllowance &&
+                          ticketAllowance.toBigInt() < BigInt(usd * 1e18)
+                        ) {
                           // const txReq = { value: BigInt(usd * 1e18) }
-                          const txSend = await send(TICKET_ADDR, BigInt(usd * 1e18));
+                          const txSend = await send(
+                            TICKET_ADDR,
+                            BigInt(usd * 1e18)
+                          );
                           console.log("txSend ticketApproval", txSend);
-                        }
-                        else {
-
+                        } else {
                           let options = {
                             headers: {
-                              'my-auth-key': token
-                            }
-                          }
+                              "my-auth-key": token,
+                            },
+                          };
                           const response = await axiosInstance({
                             url: "/ticket/createRawBuyTickets",
                             method: "POST",
@@ -1420,19 +1483,24 @@ export const AppTemp = () => {
                               data: response.data.result,
                               to: TICKET_ADDR,
                               from: walletAddress,
-                            }
+                            };
                             const txSend = await sendTicketBuy(txReq);
-                            console.log('txSend buy ticket', txSend);
-                            if (txSend && txSend.transactionHash) checkValidateTx(txSend.transactionHash)
+                            console.log("txSend buy ticket", txSend);
+                            if (txSend && txSend.transactionHash)
+                              checkValidateTx(txSend.transactionHash);
                           }
                         }
                       }
-
                     }}
                     className="bg-green-500 text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     disabled={buyWithBonus && GAValue.length < 6}
                   >
-                    {buyWithBonus ? 'Buy with Bonus' : ticketAllowance && ticketAllowance.toBigInt() < BigInt(usd * 1e18) ? 'Approval' : 'Buy Ticket'}
+                    {buyWithBonus
+                      ? "Buy with Bonus"
+                      : ticketAllowance &&
+                        ticketAllowance.toBigInt() < BigInt(usd * 1e18)
+                      ? "Approval"
+                      : "Buy Ticket"}
                   </button>
                 </>
               )}
@@ -1456,7 +1524,9 @@ export const AppTemp = () => {
                           registerForm.touched.username &&
                           registerForm.errors.username}
                       </p>
-                      <p className="text-white font-Magra mt-2">Ticket Quantity</p>
+                      <p className="text-white font-Magra mt-2">
+                        Ticket Quantity
+                      </p>
                       <input
                         name="quantity"
                         type="number"
@@ -1491,22 +1561,26 @@ export const AppTemp = () => {
                         },
                       };
                       if (
-                        window.confirm(`Are you sure to transfer ${transferQty} ticket(s) to ${transferUsername}`)
+                        window.confirm(
+                          `Are you sure to transfer ${transferQty} ticket(s) to ${transferUsername}`
+                        )
                       ) {
-
                         const response = await axiosInstance({
                           url: "/ticket/transfer",
                           method: "POST",
                           headers: options.headers,
-                          data: { to: transferUsername, qty: transferQty, facode: GAValue.toString() }
+                          data: {
+                            to: transferUsername,
+                            qty: transferQty,
+                            facode: GAValue.toString(),
+                          },
                         });
                         console.log(response.data);
                         if (response.data.success) {
-                          alert('Ticket Transfer Success')
-                          getUserData()
+                          alert("Ticket Transfer Success");
+                          getUserData();
                         }
                       }
-
                     }}
                     className="bg-green-500 text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                   >
@@ -1516,7 +1590,7 @@ export const AppTemp = () => {
                 </>
               )}
               {ticketPanel.mode === "HISTORY" && (
-                <table >
+                <table>
                   <thead>
                     <tr>
                       <th>Name</th>
@@ -1524,13 +1598,13 @@ export const AppTemp = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {transactionList.transactions.map(t => {
+                    {transactionList.transactions.map((t) => {
                       return (
                         <tr className="text-white">
                           <td>{t.transactionName}</td>
                           <td>{t.submittedAt}</td>
                         </tr>
-                      )
+                      );
                     })}
                   </tbody>
                 </table>
@@ -1550,7 +1624,7 @@ export const AppTemp = () => {
           onAnimationIteration={() => {
             console.log("animation iteration");
           }}
-        // onMount={(_app) => setApp(_app)}
+          // onMount={(_app) => setApp(_app)}
         >
           {/* @ts-ignore */}
 
