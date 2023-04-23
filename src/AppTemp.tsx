@@ -649,8 +649,7 @@ export const AppTemp = () => {
     console.log("account", account);
     if (!!account) {
       setWalletAddress(account);
-      // if (chainId !== BSCTestnet.chainId) switchNetwork(BSCTestnet.chainId);
-      if (chainId !== BSC.chainId) switchNetwork(BSC.chainId);
+      if (chainId !== BSCTestnet.chainId) switchNetwork(BSCTestnet.chainId);
     }
     if (active && !!account && authMode === "OTPEMAIL")
       otpForm.setFieldValue("walletAddress", account);
