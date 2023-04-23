@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import * as PIXI from "pixi.js";
 import { Container, Sprite, Text, useApp, useTick } from "@pixi/react";
 import { useAuthStore, useStore } from "../../utils/store";
+import { toast } from "react-toastify";
 
 type Props = {
   onBackBtnClick: () => void;
@@ -34,9 +35,8 @@ const ProfileTemp = ({ onBackBtnClick }: Props) => {
 
   const obscureEmail = (email: string) => {
     const [name, domain] = email.split("@");
-    return `${name[0]}${new Array(4).join("*")}${
-      name[name.length - 1]
-    }@${domain}`;
+    return `${name[0]}${new Array(4).join("*")}${name[name.length - 1]
+      }@${domain}`;
   };
 
   useEffect(() => {
@@ -66,14 +66,19 @@ const ProfileTemp = ({ onBackBtnClick }: Props) => {
 
   const menuItem = [
     {
-      title: "Referral Link",
+      title: "Sponsor Link",
       rightSection: (
         <Container
           position={[isNotMobile ? 450 / 2 - 70 : app.screen.width * 0.3, 0]}
           anchor={[1, 0.5]}
+          eventMode="static"
+          onpointertap={() => {
+            toast('Sponsor Link Copied!')
+            navigator.clipboard.writeText(`${window.location.href}?sponsor=${userData.username}`)
+          }}
         >
           <Text
-            text={"ABC123"}
+            text={userData.username}
             position={[-2, 0]}
             anchor={[0.5, 0.5]}
             style={

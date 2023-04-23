@@ -36,10 +36,10 @@ import {
   PAYGATEWAY_ADDR,
   TICKET_ADDR,
   USDT_ABI,
-  CAPTCHA_KEY,
+  // CAPTCHA_KEY,
 } from "./utils/config";
 import { Contract } from "ethers";
-import ReCAPTCHA from "react-google-recaptcha";
+// import ReCAPTCHA from "react-google-recaptcha";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 // import { BigNumber, BigNumberish, Contract, utils } from "ethers";
@@ -48,7 +48,7 @@ import "react-toastify/dist/ReactToastify.css";
 type loginReqFormat = {
   username: string;
   password: string;
-  captcha: string;
+  captcha?: string;
 };
 
 // type loginWalletReqFormat = {
@@ -63,7 +63,7 @@ type registerReqFormat = {
   address: string;
   otp: string;
   country: string | undefined;
-  captcha: string | undefined;
+  captcha?: string | undefined;
 };
 
 type otpReqFormat = {
@@ -100,14 +100,15 @@ export const AppTemp = () => {
   const testnetBalance = useEtherBalance(account, { chainId: BSCTestnet.chainId })
   const allowance = useTokenAllowance(USDT_ADDR, walletAddress, PAYGATEWAY_ADDR)
   const ticketAllowance = useTokenAllowance(USDT_ADDR, walletAddress, TICKET_ADDR)
-  const [captcha, setCaptcha] = useState('')
-  const [registerCaptcha, setRegisterCaptcha] = useState('')
+  // const [captcha, setCaptcha] = useState('')
+  // const [registerCaptcha, setRegisterCaptcha] = useState('')
   const [ticketHistories, setTicketHistories] = useState([])
   const [googleAuthVisible, setGoogleAuthVisible] = useState(false);
   const [googleAuthData, setGoogleAuthData] = useState<{
     qr: string;
     secret: string;
   } | null>();
+  const [sponsor, setSponsor] = useState<string | null | undefined>('')
   const {
     sendTransaction,
     state: sendTransactionState,
@@ -129,6 +130,17 @@ export const AppTemp = () => {
   const { notifications } = useNotifications();
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    console.log('sponsor', params.get('sponsor'))
+    if (params.get('sponsor')) {
+      setSponsor(params.get('sponsor'))
+      registerForm.setFieldValue("referralCode", params.get('sponsor'));
+      setAuthMode('REGISTER')
+    }
+  }, [])
+
+
+  useEffect(() => {
     if (notifications.length > 0) {
       console.log("notifications", notifications);
       toast(notifications[0].type);
@@ -144,14 +156,14 @@ export const AppTemp = () => {
     },
   };
 
-  const verifiedCallback = (token: string) => {
-    console.log(token);
-    setCaptcha(token);
-  };
-  const verifiedRegisterCallback = (token: string) => {
-    console.log(token);
-    setRegisterCaptcha(token);
-  };
+  // const verifiedCallback = (token: string) => {
+  //   console.log(token);
+  //   setCaptcha(token);
+  // };
+  // const verifiedRegisterCallback = (token: string) => {
+  //   console.log(token);
+  //   setRegisterCaptcha(token);
+  // };
 
   const getUserData = async () => {
     const result = await axiosInstance({
@@ -434,7 +446,7 @@ export const AppTemp = () => {
     username?: string;
     password?: string;
     retypePassword?: string;
-    referralCode?: string;
+    referralCode?: string | null;
     countryCode?: string;
   };
 
@@ -558,7 +570,7 @@ export const AppTemp = () => {
       username: "",
       password: "",
       retypePassword: "",
-      referralCode: "",
+      referralCode: sponsor,
       countryCode: "",
     },
     validate: registerFormValidate,
@@ -669,7 +681,7 @@ export const AppTemp = () => {
     const loginRequestData: loginReqFormat = {
       username: loginForm.values.username,
       password: loginForm.values.password,
-      captcha: captcha,
+      // captcha: captcha,
     };
     const result = await axiosInstance({
       url: "/user/authentication",
@@ -689,12 +701,12 @@ export const AppTemp = () => {
       email: otpForm.values.email,
       username: registerForm.values.username,
       password: registerForm.values.password,
-      referal: registerForm.values.referralCode,
+      referal: registerForm.values.referralCode || '',
       // address: otpForm.values.walletAddress,
       address: "",
       otp,
       country: registerForm.values.countryCode,
-      captcha: registerCaptcha,
+      // captcha: registerCaptcha,
     };
     // console.log("submit values", registerRequestData);
     const result = await axiosInstance({
@@ -1070,14 +1082,14 @@ export const AppTemp = () => {
                       <input
                         name="referralCode"
                         type="text"
-                        placeholder="Referral code (optional)"
+                        placeholder="Sponsor"
                         className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
                         style={{
                           background: `url(image/InputBox.png) no-repeat `,
                         }}
                         onChange={registerForm.handleChange}
                         onBlur={registerForm.handleBlur}
-                        value={registerForm.values.referralCode}
+                        value={registerForm.values.referralCode || ''}
                       />
                       {registerForm.errors.referralCode &&
                         registerForm.touched.referralCode &&
@@ -1105,14 +1117,15 @@ export const AppTemp = () => {
                     )}
                     <span className="font-Magra ml-2 text-white font-bold">{`I have read and agreed to <User Agreement and Privacy Policy>`}</span>
                   </div>
-                  <ReCAPTCHA
+                  {/* <ReCAPTCHA
                     sitekey={CAPTCHA_KEY}
                     onChange={(e: any) => verifiedRegisterCallback(e as string)}
-                  />
+                  /> */}
                   <input
                     alt="btnRegister"
                     type="image"
                     src={"image/BtnConfirmRegister.png"}
+                    disabled={!registerCheckbox}
                     onClick={registerForm.submitForm}
                     className="mt-2 px-3.5 py-2.5 text-sm "
                   />
@@ -1187,7 +1200,7 @@ export const AppTemp = () => {
                     type={"image"}
                     src={"image/BtnSubmit.png"}
                     onClick={registerHandler}
-                    disabled={registerCaptcha.length === 0}
+                    // disabled={registerCaptcha.length === 0}
                     className="mt-12 px-3.5 py-2.5 text-sm"
                   />
                 </>
@@ -1224,12 +1237,12 @@ export const AppTemp = () => {
                     src={"image/BtnSubmit.png"}
                     onClick={loginWalletForm.submitForm}
                     className="mt-12 px-3.5 py-2.5 text-sm"
-                    disabled={captcha.length === 0}
+                  // disabled={captcha.length === 0}
                   />
-                  <ReCAPTCHA
+                  {/* <ReCAPTCHA
                     sitekey={CAPTCHA_KEY}
                     onChange={(e: any) => verifiedCallback(e as string)}
-                  />
+                  /> */}
                 </>
               )}
             </div>
@@ -1325,9 +1338,8 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "BUY" })
                   }
-                  className={`${
-                    ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
-                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
+                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   Buy
                 </button>
@@ -1337,11 +1349,10 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "TRANSFER" })
                   }
-                  className={`${
-                    ticketPanel.mode === "TRANSFER"
-                      ? "text-blue-500"
-                      : "text-white"
-                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${ticketPanel.mode === "TRANSFER"
+                    ? "text-blue-500"
+                    : "text-white"
+                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   Transfer
                 </button>
@@ -1351,11 +1362,10 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
                   }
-                  className={`${
-                    ticketPanel.mode === "HISTORY"
-                      ? "text-blue-500"
-                      : "text-white"
-                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${ticketPanel.mode === "HISTORY"
+                    ? "text-blue-500"
+                    : "text-white"
+                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   History
                 </button>
@@ -1406,8 +1416,8 @@ export const AppTemp = () => {
                             console.log("buy with bonus", e);
                             setBuyWithBonus(!buyWithBonus);
                           }}
-                          // onBlur={loginForm.handleBlur}
-                          // value={usd}
+                        // onBlur={loginForm.handleBlur}
+                        // value={usd}
                         />
                         <p className="font-Magra text-md text-white ml-3">
                           Buy with Bonus
@@ -1504,8 +1514,8 @@ export const AppTemp = () => {
                       ? "Buy with Bonus"
                       : ticketAllowance &&
                         ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                      ? "Approval"
-                      : "Buy Ticket"}
+                        ? "Approval"
+                        : "Buy Ticket"}
                   </button>
                 </>
               )}
@@ -1640,7 +1650,7 @@ export const AppTemp = () => {
           onAnimationIteration={() => {
             console.log("animation iteration");
           }}
-          // onMount={(_app) => setApp(_app)}
+        // onMount={(_app) => setApp(_app)}
         >
           {/* @ts-ignore */}
 
