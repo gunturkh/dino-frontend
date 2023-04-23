@@ -35,8 +35,9 @@ const ProfileTemp = ({ onBackBtnClick }: Props) => {
 
   const obscureEmail = (email: string) => {
     const [name, domain] = email.split("@");
-    return `${name[0]}${new Array(4).join("*")}${name[name.length - 1]
-      }@${domain}`;
+    return `${name[0]}${new Array(4).join("*")}${
+      name[name.length - 1]
+    }@${domain}`;
   };
 
   useEffect(() => {
@@ -73,13 +74,15 @@ const ProfileTemp = ({ onBackBtnClick }: Props) => {
           anchor={[1, 0.5]}
           eventMode="static"
           onpointertap={() => {
-            toast('Sponsor Link Copied!')
-            navigator.clipboard.writeText(`${window.location.origin}?sponsor=${userData.username}`)
+            toast("Sponsor Link Copied!");
+            navigator.clipboard.writeText(
+              `${window.location.origin}?sponsor=${userData.username}`
+            );
           }}
         >
           <Text
             text={userData.username}
-            position={[-2, 0]}
+            position={[-10, 0]}
             anchor={[0.5, 0.5]}
             style={
               new PIXI.TextStyle({
@@ -501,7 +504,7 @@ const ProfileTemp = ({ onBackBtnClick }: Props) => {
                   ]}
                 >
                   <Text
-                    text="DQh1234"
+                    text={`${userData?.username}` || ""}
                     position={[0, 0]}
                     anchor={[0.5, 0.5]}
                     style={
@@ -510,6 +513,7 @@ const ProfileTemp = ({ onBackBtnClick }: Props) => {
                         // fontStyle: 'italic',
                         fontSize: isNotMobile ? 24 : 18,
                         fontWeight: "bold",
+                        strokeThickness: 1,
                         fill: ["0xFFC700"],
                       })
                     }
@@ -524,6 +528,7 @@ const ProfileTemp = ({ onBackBtnClick }: Props) => {
                 </Container>
 
                 <Text
+                  visible={false}
                   text={`ID:${"12345678"}`}
                   position={[
                     0,
@@ -535,7 +540,8 @@ const ProfileTemp = ({ onBackBtnClick }: Props) => {
                       fontFamily: "Magra Regular",
                       fontSize: isNotMobile ? 24 : 16,
                       fontWeight: "normal",
-                      fill: ["white"],
+                      strokeThickness: 1,
+                      fill: ["0xFFC700"],
                     })
                   }
                 />

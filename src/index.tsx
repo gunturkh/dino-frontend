@@ -2,7 +2,13 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import { AppTemp } from "./AppTemp";
 import reportWebVitals from "./reportWebVitals";
-import { DAppProvider, BSC, BSCTestnet, Config, MetamaskConnector, } from "@usedapp/core";
+import {
+  DAppProvider,
+  BSC,
+  BSCTestnet,
+  Config,
+  MetamaskConnector,
+} from "@usedapp/core";
 // import { WalletConnectConnector } from '@usedapp/wallet-connect-connector'
 
 const root = ReactDOM.createRoot(
@@ -12,8 +18,8 @@ const root = ReactDOM.createRoot(
 const config: Config = {
   readOnlyChainId: BSCTestnet.chainId,
   readOnlyUrls: {
-    [BSC.chainId]: 'https://bsc-dataseed.binance.org',
-    [BSCTestnet.chainId]: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
+    [BSC.chainId]: "https://bsc-dataseed.binance.org",
+    [BSCTestnet.chainId]: "https://data-seed-prebsc-1-s1.binance.org:8545/",
   },
   multicallVersion: 1,
   connectors: {

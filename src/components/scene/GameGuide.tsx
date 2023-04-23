@@ -36,7 +36,13 @@ const GameGuide = ({ onBackBtnClick }: Props) => {
     .endFill();
   const bgTexture = app.renderer.generateTexture(bgGraphic);
 
-  const gameGuideContainerRef = useCallback((node: any) => {
+  const bgWhite = new PIXI.Graphics()
+    .beginFill(0x031a22)
+    .drawRoundedRect(0, 0, 500, 100, 15)
+    .endFill();
+  const bgWhiteTexture = app.renderer.generateTexture(bgWhite);
+
+  const gameGuideRef = useCallback((node: any) => {
     if (node !== null) {
     }
   }, []);
@@ -120,24 +126,6 @@ const GameGuide = ({ onBackBtnClick }: Props) => {
                   position={isNotMobile ? [0, 50] : [0, 60]}
                 />
               </Container>
-            </Container>
-
-            {/* Profile */}
-            <Container
-              x={0}
-              y={0}
-              height={app.screen.height * 0.8}
-              scale={[1, 1]}
-              ref={gameGuideContainerRef}
-            >
-              <Sprite
-                texture={bgTexture}
-                alpha={0.85}
-                width={isNotMobile ? 450 : app.screen.width * 0.9}
-                height={app.screen.height * 0.8}
-                anchor={[0.5, 0]}
-                position={[0, app.screen.height * 0.135]}
-              />
             </Container>
           </Container>
         </Container>
