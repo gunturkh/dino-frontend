@@ -735,7 +735,10 @@ export const AppTemp = () => {
     });
     const { data } = result;
     // @ts-ignore
-    if (data.success) toast(`Register Success`);
+    if (data.success) {
+      toast(`Register Success`)
+      setAuthMode('LOGIN')
+    }
     if (!data.success) toast(`${data.message}`);
   };
 
