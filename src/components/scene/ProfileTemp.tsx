@@ -74,7 +74,7 @@ const ProfileTemp = ({ onBackBtnClick }: Props) => {
           eventMode="static"
           onpointertap={() => {
             toast('Sponsor Link Copied!')
-            navigator.clipboard.writeText(`${window.location.href}?sponsor=${userData.username}`)
+            navigator.clipboard.writeText(`${window.location.origin}?sponsor=${userData.username}`)
           }}
         >
           <Text
