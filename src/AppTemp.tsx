@@ -332,9 +332,10 @@ export const AppTemp = () => {
       },
     })
       .then((response) => {
-        console.log(response.data);
+        // console.log(response.data);
         if (response.data.result === 1) {
-          alert("Buy Ticket Confirmed");
+          toast("Buy Ticket Confirmed");
+          setTicketPanel({ show: false, mode: 'BUY' })
           getUserData();
         } else {
           setTimeout(() => checkValidateTx(hash), 5000);
@@ -352,7 +353,7 @@ export const AppTemp = () => {
       sendTicketBuyState.status === "Success" &&
       ticketAllowance
     ) {
-      checkValidateTx(sendTicketBuyState.transaction.hash);
+      // checkValidateTx(sendTicketBuyState.transaction.hash);
       resetSendTicketBuyState();
     }
     console.log("sendTicketBuyState", sendTicketBuyState);
@@ -1255,7 +1256,7 @@ export const AppTemp = () => {
                     src={"image/BtnSubmit.png"}
                     onClick={loginWalletForm.submitForm}
                     className="mt-12 px-3.5 py-2.5 text-sm"
-                    // disabled={captcha.length === 0}
+                  // disabled={captcha.length === 0}
                   />
                   {/* <ReCAPTCHA
                     sitekey={CAPTCHA_KEY}
@@ -1356,37 +1357,34 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "BUY" })
                   }
-                  className={`${
-                    ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
-                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
+                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   Buy
                 </button>
-                {/* {userData.tf_ticket && */}
-                <button
-                  type="button"
-                  onClick={() =>
-                    setTicketPanel({ ...ticketPanel, mode: "TRANSFER" })
-                  }
-                  className={`${
-                    ticketPanel.mode === "TRANSFER"
+                {userData.tf_ticket &&
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setTicketPanel({ ...ticketPanel, mode: "TRANSFER" })
+                    }
+                    className={`${ticketPanel.mode === "TRANSFER"
                       ? "text-blue-500"
                       : "text-white"
-                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
-                >
-                  Transfer
-                </button>
-                {/* } */}
+                      } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  >
+                    Transfer
+                  </button>
+                }
                 <button
                   type="button"
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
                   }
-                  className={`${
-                    ticketPanel.mode === "HISTORY"
-                      ? "text-blue-500"
-                      : "text-white"
-                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${ticketPanel.mode === "HISTORY"
+                    ? "text-blue-500"
+                    : "text-white"
+                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   History
                 </button>
@@ -1437,8 +1435,8 @@ export const AppTemp = () => {
                             console.log("buy with bonus", e);
                             setBuyWithBonus(!buyWithBonus);
                           }}
-                          // onBlur={loginForm.handleBlur}
-                          // value={usd}
+                        // onBlur={loginForm.handleBlur}
+                        // value={usd}
                         />
                         <p className="font-Magra text-md text-white ml-3">
                           Buy with Bonus
@@ -1462,7 +1460,7 @@ export const AppTemp = () => {
                   </form>
                   <button
                     type={"submit"}
-                    // src={"image/BtnConfirm.png"}
+                    // disabled={}
                     onClick={async () => {
                       console.log("usd amount approval", usd);
                       if (buyWithBonus) {
@@ -1485,7 +1483,7 @@ export const AppTemp = () => {
                           },
                         });
                         if (response.data.success) {
-                          alert("Buy Ticket Confirmed");
+                          toast("Buy Ticket Confirmed");
                           getUserData();
                         } else alert(response.data.message);
                       } else if (!buyWithBonus) {
@@ -1529,15 +1527,18 @@ export const AppTemp = () => {
                       }
                     }}
                     className="bg-green-500 text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                    disabled={buyWithBonus && GAValue.length < 6}
+                    disabled={(buyWithBonus && GAValue.length < 6) || sendTicketBuyState.status !== 'None'}
                   >
                     {buyWithBonus
                       ? "Buy with Bonus"
                       : ticketAllowance &&
                         ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                      ? "Approval"
-                      : "Buy Ticket"}
+                        ? "Approval"
+                        : "Buy Ticket"}
                   </button>
+                  {sendTicketBuyState.status !== 'None' &&
+                    <p className="text-white/50 font-Magra">{sendTicketBuyState.status}</p>
+                  }
                 </>
               )}
               {ticketPanel.mode === "TRANSFER" && (
@@ -1659,16 +1660,14 @@ export const AppTemp = () => {
                         <tr className="text-white text-center">
                           <td>{formattedTime}</td>
                           <td
-                            className={`${
-                              t.amount < 0 ? "text-red-500" : "text-green-500"
-                            }`}
+                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
+                              }`}
                           >
                             {t.amount < 0 ? "OUT" : "IN"}
                           </td>
                           <td
-                            className={`${
-                              t.amount < 0 ? "text-red-500" : "text-green-500"
-                            }`}
+                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
+                              }`}
                           >
                             {t.amount}
                           </td>
@@ -1694,6 +1693,15 @@ export const AppTemp = () => {
           {/* TODO: make header for title page and back button */}
           {/* TODO: need to refresh it once to make accordion work */}
           <div className="flex z-20 h-[80vh] w-[450px] max-[450px]:w-[calc(100vw)] max-w-[450px] justify-center items-center flex-col sm:px-4 shadow-sm rounded-sm ">
+            <div className="flex w-full justify-start">
+              <img
+                src="image/backBtn.png"
+                width={30}
+                height={30}
+                alt="Back"
+                onClick={() => changeScene('PROFILE')}
+              />
+            </div>
             <div className="flex h-full w-full px-4 pt-6 pb-6 bg-white/20 backdrop-blur-sm overflow-y-visible overflow-scroll">
               <div id="accordionExample" className="w-full">
                 <div className="rounded-t-lg border w-full border-neutral-200 bg-white dark:border-neutral-600 dark:bg-[#031A22]">
@@ -2123,7 +2131,7 @@ export const AppTemp = () => {
           onAnimationIteration={() => {
             console.log("animation iteration");
           }}
-          // onMount={(_app) => setApp(_app)}
+        // onMount={(_app) => setApp(_app)}
         >
           {/* @ts-ignore */}
 
