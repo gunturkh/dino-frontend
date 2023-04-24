@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
 type User = {
+    email: string;
     username: string;
     ga_key: boolean;
     tickets: number;
@@ -81,6 +82,7 @@ export const useStore = create<Store>((set, get) => ({
     setWalletAddress: (address) => set(() => ({ walletAddress: address })),
     setWalletBalance: (balance) => set(() => ({ walletBalance: balance })),
     userData: {
+        email: '',
         bonuses: "0",
         ga_key: false,
         sponsor: "",

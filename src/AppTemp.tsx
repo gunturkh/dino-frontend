@@ -4,7 +4,6 @@ import {
   useEtherBalance,
   useEthers,
   BSC,
-  BSCTestnet,
   useToken,
   useContractFunction,
   useTokenBalance,
@@ -35,10 +34,10 @@ import {
   PAYGATEWAY_ADDR,
   TICKET_ADDR,
   USDT_ABI,
-  // CAPTCHA_KEY,
+  CAPTCHA_KEY,
 } from "./utils/config";
 import { Contract } from "ethers";
-// import ReCAPTCHA from "react-google-recaptcha";
+import ReCAPTCHA from "react-google-recaptcha";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Collapse, initTE } from "tw-elements";
@@ -69,7 +68,7 @@ type registerReqFormat = {
 type otpReqFormat = {
   email: string;
 };
-const USDT_ADDRESS = "0x0ed04d340a054382383ee2edff0ced66ead7496c";
+// const USDT_ADDR = "0x0ed04d340a054382383ee2edff0ced66ead7496c";
 const price = 0.25;
 export const AppTemp = () => {
   const {
@@ -92,18 +91,18 @@ export const AppTemp = () => {
   const setApproved = useStore((state) => state.setApproved);
   const ticketPanel = useStore((state) => state.ticketPanel);
   const setTicketPanel = useStore((state) => state.setTicketPanel);
-  const usdtInfo = useToken(USDT_ADDRESS);
-  const usdtBalance = useTokenBalance(USDT_ADDRESS, account);
+  const usdtInfo = useToken(USDT_ADDR);
+  const usdtBalance = useTokenBalance(USDT_ADDR, account);
   const tokenBalance = useTokenBalance(
     "0x1D2F0da169ceB9fC7B3144628dB156f3F6c60dBE",
     account
   );
   const etherBalance = useEtherBalance(account, {
-    chainId: BSCTestnet.chainId,
+    chainId: BSC.chainId,
   });
   const mainnetBalance = useEtherBalance(account, { chainId: BSC.chainId });
   const testnetBalance = useEtherBalance(account, {
-    chainId: BSCTestnet.chainId,
+    chainId: BSC.chainId,
   });
   const allowance = useTokenAllowance(
     USDT_ADDR,
@@ -115,8 +114,10 @@ export const AppTemp = () => {
     walletAddress,
     TICKET_ADDR
   );
-  // const [captcha, setCaptcha] = useState('')
-  // const [registerCaptcha, setRegisterCaptcha] = useState('')
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isRetypePasswordVisible, setIsRetypePasswordVisible] = useState(false);
+  const [captcha, setCaptcha] = useState('')
+  const [registerCaptcha, setRegisterCaptcha] = useState('')
   const [ticketHistories, setTicketHistories] = useState([]);
   const [googleAuthVisible, setGoogleAuthVisible] = useState(false);
   const [googleAuthData, setGoogleAuthData] = useState<{
@@ -174,14 +175,20 @@ export const AppTemp = () => {
     },
   };
 
-  // const verifiedCallback = (token: string) => {
-  //   console.log(token);
-  //   setCaptcha(token);
-  // };
-  // const verifiedRegisterCallback = (token: string) => {
-  //   console.log(token);
-  //   setRegisterCaptcha(token);
-  // };
+  function togglePasswordVisibility() {
+    setIsPasswordVisible((prevState) => !prevState);
+  }
+  function toggleRetypePasswordVisibility() {
+    setIsRetypePasswordVisible((prevState) => !prevState);
+  }
+  const verifiedCallback = (token: string) => {
+    console.log(token);
+    setCaptcha(token);
+  };
+  const verifiedRegisterCallback = (token: string) => {
+    console.log(token);
+    setRegisterCaptcha(token);
+  };
 
   const getUserData = async () => {
     const result = await axiosInstance({
@@ -649,7 +656,7 @@ export const AppTemp = () => {
     console.log("account", account);
     if (!!account) {
       setWalletAddress(account);
-      if (chainId !== BSCTestnet.chainId) switchNetwork(BSCTestnet.chainId);
+      if (chainId !== BSC.chainId) switchNetwork(BSC.chainId);
     }
     if (active && !!account && authMode === "OTPEMAIL")
       otpForm.setFieldValue("walletAddress", account);
@@ -700,7 +707,7 @@ export const AppTemp = () => {
     const loginRequestData: loginReqFormat = {
       username: loginForm.values.username,
       password: loginForm.values.password,
-      // captcha: captcha,
+      captcha: captcha,
     };
     const result = await axiosInstance({
       url: "/user/authentication",
@@ -725,7 +732,7 @@ export const AppTemp = () => {
       address: "",
       otp,
       country: registerForm.values.countryCode,
-      // captcha: registerCaptcha,
+      captcha: registerCaptcha,
     };
     // console.log("submit values", registerRequestData);
     const result = await axiosInstance({
@@ -995,18 +1002,62 @@ export const AppTemp = () => {
                           loginForm.touched.username &&
                           loginForm.errors.username}
                       </p>
-                      <input
-                        name="password"
-                        type="password"
-                        placeholder="Password"
-                        className="mt-2 py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                        style={{
-                          background: `url(image/InputBox.png) no-repeat `,
-                        }}
-                        onChange={loginForm.handleChange}
-                        onBlur={loginForm.handleBlur}
-                        value={loginForm.values.password}
-                      />
+                      <div className="relative flex flex-row items-center justify-between">
+                        <input
+                          name="password"
+                          type={isPasswordVisible ? "text" : "password"}
+                          placeholder="Password"
+                          className="mt-2 py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          onChange={loginForm.handleChange}
+                          onBlur={loginForm.handleBlur}
+                          value={loginForm.values.password}
+                        />
+                        <button
+                          type="button"
+                          className="absolute flex top-[42%] right-1 items-center px-4 text-gray-600"
+                          onClick={togglePasswordVisibility}
+                        >
+                          {isPasswordVisible ? (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-5 h-5"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
+                              />
+                            </svg>
+                          ) : (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-5 h-5"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
                       <p className="text-red-500 font-bold font-magra max-w-[350px]">
                         {loginForm.errors.password &&
                           loginForm.touched.password &&
@@ -1055,35 +1106,124 @@ export const AppTemp = () => {
                           registerForm.touched.username &&
                           registerForm.errors.username}
                       </p>
-                      <input
-                        name="password"
-                        type="password"
-                        placeholder="Password"
-                        className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                        style={{
-                          background: `url(image/InputBox.png) no-repeat `,
-                        }}
-                        onChange={registerForm.handleChange}
-                        onBlur={registerForm.handleBlur}
-                        value={registerForm.values.password}
-                      />
+                      <div className="relative flex flex-row items-center justify-between">
+                        <input
+                          name="password"
+                          type={isPasswordVisible ? "text" : "password"}
+                          placeholder="Password"
+                          className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          onChange={registerForm.handleChange}
+                          onBlur={registerForm.handleBlur}
+                          value={registerForm.values.password}
+                        />
+                        <button
+                          type="button"
+                          className="absolute flex top-[42%] right-1 items-center px-4 text-gray-600"
+                          onClick={togglePasswordVisibility}
+                        >
+                          {isPasswordVisible ? (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-5 h-5"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
+                              />
+                            </svg>
+                          ) : (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-5 h-5"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
                       <p className="text-red-500 font-bold font-magra max-w-[350px]">
                         {registerForm.errors.password &&
                           registerForm.touched.password &&
                           registerForm.errors.password}
                       </p>
-                      <input
-                        name="retypePassword"
-                        type="password"
-                        placeholder="Re-enter your password"
-                        className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                        style={{
-                          background: `url(image/InputBox.png) no-repeat `,
-                        }}
-                        onChange={registerForm.handleChange}
-                        onBlur={registerForm.handleBlur}
-                        value={registerForm.values.retypePassword}
-                      />
+
+                      <div className="relative flex flex-row items-center justify-between">
+                        <input
+                          name="retypePassword"
+                          type={isRetypePasswordVisible ? "text" : "password"}
+                          placeholder="Re-enter your password"
+                          className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          onChange={registerForm.handleChange}
+                          onBlur={registerForm.handleBlur}
+                          value={registerForm.values.retypePassword}
+                        />
+                        <button
+                          type="button"
+                          className="absolute flex top-[42%] right-1 items-center px-4 text-gray-600"
+                          onClick={toggleRetypePasswordVisibility}
+                        >
+                          {isRetypePasswordVisible ? (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-5 h-5"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
+                              />
+                            </svg>
+                          ) : (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-5 h-5"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
                       <p className="text-red-500 font-bold font-magra max-w-[350px]">
                         {registerForm.errors.retypePassword &&
                           registerForm.touched.retypePassword &&
@@ -1139,10 +1279,10 @@ export const AppTemp = () => {
                     )}
                     <span className="font-Magra ml-2 text-white font-bold">{`I have read and agreed to <User Agreement and Privacy Policy>`}</span>
                   </div>
-                  {/* <ReCAPTCHA
+                  <ReCAPTCHA
                     sitekey={CAPTCHA_KEY}
                     onChange={(e: any) => verifiedRegisterCallback(e as string)}
-                  /> */}
+                  />
                   <input
                     alt="btnRegister"
                     type="image"
@@ -1222,7 +1362,7 @@ export const AppTemp = () => {
                     type={"image"}
                     src={"image/BtnSubmit.png"}
                     onClick={registerHandler}
-                    // disabled={registerCaptcha.length === 0}
+                    disabled={registerCaptcha.length === 0}
                     className="mt-12 px-3.5 py-2.5 text-sm"
                   />
                 </>
@@ -1259,12 +1399,12 @@ export const AppTemp = () => {
                     src={"image/BtnSubmit.png"}
                     onClick={loginWalletForm.submitForm}
                     className="mt-12 px-3.5 py-2.5 text-sm"
-                  // disabled={captcha.length === 0}
+                    disabled={captcha.length === 0}
                   />
-                  {/* <ReCAPTCHA
+                  <ReCAPTCHA
                     sitekey={CAPTCHA_KEY}
                     onChange={(e: any) => verifiedCallback(e as string)}
-                  /> */}
+                  />
                 </>
               )}
             </div>

@@ -163,7 +163,7 @@ const ProfileTemp = ({ onBackBtnClick }: Props) => {
           anchor={[1, 0.5]}
         >
           <Text
-            text={obscureEmail("test1234@gmail.com")}
+            text={obscureEmail(userData.email)}
             position={[0, 0]}
             anchor={[1, 0.5]}
             style={

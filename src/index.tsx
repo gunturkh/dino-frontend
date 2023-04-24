@@ -19,7 +19,7 @@ const config: Config = {
   readOnlyChainId: BSCTestnet.chainId,
   readOnlyUrls: {
     [BSC.chainId]: "https://bsc-dataseed.binance.org",
-    [BSCTestnet.chainId]: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+    // [BSCTestnet.chainId]: "https://data-seed-prebsc-1-s1.binance.org:8545/",
   },
   multicallVersion: 1,
   connectors: {
