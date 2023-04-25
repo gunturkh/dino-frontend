@@ -230,6 +230,10 @@ export const AppTemp = () => {
     transactionName: "Ticket Approval",
   });
   console.log("contractFunction state", state);
+  useEffect(() => {
+    toast(state.errorMessage)
+  }, [state.errorMessage])
+
 
   const changeScene = useStore((state) => state.changeScene);
   const [authMode, setAuthMode] = useState<
@@ -364,6 +368,7 @@ export const AppTemp = () => {
       resetSendTicketBuyState();
     }
     console.log("sendTicketBuyState", sendTicketBuyState);
+    if (sendTicketBuyState.status === 'Exception') toast(sendTicketBuyState.errorMessage)
   }, [sendTicketBuyState]);
 
   const checkValidation = async (id: string) => {
