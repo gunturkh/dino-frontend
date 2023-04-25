@@ -399,7 +399,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
         x={-5}
         scale={[0.9, 0.9]}
         height={app.screen.height * 0.4}
-        // width={app.screen.width * 0.9}
+      // width={app.screen.width * 0.9}
       >
         <Sprite
           texture={PIXI.Assets.get("EggPlate") || PIXI.Texture.EMPTY}
@@ -568,7 +568,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
               <Container
                 position={[
                   (DinoFundBgBounds?.width / 2) *
-                    (app.screen?.width > 450 ? 1.05 : 1),
+                  (app.screen?.width > 450 ? 1.05 : 1),
                   DinoFundBgBounds?.height / 2 - 7,
                 ]}
               >
@@ -635,12 +635,13 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 // position={[app.screen.width / 2 - (lfSideBounds.width / 2), 0]}
                 position={[isNotMobile ? 110 : 90, 10]}
                 anchor={[0.5, 0.5]}
-                // width={app.screen.width > 450 ? 450 : app.screen.width}
+              // width={app.screen.width > 450 ? 450 : app.screen.width}
               >
                 <DetailsComponent
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
                   IconTexture={PIXI?.Assets?.get("USDTIcon")}
-                  text={walletBalance}
+                  text={parseFloat(parseFloat(walletBalance).toFixed(4)).toString()}
+                  // text={parseFloat(parseFloat('7.8568777655').toFixed(4)).toString()}
                   posX={0}
                   posY={0}
                   scaleX={isNotMobile ? 1 : 0.8}
@@ -771,7 +772,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
               ref={lowerSectionContainerRef}
               anchor={[0.5, 0.5]}
               x={0}
-              // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
+            // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
             >
               {/* left side */}
               <LowerButtonComponent
@@ -992,7 +993,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[
                       buyTicketPanelBounds?.width * 0.5 -
-                        (isNotMobile ? 50 : 25),
+                      (isNotMobile ? 50 : 25),
                       0,
                     ]}
                     eventMode="static"
@@ -1052,11 +1053,11 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[
                       buyTicketPanelBounds?.width * 0.5 -
-                        (isNotMobile ? 50 : 25),
+                      (isNotMobile ? 50 : 25),
                       0,
                     ]}
                     eventMode="static"
-                    // onpointertap={() => setGoogleAuthVisible(false)}
+                  // onpointertap={() => setGoogleAuthVisible(false)}
                   />
                 </Container>
 
