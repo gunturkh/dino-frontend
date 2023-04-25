@@ -484,14 +484,13 @@ export const AppTemp = () => {
     } else if (!/^[A-Za-z0-9_]{5,20}$/i.test(values.username)) {
       errors.username = "Invalid username, min 5 chars & max 20 chars";
     }
-    if (!values.password) {
-      errors.password = "Required";
-    } else if (
-      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,20}$/i.test(values.password)
-    ) {
-      errors.password =
-        "Password must contain 1 uppercase, 1 lowercase, 1 number, min 8 chars & max 20 chars, no symbol";
-    }
+    if (!values.password) errors.password = "Required";
+    // else if (
+    //   !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,20}$/i.test(values.password)
+    // ) {
+    //   errors.password =
+    //     "Password must contain 1 uppercase, 1 lowercase, 1 number, min 8 chars & max 20 chars, no symbol";
+    // }
     console.log("errors", errors);
     return errors;
   };
