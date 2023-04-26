@@ -723,6 +723,7 @@ export const AppTemp = () => {
     if (!data.success) toast(`${data.message}`);
     if (data && data.result) {
       saveToken(data.result?.jwt, () => changeScene("HOME"));
+      setCaptcha('')
     }
   };
 
@@ -1256,6 +1257,7 @@ export const AppTemp = () => {
                         onChange={registerForm.handleChange}
                         onBlur={registerForm.handleBlur}
                         value={registerForm.values.referralCode || ""}
+                        disabled={!!sponsor}
                       />
                       {registerForm.errors.referralCode &&
                         registerForm.touched.referralCode &&
@@ -1366,7 +1368,7 @@ export const AppTemp = () => {
                     type={"image"}
                     src={"image/BtnSubmit.png"}
                     onClick={registerHandler}
-                    disabled={registerCaptcha.length === 0}
+                    disabled={registerCaptcha?.length === 0}
                     className="mt-12 px-3.5 py-2.5 text-sm"
                   />
                 </>
@@ -1402,8 +1404,8 @@ export const AppTemp = () => {
                     type={"image"}
                     src={"image/BtnSubmit.png"}
                     onClick={loginWalletForm.submitForm}
-                    className="mt-12 px-3.5 py-2.5 text-sm"
-                    disabled={captcha.length === 0}
+                    className={`${captcha?.length === 0 ? 'opacity-50' : ''} mt-12 px-3.5 py-2.5 text-sm`}
+                    disabled={captcha?.length === 0}
                   />
                   <ReCAPTCHA
                     sitekey={CAPTCHA_KEY}
@@ -2311,6 +2313,8 @@ export const AppTemp = () => {
                   changeScene("HOME");
                   console.log("back");
                 }}
+                deactivate={deactivate}
+                setAuthMode={setAuthMode}
               />
             </>
           )}

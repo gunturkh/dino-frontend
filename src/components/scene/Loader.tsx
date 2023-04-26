@@ -26,7 +26,7 @@ const Loader = ({ onFinishLoading, visible = true }: LoaderProps) => {
   console.log("testLoad asset outside", PIXI.Assets.get("MainBg"));
 
   const loaderBarWidth =
-    app.screen.width < 450 ? app.screen.width * 0.8 : app.screen.width * 0.3;
+    app.screen.width < 450 ? app.screen.width * 0.8 : app.screen.width * 0.25;
   const loaderBarFill = new PIXI.Graphics();
   loaderBarFill.beginFill(0x009eb5);
   loaderBarFill.drawRect(10, 5, loaderBarWidth - 20, 10);
@@ -64,8 +64,9 @@ const Loader = ({ onFinishLoading, visible = true }: LoaderProps) => {
   function updateLoaderBar(progress: number) {
     // useTick(progress);
     loaderBarFill.scale.x = progress;
+    console.log('progress', loaderBarFill.width )
     if (progress === 1) {
-      onFinishLoading();
+      // onFinishLoading();
     }
   }
 

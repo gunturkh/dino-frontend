@@ -7,9 +7,11 @@ import { toast } from "react-toastify";
 
 type Props = {
   onBackBtnClick: () => void;
+  deactivate: () => void;
+  setAuthMode: (mode: "LOGIN" | "REGISTER" | "OTPEMAIL" | "OTPMOBILE" | "LOGINWALLET") => void;
 };
 
-const ProfileTemp = ({ onBackBtnClick }: Props) => {
+const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
   const app = useApp();
   // @ts-ignore
   globalThis.__PIXI_APP__ = app;
@@ -35,9 +37,8 @@ const ProfileTemp = ({ onBackBtnClick }: Props) => {
 
   const obscureEmail = (email: string) => {
     const [name, domain] = email.split("@");
-    return `${name[0]}${new Array(4).join("*")}${
-      name[name.length - 1]
-    }@${domain}`;
+    return `${name[0]}${new Array(4).join("*")}${name[name.length - 1]
+      }@${domain}`;
   };
 
   useEffect(() => {
@@ -701,6 +702,8 @@ const ProfileTemp = ({ onBackBtnClick }: Props) => {
                         if (item?.title === "Confirm") {
                           logout();
                           changeScene("REGISTER");
+                          deactivate()
+                          setAuthMode('LOGIN')
                         } else {
                           setConfirmQuitPanelVisible(false);
                         }
