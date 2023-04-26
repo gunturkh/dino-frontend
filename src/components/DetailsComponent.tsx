@@ -1,12 +1,6 @@
-
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef } from "react";
 import * as PIXI from "pixi.js";
-import {
-  Container,
-  Sprite,
-  Text,
-  useApp,
-} from "@pixi/react";
+import { Container, Sprite, Text, useApp } from "@pixi/react";
 
 type Props = {
   spriteTexture: PIXI.Texture;
@@ -22,7 +16,8 @@ type Props = {
   ref?: any;
   onPress?: () => void;
   isVisible?: boolean;
-}
+  rightIconVisible?: boolean;
+};
 
 const DetailsComponent = ({
   spriteTexture,
@@ -36,6 +31,7 @@ const DetailsComponent = ({
   scaleX = 1,
   scaleY = 1,
   ref = null,
+  rightIconVisible = false,
   onPress,
   isVisible = true,
 }: Props) => {
@@ -63,43 +59,52 @@ const DetailsComponent = ({
 
   return (
     <>
-      {isLoaded && <Container
-        ref={ref || containerRef}
-        scale={[scaleX, scaleY]}
-        position={[posX, posY]}
-        eventMode='static'
-        onpointertap={onPress}
-        visible={isVisible}
-      >
-        {spriteTexture && IconTexture && (
-          <>
-            {/* @ts-ignore */}
-            {/* {console.log('containerBounds', containerRef)} */}
-            <Sprite
-              // texture={PIXI.Assets.get('DinoFundLogo')}
-              texture={spriteTexture || PIXI.Texture.EMPTY}
-              anchor={[0.5, 0.5]}
-              // scale={[0.5, 0.5]}
-              position={[0, 0]}
-            // scale={[scaleX, scaleY]}
-            />
-            <Sprite
-              texture={IconTexture || PIXI.Texture.EMPTY}
-              anchor={[0.5, 0.5]}
-              position={[-85, 0]}
-            />
-            <Text
-              text={text || ''}
-              anchor={[0.5, 0.5]}
-              position={[0 + textXOffest, 0 + textYOffest]}
-              style={textStyle}
-            // scale={[scaleX, scaleY]}
-            />
-          </>
-        )}
-      </Container>}
+      {isLoaded && (
+        <Container
+          ref={ref || containerRef}
+          scale={[scaleX, scaleY]}
+          position={[posX, posY]}
+          eventMode="static"
+          onpointertap={onPress}
+          visible={isVisible}
+        >
+          {spriteTexture && IconTexture && (
+            <>
+              {/* @ts-ignore */}
+              {/* {console.log('containerBounds', containerRef)} */}
+              <Sprite
+                // texture={PIXI.Assets.get('DinoFundLogo')}
+                texture={spriteTexture || PIXI.Texture.EMPTY}
+                anchor={[0.5, 0.5]}
+                // scale={[0.5, 0.5]}
+                position={[0, 0]}
+                // scale={[scaleX, scaleY]}
+              />
+              <Sprite
+                texture={IconTexture || PIXI.Texture.EMPTY}
+                anchor={[0.5, 0.5]}
+                position={[-85, 0]}
+              />
+              <Text
+                text={text || ""}
+                anchor={[0.5, 0.5]}
+                position={[0 + textXOffest, 0 + textYOffest]}
+                style={textStyle}
+                // scale={[scaleX, scaleY]}
+              />
+              <Sprite
+                texture={PIXI.Assets.get("PlusIcon") || PIXI.Texture.EMPTY}
+                anchor={[0.5, 0.5]}
+                position={[80, 0]}
+                // scale={[scaleX, scaleY]}
+                visible={rightIconVisible}
+              />
+            </>
+          )}
+        </Container>
+      )}
     </>
-  )
-}
+  );
+};
 
-export default DetailsComponent
+export default DetailsComponent;
