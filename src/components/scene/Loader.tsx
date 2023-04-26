@@ -70,7 +70,7 @@ const Loader = ({ onFinishLoading, visible = true }: LoaderProps) => {
     loaderBarFill.scale.x = progress;
     // console.log("progress", loaderBarFill.width);
     if (progress === 1) {
-      // onFinishLoading();
+      onFinishLoading();
     }
   }
 
