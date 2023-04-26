@@ -51,8 +51,8 @@ const Loader = ({ onFinishLoading, visible = true }: LoaderProps) => {
   loaderBarBackground.x = 0;
   loaderBarBackground.y = 0;
 
-  loaderBar.addChild(loaderBarBackground);
   loaderBar.addChild(loaderBarFill);
+  loaderBar.addChild(loaderBarBackground);
   // loaderBar.addChild(loaderBarBorder);
 
   loaderBar.x = app.screen.width / 2 - loaderBar.width / 2;
