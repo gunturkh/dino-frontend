@@ -9,6 +9,10 @@ type LoaderProps = {
 
 const Loader = ({ onFinishLoading, visible = true }: LoaderProps) => {
   const app = useApp();
+
+  // @ts-ignore
+  globalThis.__PIXI_APP__ = app;
+
   console.log("app.screen", app.screen.width, app.screen.height);
   // console.log('app.view', app.view.width, app.view.height)
   // console.log('app.renderer', app.renderer.width, app.renderer.height)
@@ -26,22 +30,23 @@ const Loader = ({ onFinishLoading, visible = true }: LoaderProps) => {
   console.log("testLoad asset outside", PIXI.Assets.get("MainBg"));
 
   const loaderBarWidth =
-    app.screen.width < 450 ? app.screen.width * 0.8 : app.screen.width * 0.25;
+    app.screen.width < 450 ? app.screen.width * 0.8 : app.screen.width * 0.3;
   const loaderBarFill = new PIXI.Graphics();
   loaderBarFill.beginFill(0x009eb5);
   loaderBarFill.drawRect(10, 5, loaderBarWidth - 20, 10);
   loaderBarFill.endFill();
-  loaderBarFill.scale.x = 0;
+  loaderBarFill.position.x = 10;
   loaderBarFill.zIndex = 1;
+  loaderBarFill.pivot.x = 10;
   // const loaderBarBorder = new PIXI.Graphics();
   // loaderBarBorder.lineStyle(2, 0xffffff);
   // loaderBarBorder.drawRect(0, 0, loaderBarWidth, 10);
 
   const loaderBar = new PIXI.Container();
-  // use sprite as a background container loaderBar
 
   const loaderBarBackground = PIXI.Sprite.from("image/LoadingBar.png");
   loaderBarBackground.width = loaderBarWidth;
+  loaderBarBackground.anchor.x = 0;
   loaderBarBackground.height = 20;
   loaderBarBackground.x = 0;
   loaderBarBackground.y = 0;
@@ -52,11 +57,10 @@ const Loader = ({ onFinishLoading, visible = true }: LoaderProps) => {
 
   loaderBar.x = app.screen.width / 2 - loaderBar.width / 2;
   loaderBar.y = app.screen.height - 110;
+  loaderBar.scale.x = 1;
+  loaderBar.scale.y = 1;
   app.stage.addChild(loaderBar);
-  if (!visible) {
-    // loaderBar.visible = true;
-    app.stage.removeChild(loaderBar);
-  }
+
   console.log("app loaderBar.x", loaderBar.x, loaderBar.width);
 
   // need to expose this to loader props
@@ -64,7 +68,7 @@ const Loader = ({ onFinishLoading, visible = true }: LoaderProps) => {
   function updateLoaderBar(progress: number) {
     // useTick(progress);
     loaderBarFill.scale.x = progress;
-    console.log('progress', loaderBarFill.width )
+    // console.log("progress", loaderBarFill.width);
     if (progress === 1) {
       // onFinishLoading();
     }

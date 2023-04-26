@@ -8,7 +8,9 @@ import { toast } from "react-toastify";
 type Props = {
   onBackBtnClick: () => void;
   deactivate: () => void;
-  setAuthMode: (mode: "LOGIN" | "REGISTER" | "OTPEMAIL" | "OTPMOBILE" | "LOGINWALLET") => void;
+  setAuthMode: (
+    mode: "LOGIN" | "REGISTER" | "OTPEMAIL" | "OTPMOBILE" | "LOGINWALLET"
+  ) => void;
 };
 
 const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
@@ -37,8 +39,9 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
 
   const obscureEmail = (email: string) => {
     const [name, domain] = email.split("@");
-    return `${name[0]}${new Array(4).join("*")}${name[name.length - 1]
-      }@${domain}`;
+    return `${name[0]}${new Array(4).join("*")}${
+      name[name.length - 1]
+    }@${domain}`;
   };
 
   useEffect(() => {
@@ -65,6 +68,7 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
       // profileBgRef.current.mask = mask
     }
   }, [isLoaded, upperComponentBounds]);
+  console.log("menuItemBounds", menuItemBounds);
 
   const menuItem = [
     {
@@ -376,7 +380,6 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
 
   return (
     <>
-      {console.log("menuItemBounds", menuItemBounds)}
       {isLoaded && (
         <Container>
           <Sprite
@@ -479,6 +482,7 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
                   app.screen.height * 0.8
                 }
                 anchor={[0.5, 0]}
+                scale={[1, 2]}
                 position={[0, isNotMobile ? 100 : 87]}
               />
 
@@ -552,6 +556,7 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
               <Container
                 position={[0, isNotMobile ? 295 : 240]}
                 ref={upperComponentRef}
+                // scale={[1, 1]}
               >
                 {menuItem.map((item, i) => (
                   <Container
@@ -702,8 +707,8 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
                         if (item?.title === "Confirm") {
                           logout();
                           changeScene("REGISTER");
-                          deactivate()
-                          setAuthMode('LOGIN')
+                          deactivate();
+                          setAuthMode("LOGIN");
                         } else {
                           setConfirmQuitPanelVisible(false);
                         }
