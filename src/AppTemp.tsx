@@ -44,6 +44,8 @@ import {
   Accordion,
   AccordionHeader,
   AccordionBody,
+  Select,
+  Option,
 } from "@material-tailwind/react";
 import { BsPlusSquare } from "react-icons/bs";
 // import { BigNumber, BigNumberish, Contract, utils } from "ethers";
@@ -790,26 +792,42 @@ export const AppTemp = () => {
     labels,
     ...rest
   }: any) => (
-    <select
+    // <select
+    //   {...rest}
+    //   value={value}
+    //   onChange={(event) => {
+    //     onChange(event.target.value || undefined);
+    //   }}
+    //   className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] appearance-none text-black font-Magra font-bold"
+    //   style={{
+    //     background: `url(image/InputBox.png) no-repeat `,
+    //   }}
+    // >
+    //   <option disabled selected defaultValue="">
+    //     {placeholder}
+    //   </option>
+    //   {getCountries().map((country) => (
+    //     <option key={country} value={country} className="text-black">
+    //       {labels[country]}
+    //     </option>
+    //   ))}
+    // </select>
+    <Select
       {...rest}
       value={value}
-      onChange={(event) => {
-        onChange(event.target.value || undefined);
-      }}
-      className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] appearance-none text-black font-Magra font-bold"
+      onChange={onChange}
+      label="Select country"
+      className="border-none focus:border-none focus:outline-none ring-0 outline-none text-[#A8A8A8] font-Magra font-bold"
       style={{
         background: `url(image/InputBox.png) no-repeat `,
       }}
     >
-      <option disabled selected defaultValue="">
-        {placeholder}
-      </option>
       {getCountries().map((country) => (
-        <option key={country} value={country} className="text-black">
+        <Option key={country} value={country} className="text-black">
           {labels[country]}
-        </option>
+        </Option>
       ))}
-    </select>
+    </Select>
   );
 
   const [openGameGuide, setOpenGameGuide] = useState(0);
@@ -817,8 +835,9 @@ export const AppTemp = () => {
     return (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className={`${id === open ? "rotate-180" : ""
-          } h-5 w-5 transition-transform`}
+        className={`${
+          id === open ? "rotate-180" : ""
+        } h-5 w-5 transition-transform`}
         fill="none"
         viewBox="0 0 24 24"
         stroke="white"
@@ -865,7 +884,9 @@ export const AppTemp = () => {
               {/* <span className='col-4'>Bought: $ { ethers.utils.formatUnits(data.bought, 18) }</span>
                         <span className='col-4'>Group : $ { ethers.utils.formatUnits(data.dl_bought, 18) }</span> */}
               <span className="">Bought: $ {formatUnits(data.bought, 18)}</span>
-              <span className="">Group : $ {formatUnits(data.dl_bought, 18)}</span>
+              <span className="">
+                Group : $ {formatUnits(data.dl_bought, 18)}
+              </span>
             </div>
           </div>
         </div>
@@ -905,7 +926,9 @@ export const AppTemp = () => {
 
     return (
       <>
-        <h1 className="font-Magra text-yellow-700 text-center text-xl">Buddy</h1>
+        <h1 className="font-Magra text-yellow-700 text-center text-xl">
+          Buddy
+        </h1>
         {datas ? (
           <div className="flex flex-col">
             {datas.map((elm: any) => (
@@ -919,7 +942,7 @@ export const AppTemp = () => {
     );
   };
 
-  const DownlineCallback = useCallback(Downline, [])
+  const DownlineCallback = useCallback(Downline, []);
 
   // const walletStatus = (status: string) => {
   //   switch (status) {
@@ -1339,22 +1362,24 @@ export const AppTemp = () => {
                           )}
                         </button>
                       </div>
-                      <p className="text-red-500 font-bold font-magra max-w-[350px]">
-                        {registerForm.errors.retypePassword &&
-                          registerForm.touched.retypePassword &&
-                          registerForm.errors.retypePassword}
-                      </p>
-                      <CountrySelect
-                        labels={en}
-                        placeholder="Select Country"
-                        value={country}
-                        onChange={setCountry}
-                      />
-                      <p className="text-red-500 font-bold font-magra">
-                        {registerForm.errors.countryCode &&
-                          registerForm.touched.countryCode &&
-                          registerForm.errors.countryCode}
-                      </p>
+                      <div className="my-2">
+                        <p className="text-red-500 font-bold font-magra max-w-[350px]">
+                          {registerForm.errors.retypePassword &&
+                            registerForm.touched.retypePassword &&
+                            registerForm.errors.retypePassword}
+                        </p>
+                        <CountrySelect
+                          labels={en}
+                          placeholder="Select Country"
+                          value={country}
+                          onChange={setCountry}
+                        />
+                        <p className="text-red-500 font-bold font-magra">
+                          {registerForm.errors.countryCode &&
+                            registerForm.touched.countryCode &&
+                            registerForm.errors.countryCode}
+                        </p>
+                      </div>
 
                       <input
                         name="referralCode"
@@ -1514,8 +1539,9 @@ export const AppTemp = () => {
                     type={"image"}
                     src={"image/BtnSubmit.png"}
                     onClick={loginWalletForm.submitForm}
-                    className={`${captcha?.length === 0 ? "opacity-50" : ""
-                      } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${
+                      captcha?.length === 0 ? "opacity-50" : ""
+                    } mt-12 px-3.5 py-2.5 text-sm`}
                     disabled={captcha?.length === 0}
                   />
                   <ReCAPTCHA
@@ -1617,8 +1643,9 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "BUY" })
                   }
-                  className={`${ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
-                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${
+                    ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
+                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   Buy
                 </button>
@@ -1628,10 +1655,11 @@ export const AppTemp = () => {
                     onClick={() =>
                       setTicketPanel({ ...ticketPanel, mode: "TRANSFER" })
                     }
-                    className={`${ticketPanel.mode === "TRANSFER"
-                      ? "text-blue-500"
-                      : "text-white"
-                      } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                    className={`${
+                      ticketPanel.mode === "TRANSFER"
+                        ? "text-blue-500"
+                        : "text-white"
+                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                   >
                     Transfer
                   </button>
@@ -1641,10 +1669,11 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
                   }
-                  className={`${ticketPanel.mode === "HISTORY"
-                    ? "text-blue-500"
-                    : "text-white"
-                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${
+                    ticketPanel.mode === "HISTORY"
+                      ? "text-blue-500"
+                      : "text-white"
+                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   History
                 </button>
@@ -1695,8 +1724,8 @@ export const AppTemp = () => {
                             console.log("buy with bonus", e);
                             setBuyWithBonus(!buyWithBonus);
                           }}
-                        // onBlur={loginForm.handleBlur}
-                        // value={usd}
+                          // onBlur={loginForm.handleBlur}
+                          // value={usd}
                         />
                         <p className="font-Magra text-md text-white ml-3">
                           Buy with Bonus
@@ -1796,8 +1825,8 @@ export const AppTemp = () => {
                       ? "Buy with Bonus"
                       : ticketAllowance &&
                         ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                        ? "Approval"
-                        : "Buy Ticket"}
+                      ? "Approval"
+                      : "Buy Ticket"}
                   </button>
                   {sendTicketBuyState.status !== "None" && (
                     <p className="text-white/50 font-Magra">
@@ -1925,14 +1954,16 @@ export const AppTemp = () => {
                         <tr className="text-white text-center">
                           <td>{formattedTime}</td>
                           <td
-                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
-                              }`}
+                            className={`${
+                              t.amount < 0 ? "text-red-500" : "text-green-500"
+                            }`}
                           >
                             {t.amount < 0 ? "OUT" : "IN"}
                           </td>
                           <td
-                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
-                              }`}
+                            className={`${
+                              t.amount < 0 ? "text-red-500" : "text-green-500"
+                            }`}
                           >
                             {t.amount}
                           </td>
@@ -2201,7 +2232,7 @@ export const AppTemp = () => {
           onAnimationIteration={() => {
             console.log("animation iteration");
           }}
-        // onMount={(_app) => setApp(_app)}
+          // onMount={(_app) => setApp(_app)}
         >
           {/* @ts-ignore */}
 
