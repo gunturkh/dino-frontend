@@ -216,8 +216,8 @@ export const AppTemp = () => {
   };
 
   useEffect(() => {
-    getTicketHistories();
-  }, [ticketPanel.show]);
+    if (token) getTicketHistories();
+  }, [ticketPanel.show, token]);
 
   console.log("ticketHistories", ticketHistories);
 
@@ -796,16 +796,16 @@ export const AppTemp = () => {
       onChange={(event) => {
         onChange(event.target.value || undefined);
       }}
-      className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] appearance-none text-white font-Magra font-bold"
+      className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] appearance-none text-black font-Magra font-bold"
       style={{
         background: `url(image/InputBox.png) no-repeat `,
       }}
     >
-      <option disabled selected value="">
+      <option disabled selected defaultValue="">
         {placeholder}
       </option>
       {getCountries().map((country) => (
-        <option key={country} value={country} className="text-white">
+        <option key={country} value={country} className="text-black">
           {labels[country]}
         </option>
       ))}
@@ -817,9 +817,8 @@ export const AppTemp = () => {
     return (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className={`${
-          id === open ? "rotate-180" : ""
-        } h-5 w-5 transition-transform`}
+        className={`${id === open ? "rotate-180" : ""
+          } h-5 w-5 transition-transform`}
         fill="none"
         viewBox="0 0 24 24"
         stroke="white"
@@ -856,17 +855,17 @@ export const AppTemp = () => {
 
     return (
       <>
-        <div className="card m-2 p-2 w-100">
-          <div className="d-flex flex-row">
+        <div className="flex items-center m-2 p-2 w-full border border-black">
+          <div className="flex flex-row w-full">
             <div className="icon">
               <BsPlusSquare size={20} onClick={clickPlus} />
             </div>
-            <div className="d-flex col-12 ms-3">
-              <span className="col-4">{data.username}</span>
+            <div className="flex w-full ml-3 justify-evenly font-Magra">
+              <span className="text-yellow-700">{data.username}</span>
               {/* <span className='col-4'>Bought: $ { ethers.utils.formatUnits(data.bought, 18) }</span>
                         <span className='col-4'>Group : $ { ethers.utils.formatUnits(data.dl_bought, 18) }</span> */}
-              <span className="col-4">Bought: $ {5}</span>
-              <span className="col-4">Group : $ {1}</span>
+              <span className="">Bought: $ {formatUnits(data.bought, 18)}</span>
+              <span className="">Group : $ {formatUnits(data.dl_bought, 18)}</span>
             </div>
           </div>
         </div>
@@ -902,13 +901,13 @@ export const AppTemp = () => {
 
     useEffect(() => {
       if (!datas) loadDownline();
-    });
+    }, []);
 
     return (
       <>
-        <h5>Downline</h5>
+        <h1 className="font-Magra text-yellow-700 text-center text-xl">Buddy</h1>
         {datas ? (
-          <div className="d-flex flex-wrap">
+          <div className="flex flex-col">
             {datas.map((elm: any) => (
               <ShowUsers key={elm.username} data={elm} />
             ))}
@@ -919,6 +918,8 @@ export const AppTemp = () => {
       </>
     );
   };
+
+  const DownlineCallback = useCallback(Downline, [])
 
   // const walletStatus = (status: string) => {
   //   switch (status) {
@@ -1513,9 +1514,8 @@ export const AppTemp = () => {
                     type={"image"}
                     src={"image/BtnSubmit.png"}
                     onClick={loginWalletForm.submitForm}
-                    className={`${
-                      captcha?.length === 0 ? "opacity-50" : ""
-                    } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${captcha?.length === 0 ? "opacity-50" : ""
+                      } mt-12 px-3.5 py-2.5 text-sm`}
                     disabled={captcha?.length === 0}
                   />
                   <ReCAPTCHA
@@ -1617,9 +1617,8 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "BUY" })
                   }
-                  className={`${
-                    ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
-                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
+                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   Buy
                 </button>
@@ -1629,11 +1628,10 @@ export const AppTemp = () => {
                     onClick={() =>
                       setTicketPanel({ ...ticketPanel, mode: "TRANSFER" })
                     }
-                    className={`${
-                      ticketPanel.mode === "TRANSFER"
-                        ? "text-blue-500"
-                        : "text-white"
-                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                    className={`${ticketPanel.mode === "TRANSFER"
+                      ? "text-blue-500"
+                      : "text-white"
+                      } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                   >
                     Transfer
                   </button>
@@ -1643,11 +1641,10 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
                   }
-                  className={`${
-                    ticketPanel.mode === "HISTORY"
-                      ? "text-blue-500"
-                      : "text-white"
-                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${ticketPanel.mode === "HISTORY"
+                    ? "text-blue-500"
+                    : "text-white"
+                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   History
                 </button>
@@ -1698,8 +1695,8 @@ export const AppTemp = () => {
                             console.log("buy with bonus", e);
                             setBuyWithBonus(!buyWithBonus);
                           }}
-                          // onBlur={loginForm.handleBlur}
-                          // value={usd}
+                        // onBlur={loginForm.handleBlur}
+                        // value={usd}
                         />
                         <p className="font-Magra text-md text-white ml-3">
                           Buy with Bonus
@@ -1799,8 +1796,8 @@ export const AppTemp = () => {
                       ? "Buy with Bonus"
                       : ticketAllowance &&
                         ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                      ? "Approval"
-                      : "Buy Ticket"}
+                        ? "Approval"
+                        : "Buy Ticket"}
                   </button>
                   {sendTicketBuyState.status !== "None" && (
                     <p className="text-white/50 font-Magra">
@@ -1928,16 +1925,14 @@ export const AppTemp = () => {
                         <tr className="text-white text-center">
                           <td>{formattedTime}</td>
                           <td
-                            className={`${
-                              t.amount < 0 ? "text-red-500" : "text-green-500"
-                            }`}
+                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
+                              }`}
                           >
                             {t.amount < 0 ? "OUT" : "IN"}
                           </td>
                           <td
-                            className={`${
-                              t.amount < 0 ? "text-red-500" : "text-green-500"
-                            }`}
+                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
+                              }`}
                           >
                             {t.amount}
                           </td>
@@ -1969,7 +1964,7 @@ export const AppTemp = () => {
                 onClick={() => changeScene("PROFILE")}
               />
             </div>
-            <div className="flex flex-col h-full w-full px-4 pt-6 pb-6 bg-white/20 backdrop-blur-sm overflow-y-visible overflow-scroll">
+            <div className="flex flex-col h-full w-full px-4 pt-6 pb-6 bg-white/20 backdrop-blur-sm overflow-y-visible overflow-auto">
               <Accordion
                 open={openGameGuide === 1}
                 icon={<IconGameGuide id={1} open={openGameGuide} />}
@@ -2186,9 +2181,9 @@ export const AppTemp = () => {
                 onClick={() => changeScene("HOME")}
               />
             </div>
-            <div className="flex flex-col h-full w-full px-4 pt-6 pb-6 bg-white/20 backdrop-blur-sm overflow-y-visible overflow-scroll">
-              <div className="bg-white">
-                <Downline />
+            <div className="flex flex-col h-full w-full px-4 pt-6 pb-6 bg-gray-700/20 backdrop-blur-sm overflow-y-visible overflow-auto">
+              <div className="bg-transparent">
+                <DownlineCallback />
               </div>
             </div>
           </div>
@@ -2206,7 +2201,7 @@ export const AppTemp = () => {
           onAnimationIteration={() => {
             console.log("animation iteration");
           }}
-          // onMount={(_app) => setApp(_app)}
+        // onMount={(_app) => setApp(_app)}
         >
           {/* @ts-ignore */}
 

@@ -4,6 +4,7 @@ import * as PIXI from "pixi.js";
 import { Container, Sprite, useApp, Text } from "@pixi/react";
 import { ProgressBar } from "@pixi/ui";
 
+import { formatUnits } from "@ethersproject/units";
 import EggListingComponent from "../EggListingComponent";
 import { EggTransactionData, useAuthStore, useStore } from "../../utils/store";
 import { axiosInstance } from "../../utils/api";
@@ -172,6 +173,7 @@ const DinoCenter = ({
 
   console.log("rankDetailBounds:", rankDetailBounds);
   const token = useAuthStore((state) => state.token);
+  const userData = useStore((state) => state.userData);
   const walletAddress = useStore((state) => state.walletAddress);
   const eggListsData = useStore((state) => state.eggListsData);
   const setEggListsData = useStore((state) => state.setEggListsData);
@@ -396,16 +398,19 @@ const DinoCenter = ({
   const barView = new PIXI.Container();
   // const barAssets = [PIXI.Assets.get('RankExpBarBg'), PIXI.Assets.get('RankExpBarFill')];
   const barAssets = ["image/rankExpBarBg.png", "image/imgRankExpBarFill.png"];
-
+  const group = formatUnits(userData?.bought.group, 18)
+  const total = formatUnits(userData?.bought.total, 18)
+  const progress = (parseInt(group) / parseInt(total)) * 100
+  console.log('progress', progress)
   const progressBarComponent = new ProgressBar({
     bg: barAssets[0],
     fill: barAssets[1],
-    progress: 50,
+    progress
   });
   progressBarComponent.width = 230;
   // progressBarComponent.width = rankDetailBounds.width * 0.5;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const expText = new PIXI.Text("1000/2000", {
+  const expText = new PIXI.Text(`${parseInt(group)}/${parseInt(total)}`, {
     align: "center",
     fontFamily: "Magra Bold",
     fontSize: isNotMobile ? 15 : 14,
@@ -429,6 +434,46 @@ const DinoCenter = ({
     },
     [barView, expText]
   );
+
+  const rankRequalification = (rank: string) => {
+    console.log('rank', rank)
+    switch (rank) {
+      case 'Hunter':
+        return 'N/A'
+      case 'Predator':
+        return '500'
+      case 'Warrior':
+        return '2000'
+      case 'Knight':
+        return '10000'
+      case 'Dominator':
+        return '20000'
+      case 'Legendary':
+        return '50000'
+      default:
+        return 'N/A'
+    }
+  }
+
+  const rankLoaderBarProgress = (rank: string) => {
+    console.log('rank', rank)
+    switch (rank) {
+      case 'Hunter':
+        return ['0', '500']
+      case 'Predator':
+        return ['500', '2000']
+      case 'Warrior':
+        return ['2000', '10000']
+      case 'Knight':
+        return ['10000', '20000']
+      case 'Dominator':
+        return ['20000', '50000']
+      case 'Legendary':
+        return ['50000', 'Infinity']
+      default:
+        return ['0', '500']
+    }
+  }
 
   return (
     <>
@@ -511,10 +556,10 @@ const DinoCenter = ({
                   anchor={[0.5, 0.5]}
                   position={[0, 0]}
                   eventMode="static"
-                  // onpointertap={() => {
-                  //   console.log("logout clicked");
-                  //   setConfirmQuitPanelVisible(true);
-                  // }}
+                // onpointertap={() => {
+                //   console.log("logout clicked");
+                //   setConfirmQuitPanelVisible(true);
+                // }}
                 />
               </Container>
               {/* divider */}
@@ -539,7 +584,7 @@ const DinoCenter = ({
                 anchor={[0.5, 0.5]}
               />
               <Text
-                text={"Trainer's Rank"}
+                text={"Hunter's Rank"}
                 position={[0, -rankDetailBounds?.height / 2 + 28]}
                 anchor={[0.5, 0.5]}
                 style={
@@ -576,7 +621,7 @@ const DinoCenter = ({
                   }
                 />
                 <Text
-                  text={"10050"}
+                  text={rankRequalification(userData?.title)}
                   position={[0, 15]}
                   anchor={[0, 0.5]}
                   style={
@@ -596,7 +641,7 @@ const DinoCenter = ({
                   y={rankDetailBounds.width * (isNotMobile ? 0.072 : 0.082)}
                 >
                   <Text
-                    text={"Novice"}
+                    text={rankLoaderBarProgress(userData?.title)?.[0]}
                     y={0}
                     x={-(barView.width / 2)}
                     anchor={[0.5, 0.5]}
@@ -610,7 +655,7 @@ const DinoCenter = ({
                     }
                   />
                   <Text
-                    text={"Rookie"}
+                    text={rankLoaderBarProgress(userData?.title)?.[1]}
                     y={0}
                     x={barView.width / 2}
                     anchor={[0.5, 0.5]}
@@ -649,7 +694,7 @@ const DinoCenter = ({
                   }
                 />
                 <Text
-                  text={"Novice"}
+                  text={userData?.title}
                   position={[0, 15]}
                   anchor={[1, 0.5]}
                   style={
@@ -749,7 +794,7 @@ const DinoCenter = ({
                 x={rankDetailBounds?.width * (isNotMobile ? 0.15 : 0.15)}
                 anchor={[0.5, 0.5]}
                 eventMode="static"
-                // onpointertap={() => setIsRarityPanelVisible(!isRarityPanelVisible)}
+              // onpointertap={() => setIsRarityPanelVisible(!isRarityPanelVisible)}
               >
                 <Text
                   text={"Price"}
@@ -781,7 +826,7 @@ const DinoCenter = ({
                 x={rankDetailBounds?.width * (isNotMobile ? 0.35 : 0.35)}
                 anchor={[0.5, 0.5]}
                 eventMode="static"
-                // onpointertap={() => setIsRarityPanelVisible(!isRarityPanelVisible)}
+              // onpointertap={() => setIsRarityPanelVisible(!isRarityPanelVisible)}
               >
                 <Text
                   text={"Time"}
@@ -818,7 +863,7 @@ const DinoCenter = ({
               anchor={[0, 0.5]}
               // anchor={[0.5, 0.5]}
               visible={selectedPanel === "Listing"}
-              // width={eggListingBounds?.width}
+            // width={eggListingBounds?.width}
             >
               <Text
                 text={"Coming Soon"}
@@ -833,7 +878,7 @@ const DinoCenter = ({
                     fill: ["white"],
                   })
                 }
-                // visible={eggTransactionData?.length === 0}
+              // visible={eggTransactionData?.length === 0}
               />
               {/* {currentEggs.length > 0 &&
                 currentEggs?.map((d: any, idx: number) => {
@@ -902,12 +947,10 @@ const DinoCenter = ({
                         <EggListingComponent
                           data={d}
                           id={`${d.id}`}
-                          key={`egg-transaction-${
-                            idx + (currentPage - 1) * 12
-                          }`}
-                          index={`egg-transaction-${
-                            idx + (currentPage - 1) * 12
-                          }`}
+                          key={`egg-transaction-${idx + (currentPage - 1) * 12
+                            }`}
+                          index={`egg-transaction-${idx + (currentPage - 1) * 12
+                            }`}
                           idx={idx}
                           priceText={d?.total}
                           timerText={d?.expired.toString()}
@@ -1026,15 +1069,15 @@ const DinoCenter = ({
                 (app.screen.width > 430
                   ? 0.5
                   : app.screen.width > 400
-                  ? 0.44
-                  : 0.42)
+                    ? 0.44
+                    : 0.42)
               }
               scale={
                 app.screen.width > 430
                   ? [1.7, 1.7]
                   : app.screen.width > 400
-                  ? [1.5, 1.5]
-                  : [1.2, 1.2]
+                    ? [1.5, 1.5]
+                    : [1.2, 1.2]
               }
               eventMode="static"
               onpointertap={() => {

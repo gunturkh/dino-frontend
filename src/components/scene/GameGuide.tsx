@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import * as PIXI from "pixi.js";
 import { Container, Sprite, Text, useApp, useTick } from "@pixi/react";
 // import { useStore } from "../../utils/store";
@@ -30,22 +30,22 @@ const GameGuide = ({ onBackBtnClick }: Props) => {
   }, []);
   console.log("isLoaded", isLoaded);
 
-  const bgGraphic = new PIXI.Graphics()
-    .beginFill(0xc9c9c9)
-    .drawRoundedRect(0, 0, 1000, 1000, 15)
-    .endFill();
-  const bgTexture = app.renderer.generateTexture(bgGraphic);
+  // const bgGraphic = new PIXI.Graphics()
+  //   .beginFill(0xc9c9c9)
+  //   .drawRoundedRect(0, 0, 1000, 1000, 15)
+  //   .endFill();
+  // const bgTexture = app.renderer.generateTexture(bgGraphic);
 
-  const bgWhite = new PIXI.Graphics()
-    .beginFill(0x031a22)
-    .drawRoundedRect(0, 0, 500, 100, 15)
-    .endFill();
-  const bgWhiteTexture = app.renderer.generateTexture(bgWhite);
+  // const bgWhite = new PIXI.Graphics()
+  //   .beginFill(0x031a22)
+  //   .drawRoundedRect(0, 0, 500, 100, 15)
+  //   .endFill();
+  // const bgWhiteTexture = app.renderer.generateTexture(bgWhite);
 
-  const gameGuideRef = useCallback((node: any) => {
-    if (node !== null) {
-    }
-  }, []);
+  // const gameGuideRef = useCallback((node: any) => {
+  //   if (node !== null) {
+  //   }
+  // }, []);
 
   return (
     <>

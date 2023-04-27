@@ -39,9 +39,8 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
 
   const obscureEmail = (email: string) => {
     const [name, domain] = email.split("@");
-    return `${name[0]}${new Array(4).join("*")}${
-      name[name.length - 1]
-    }@${domain}`;
+    return `${name[0]}${new Array(4).join("*")}${name[name.length - 1]
+      }@${domain}`;
   };
 
   useEffect(() => {
@@ -79,10 +78,24 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
           anchor={[1, 0.5]}
           eventMode="static"
           onpointertap={() => {
-            toast("Sponsor Link Copied!");
-            navigator.clipboard.writeText(
-              `${window.location.origin}?sponsor=${userData.username}`
-            );
+            if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(
+                `${window.location.origin}?sponsor=${userData.username}`
+              ).then(() => {
+                toast("Sponsor Link Copied!");
+              });
+            } else {
+              const el = document.createElement('textarea');
+              el.value = `${window.location.origin}?sponsor=${userData.username}`;
+              el.setAttribute('readonly', '');
+              el.style.position = 'absolute';
+              el.style.left = '-9999px';
+              document.body.appendChild(el);
+              el.select();
+              document.execCommand('copy');
+              document.body.removeChild(el);
+              toast("Sponsor Link Copied!");
+            }
           }}
         >
           <Text
@@ -109,7 +122,7 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
       ),
     },
     {
-      title: "Transaction Password",
+      title: "Google Authenticator",
       rightSection: (
         <Container
           position={[isNotMobile ? 450 / 2 - 70 : app.screen.width * 0.29, 0]}
@@ -309,7 +322,7 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
         console.log("Referral Link");
 
         break;
-      case "Transaction Password":
+      case "Google Authenticator":
         console.log("Transactional Password");
 
         break;
@@ -556,7 +569,7 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
               <Container
                 position={[0, isNotMobile ? 295 : 240]}
                 ref={upperComponentRef}
-                // scale={[1, 1]}
+              // scale={[1, 1]}
               >
                 {menuItem.map((item, i) => (
                   <Container
