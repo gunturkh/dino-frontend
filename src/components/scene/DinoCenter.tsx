@@ -459,19 +459,19 @@ const DinoCenter = ({
     console.log('rank', rank)
     switch (rank) {
       case 'Hunter':
-        return ['0', '500']
+        return ['Hunter', 'Predator']
       case 'Predator':
-        return ['500', '2000']
+        return ['Predator', 'Warrior']
       case 'Warrior':
-        return ['2000', '10000']
+        return ['Warrior', 'Knight']
       case 'Knight':
-        return ['10000', '20000']
+        return ['Knight', 'Dominator']
       case 'Dominator':
-        return ['20000', '50000']
+        return ['Dominator', 'Legendary']
       case 'Legendary':
-        return ['50000', 'Infinity']
+        return ['Legendary', '-']
       default:
-        return ['0', '500']
+        return ['Hunter', 'Predator']
     }
   }
 
