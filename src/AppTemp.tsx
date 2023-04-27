@@ -1107,7 +1107,7 @@ export const AppTemp = () => {
                 <input
                   alt="btnLogin"
                   type={"image"}
-                  src={"image/Btnlogin.png"}
+                  src={"image/BtnLogin.png"}
                   onClick={() => setAuthMode("LOGIN")}
                   className="text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 />
@@ -1414,7 +1414,7 @@ export const AppTemp = () => {
                         // type="checkbox"
                         type="image"
                         alt="checkboxEula"
-                        src="image/CheckboxEulaBackground.png"
+                        src="image/CheckBoxEulaBackground.png"
                         onClick={() => setRegisterCheckbox(true)}
                       />
                     )}
