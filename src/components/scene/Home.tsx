@@ -849,6 +849,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     fill: ["0xFFC700"],
                   })
                 }
+                onPress={() => changeScene("BUDDIES")}
               />
 
               {/* center button */}

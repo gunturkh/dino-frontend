@@ -15,6 +15,7 @@ import {
 import { Stage } from "@pixi/react";
 import { useState, useEffect, useCallback } from "react";
 import { axiosInstance } from "./utils/api";
+import axios from "axios";
 import { getCountries } from "react-phone-number-input/input";
 import en from "react-phone-number-input/locale/en.json";
 // @ts-ignore
@@ -45,6 +46,7 @@ import {
   AccordionHeader,
   AccordionBody,
 } from "@material-tailwind/react";
+import { BsPlusSquare } from "react-icons/bs";
 // import { BigNumber, BigNumberish, Contract, utils } from "ethers";
 // import { Interface } from "ethers/lib/utils";
 
@@ -831,6 +833,93 @@ export const AppTemp = () => {
 
   const handleOpenGameGuide = (value: number) => {
     setOpenGameGuide(openGameGuide === value ? 0 : value);
+  };
+
+  const API_BETA = "https://beta-api.jurassicegg.co/";
+  const ShowUsers = (props: any) => {
+    const { data } = props;
+    const [downline, setDownline] = useState<any>();
+
+    const clickPlus = async () => {
+      let options = {
+        headers: {
+          "my-auth-key": token,
+        },
+      };
+      const response = await axiosInstance({
+        url: "/user/downline?ref=" + data.username,
+        method: "GET",
+        headers: options.headers,
+      });
+      if (response.data.result.length > 0) {
+        setDownline(response.data.result);
+      }
+    };
+
+    return (
+      <>
+        <div className="card m-2 p-2 w-100">
+          <div className="d-flex flex-row">
+            <div className="icon">
+              <BsPlusSquare size={20} onClick={clickPlus} />
+            </div>
+            <div className="d-flex col-12 ms-3">
+              <span className="col-4">{data.username}</span>
+              {/* <span className='col-4'>Bought: $ { ethers.utils.formatUnits(data.bought, 18) }</span>
+                        <span className='col-4'>Group : $ { ethers.utils.formatUnits(data.dl_bought, 18) }</span> */}
+              <span className="col-4">Bought: $ {5}</span>
+              <span className="col-4">Group : $ {1}</span>
+            </div>
+          </div>
+        </div>
+        {downline ? (
+          <div className="d-flex flex-wrap ms-4 w-100">
+            {downline.map((elm: any) => (
+              <ShowUsers key={elm.username} data={elm} />
+            ))}
+          </div>
+        ) : (
+          ""
+        )}
+      </>
+    );
+  };
+
+  const Downline = () => {
+    const [datas, setDatas] = useState<any>();
+
+    const loadDownline = async () => {
+      let options = {
+        headers: {
+          "my-auth-key": token,
+        },
+      };
+      const response = await axiosInstance({
+        url: "/user/downline",
+        method: "GET",
+        headers: options.headers,
+      });
+      setDatas(response.data.result);
+    };
+
+    useEffect(() => {
+      if (!datas) loadDownline();
+    });
+
+    return (
+      <>
+        <h5>Downline</h5>
+        {datas ? (
+          <div className="d-flex flex-wrap">
+            {datas.map((elm: any) => (
+              <ShowUsers key={elm.username} data={elm} />
+            ))}
+          </div>
+        ) : (
+          ""
+        )}
+      </>
+    );
   };
 
   // const walletStatus = (status: string) => {
@@ -1872,9 +1961,6 @@ export const AppTemp = () => {
             className="absolute w-full h-full object-cover "
             alt="background"
           />
-
-          {/* TODO: make header for title page and back button */}
-          {/* TODO: need to refresh it once to make accordion work */}
           <div className="flex z-20 h-[80vh] w-[450px] max-[450px]:w-[calc(100vw)] max-w-[450px] justify-center items-center flex-col sm:px-4 shadow-sm rounded-sm ">
             <div className="flex w-full justify-start">
               <img
@@ -2085,6 +2171,31 @@ export const AppTemp = () => {
           </div>
         </div>
       )}
+      {scene === "BUDDIES" && (
+        <div className="absolute w-full h-full flex justify-center items-center">
+          <img
+            src="image/profileBackground.png"
+            className="absolute w-full h-full object-cover "
+            alt="background"
+          />
+          <div className="flex z-20 h-[80vh] w-[450px] max-[450px]:w-[calc(100vw)] max-w-[450px] justify-center items-center flex-col sm:px-4 shadow-sm rounded-sm ">
+            <div className="flex w-full justify-start">
+              <img
+                src="image/backBtn.png"
+                width={30}
+                height={30}
+                alt="Back"
+                onClick={() => changeScene("HOME")}
+              />
+            </div>
+            <div className="flex flex-col h-full w-full px-4 pt-6 pb-6 bg-white/20 backdrop-blur-sm overflow-y-visible overflow-scroll">
+              <div className="bg-white">
+                <Downline />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <div>
         <Stage
           ref={stageRef}
@@ -2133,15 +2244,6 @@ export const AppTemp = () => {
                 deactivate={deactivate}
                 setAuthMode={setAuthMode}
               />
-            </>
-          )}
-          {scene === "GAMEGUIDE" && (
-            <>
-              {/* <GameGuide
-                onBackBtnClick={() => {
-                  changeScene("PROFILE");
-                }}
-              /> */}
             </>
           )}
           {scene === "DINOCENTER" && (
