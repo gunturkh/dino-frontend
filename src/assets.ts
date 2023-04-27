@@ -126,7 +126,7 @@ export const manifest: ResolverManifest = {
         },
         {
           name: "BNBIcon",
-          srcs: "image/imgBnBIcon.png",
+          srcs: "image/imgBnbIcon.png",
         },
         {
           name: "DinoEggIcon",
