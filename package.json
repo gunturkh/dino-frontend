@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-tailwind/react": "^1.4.2",
     "@pixi/react": "^7.0.3",
     "@pixi/sound": "^5.1.1",
     "@pixi/ui": "^0.7.0",
@@ -29,7 +30,6 @@
     "react-phone-number-input": "^3.2.19",
     "react-scripts": "5.0.1",
     "react-toastify": "^9.1.2",
-    "tw-elements": "^1.0.0-beta2",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4",
     "zustand": "^4.3.5"

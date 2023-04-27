@@ -40,7 +40,11 @@ import { Contract } from "ethers";
 import ReCAPTCHA from "react-google-recaptcha";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Collapse, initTE } from "tw-elements";
+import {
+  Accordion,
+  AccordionHeader,
+  AccordionBody,
+} from "@material-tailwind/react";
 // import { BigNumber, BigNumberish, Contract, utils } from "ethers";
 // import { Interface } from "ethers/lib/utils";
 
@@ -116,8 +120,8 @@ export const AppTemp = () => {
   );
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isRetypePasswordVisible, setIsRetypePasswordVisible] = useState(false);
-  const [captcha, setCaptcha] = useState('')
-  const [registerCaptcha, setRegisterCaptcha] = useState('')
+  const [captcha, setCaptcha] = useState("");
+  const [registerCaptcha, setRegisterCaptcha] = useState("");
   const [ticketHistories, setTicketHistories] = useState([]);
   const [googleAuthVisible, setGoogleAuthVisible] = useState(false);
   const [googleAuthData, setGoogleAuthData] = useState<{
@@ -135,10 +139,6 @@ export const AppTemp = () => {
     // state: sendTransactionPayState,
     // resetState: resetSendTransactionPayState,
   } = useSendTransaction({ transactionName: "Egg Pay" });
-
-  useEffect(() => {
-    initTE({ Collapse });
-  }, []);
 
   // const {
   //   sendTransaction: sendTicketApproval,
@@ -231,9 +231,8 @@ export const AppTemp = () => {
   });
   console.log("contractFunction state", state);
   useEffect(() => {
-    toast(state.errorMessage)
-  }, [state.errorMessage])
-
+    toast(state.errorMessage);
+  }, [state.errorMessage]);
 
   const changeScene = useStore((state) => state.changeScene);
   const [authMode, setAuthMode] = useState<
@@ -346,7 +345,7 @@ export const AppTemp = () => {
         // console.log(response.data);
         if (response.data.result === 1) {
           toast("Buy Ticket Confirmed");
-          setTicketPanel({ show: false, mode: 'BUY' })
+          setTicketPanel({ show: false, mode: "BUY" });
           getUserData();
         } else {
           setTimeout(() => checkValidateTx(hash), 5000);
@@ -368,7 +367,8 @@ export const AppTemp = () => {
       resetSendTicketBuyState();
     }
     console.log("sendTicketBuyState", sendTicketBuyState);
-    if (sendTicketBuyState.status === 'Exception') toast(sendTicketBuyState.errorMessage)
+    if (sendTicketBuyState.status === "Exception")
+      toast(sendTicketBuyState.errorMessage);
   }, [sendTicketBuyState]);
 
   const checkValidation = async (id: string) => {
@@ -723,7 +723,7 @@ export const AppTemp = () => {
     if (!data.success) toast(`${data.message}`);
     if (data && data.result) {
       saveToken(data.result?.jwt, () => changeScene("HOME"));
-      setCaptcha('')
+      setCaptcha("");
     }
   };
 
@@ -748,8 +748,8 @@ export const AppTemp = () => {
     const { data } = result;
     // @ts-ignore
     if (data.success) {
-      toast(`Register Success`)
-      setAuthMode('LOGIN')
+      toast(`Register Success`);
+      setAuthMode("LOGIN");
     }
     if (!data.success) toast(`${data.message}`);
   };
@@ -810,6 +810,28 @@ export const AppTemp = () => {
       ))}
     </select>
   );
+
+  const [openGameGuide, setOpenGameGuide] = useState(0);
+  function IconGameGuide({ id, open }: any) {
+    return (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className={`${
+          id === open ? "rotate-180" : ""
+        } h-5 w-5 transition-transform`}
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="white"
+        strokeWidth={2}
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+      </svg>
+    );
+  }
+
+  const handleOpenGameGuide = (value: number) => {
+    setOpenGameGuide(openGameGuide === value ? 0 : value);
+  };
 
   // const walletStatus = (status: string) => {
   //   switch (status) {
@@ -1404,7 +1426,9 @@ export const AppTemp = () => {
                     type={"image"}
                     src={"image/BtnSubmit.png"}
                     onClick={loginWalletForm.submitForm}
-                    className={`${captcha?.length === 0 ? 'opacity-50' : ''} mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${
+                      captcha?.length === 0 ? "opacity-50" : ""
+                    } mt-12 px-3.5 py-2.5 text-sm`}
                     disabled={captcha?.length === 0}
                   />
                   <ReCAPTCHA
@@ -1506,34 +1530,37 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "BUY" })
                   }
-                  className={`${ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
-                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${
+                    ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
+                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   Buy
                 </button>
-                {userData.tf_ticket &&
+                {userData.tf_ticket && (
                   <button
                     type="button"
                     onClick={() =>
                       setTicketPanel({ ...ticketPanel, mode: "TRANSFER" })
                     }
-                    className={`${ticketPanel.mode === "TRANSFER"
-                      ? "text-blue-500"
-                      : "text-white"
-                      } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                    className={`${
+                      ticketPanel.mode === "TRANSFER"
+                        ? "text-blue-500"
+                        : "text-white"
+                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                   >
                     Transfer
                   </button>
-                }
+                )}
                 <button
                   type="button"
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
                   }
-                  className={`${ticketPanel.mode === "HISTORY"
-                    ? "text-blue-500"
-                    : "text-white"
-                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${
+                    ticketPanel.mode === "HISTORY"
+                      ? "text-blue-500"
+                      : "text-white"
+                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   History
                 </button>
@@ -1584,8 +1611,8 @@ export const AppTemp = () => {
                             console.log("buy with bonus", e);
                             setBuyWithBonus(!buyWithBonus);
                           }}
-                        // onBlur={loginForm.handleBlur}
-                        // value={usd}
+                          // onBlur={loginForm.handleBlur}
+                          // value={usd}
                         />
                         <p className="font-Magra text-md text-white ml-3">
                           Buy with Bonus
@@ -1676,18 +1703,23 @@ export const AppTemp = () => {
                       }
                     }}
                     className="bg-green-500 text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                    disabled={(buyWithBonus && GAValue.length < 6) || sendTicketBuyState.status !== 'None'}
+                    disabled={
+                      (buyWithBonus && GAValue.length < 6) ||
+                      sendTicketBuyState.status !== "None"
+                    }
                   >
                     {buyWithBonus
                       ? "Buy with Bonus"
                       : ticketAllowance &&
                         ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                        ? "Approval"
-                        : "Buy Ticket"}
+                      ? "Approval"
+                      : "Buy Ticket"}
                   </button>
-                  {sendTicketBuyState.status !== 'None' &&
-                    <p className="text-white/50 font-Magra">{sendTicketBuyState.status}</p>
-                  }
+                  {sendTicketBuyState.status !== "None" && (
+                    <p className="text-white/50 font-Magra">
+                      {sendTicketBuyState.status}
+                    </p>
+                  )}
                 </>
               )}
               {ticketPanel.mode === "TRANSFER" && (
@@ -1809,14 +1841,16 @@ export const AppTemp = () => {
                         <tr className="text-white text-center">
                           <td>{formattedTime}</td>
                           <td
-                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
-                              }`}
+                            className={`${
+                              t.amount < 0 ? "text-red-500" : "text-green-500"
+                            }`}
                           >
                             {t.amount < 0 ? "OUT" : "IN"}
                           </td>
                           <td
-                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
-                              }`}
+                            className={`${
+                              t.amount < 0 ? "text-red-500" : "text-green-500"
+                            }`}
                           >
                             {t.amount}
                           </td>
@@ -1848,419 +1882,205 @@ export const AppTemp = () => {
                 width={30}
                 height={30}
                 alt="Back"
-                onClick={() => changeScene('PROFILE')}
+                onClick={() => changeScene("PROFILE")}
               />
             </div>
-            <div className="flex h-full w-full px-4 pt-6 pb-6 bg-white/20 backdrop-blur-sm overflow-y-visible overflow-scroll">
-              <div id="accordionExample" className="w-full">
-                <div className="rounded-t-lg border w-full border-neutral-200 bg-white dark:border-neutral-600 dark:bg-[#031A22]">
-                  <h2 className="mb-0" id="headingOne">
-                    <button
-                      className="group relative flex w-full font-Magra font-bold items-center rounded-t-[15px] border-0 bg-white px-5 py-4 text-left text-base text-neutral-800 transition [overflow-anchor:none] hover:z-[2] focus:z-[3] focus:outline-none dark:bg-[#031A22] dark:text-[#FFC700] [&:not([data-te-collapse-collapsed])]:bg-white [&:not([data-te-collapse-collapsed])]:text-[#FFC700] [&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(229,231,235)] dark:[&:not([data-te-collapse-collapsed])]:bg-[#031A22] dark:[&:not([data-te-collapse-collapsed])]:text-[#FFC700] dark:[&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(75,85,99)]"
-                      type="button"
-                      data-te-collapse-init
-                      data-te-target="#collapseOne"
-                      aria-expanded="true"
-                      aria-controls="collapseOne"
-                    >
-                      Jurrasic World
-                      <span className="ml-auto h-5 w-5 shrink-0 rotate-[-180deg] fill-[#336dec] transition-transform duration-200 ease-in-out group-[[data-te-collapse-collapsed]]:rotate-0 group-[[data-te-collapse-collapsed]]:fill-[#212529] motion-reduce:transition-none dark:fill-blue-300 dark:group-[[data-te-collapse-collapsed]]:fill-white">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="white"
-                          className="h-6 w-6"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                          />
-                        </svg>
-                      </span>
-                    </button>
-                  </h2>
-                  <div
-                    id="collapseOne"
-                    className="!visible"
-                    data-te-collapse-item
-                    data-te-collapse-show
-                    aria-labelledby="headingOne"
-                    data-te-parent="#accordionExample"
-                  >
-                    <div className="px-5 py-4 text-white text-sm">
-                      <p>
-                        When the first dinosaur bone was described in Jurassic
-                        World, it was thought to come from an elephant or
-                        perhaps a giant.Over a century later, scientists
-                        realised such fossils came from a creature they named
-                        Megalosaurus. Then, in leading anatomist recognised
-                        Megalosaurus as part of a whole new group of animals,
-                        which named Dinosaur. Since then, around 600 different
-                        dinosaur species have been described in Jurassic World
-                        and there is more dinosaur that haven’t described
-                      </p>
-                      <br />
-                      <p>
-                        In a meantime, people and dinosaur will meet eventually
-                        and we encourage for all of you around the world to
-                        participate inside Jurassic World, become a Hunter and
-                        train your Dinosaur to defeat and capture Dinosaur Eggs.
-                        Only highly dedicated Hunters who able to defeat
-                        Immortal Dinosaur. Let us lead the future of Jurassic
-                        World to a more promising path.
-                      </p>
-                      <br />
-                      <p>
-                        Hunters need to go to the [Jurassic] Market to buy Dino
-                        Eggs before starting the hunting journey. When the Dino
-                        Eggs is successfully purchased, the Hunter will also
-                        accumulate its own hunting value. With the increase of
-                        the hunting value, the hunter can also advance to a
-                        higher level and enjoy more benefits (the hunting value
-                        of the first-level relationship buddies of the hunter,
-                        can also contribute to the hunter's hunting value, and
-                        assist the hunter to advance).
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="rounded-t-0 border w-full border-neutral-200 bg-white dark:border-neutral-600 dark:bg-[#031A22]">
-                  <h2 className="mb-0" id="headingTwo">
-                    <button
-                      className="group relative flex w-full font-Magra font-bold items-center rounded-t-[15px] border-0 bg-white px-5 py-4 text-left text-base text-neutral-800 transition [overflow-anchor:none] hover:z-[2] focus:z-[3] focus:outline-none dark:bg-[#031A22] dark:text-[#FFC700] [&:not([data-te-collapse-collapsed])]:bg-white [&:not([data-te-collapse-collapsed])]:text-[#FFC700] [&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(229,231,235)] dark:[&:not([data-te-collapse-collapsed])]:bg-[#031A22] dark:[&:not([data-te-collapse-collapsed])]:text-[#FFC700] dark:[&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(75,85,99)]"
-                      type="button"
-                      data-te-collapse-init
-                      data-te-collapse-collapsed
-                      data-te-target="#collapseTwo"
-                      aria-expanded="false"
-                      aria-controls="collapseTwo"
-                    >
-                      Start Game
-                      <span className="-mr-1 ml-auto h-5 w-5 shrink-0 rotate-[-180deg] fill-[#336dec] transition-transform duration-200 ease-in-out group-[[data-te-collapse-collapsed]]:mr-0 group-[[data-te-collapse-collapsed]]:rotate-0 group-[[data-te-collapse-collapsed]]:fill-[#212529] motion-reduce:transition-none dark:fill-blue-300 dark:group-[[data-te-collapse-collapsed]]:fill-white">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="white"
-                          className="h-6 w-6"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                          />
-                        </svg>
-                      </span>
-                    </button>
-                  </h2>
-                  <div
-                    id="collapseTwo"
-                    className="!visible hidden"
-                    data-te-collapse-item
-                    aria-labelledby="headingTwo"
-                    data-te-parent="#accordionExample"
-                  >
-                    <div className="px-5 py-4 text-white text-sm">
-                      <p>
-                        Before beginning the hunting expedition, hunters must
-                        purchase Dino Eggs at the [Jurassic] Market. Following
-                        the purchase of Dino Eggs, the hunter will also raise
-                        their hunting value, climb the rank ladder, and earn
-                        more rewards. (The hunting value of the hunter's
-                        first-degree buddies will also help the hunter rise in
-                        rank.)
-                      </p>
-                      <br />
-                      <img
-                        src="/image/tableStartGame.png"
-                        alt="table start game"
-                      />
-                      <br />
-                      <p>
-                        Hunters will receive additional awards from the
-                        [Jurassic] Market in addition to hunting rewards for
-                        successfully capturing Dinosaurus during the hunting
-                        procedure. Hunters who failed to capture any Dinosaurus
-                        will also receive rewards for their efforts.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="rounded-t-0 border w-full border-neutral-200 bg-white dark:border-neutral-600 dark:bg-[#031A22]">
-                  <h2 className="mb-0" id="headingThree">
-                    <button
-                      className="group relative flex w-full font-Magra font-bold items-center rounded-t-[15px] border-0 bg-white px-5 py-4 text-left text-base text-neutral-800 transition [overflow-anchor:none] hover:z-[2] focus:z-[3] focus:outline-none dark:bg-[#031A22] dark:text-[#FFC700] [&:not([data-te-collapse-collapsed])]:bg-white [&:not([data-te-collapse-collapsed])]:text-[#FFC700] [&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(229,231,235)] dark:[&:not([data-te-collapse-collapsed])]:bg-[#031A22] dark:[&:not([data-te-collapse-collapsed])]:text-[#FFC700] dark:[&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(75,85,99)]"
-                      type="button"
-                      data-te-collapse-init
-                      data-te-collapse-collapsed
-                      data-te-target="#collapseThree"
-                      aria-expanded="false"
-                      aria-controls="collapseThree"
-                    >
-                      Jurassic Market
-                      <span className="-mr-1 ml-auto h-5 w-5 shrink-0 rotate-[-180deg] fill-[#336dec] transition-transform duration-200 ease-in-out group-[[data-te-collapse-collapsed]]:mr-0 group-[[data-te-collapse-collapsed]]:rotate-0 group-[[data-te-collapse-collapsed]]:fill-[#212529] motion-reduce:transition-none dark:fill-blue-300 dark:group-[[data-te-collapse-collapsed]]:fill-white">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="white"
-                          className="h-6 w-6"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                          />
-                        </svg>
-                      </span>
-                    </button>
-                  </h2>
-                  <div
-                    id="collapseThree"
-                    className="!visible hidden"
-                    data-te-collapse-item
-                    aria-labelledby="headingThree"
-                    data-te-parent="#accordionExample"
-                  >
-                    <div className="px-5 py-4 text-white text-sm">
-                      <p>
-                        A place where all hunters gather.
-                        <br />
-                        <br />
-                        Hunters who intend to purchase Dino Eggs here are
-                        required to have purchase eggs, tickets and USDT in
-                        their account.
-                        <br />
-                        <br />
-                        One hour prior to the end of the hunt, hunters who are
-                        hunting can pre-list their Dino Eggs at the [Jurassic]
-                        market. The Dino eggs will be listed immediately at the
-                        [Jurassic] market for other Hunters to purchase from
-                        after the hunting session has ended.
-                        <br />
-                        <br />
-                        All Dino Eggs listed in the Jurassic Market are only
-                        available for 24 hours. After 24 hours, any remaining
-                        Jurassic Eggs will trigger the Dino Fund's buy- back
-                        policy.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="rounded-t-0 border w-full border-neutral-200 bg-white dark:border-neutral-600 dark:bg-[#031A22]">
-                  <h2 className="mb-0" id="headingFour">
-                    <button
-                      className="group relative flex w-full font-Magra font-bold items-center rounded-t-[15px] border-0 bg-white px-5 py-4 text-left text-base text-neutral-800 transition [overflow-anchor:none] hover:z-[2] focus:z-[3] focus:outline-none dark:bg-[#031A22] dark:text-[#FFC700] [&:not([data-te-collapse-collapsed])]:bg-white [&:not([data-te-collapse-collapsed])]:text-[#FFC700] [&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(229,231,235)] dark:[&:not([data-te-collapse-collapsed])]:bg-[#031A22] dark:[&:not([data-te-collapse-collapsed])]:text-[#FFC700] dark:[&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(75,85,99)]"
-                      type="button"
-                      data-te-collapse-init
-                      data-te-collapse-collapsed
-                      data-te-target="#collapseFour"
-                      aria-expanded="false"
-                      aria-controls="collapseFour"
-                    >
-                      Dinosaurus
-                      <span className="-mr-1 ml-auto h-5 w-5 shrink-0 rotate-[-180deg] fill-[#336dec] transition-transform duration-200 ease-in-out group-[[data-te-collapse-collapsed]]:mr-0 group-[[data-te-collapse-collapsed]]:rotate-0 group-[[data-te-collapse-collapsed]]:fill-[#212529] motion-reduce:transition-none dark:fill-blue-300 dark:group-[[data-te-collapse-collapsed]]:fill-white">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="white"
-                          className="h-6 w-6"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                          />
-                        </svg>
-                      </span>
-                    </button>
-                  </h2>
-                  <div
-                    id="collapseFour"
-                    className="!visible hidden"
-                    data-te-collapse-item
-                    aria-labelledby="headingFour"
-                    data-te-parent="#accordionExample"
-                  >
-                    <div className="px-5 py-4 text-white text-sm">
-                      <p className="font-bold">Captured Dinosaurus Rewards</p>
-                      <br />
-                      <img
-                        src="/image/tableDinosaur.png"
-                        alt="table start game"
-                      />
-                      <br />
-                      <p>
-                        Higher rarity Dinosaurus can only be captured using a
-                        Epic or Glory Egg.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="rounded-t-0 border w-full border-neutral-200 bg-white dark:border-neutral-600 dark:bg-[#031A22]">
-                  <h2 className="mb-0" id="headingFive">
-                    <button
-                      className="group relative flex w-full font-Magra font-bold items-center rounded-t-[15px] border-0 bg-white px-5 py-4 text-left text-base text-neutral-800 transition [overflow-anchor:none] hover:z-[2] focus:z-[3] focus:outline-none dark:bg-[#031A22] dark:text-[#FFC700] [&:not([data-te-collapse-collapsed])]:bg-white [&:not([data-te-collapse-collapsed])]:text-[#FFC700] [&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(229,231,235)] dark:[&:not([data-te-collapse-collapsed])]:bg-[#031A22] dark:[&:not([data-te-collapse-collapsed])]:text-[#FFC700] dark:[&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(75,85,99)]"
-                      type="button"
-                      data-te-collapse-init
-                      data-te-collapse-collapsed
-                      data-te-target="#collapseFive"
-                      aria-expanded="false"
-                      aria-controls="collapseFive"
-                    >
-                      Dino Egg
-                      <span className="-mr-1 ml-auto h-5 w-5 shrink-0 rotate-[-180deg] fill-[#336dec] transition-transform duration-200 ease-in-out group-[[data-te-collapse-collapsed]]:mr-0 group-[[data-te-collapse-collapsed]]:rotate-0 group-[[data-te-collapse-collapsed]]:fill-[#212529] motion-reduce:transition-none dark:fill-blue-300 dark:group-[[data-te-collapse-collapsed]]:fill-white">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="white"
-                          className="h-6 w-6"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                          />
-                        </svg>
-                      </span>
-                    </button>
-                  </h2>
-                  <div
-                    id="collapseFive"
-                    className="!visible hidden"
-                    data-te-collapse-item
-                    aria-labelledby="headingFive"
-                    data-te-parent="#accordionExample"
-                  >
-                    <div className="px-5 py-4 text-white text-sm">
-                      <img
-                        src="/image/tableDinoEgg.png"
-                        alt="table start game"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="rounded-t-0 border w-full border-neutral-200 bg-white dark:border-neutral-600 dark:bg-[#031A22]">
-                  <h2 className="mb-0" id="headingSix">
-                    <button
-                      className="group relative flex w-full font-Magra font-bold items-center rounded-t-[15px] border-0 bg-white px-5 py-4 text-left text-base text-neutral-800 transition [overflow-anchor:none] hover:z-[2] focus:z-[3] focus:outline-none dark:bg-[#031A22] dark:text-[#FFC700] [&:not([data-te-collapse-collapsed])]:bg-white [&:not([data-te-collapse-collapsed])]:text-[#FFC700] [&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(229,231,235)] dark:[&:not([data-te-collapse-collapsed])]:bg-[#031A22] dark:[&:not([data-te-collapse-collapsed])]:text-[#FFC700] dark:[&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(75,85,99)]"
-                      type="button"
-                      data-te-collapse-init
-                      data-te-collapse-collapsed
-                      data-te-target="#collapseSix"
-                      aria-expanded="false"
-                      aria-controls="collapseSix"
-                    >
-                      Buddies
-                      <span className="-mr-1 ml-auto h-5 w-5 shrink-0 rotate-[-180deg] fill-[#336dec] transition-transform duration-200 ease-in-out group-[[data-te-collapse-collapsed]]:mr-0 group-[[data-te-collapse-collapsed]]:rotate-0 group-[[data-te-collapse-collapsed]]:fill-[#212529] motion-reduce:transition-none dark:fill-blue-300 dark:group-[[data-te-collapse-collapsed]]:fill-white">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="white"
-                          className="h-6 w-6"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                          />
-                        </svg>
-                      </span>
-                    </button>
-                  </h2>
-                  <div
-                    id="collapseSix"
-                    className="!visible hidden"
-                    data-te-collapse-item
-                    aria-labelledby="headingSix"
-                    data-te-parent="#accordionExample"
-                  >
-                    <div className="px-5 py-4 text-white text-sm">
-                      <p>
-                        Trainers can earn Buddy hunting bonuses by recruiting
-                        Buddies; Bonuses will be earned whenever your Buddies
-                        purchase Dino Eggs. Tiers receivable are based on the
-                        hunter’s personal rank.
-                      </p>
-                      <br />
-                      <p className="font-bold">Hunter\'s Rank</p>
-                      <img
-                        src="/image/tableBuddies.png"
-                        alt="table start game"
-                      />
-                      <br />
-                      <p>
-                        *In order to receive Buddy Hunting Bonus, the trainer
-                        will need to exhaust one Purchase Ticket before the day
-                        ends, 2359hrs (GMT +8)
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="rounded-b-lg border border-t-0 w-full border-neutral-200 bg-white dark:border-neutral-600 dark:bg-[#031A22]">
-                  <h2 className="mb-0" id="headingSeven">
-                    <button
-                      className="group relative flex w-full font-Magra font-bold items-center rounded-t-[15px] border-0 bg-white px-5 py-4 text-left text-base text-neutral-800 transition [overflow-anchor:none] hover:z-[2] focus:z-[3] focus:outline-none dark:bg-[#031A22] dark:text-[#FFC700] [&:not([data-te-collapse-collapsed])]:bg-white [&:not([data-te-collapse-collapsed])]:text-[#FFC700] [&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(229,231,235)] dark:[&:not([data-te-collapse-collapsed])]:bg-[#031A22] dark:[&:not([data-te-collapse-collapsed])]:text-[#FFC700] dark:[&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(75,85,99)]"
-                      type="button"
-                      data-te-collapse-init
-                      data-te-collapse-collapsed
-                      data-te-target="#collapseSeven"
-                      aria-expanded="false"
-                      aria-controls="collapseSeven"
-                    >
-                      Rank Requalification
-                      <span className="-mr-1 ml-auto h-5 w-5 shrink-0 rotate-[-180deg] fill-[#336dec] transition-transform duration-200 ease-in-out group-[[data-te-collapse-collapsed]]:mr-0 group-[[data-te-collapse-collapsed]]:rotate-0 group-[[data-te-collapse-collapsed]]:fill-[#212529] motion-reduce:transition-none dark:fill-blue-300 dark:group-[[data-te-collapse-collapsed]]:fill-white">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="white"
-                          className="h-6 w-6"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                          />
-                        </svg>
-                      </span>
-                    </button>
-                  </h2>
-                  <div
-                    id="collapseSeven"
-                    className="!visible hidden"
-                    data-te-collapse-item
-                    aria-labelledby="headingSeven"
-                    data-te-parent="#accordionExample"
-                  >
-                    <div className="px-5 py-4 text-white text-sm">
-                      <p>
-                        Hunter are required to maintain their rank in order to
-                        enjoy their current benefits. 1 week following a
-                        promotion to a rank, a minimum amount of personal
-                        hunting value is required for requalification.
-                      </p>
-                      <br />
-                      <img
-                        src="/image/tableRankRequalification.png"
-                        alt="table start game"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="flex flex-col h-full w-full px-4 pt-6 pb-6 bg-white/20 backdrop-blur-sm overflow-y-visible overflow-scroll">
+              <Accordion
+                open={openGameGuide === 1}
+                icon={<IconGameGuide id={1} open={openGameGuide} />}
+              >
+                <AccordionHeader
+                  onClick={() => handleOpenGameGuide(1)}
+                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4 rounded-t-xl"
+                >
+                  Jurrasic World
+                </AccordionHeader>
+                <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                  <p>
+                    When the first dinosaur bone was described in Jurassic
+                    World, it was thought to come from an elephant or perhaps a
+                    giant.Over a century later, scientists realised such fossils
+                    came from a creature they named Megalosaurus. Then, in
+                    leading anatomist recognised Megalosaurus as part of a whole
+                    new group of animals, which named Dinosaur. Since then,
+                    around 600 different dinosaur species have been described in
+                    Jurassic World and there is more dinosaur that haven’t
+                    described
+                  </p>
+                  <br />
+                  <p>
+                    In a meantime, people and dinosaur will meet eventually and
+                    we encourage for all of you around the world to participate
+                    inside Jurassic World, become a Hunter and train your
+                    Dinosaur to defeat and capture Dinosaur Eggs. Only highly
+                    dedicated Hunters who able to defeat Immortal Dinosaur. Let
+                    us lead the future of Jurassic World to a more promising
+                    path.
+                  </p>
+                  <br />
+                  <p>
+                    Hunters need to go to the [Jurassic] Market to buy Dino Eggs
+                    before starting the hunting journey. When the Dino Eggs is
+                    successfully purchased, the Hunter will also accumulate its
+                    own hunting value. With the increase of the hunting value,
+                    the hunter can also advance to a higher level and enjoy more
+                    benefits (the hunting value of the first-level relationship
+                    buddies of the hunter, can also contribute to the hunter's
+                    hunting value, and assist the hunter to advance).
+                  </p>
+                </AccordionBody>
+              </Accordion>
+              <Accordion
+                open={openGameGuide === 2}
+                icon={<IconGameGuide id={2} open={openGameGuide} />}
+              >
+                <AccordionHeader
+                  onClick={() => handleOpenGameGuide(2)}
+                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
+                >
+                  Start Game
+                </AccordionHeader>
+                <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                  <p>
+                    Before beginning the hunting expedition, hunters must
+                    purchase Dino Eggs at the [Jurassic] Market. Following the
+                    purchase of Dino Eggs, the hunter will also raise their
+                    hunting value, climb the rank ladder, and earn more rewards.
+                    (The hunting value of the hunter's first-degree buddies will
+                    also help the hunter rise in rank.)
+                  </p>
+                  <br />
+                  <img src="/image/tableStartGame.png" alt="table start game" />
+                  <br />
+                  <p>
+                    Hunters will receive additional awards from the [Jurassic]
+                    Market in addition to hunting rewards for successfully
+                    capturing Dinosaurus during the hunting procedure. Hunters
+                    who failed to capture any Dinosaurus will also receive
+                    rewards for their efforts.
+                  </p>
+                </AccordionBody>
+              </Accordion>
+              <Accordion
+                open={openGameGuide === 3}
+                icon={<IconGameGuide id={3} open={openGameGuide} />}
+              >
+                <AccordionHeader
+                  onClick={() => handleOpenGameGuide(3)}
+                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
+                >
+                  Jurrasic Market
+                </AccordionHeader>
+                <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                  <p>
+                    A place where all hunters gather.
+                    <br />
+                    <br />
+                    Hunters who intend to purchase Dino Eggs here are required
+                    to have purchase eggs, tickets and USDT in their account.
+                    <br />
+                    <br />
+                    One hour prior to the end of the hunt, hunters who are
+                    hunting can pre-list their Dino Eggs at the [Jurassic]
+                    market. The Dino eggs will be listed immediately at the
+                    [Jurassic] market for other Hunters to purchase from after
+                    the hunting session has ended.
+                    <br />
+                    <br />
+                    All Dino Eggs listed in the Jurassic Market are only
+                    available for 24 hours. After 24 hours, any remaining
+                    Jurassic Eggs will trigger the Dino Fund's buy- back policy.
+                  </p>
+                </AccordionBody>
+              </Accordion>
+              <Accordion
+                open={openGameGuide === 5}
+                icon={<IconGameGuide id={5} open={openGameGuide} />}
+              >
+                <AccordionHeader
+                  onClick={() => handleOpenGameGuide(5)}
+                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
+                >
+                  Dino Egg
+                </AccordionHeader>
+                <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                  <img src="/image/tableDinoEgg.png" alt="table start game" />
+                </AccordionBody>
+              </Accordion>
+              <Accordion
+                open={openGameGuide === 4}
+                icon={<IconGameGuide id={4} open={openGameGuide} />}
+              >
+                <AccordionHeader
+                  onClick={() => handleOpenGameGuide(4)}
+                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
+                >
+                  Dinosaurus
+                </AccordionHeader>
+                <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                  <p className="font-bold">Captured Dinosaurus Rewards</p>
+                  <br />
+                  <img src="/image/tableDinosaur.png" alt="table start game" />
+                  <br />
+                  <p>
+                    Higher rarity Dinosaurus can only be captured using a Epic
+                    or Glory Egg.
+                  </p>
+                </AccordionBody>
+              </Accordion>
+              <Accordion
+                open={openGameGuide === 6}
+                icon={<IconGameGuide id={6} open={openGameGuide} />}
+              >
+                <AccordionHeader
+                  onClick={() => handleOpenGameGuide(6)}
+                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
+                >
+                  Buddies
+                </AccordionHeader>
+                <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                  <p>
+                    Trainers can earn Buddy hunting bonuses by recruiting
+                    Buddies; Bonuses will be earned whenever your Buddies
+                    purchase Dino Eggs. Tiers receivable are based on the
+                    hunter’s personal rank.
+                  </p>
+                  <br />
+                  <p className="font-bold">Hunter\'s Rank</p>
+                  <img src="/image/tableBuddies.png" alt="table start game" />
+                  <br />
+                  <p>
+                    *In order to receive Buddy Hunting Bonus, the trainer will
+                    need to exhaust one Purchase Ticket before the day ends,
+                    2359hrs (GMT +8)
+                  </p>
+                </AccordionBody>
+              </Accordion>
+              <Accordion
+                open={openGameGuide === 7}
+                icon={<IconGameGuide id={7} open={openGameGuide} />}
+              >
+                <AccordionHeader
+                  onClick={() => handleOpenGameGuide(7)}
+                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4 rounded-b-xl"
+                >
+                  Rank Requalification
+                </AccordionHeader>
+                <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                  <p>
+                    Hunter are required to maintain their rank in order to enjoy
+                    their current benefits. 1 week following a promotion to a
+                    rank, a minimum amount of personal hunting value is required
+                    for requalification.
+                  </p>
+                  <br />
+                  <img
+                    src="/image/tableRankRequalification.png"
+                    alt="table start game"
+                  />
+                </AccordionBody>
+              </Accordion>
             </div>
           </div>
         </div>
@@ -2271,16 +2091,13 @@ export const AppTemp = () => {
           width={appWidth}
           height={appHeight}
           options={options}
-          onTimeUpdate={(e) => {
-            console.log(e + " time update");
-          }}
           // renderOnComponentChange={true}
-          // raf={true}
+          raf={true}
           renderOnComponentChange={true}
           onAnimationIteration={() => {
             console.log("animation iteration");
           }}
-        // onMount={(_app) => setApp(_app)}
+          // onMount={(_app) => setApp(_app)}
         >
           {/* @ts-ignore */}
 
