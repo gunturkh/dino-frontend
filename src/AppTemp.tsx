@@ -15,7 +15,6 @@ import {
 import { Stage } from "@pixi/react";
 import { useState, useEffect, useCallback } from "react";
 import { axiosInstance } from "./utils/api";
-import axios from "axios";
 import { getCountries } from "react-phone-number-input/input";
 import en from "react-phone-number-input/locale/en.json";
 // @ts-ignore
@@ -835,7 +834,6 @@ export const AppTemp = () => {
     setOpenGameGuide(openGameGuide === value ? 0 : value);
   };
 
-  const API_BETA = "https://beta-api.jurassicegg.co/";
   const ShowUsers = (props: any) => {
     const { data } = props;
     const [downline, setDownline] = useState<any>();

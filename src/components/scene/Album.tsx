@@ -567,7 +567,7 @@ const Album = ({ onBackBtnClick, visible = true, scene }: Props) => {
       rarity: 5,
       name: "OVIRAPTOR",
       image: PIXI.Assets.get("OviraptorLocked"),
-      imageUnlock: PIXI.Assets.get("OviraptorLocked"),
+      imageUnlock: PIXI.Assets.get("OviraptorUnlocked"),
       isLocked: false,
     },
     {
