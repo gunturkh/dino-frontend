@@ -549,7 +549,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
 
               <DinoFundComponent
                 spriteTexture={PIXI?.Assets?.get("DinoFundBg")}
-                text="9.000.000.000"
+                text="0"
                 // text={`w=${getHomeContainerBounds.width.toFixed()} h=${getHomeContainerBounds.height}`}
                 posX={0}
                 posY={0}
