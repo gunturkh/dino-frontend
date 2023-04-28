@@ -13,7 +13,7 @@ import {
   useNotifications,
 } from "@usedapp/core";
 import { Stage } from "@pixi/react";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { axiosInstance } from "./utils/api";
 import { getCountries } from "react-phone-number-input/input";
 import en from "react-phone-number-input/locale/en.json";
@@ -86,6 +86,7 @@ export const AppTemp = () => {
     chainId,
     switchNetwork,
   } = useEthers();
+  const registerRechaptchaRef = useRef(null)
   const token = useAuthStore((state) => state.token);
   const saveToken = useAuthStore((state) => state.saveToken);
   const userData = useStore((state) => state.userData);
@@ -753,8 +754,22 @@ export const AppTemp = () => {
     if (data.success) {
       toast(`Register Success`);
       setAuthMode("LOGIN");
+      setRegisterCaptcha('')
+      if (registerRechaptchaRef?.current) {
+        // console.log('registerRechaptchaRef?.current', registerRechaptchaRef?.current)
+        // @ts-ignore
+        registerRechaptchaRef?.current?.reset()
+      }
     }
-    if (!data.success) toast(`${data.message}`);
+    if (!data.success) {
+      toast(`${data.message}`)
+      setRegisterCaptcha('')
+      if (registerRechaptchaRef?.current) {
+        // console.log('registerRechaptchaRef?.current', registerRechaptchaRef?.current)
+        // @ts-ignore
+        registerRechaptchaRef?.current?.reset()
+      }
+    }
   };
 
   const otpHandler = async (email: string) => {
@@ -835,9 +850,8 @@ export const AppTemp = () => {
     return (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className={`${
-          id === open ? "rotate-180" : ""
-        } h-5 w-5 transition-transform`}
+        className={`${id === open ? "rotate-180" : ""
+          } h-5 w-5 transition-transform`}
         fill="none"
         viewBox="0 0 24 24"
         stroke="white"
@@ -942,7 +956,7 @@ export const AppTemp = () => {
     );
   };
 
-  const DownlineCallback = useCallback(Downline, []);
+  const DownlineCallback = useCallback(Downline, [token]);
 
   // const walletStatus = (status: string) => {
   //   switch (status) {
@@ -1420,17 +1434,14 @@ export const AppTemp = () => {
                     )}
                     <span className="font-Magra ml-2 text-white font-bold">{`I have read and agreed to <User Agreement and Privacy Policy>`}</span>
                   </div>
-                  <ReCAPTCHA
-                    sitekey={CAPTCHA_KEY}
-                    onChange={(e: any) => verifiedRegisterCallback(e as string)}
-                  />
                   <input
                     alt="btnRegister"
                     type="image"
                     src={"image/BtnConfirmRegister.png"}
                     disabled={!registerCheckbox}
                     onClick={registerForm.submitForm}
-                    className="mt-2 px-3.5 py-2.5 text-sm "
+                    className={`${!registerCheckbox ? "opacity-50" : ""
+                      } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -1498,13 +1509,19 @@ export const AppTemp = () => {
                       </button>
                     </div>
                   </form>
+                  <ReCAPTCHA
+                    ref={registerRechaptchaRef}
+                    sitekey={CAPTCHA_KEY}
+                    onChange={(e: any) => verifiedRegisterCallback(e as string)}
+                  />
                   <input
                     alt="Register Submit"
                     type={"image"}
                     src={"image/BtnSubmit.png"}
                     onClick={registerHandler}
                     disabled={registerCaptcha?.length === 0}
-                    className="mt-12 px-3.5 py-2.5 text-sm"
+                    className={`${registerCaptcha?.length === 0 ? "opacity-50" : ""
+                      } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -1539,9 +1556,8 @@ export const AppTemp = () => {
                     type={"image"}
                     src={"image/BtnSubmit.png"}
                     onClick={loginWalletForm.submitForm}
-                    className={`${
-                      captcha?.length === 0 ? "opacity-50" : ""
-                    } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${captcha?.length === 0 ? "opacity-50" : ""
+                      } mt-12 px-3.5 py-2.5 text-sm`}
                     disabled={captcha?.length === 0}
                   />
                   <ReCAPTCHA
@@ -1643,9 +1659,8 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "BUY" })
                   }
-                  className={`${
-                    ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
-                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
+                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   Buy
                 </button>
@@ -1655,11 +1670,10 @@ export const AppTemp = () => {
                     onClick={() =>
                       setTicketPanel({ ...ticketPanel, mode: "TRANSFER" })
                     }
-                    className={`${
-                      ticketPanel.mode === "TRANSFER"
-                        ? "text-blue-500"
-                        : "text-white"
-                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                    className={`${ticketPanel.mode === "TRANSFER"
+                      ? "text-blue-500"
+                      : "text-white"
+                      } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                   >
                     Transfer
                   </button>
@@ -1669,11 +1683,10 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
                   }
-                  className={`${
-                    ticketPanel.mode === "HISTORY"
-                      ? "text-blue-500"
-                      : "text-white"
-                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${ticketPanel.mode === "HISTORY"
+                    ? "text-blue-500"
+                    : "text-white"
+                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   History
                 </button>
@@ -1724,8 +1737,8 @@ export const AppTemp = () => {
                             console.log("buy with bonus", e);
                             setBuyWithBonus(!buyWithBonus);
                           }}
-                          // onBlur={loginForm.handleBlur}
-                          // value={usd}
+                        // onBlur={loginForm.handleBlur}
+                        // value={usd}
                         />
                         <p className="font-Magra text-md text-white ml-3">
                           Buy with Bonus
@@ -1825,8 +1838,8 @@ export const AppTemp = () => {
                       ? "Buy with Bonus"
                       : ticketAllowance &&
                         ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                      ? "Approval"
-                      : "Buy Ticket"}
+                        ? "Approval"
+                        : "Buy Ticket"}
                   </button>
                   {sendTicketBuyState.status !== "None" && (
                     <p className="text-white/50 font-Magra">
@@ -1954,16 +1967,14 @@ export const AppTemp = () => {
                         <tr className="text-white text-center">
                           <td>{formattedTime}</td>
                           <td
-                            className={`${
-                              t.amount < 0 ? "text-red-500" : "text-green-500"
-                            }`}
+                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
+                              }`}
                           >
                             {t.amount < 0 ? "OUT" : "IN"}
                           </td>
                           <td
-                            className={`${
-                              t.amount < 0 ? "text-red-500" : "text-green-500"
-                            }`}
+                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
+                              }`}
                           >
                             {t.amount}
                           </td>
@@ -2232,7 +2243,7 @@ export const AppTemp = () => {
           onAnimationIteration={() => {
             console.log("animation iteration");
           }}
-          // onMount={(_app) => setApp(_app)}
+        // onMount={(_app) => setApp(_app)}
         >
           {/* @ts-ignore */}
 
