@@ -9,6 +9,7 @@ import LowerButtonComponent from "../LowerButtonComponent";
 import { useAuthStore, useStore } from "../../utils/store";
 import { axiosInstance } from "../../utils/api";
 import { ethers } from "ethers";
+import { manifest } from "../../assets";
 // import { TICKET_ADDR } from "../../utils/config";
 
 type Props = {
@@ -71,6 +72,25 @@ const Home = ({ onProfileClick, scene }: Props) => {
     PIXI?.Assets?.get("LowerBtnSmallBg")?.orig || defaultBounds;
   const BtnBigBounds =
     PIXI?.Assets?.get("LowerBtnBigBg")?.orig || defaultBounds;
+
+  // initialize background assets loader
+  async function loadBackgroundAssets() {
+    await PIXI.Assets.init({ manifest: manifest });
+    // initialize assets that have big size
+    const bundleIds = manifest.bundles
+      .filter((bundle) => {
+        return ["CollectionScene"].includes(bundle.name);
+      })
+      .map((bundle) => bundle.name);
+
+    // load asset in background
+    await PIXI.Assets.backgroundLoadBundle(bundleIds);
+    await PIXI.Assets.loadBundle(bundleIds);
+  }
+
+  loadBackgroundAssets();
+  // TODO: need to trigger resolve/mark something after all assets loaded
+  // so we can make validation for scene that need to load all assets first
 
   const dummyEggLists = [
     {

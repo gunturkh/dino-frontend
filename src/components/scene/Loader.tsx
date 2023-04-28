@@ -21,13 +21,21 @@ const Loader = ({ onFinishLoading, visible = true }: LoaderProps) => {
   // load assets
   async function initializeLoader() {
     await PIXI.Assets.init({ manifest: manifest });
-    const bundleIds = manifest.bundles.map((bundle) => bundle.name);
+
+    // filter out bundle that too big to load
+    const bundleIds = manifest.bundles
+      .filter((bundle) => {
+        return !["CollectionScene"].includes(bundle.name);
+      })
+      .map((bundle) => {
+        // console.log("bundle name", bundle.name);
+        return bundle.name;
+      });
 
     await PIXI.Assets.loadBundle(bundleIds, updateLoaderBar);
   }
 
   initializeLoader();
-  console.log("testLoad asset outside", PIXI.Assets.get("MainBg"));
 
   const loaderBarWidth =
     app.screen.width < 450 ? app.screen.width * 0.8 : app.screen.width * 0.3;
