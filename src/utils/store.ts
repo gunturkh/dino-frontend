@@ -41,6 +41,11 @@ export type TicketPanelData = {
   mode: "BUY" | "TRANSFER" | "HISTORY";
 };
 
+export type SponsorLinkPanelData = {
+  show: boolean;
+  link: string;
+};
+
 type Store = {
   scene: Screen;
   changeScene: (screen: Screen) => void;
@@ -58,6 +63,8 @@ type Store = {
   setApproved: (data: BigNumber) => void;
   ticketPanel: TicketPanelData;
   setTicketPanel: (data: TicketPanelData) => void;
+  sponsorLinkPanel: SponsorLinkPanelData;
+  setSponsorLinkPanel: (data: SponsorLinkPanelData) => void;
 };
 type AuthStore = {
   token: string | null;
@@ -116,6 +123,9 @@ export const useStore = create<Store>((set, get) => ({
   ticketPanel: { show: false, mode: "BUY" },
   setTicketPanel: ({ show, mode }) =>
     set(() => ({ ticketPanel: { show, mode } })),
+  sponsorLinkPanel: { show: false, link: '' },
+  setSponsorLinkPanel: (data) =>
+    set(() => ({ sponsorLinkPanel: data })),
 }));
 
 export const useAuthStore = create(
