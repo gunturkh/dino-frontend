@@ -800,7 +800,9 @@ const Album = ({ onBackBtnClick, visible = true, scene }: Props) => {
                       <Sprite
                         key={index}
                         texture={
-                          item?.isLocked ? item?.imageUnlock : item?.image
+                          item?.isLocked
+                            ? item?.imageUnlock
+                            : item?.image || PIXI.Texture.EMPTY
                         }
                         anchor={[0.5, 0.5]}
                         scale={isNotMobile ? [0.1, 0.1] : [0.095, 0.1]}
