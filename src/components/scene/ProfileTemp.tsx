@@ -85,16 +85,20 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
                 toast("Sponsor Link Copied!");
               });
             } else {
-              const el = document.createElement('textarea');
-              el.value = `${window.location.origin}?sponsor=${userData.username}`;
-              el.setAttribute('readonly', '');
-              el.style.position = 'absolute';
-              el.style.left = '-9999px';
-              document.body.appendChild(el);
-              el.select();
-              document.execCommand('copy');
-              document.body.removeChild(el);
-              toast("Sponsor Link Copied!");
+              var textarea = document.createElement("textarea");
+              textarea.textContent = `${window.location.origin}?sponsor=${userData.username}`;
+              textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
+              document.body.appendChild(textarea);
+              textarea.select();
+              try {
+                console.log(`sponsor link: ${window.location.origin}?sponsor=${userData.username} `)
+              } catch (ex) {
+                toast("Copy to clipboard failed.");
+                return false;
+              } finally {
+                document.body.removeChild(textarea);
+                toast("Sponsor Link Copied!");
+              }
             }
           }}
         >
