@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import * as PIXI from "pixi.js";
 import { Container, Sprite, Text, useApp, useTick } from "@pixi/react";
 import { useAuthStore, useStore } from "../../utils/store";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 
 type Props = {
   onBackBtnClick: () => void;
