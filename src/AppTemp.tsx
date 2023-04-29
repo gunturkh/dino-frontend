@@ -106,8 +106,8 @@ export const AppTemp = () => {
   const setApproved = useStore((state) => state.setApproved);
   const ticketPanel = useStore((state) => state.ticketPanel);
   const setTicketPanel = useStore((state) => state.setTicketPanel);
-  const sponsorLinkPanel = useStore((state) => state.sponsorLinkPanel);
-  const setSponsorLinkPanel = useStore((state) => state.setSponsorLinkPanel);
+  // const sponsorLinkPanel = useStore((state) => state.sponsorLinkPanel);
+  // const setSponsorLinkPanel = useStore((state) => state.setSponsorLinkPanel);
   const usdtInfo = useToken(USDT_ADDR);
   const usdtBalance = useTokenBalance(USDT_ADDR, account);
   const tokenBalance = useTokenBalance(
@@ -2003,7 +2003,7 @@ export const AppTemp = () => {
           </div>
         </div>
       )}
-      {sponsorLinkPanel.show && scene === "PROFILE" && (
+      {/* {sponsorLinkPanel.show && scene === "PROFILE" && (
         <div className="absolute h-[80vh] flex">
           <div className=" my-5 flex backdrop-blur-sm  justify-center items-center flex-col bg-white/10 px-3.5 py-2.5 shadow-sm rounded-sm ">
             <div className="flex w-full justify-end">
@@ -2030,18 +2030,6 @@ export const AppTemp = () => {
                     Sponsor Link
                   </p>
 
-                  {/* <input
-                    name="sponsorLink"
-                    type="textarea"
-                    id="sponsorLink"
-                    // placeholder="Ticket Quantity"
-                    className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-black font-Magra font-bold"
-                    // style={{
-                    //   background: `url(image/InputBox.png) no-repeat `,
-                    // }}
-                    // onChange={changeQuantity}
-                    value={sponsorLinkPanel.link}
-                  /> */}
                   <p className="text-white text-lg">{sponsorLinkPanel.link}</p>
                   {navigator && navigator.clipboard &&
                     <p className="text-gray-500 text-sm">Your browser cannot copy link directly, please copy the link above manually</p>
@@ -2109,7 +2097,7 @@ export const AppTemp = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
       {scene === "GAMEGUIDE" && (
         <div className="absolute w-full h-full flex justify-center items-center">
           <img

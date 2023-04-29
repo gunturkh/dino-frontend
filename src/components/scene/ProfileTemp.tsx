@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import * as PIXI from "pixi.js";
 import { Container, Sprite, Text, useApp, useTick } from "@pixi/react";
 import { useAuthStore, useStore } from "../../utils/store";
-// import { toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 type Props = {
   onBackBtnClick: () => void;
@@ -21,7 +21,7 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
   const logout = useAuthStore((state) => state.logout);
   const changeScene = useStore((state) => state.changeScene);
   const userData = useStore((state) => state.userData);
-  const setSponsorLinkPanel = useStore((state) => state.setSponsorLinkPanel);
+  // const setSponsorLinkPanel = useStore((state) => state.setSponsorLinkPanel);
   const isNotMobile = app.screen.width > 450;
 
   const [isLoaded, setIsLoaded] = useState(false);
@@ -78,34 +78,30 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
           position={[isNotMobile ? 450 / 2 - 70 : app.screen.width * 0.3, 0]}
           anchor={[1, 0.5]}
           eventMode="static"
-          onpointertap={(e) => {
-            // if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
-            //   navigator.clipboard.writeText(
-            //     `${window.location.origin}?sponsor=${userData.username}`
-            //   ).then(() => {
-            //     toast("Sponsor Link Copied!");
-            //   });
-            // } else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
-            //   var textarea = document.createElement("textarea");
-            //   textarea.textContent = `${window.location.origin}?sponsor=${userData.username}`;
-            //   textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
-            //   document.body.appendChild(textarea);
-            //   textarea.select();
-            //   try {
-            //     console.log(`sponsor link: ${window.location.origin}?sponsor=${userData.username} `)
-            //     return document.execCommand("copy");
-            //   } catch (ex) {
-            //     toast("Copy to clipboard failed.");
-            //     return false
-            //   } finally {
-            //     document.body.removeChild(textarea);
-            //     toast("Sponsor Link Copied!");
-            //   }
-            // }
-            // else {
-              setSponsorLinkPanel({ show: true, link: `${window.location.origin}?sponsor=${userData.username}` })
-            // }
-          }}
+        // onpointertap={(e) => {
+        //   if (navigator && navigator.clipboard) {
+        //     var textarea = document.createElement("textarea");
+        //     textarea.textContent = `${window.location.origin}?sponsor=${userData.username}`;
+        //     textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
+        //     document.body.appendChild(textarea);
+        //     textarea.select();
+        //     try {
+        //       console.log(`sponsor link: ${window.location.origin}?sponsor=${userData.username} `)
+        //       return document.execCommand("copy");
+        //     } catch (ex) {
+        //       toast("Copy to clipboard failed.");
+        //       return false
+        //     } finally {
+        //       document.body.removeChild(textarea);
+        //       toast("Sponsor Link Copied!");
+        //     }
+        //   }
+        //   // else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+        //   // }
+        //   // // else {
+        //   //   setSponsorLinkPanel({ show: true, link: `${window.location.origin}?sponsor=${userData.username}` })
+        //   // // }
+        // }}
         >
           <Text
             text={userData.username}
@@ -364,7 +360,26 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
       case "Game Guide":
         console.log("Game Guide");
         changeScene("GAMEGUIDE");
+        break;
 
+      case "Sponsor Link":
+        if (navigator && navigator.clipboard) {
+          var textarea = document.createElement("textarea");
+          textarea.textContent = `${window.location.origin}?sponsor=${userData.username}`;
+          textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
+          document.body.appendChild(textarea);
+          textarea.select();
+          try {
+            console.log(`sponsor link: ${window.location.origin}?sponsor=${userData.username} `)
+            return document.execCommand("copy");
+          } catch (ex) {
+            toast("Copy to clipboard failed.");
+            return false
+          } finally {
+            document.body.removeChild(textarea);
+            toast("Sponsor Link Copied!");
+          }
+        }
         break;
       default:
         break;
