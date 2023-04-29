@@ -2042,46 +2042,51 @@ export const AppTemp = () => {
                     // onChange={changeQuantity}
                     value={sponsorLinkPanel.link}
                   /> */}
-                  <p className="text-white text-sm">{sponsorLinkPanel.link}</p>
-                  <button
-                    onClick={() => {
-                      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-                      document?.getElementById("sponsorLink")?.focus();
-                      console.log('window.clipboardData', window.clipboardData)
-                      // if (window?.clipboardData && window?.clipboardData.setData) {
-                      //   toast("Sponsor Link Copied!");
-                      //   // IE specific code path to prevent textarea being shown while dialog is visible.
-                      //   return window.clipboardData.setData("Text", `${window.location.origin}?sponsor=${userData.username}`);
+                  <p className="text-white text-lg">{sponsorLinkPanel.link}</p>
+                  {navigator && navigator.clipboard &&
+                    <p className="text-gray-500 text-sm">Your browser cannot copy link directly, please copy the link above manually</p>
+                  }
+                  {navigator && navigator.clipboard && navigator.clipboard.writeText &&
+                    <button
+                      onClick={() => {
+                        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+                        document?.getElementById("sponsorLink")?.focus();
+                        console.log('window.clipboardData', window.clipboardData)
+                        // if (window?.clipboardData && window?.clipboardData.setData) {
+                        //   toast("Sponsor Link Copied!");
+                        //   // IE specific code path to prevent textarea being shown while dialog is visible.
+                        //   return window.clipboardData.setData("Text", `${window.location.origin}?sponsor=${userData.username}`);
 
-                      // }
-                      if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
-                        navigator.clipboard.writeText(
-                          `${window.location.origin}?sponsor=${userData.username}`
-                        ).then(() => {
-                          toast("Sponsor Link Copied!");
-                        });
-                      }
-                      else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
-                        var textarea = document.createElement("textarea");
-                        textarea.textContent = `${window.location.origin}?sponsor=${userData.username}`;
-                        textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
-                        document.body.appendChild(textarea);
-                        textarea.select();
-                        try {
-                          console.log(`sponsor link: ${window.location.origin}?sponsor=${userData.username} `)
-                          toast("Sponsor Link Copied!");
-                          return document.execCommand("copy");
-                        } catch (ex) {
-                          toast("Copy to clipboard failed.");
-                        } finally {
-                          document.body.removeChild(textarea);
-                          toast("Sponsor Link Copied!");
+                        // }
+                        if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+                          navigator.clipboard.writeText(
+                            `${window.location.origin}?sponsor=${userData.username}`
+                          ).then(() => {
+                            toast("Sponsor Link Copied!");
+                          });
+                        }
+                        else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+                          var textarea = document.createElement("textarea");
+                          textarea.textContent = `${window.location.origin}?sponsor=${userData.username}`;
+                          textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
+                          document.body.appendChild(textarea);
+                          textarea.select();
+                          try {
+                            console.log(`sponsor link: ${window.location.origin}?sponsor=${userData.username} `)
+                            toast("Sponsor Link Copied!");
+                            return document.execCommand("copy");
+                          } catch (ex) {
+                            toast("Copy to clipboard failed.");
+                          } finally {
+                            document.body.removeChild(textarea);
+                            toast("Sponsor Link Copied!");
+                          }
                         }
                       }
-                    }
-                    }
-                    className="mt-3 bg-green-500 text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                  >Copy Link</button>
+                      }
+                      className="mt-3 bg-green-500 text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    >Copy Link</button>
+                  }
                 </div>
               </>
 
