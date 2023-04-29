@@ -93,6 +93,7 @@ export const AppTemp = () => {
     chainId,
     switchNetwork,
   } = useEthers();
+  const loginRechaptchaRef = useRef(null);
   const registerRechaptchaRef = useRef(null);
   const token = useAuthStore((state) => state.token);
   const saveToken = useAuthStore((state) => state.saveToken);
@@ -579,7 +580,8 @@ export const AppTemp = () => {
       // alert(JSON.stringify(values, null, 2));
       // otpHandler(values.email);
       setSubmitting(false);
-      setAuthMode("LOGINWALLET");
+      loginHandler()
+      // setAuthMode("LOGINWALLET");
     },
   });
 
@@ -603,9 +605,10 @@ export const AppTemp = () => {
     onSubmit: (values, { setSubmitting }) => {
       // alert(JSON.stringify(values, null, 2));
       // otpHandler(values.email);
-      loginHandler();
+      // loginHandler();
       setSubmitting(false);
       // setAuthMode("LOGINWALLET");
+      changeScene('HOME')
     },
   });
   const registerForm = useFormik({
@@ -733,10 +736,23 @@ export const AppTemp = () => {
     });
 
     const { data } = result;
-    if (!data.success) toast(`${data.message}`);
+    if (!data.success) {
+      toast(`${data.message}`)
+      if (loginRechaptchaRef?.current) {
+        // console.log('loginRechaptchaRef?.current', loginRechaptchaRef?.current)
+        // @ts-ignore
+        loginRechaptchaRef?.current?.reset();
+      }
+    }
     if (data && data.result) {
-      saveToken(data.result?.jwt, () => changeScene("HOME"));
+      saveToken(data.result?.jwt);
       setCaptcha("");
+      if (loginRechaptchaRef?.current) {
+        // console.log('loginRechaptchaRef?.current', loginRechaptchaRef?.current)
+        // @ts-ignore
+        loginRechaptchaRef?.current?.reset();
+      }
+      setAuthMode('LOGINWALLET')
     }
   };
 
@@ -1237,12 +1253,19 @@ export const AppTemp = () => {
                       </div>
                     </div>
                   </form>
+                  <ReCAPTCHA
+                    ref={loginRechaptchaRef}
+                    sitekey={CAPTCHA_KEY}
+                    onChange={(e: any) => verifiedCallback(e as string)}
+                  />
                   <input
                     alt="btnLogin"
                     type={"image"}
                     src={"image/BtnConfirm.png"}
                     onClick={loginForm.submitForm}
-                    className=" px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    className={`${captcha?.length === 0 ? "opacity-50" : ""
+                      } mt-12 px-3.5 py-2.5 text-sm`}
+                    disabled={captcha?.length === 0}
                   />
                 </>
               )}
@@ -1565,13 +1588,8 @@ export const AppTemp = () => {
                     type={"image"}
                     src={"image/BtnSubmit.png"}
                     onClick={loginWalletForm.submitForm}
-                    className={`${captcha?.length === 0 ? "opacity-50" : ""
+                    className={`${loginWalletForm.values.walletAddress.length === 0 ? "opacity-50" : ""
                       } mt-12 px-3.5 py-2.5 text-sm`}
-                    disabled={captcha?.length === 0}
-                  />
-                  <ReCAPTCHA
-                    sitekey={CAPTCHA_KEY}
-                    onChange={(e: any) => verifiedCallback(e as string)}
                   />
                 </>
               )}
