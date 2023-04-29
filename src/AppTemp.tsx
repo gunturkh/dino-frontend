@@ -2048,19 +2048,19 @@ export const AppTemp = () => {
                       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                       document?.getElementById("sponsorLink")?.focus();
                       console.log('window.clipboardData', window.clipboardData)
-                      if (window?.clipboardData && window?.clipboardData.setData) {
-                        toast("Sponsor Link Copied!");
-                        // IE specific code path to prevent textarea being shown while dialog is visible.
-                        return window.clipboardData.setData("Text", `${window.location.origin}?sponsor=${userData.username}`);
+                      // if (window?.clipboardData && window?.clipboardData.setData) {
+                      //   toast("Sponsor Link Copied!");
+                      //   // IE specific code path to prevent textarea being shown while dialog is visible.
+                      //   return window.clipboardData.setData("Text", `${window.location.origin}?sponsor=${userData.username}`);
 
-                      }
-                      // if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
-                      //   navigator.clipboard.writeText(
-                      //     `${window.location.origin}?sponsor=${userData.username}`
-                      //   ).then(() => {
-                      //     toast("Sponsor Link Copied!");
-                      //   });
                       // }
+                      if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(
+                          `${window.location.origin}?sponsor=${userData.username}`
+                        ).then(() => {
+                          toast("Sponsor Link Copied!");
+                        });
+                      }
                       else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
                         var textarea = document.createElement("textarea");
                         textarea.textContent = `${window.location.origin}?sponsor=${userData.username}`;
@@ -2069,6 +2069,7 @@ export const AppTemp = () => {
                         textarea.select();
                         try {
                           console.log(`sponsor link: ${window.location.origin}?sponsor=${userData.username} `)
+                          document.execCommand("copy");
                         } catch (ex) {
                           toast("Copy to clipboard failed.");
                         } finally {
