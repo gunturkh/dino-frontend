@@ -142,6 +142,10 @@ export const AppTemp = () => {
     qr: string;
     secret: string;
   } | null>();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // const [buddiesHistories, setBuddiesyHistories] = useState<{ username: string, data: { username: string, bought: string, dl_bought: string, regdate: number }[] }[]>([])
+  // const [buddiesHistories, setBuddiesyHistories] = useState<string[]>([])
+  // console.log('buddiesHistories', buddiesHistories)
   const [sponsor, setSponsor] = useState<string | null | undefined>("");
   const {
     sendTransaction,
@@ -892,8 +896,8 @@ export const AppTemp = () => {
   };
 
   const ShowUsers = (props: any) => {
-    const { data } = props;
-    const [downline, setDownline] = useState<any>();
+    const { data, setDatas } = props;
+    // const [downline, setDownline] = useState<any>();
 
     const clickPlus = async () => {
       let options = {
@@ -907,7 +911,11 @@ export const AppTemp = () => {
         headers: options.headers,
       });
       if (response.data.result.length > 0) {
-        setDownline(response.data.result);
+        // setDownline(response.data.result);
+        setDatas(response.data.result);
+        // let newHistory = buddiesHistories
+        // newHistory.push({ username: data.username, data: response.data.result })
+        // setBuddiesyHistories(newHistory)
       }
     };
 
@@ -929,7 +937,7 @@ export const AppTemp = () => {
             </div>
           </div>
         </div>
-        {downline ? (
+        {/* {downline ? (
           <div className="d-flex flex-wrap ms-4 w-100">
             {downline.map((elm: any) => (
               <ShowUsers key={elm.username} data={elm} />
@@ -937,12 +945,13 @@ export const AppTemp = () => {
           </div>
         ) : (
           ""
-        )}
+        )} */}
       </>
     );
   };
 
   const Downline = () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [datas, setDatas] = useState<any>();
 
     const loadDownline = async () => {
@@ -957,26 +966,38 @@ export const AppTemp = () => {
         headers: options.headers,
       });
       setDatas(response.data.result);
+      // setBuddiesyHistories([{ username: userData?.username, data: response.data.result }])
     };
 
     useEffect(() => {
       if (!datas) loadDownline();
+      // if (buddiesHistories.length === 0) loadDownline();
     }, []);
 
     return (
       <>
         <h1 className="font-Magra text-yellow-700 text-center text-xl">
-          Buddy
+          {`${userData.username} Buddy`}
+          {/* {buddiesHistories.length > 0 ? buddiesHistories[buddiesHistories.length - 1]?.username : `${userData.username}'s buddy`} */}
         </h1>
         {datas ? (
           <div className="flex flex-col">
             {datas.map((elm: any) => (
-              <ShowUsers key={elm.username} data={elm} />
+              <ShowUsers key={elm.username} data={elm} setDatas={setDatas} />
             ))}
           </div>
         ) : (
           ""
         )}
+        {/* {buddiesHistories.length > 0 ? (
+          <div className="flex flex-col">
+            {buddiesHistories[buddiesHistories.length - 1]?.data?.map((elm: any) => (
+              <ShowUsers key={elm.username} data={elm} setDatas={setDatas} />
+            ))}
+          </div>
+        ) : (
+          ""
+        )} */}
       </>
     );
   };
