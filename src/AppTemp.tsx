@@ -2069,7 +2069,8 @@ export const AppTemp = () => {
                         textarea.select();
                         try {
                           console.log(`sponsor link: ${window.location.origin}?sponsor=${userData.username} `)
-                          document.execCommand("copy");
+                          toast("Sponsor Link Copied!");
+                          return document.execCommand("copy");
                         } catch (ex) {
                           toast("Copy to clipboard failed.");
                         } finally {
