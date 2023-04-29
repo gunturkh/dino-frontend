@@ -2046,7 +2046,7 @@ export const AppTemp = () => {
                   {navigator && navigator.clipboard &&
                     <p className="text-gray-500 text-sm">Your browser cannot copy link directly, please copy the link above manually</p>
                   }
-                  {navigator && navigator.clipboard && navigator.clipboard.writeText &&
+                  {navigator && navigator.clipboard &&
                     <button
                       onClick={() => {
                         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -2058,14 +2058,13 @@ export const AppTemp = () => {
                         //   return window.clipboardData.setData("Text", `${window.location.origin}?sponsor=${userData.username}`);
 
                         // }
-                        if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
-                          navigator.clipboard.writeText(
-                            `${window.location.origin}?sponsor=${userData.username}`
-                          ).then(() => {
-                            toast("Sponsor Link Copied!");
-                          });
-                        }
-                        else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+                        if (navigator && navigator.clipboard) {
+                          // navigator.clipboard.writeText(
+                          //   `${window.location.origin}?sponsor=${userData.username}`
+                          // ).then(() => {
+                          //   toast("Sponsor Link Copied!");
+                          // });
+
                           var textarea = document.createElement("textarea");
                           textarea.textContent = `${window.location.origin}?sponsor=${userData.username}`;
                           textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
@@ -2073,7 +2072,7 @@ export const AppTemp = () => {
                           textarea.select();
                           try {
                             console.log(`sponsor link: ${window.location.origin}?sponsor=${userData.username} `)
-                            toast("Sponsor Link Copied!");
+                            // toast("Sponsor Link Copied!");
                             return document.execCommand("copy");
                           } catch (ex) {
                             toast("Copy to clipboard failed.");
@@ -2082,6 +2081,23 @@ export const AppTemp = () => {
                             toast("Sponsor Link Copied!");
                           }
                         }
+                        // else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+                        //   var textarea = document.createElement("textarea");
+                        //   textarea.textContent = `${window.location.origin}?sponsor=${userData.username}`;
+                        //   textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
+                        //   document.body.appendChild(textarea);
+                        //   textarea.select();
+                        //   try {
+                        //     console.log(`sponsor link: ${window.location.origin}?sponsor=${userData.username} `)
+                        //     toast("Sponsor Link Copied!");
+                        //     return document.execCommand("copy");
+                        //   } catch (ex) {
+                        //     toast("Copy to clipboard failed.");
+                        //   } finally {
+                        //     document.body.removeChild(textarea);
+                        //     toast("Sponsor Link Copied!");
+                        //   }
+                        // }
                       }
                       }
                       className="mt-3 bg-green-500 text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
