@@ -65,6 +65,8 @@ type Store = {
   setTicketPanel: (data: TicketPanelData) => void;
   sponsorLinkPanel: SponsorLinkPanelData;
   setSponsorLinkPanel: (data: SponsorLinkPanelData) => void;
+  changePasswordPanel: boolean,
+  setChangePasswordPanel: (data: boolean) => void
 };
 type AuthStore = {
   token: string | null;
@@ -126,6 +128,9 @@ export const useStore = create<Store>((set, get) => ({
   sponsorLinkPanel: { show: false, link: '' },
   setSponsorLinkPanel: (data) =>
     set(() => ({ sponsorLinkPanel: data })),
+  changePasswordPanel: false,
+  setChangePasswordPanel: (data) =>
+    set(() => ({ changePasswordPanel: data })),
 }));
 
 export const useAuthStore = create(

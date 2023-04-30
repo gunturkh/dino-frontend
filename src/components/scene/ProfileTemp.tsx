@@ -21,7 +21,7 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
   const logout = useAuthStore((state) => state.logout);
   const changeScene = useStore((state) => state.changeScene);
   const userData = useStore((state) => state.userData);
-  // const setSponsorLinkPanel = useStore((state) => state.setSponsorLinkPanel);
+  const setChangePasswordPanel = useStore((state) => state.setChangePasswordPanel);
   const isNotMobile = app.screen.width > 450;
 
   const [isLoaded, setIsLoaded] = useState(false);
@@ -307,6 +307,23 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
         </Container>
       ),
     },
+    {
+      title: "Change Password",
+      rightSection: (
+        <Container
+          position={[isNotMobile ? 450 / 2 - 70 : app.screen.width * 0.29, 0]}
+          anchor={[1, 0.5]}
+        >
+          <Sprite
+            texture={PIXI.Assets.get("ArrowRightIcon")}
+            anchor={[0.5, 0.5]}
+            width={isNotMobile ? 30 : 25}
+            height={isNotMobile ? 30 : 25}
+            position={[isNotMobile ? 42 : 30, 1]}
+          />
+        </Container>
+      ),
+    },
   ];
 
   const ProfileBgBounds = PIXI.Assets.get("ProfileBg")?.orig;
@@ -357,8 +374,9 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
         changeScene("GAMEGUIDE");
         break;
 
-      // case "Sponsor Link":
-      //   break;
+      case "Change Password":
+        setChangePasswordPanel(true)
+        break;
       default:
         break;
     }

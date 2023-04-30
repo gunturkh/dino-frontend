@@ -95,6 +95,7 @@ export const AppTemp = () => {
   } = useEthers();
   const loginRechaptchaRef = useRef(null);
   const registerRechaptchaRef = useRef(null);
+  const forgotPasswordRechaptchaRef = useRef(null);
   const token = useAuthStore((state) => state.token);
   const saveToken = useAuthStore((state) => state.saveToken);
   const userData = useStore((state) => state.userData);
@@ -107,6 +108,8 @@ export const AppTemp = () => {
   const setApproved = useStore((state) => state.setApproved);
   const ticketPanel = useStore((state) => state.ticketPanel);
   const setTicketPanel = useStore((state) => state.setTicketPanel);
+  const changePasswordPanel = useStore((state) => state.changePasswordPanel);
+  const setChangePasswordPanel = useStore((state) => state.setChangePasswordPanel);
   // const sponsorLinkPanel = useStore((state) => state.sponsorLinkPanel);
   // const setSponsorLinkPanel = useStore((state) => state.setSponsorLinkPanel);
   const usdtInfo = useToken(USDT_ADDR);
@@ -132,10 +135,12 @@ export const AppTemp = () => {
     walletAddress,
     TICKET_ADDR
   );
+  const [isOldPasswordVisible, setIsOldPasswordVisible] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isRetypePasswordVisible, setIsRetypePasswordVisible] = useState(false);
   const [captcha, setCaptcha] = useState("");
   const [registerCaptcha, setRegisterCaptcha] = useState("");
+  const [forgotPasswordCaptcha, setForgotPasswordCaptcha] = useState("");
   const [ticketHistories, setTicketHistories] = useState([]);
   const [googleAuthVisible, setGoogleAuthVisible] = useState(false);
   const [googleAuthData, setGoogleAuthData] = useState<{
@@ -193,6 +198,9 @@ export const AppTemp = () => {
     },
   };
 
+  function toggleOldPasswordVisibility() {
+    setIsOldPasswordVisible((prevState) => !prevState);
+  }
   function togglePasswordVisibility() {
     setIsPasswordVisible((prevState) => !prevState);
   }
@@ -200,12 +208,16 @@ export const AppTemp = () => {
     setIsRetypePasswordVisible((prevState) => !prevState);
   }
   const verifiedCallback = (token: string) => {
-    console.log(token);
+    // console.log(token);
     setCaptcha(token);
   };
   const verifiedRegisterCallback = (token: string) => {
-    console.log(token);
+    // console.log(token);
     setRegisterCaptcha(token);
+  };
+  const verifiedForgotPasswordCallback = (token: string) => {
+    // console.log(token);
+    setForgotPasswordCaptcha(token);
   };
 
   const getUserData = async () => {
@@ -254,7 +266,7 @@ export const AppTemp = () => {
 
   const changeScene = useStore((state) => state.changeScene);
   const [authMode, setAuthMode] = useState<
-    "LOGIN" | "REGISTER" | "OTPEMAIL" | "OTPMOBILE" | "LOGINWALLET"
+    "LOGIN" | "REGISTER" | "OTPEMAIL" | "OTPMOBILE" | "LOGINWALLET" | "FORGOTPASSWORD"
   >("LOGIN");
   const [otp, setOtp] = useState("");
   // const [activateError, setActivateError] = useState('')
@@ -499,6 +511,12 @@ export const AppTemp = () => {
     countryCode?: string;
   };
 
+  type ChangePasswordFormValidate = {
+    oldPassword?: string;
+    password?: string;
+    retypePassword?: string;
+  };
+
   const loginFormValidate = (values: LoginFormValidate) => {
     console.log("validate values", values);
     const errors: LoginFormValidate = {};
@@ -601,6 +619,49 @@ export const AppTemp = () => {
     return errors;
   };
 
+  const forgotPasswordFormValidate = (values: {
+    username?: string;
+  }) => {
+    console.log("validate forgot password", values);
+    const errors: { username?: string } = {};
+    if (!values.username) {
+      errors.username = "Required";
+    }
+    console.log("errors", errors);
+    return errors;
+  };
+
+  const changePasswordFormValidate = (values: ChangePasswordFormValidate) => {
+    console.log("changePasswordFormValidate validate values", values);
+    const errors: ChangePasswordFormValidate = {};
+    if (!values.oldPassword) {
+      errors.oldPassword = "Required";
+    }
+    if (!values.password) {
+      errors.password = "Required";
+    } else if (
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,20}$/i.test(values.password)
+    ) {
+      errors.password =
+        "Password must contain 1 uppercase, 1 lowercase, 1 number, min 8 chars & max 20 chars, no symbol";
+    }
+    if (!values.retypePassword) {
+      errors.retypePassword = "Required";
+    } else if (
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,20}$/i.test(
+        values.retypePassword
+      )
+    ) {
+      errors.retypePassword =
+        "Password must contain 1 uppercase, 1 lowercase, 1 number, min 8 chars & max 20 chars, no symbol";
+    }
+    if (values.password !== values.retypePassword) {
+      errors.retypePassword = "Password is not the same";
+    }
+    console.log("errors", errors);
+    return errors;
+  };
+
   const loginWalletForm = useFormik({
     initialValues: {
       walletAddress: "",
@@ -672,6 +733,92 @@ export const AppTemp = () => {
       };
 
       validate2FA();
+    },
+  });
+  const forgotPasswordForm = useFormik({
+    initialValues: {
+      username: "",
+    },
+    validate: forgotPasswordFormValidate,
+    onSubmit: (values, { setSubmitting }) => {
+      setSubmitting(false);
+      let options = {
+        headers: {
+          "my-auth-key": token,
+        },
+      };
+      const forgotPassword = async () => {
+        const result = await axiosInstance({
+          url: "/user/forgotpassword",
+          method: "POST",
+          headers: options.headers,
+          data: { username: values.username, captcha: forgotPasswordCaptcha },
+        });
+        const { data } = result;
+        const { result: forgotPasswordResult } = data
+        console.log("forgotPassword data:", forgotPasswordResult);
+        if (data.success) {
+          toast(`${forgotPasswordResult}`);
+          setForgotPasswordCaptcha("");
+          if (forgotPasswordRechaptchaRef?.current) {
+            // console.log('forgotPasswordRechaptchaRef?.current', forgotPasswordRechaptchaRef?.current)
+            // @ts-ignore
+            forgotPasswordRechaptchaRef?.current?.reset();
+          }
+        }
+        if (!data.success) {
+          toast(`${forgotPasswordResult}`);
+          setForgotPasswordCaptcha("");
+          if (forgotPasswordRechaptchaRef?.current) {
+            // console.log('forgotPasswordRechaptchaRef?.current', forgotPasswordRechaptchaRef?.current)
+            // @ts-ignore
+            forgotPasswordRechaptchaRef?.current?.reset();
+          }
+        }
+      };
+
+      forgotPassword();
+    },
+  });
+
+  const changePasswordForm = useFormik({
+    initialValues: {
+      oldPassword: "",
+      password: "",
+      retypePassword: "",
+    },
+    validate: changePasswordFormValidate,
+    onSubmit: (values, { setSubmitting }) => {
+      // alert(JSON.stringify(values, null, 2));
+      // otpHandler(values.email);
+      setSubmitting(false);
+      let options = {
+        headers: {
+          "my-auth-key": token,
+        },
+      };
+      const changePassword = async () => {
+        const result = await axiosInstance({
+          url: "/user/changepassword",
+          method: "POST",
+          headers: options.headers,
+          data: { old: values.oldPassword, password: values.password },
+        });
+        const { data } = result;
+        const { message } = data
+        console.log("changePassword data:", data);
+        if (data.success) {
+          toast(`Password changed successfully`);
+          changePasswordForm.resetForm()
+          setChangePasswordPanel(false)
+        }
+        if (!data.success) {
+          toast(`${message}`);
+        }
+      };
+
+      changePassword()
+
     },
   });
 
@@ -1264,9 +1411,7 @@ export const AppTemp = () => {
                       <div className="flex justify-end w-full">
                         <button
                           type="button"
-                          onClick={() =>
-                            window.alert(`forgot password clicked`)
-                          }
+                          onClick={() => setAuthMode("FORGOTPASSWORD")}
                           className="px-1.5 py-0.5 text-sm font-bold text-white shadow-sm hover:text-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 font-Magra"
                         >
                           Forgot password
@@ -1610,6 +1755,45 @@ export const AppTemp = () => {
                     src={"image/BtnSubmit.png"}
                     onClick={loginWalletForm.submitForm}
                     className={`${loginWalletForm.values.walletAddress.length === 0 ? "opacity-50" : ""
+                      } mt-12 px-3.5 py-2.5 text-sm`}
+                  />
+                </>
+              )}
+              {authMode === "FORGOTPASSWORD" && (
+                <>
+                  <form onSubmit={forgotPasswordForm.handleSubmit}>
+                    <div>
+                      <input
+                        name="username"
+                        type="text"
+                        placeholder="Enter username"
+                        className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                        style={{
+                          background: `url(image/InputBox.png) no-repeat `,
+                        }}
+                        onChange={forgotPasswordForm.handleChange}
+                        onBlur={forgotPasswordForm.handleBlur}
+                        value={forgotPasswordForm.values.username}
+                      />
+                      <p className="text-red-500 font-bold font-magra">
+                        {forgotPasswordForm.errors.username &&
+                          forgotPasswordForm.touched.username &&
+                          forgotPasswordForm.errors.username}
+                      </p>
+                    </div>
+                  </form>
+                  <ReCAPTCHA
+                    ref={forgotPasswordRechaptchaRef}
+                    sitekey={CAPTCHA_KEY}
+                    onChange={(e: any) => verifiedForgotPasswordCallback(e as string)}
+                  />
+                  <input
+                    alt="Forgot Password Submit"
+                    type={"image"}
+                    src={"image/BtnSubmit.png"}
+                    onClick={forgotPasswordForm.submitForm}
+                    disabled={forgotPasswordCaptcha?.length === 0}
+                    className={`${forgotPasswordCaptcha?.length === 0 ? "opacity-50" : ""
                       } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
@@ -2137,6 +2321,227 @@ export const AppTemp = () => {
           </div>
         </div>
       )} */}
+      {changePasswordPanel && scene === "PROFILE" && (
+        <div className="absolute h-[80vh] flex">
+          <div className=" my-5 flex backdrop-blur-sm  justify-center items-center flex-col bg-white/10 px-3.5 py-2.5 shadow-sm rounded-sm ">
+            <div className="flex w-full justify-end">
+              <img
+                src="image/logoutBtn.png"
+                width={30}
+                height={30}
+                alt="Close Change Password Panel"
+                onClick={() => setChangePasswordPanel(false)}
+              />
+            </div>
+            <div
+              className="flex justify-start items-center flex-col gap-4 bg-white/50 px-3.5 py-6 shadow-sm rounded-xl "
+              style={{
+                background: `url(image/formBackground.png) no-repeat `,
+                backgroundSize: "cover",
+                overflow: "auto",
+              }}
+            >
+
+              <>
+                <form onSubmit={changePasswordForm.handleSubmit}>
+                  <div className="flex flex-col">
+                    <div className="relative flex flex-row items-center justify-between">
+                      <input
+                        name="oldPassword"
+                        type={isOldPasswordVisible ? "text" : "password"}
+                        placeholder="Old Password"
+                        className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                        style={{
+                          background: `url(image/InputBox.png) no-repeat `,
+                        }}
+                        onChange={changePasswordForm.handleChange}
+                        onBlur={changePasswordForm.handleBlur}
+                        value={changePasswordForm.values.oldPassword}
+                      />
+                      <button
+                        type="button"
+                        className="absolute flex top-[42%] right-1 items-center px-4 text-gray-600"
+                        onClick={toggleOldPasswordVisibility}
+                      >
+                        {isOldPasswordVisible ? (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-5 h-5"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
+                            />
+                          </svg>
+                        ) : (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-5 h-5"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                    <p className="text-red-500 font-bold font-magra max-w-[350px]">
+                      {changePasswordForm.errors.oldPassword &&
+                        changePasswordForm.touched.oldPassword &&
+                        changePasswordForm.errors.oldPassword}
+                    </p>
+                    <div className="relative flex flex-row items-center justify-between">
+                      <input
+                        name="password"
+                        type={isPasswordVisible ? "text" : "password"}
+                        placeholder="New Password"
+                        className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                        style={{
+                          background: `url(image/InputBox.png) no-repeat `,
+                        }}
+                        onChange={changePasswordForm.handleChange}
+                        onBlur={changePasswordForm.handleBlur}
+                        value={changePasswordForm.values.password}
+                      />
+                      <button
+                        type="button"
+                        className="absolute flex top-[42%] right-1 items-center px-4 text-gray-600"
+                        onClick={togglePasswordVisibility}
+                      >
+                        {isPasswordVisible ? (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-5 h-5"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
+                            />
+                          </svg>
+                        ) : (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-5 h-5"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                    <p className="text-red-500 font-bold font-magra max-w-[350px]">
+                      {changePasswordForm.errors.password &&
+                        changePasswordForm.touched.password &&
+                        changePasswordForm.errors.password}
+                    </p>
+
+                    <div className="relative flex flex-row items-center justify-between">
+                      <input
+                        name="retypePassword"
+                        type={isRetypePasswordVisible ? "text" : "password"}
+                        placeholder="Re-enter your password"
+                        className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                        style={{
+                          background: `url(image/InputBox.png) no-repeat `,
+                        }}
+                        onChange={changePasswordForm.handleChange}
+                        onBlur={changePasswordForm.handleBlur}
+                        value={changePasswordForm.values.retypePassword}
+                      />
+                      <button
+                        type="button"
+                        className="absolute flex top-[42%] right-1 items-center px-4 text-gray-600"
+                        onClick={toggleRetypePasswordVisibility}
+                      >
+                        {isRetypePasswordVisible ? (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-5 h-5"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
+                            />
+                          </svg>
+                        ) : (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-5 h-5"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                    <div className="my-2">
+                      <p className="text-red-500 font-bold font-magra max-w-[350px]">
+                        {changePasswordForm.errors.retypePassword &&
+                          changePasswordForm.touched.retypePassword &&
+                          changePasswordForm.errors.retypePassword}
+                      </p>
+                    </div>
+                  </div>
+                </form>
+                <button
+                  onClick={changePasswordForm.submitForm}
+                  className={`bg-green-500 text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                >Change Password</button>
+              </>
+            </div>
+          </div>
+        </div>
+      )}
       {scene === "GAMEGUIDE" && (
         <div className="absolute w-full h-full flex justify-center items-center">
           <img
