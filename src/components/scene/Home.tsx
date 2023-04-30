@@ -10,6 +10,7 @@ import { useAuthStore, useStore } from "../../utils/store";
 import { axiosInstance } from "../../utils/api";
 import { ethers } from "ethers";
 import { manifest } from "../../assets";
+import FlyingAnimations from "../FlyingAnimations";
 // import { TICKET_ADDR } from "../../utils/config";
 
 type Props = {
@@ -508,9 +509,9 @@ const Home = ({ onProfileClick, scene }: Props) => {
       </Container>
     );
   };
+
   return (
     <>
-      {/* {isLoaded && */}
       {true && (
         <Container height={app.screen.height}>
           <Sprite
@@ -522,8 +523,10 @@ const Home = ({ onProfileClick, scene }: Props) => {
             anchor={[0.5, 0.5]}
             position={[app.screen.width / 2, app.screen.height / 2]}
           />
+          <FlyingAnimations />
           <Container ref={homecontainerRef}>
             {/* Upper  Container */}
+
             <Container
               ref={upperContainerRef}
               // x={0}
