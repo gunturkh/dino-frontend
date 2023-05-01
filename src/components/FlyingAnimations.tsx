@@ -28,7 +28,7 @@ function FlyingAnimations() {
     ) {
       const ticker = new PIXI.Ticker();
       let direction = 1; // 1 for right, -1 for left
-      const waitDuration = 2000;
+      const waitDuration = 8000;
 
       memoizedDinoAssets.spineData.animations.forEach((animation: any) => {
         const flyingDino = new Spine(memoizedDinoAssets.spineData);
@@ -49,8 +49,6 @@ function FlyingAnimations() {
 
         // Move sprite
         sprite.x += direction * ((screenWidth / duration) * deltaTime);
-        // sprite.x += direction * 1;
-        // reset flip to default
 
         // Check if sprite has reached screen edge
         if (
@@ -94,7 +92,10 @@ function FlyingAnimations() {
     }
     if (containerRef.current && memoizedDinoAssets)
       // reduce the duration to increase the speed
-      loadSpineAnimation(containerRef.current, app.screen.width, 250);
+      // delay for a 8 seconds
+      setTimeout(() => {
+        loadSpineAnimation(containerRef.current, app.screen.width, 250);
+      }, 8000);
   }, [
     app.screen.height,
     app.screen.width,
