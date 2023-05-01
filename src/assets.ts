@@ -821,6 +821,10 @@ export const manifest: ResolverManifest = {
           name: "RarityBtnFilter",
           srcs: "image/rarityBtnFilterBg.png",
         },
+        {
+          name: "FlyingDino",
+          srcs: BASE_URL + "/animations/flying-dino/skeleton.json",
+        },
       ],
     },
     {
