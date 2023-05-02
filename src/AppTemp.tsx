@@ -110,7 +110,9 @@ export const AppTemp = () => {
   const ticketPanel = useStore((state) => state.ticketPanel);
   const setTicketPanel = useStore((state) => state.setTicketPanel);
   const changePasswordPanel = useStore((state) => state.changePasswordPanel);
-  const setChangePasswordPanel = useStore((state) => state.setChangePasswordPanel);
+  const setChangePasswordPanel = useStore(
+    (state) => state.setChangePasswordPanel
+  );
   // const sponsorLinkPanel = useStore((state) => state.sponsorLinkPanel);
   // const setSponsorLinkPanel = useStore((state) => state.setSponsorLinkPanel);
   const usdtInfo = useToken(USDT_ADDR);
@@ -267,7 +269,12 @@ export const AppTemp = () => {
 
   const changeScene = useStore((state) => state.changeScene);
   const [authMode, setAuthMode] = useState<
-    "LOGIN" | "REGISTER" | "OTPEMAIL" | "OTPMOBILE" | "LOGINWALLET" | "FORGOTPASSWORD"
+    | "LOGIN"
+    | "REGISTER"
+    | "OTPEMAIL"
+    | "OTPMOBILE"
+    | "LOGINWALLET"
+    | "FORGOTPASSWORD"
   >("LOGIN");
   const [otp, setOtp] = useState("");
   // const [activateError, setActivateError] = useState('')
@@ -620,9 +627,7 @@ export const AppTemp = () => {
     return errors;
   };
 
-  const forgotPasswordFormValidate = (values: {
-    username?: string;
-  }) => {
+  const forgotPasswordFormValidate = (values: { username?: string }) => {
     console.log("validate forgot password", values);
     const errors: { username?: string } = {};
     if (!values.username) {
@@ -756,7 +761,7 @@ export const AppTemp = () => {
           data: { username: values.username, captcha: forgotPasswordCaptcha },
         });
         const { data } = result;
-        const { result: forgotPasswordResult } = data
+        const { result: forgotPasswordResult } = data;
         console.log("forgotPassword data:", forgotPasswordResult);
         if (data.success) {
           toast(`${forgotPasswordResult}`);
@@ -806,20 +811,19 @@ export const AppTemp = () => {
           data: { old: values.oldPassword, password: values.password },
         });
         const { data } = result;
-        const { message } = data
+        const { message } = data;
         console.log("changePassword data:", data);
         if (data.success) {
           toast(`Password changed successfully`);
-          changePasswordForm.resetForm()
-          setChangePasswordPanel(false)
+          changePasswordForm.resetForm();
+          setChangePasswordPanel(false);
         }
         if (!data.success) {
           toast(`${message}`);
         }
       };
 
-      changePassword()
-
+      changePassword();
     },
   });
 
@@ -1793,7 +1797,9 @@ export const AppTemp = () => {
                   <ReCAPTCHA
                     ref={forgotPasswordRechaptchaRef}
                     sitekey={CAPTCHA_KEY}
-                    onChange={(e: any) => verifiedForgotPasswordCallback(e as string)}
+                    onChange={(e: any) =>
+                      verifiedForgotPasswordCallback(e as string)
+                    }
                   />
                   <input
                     alt="Forgot Password Submit"
@@ -1801,8 +1807,9 @@ export const AppTemp = () => {
                     src={"image/BtnSubmit.png"}
                     onClick={forgotPasswordForm.submitForm}
                     disabled={forgotPasswordCaptcha?.length === 0}
-                    className={`${forgotPasswordCaptcha?.length === 0 ? "opacity-50" : ""
-                      } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${
+                      forgotPasswordCaptcha?.length === 0 ? "opacity-50" : ""
+                    } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -2356,7 +2363,6 @@ export const AppTemp = () => {
                 overflow: "auto",
               }}
             >
-
               <>
                 <form onSubmit={changePasswordForm.handleSubmit}>
                   <div className="flex flex-col">
@@ -2551,7 +2557,9 @@ export const AppTemp = () => {
                 <button
                   onClick={changePasswordForm.submitForm}
                   className={`bg-green-500 text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
-                >Change Password</button>
+                >
+                  Change Password
+                </button>
               </>
             </div>
           </div>
@@ -2794,6 +2802,136 @@ export const AppTemp = () => {
             <div className="flex flex-col h-full w-full px-4 pt-6 pb-6 bg-gray-700/20 backdrop-blur-sm overflow-y-visible overflow-auto">
               <div className="bg-transparent">
                 <DownlineCallback />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {scene === "DINOCENTER" && (
+        <div className="absolute w-full h-full flex justify-center items-center">
+          <div className="flex z-20 h-[95vh] w-[450px] max-[450px]:w-[calc(100vw)] max-w-[450px] justify-center items-center flex-col sm:px-4 shadow-sm rounded-sm ">
+            <div className="flex flex-row w-full justify-between my-4">
+              <img
+                src="image/backBtn.png"
+                width={40}
+                height={40}
+                alt="Back"
+                onClick={() => changeScene("HOME")}
+              />
+              <div className="flex flex-col items-center justify-center text-[1.5rem] text-white font-bold font-magra ">
+                Jurrasic Market
+              </div>
+              <img
+                src="image/logoutBtn.png"
+                width={40}
+                height={40}
+                alt="Back"
+                // onClick={() => changeScene("HOME")}
+              />
+            </div>
+            <div className="flex flex-col h-full w-full px-4 pt-6 pb-6 bg-white/20 backdrop-blur-sm overflow-y-visible overflow-auto">
+              {/* Hunter Details */}
+              <div className="absolute left-0 w-full">
+                <>
+                  <img
+                    src="image/pnlJurassicMarketBackground.png"
+                    className="w-full object-cover"
+                    alt="pnlJurassicMarketBackground"
+                  />
+                  <div className="absolute top-4 w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
+                    <div className="flex flex-row justify-center font-bold font-Magra text-white text-lg">
+                      Hunter's Rank
+                    </div>
+                  </div>
+                  <div className="absolute top-8 w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
+                    <div className="flex flex-row justify-between px-1 font-bold font-Magra text-white text-base">
+                      <span>Requalification</span>
+                      <span>Current Rank</span>
+                    </div>
+                  </div>
+                  {/* progress bar with image */}
+                  {/* TODO: need to update styling to accept dynamic progress bar fill */}
+                  <div className="absolute inline-block top-12 w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
+                    <div className="flex flex-col items-center justify-center font-bold font-Magra text-white text-lg">
+                      <img
+                        src="image/RankExpBarBg.png"
+                        className="object-cover z-10"
+                        alt="RankExpBarBg"
+                      />
+                      {/* progress fill */}
+                      <div className="absolute top-0 w-auto z-0">
+                        <img
+                          src="image/imgRankExpBarFill.png"
+                          className=" object-covef"
+                          alt="imgRankExpBarFill"
+                        />
+                      </div>
+                      <div className="absolute top-[-5px] text-[0.8rem]">
+                        0/2500
+                      </div>
+                    </div>
+                  </div>
+                  <div className="absolute top-12 w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
+                    <div className="flex flex-row justify-between px-1 font-bold font-Magra text-white">
+                      <span>0</span>
+                      <span>Dominator</span>
+                    </div>
+                  </div>
+                  <div className="absolute top-[4.4rem] w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
+                    <div className="flex flex-row justify-between px-20 font-bold font-Magra text-white">
+                      <span className="text-red-500">Dominator</span>
+                      <span>Legendary</span>
+                    </div>
+                  </div>
+                </>
+              </div>
+
+              {/* DinoCenter Pages & filters */}
+              <div className="absolute left-0 top-[8.5rem] w-full">
+                <div className="flex flex-row w-full justify-between">
+                  {/* Pages */}
+                  <div className="flex w-full justify-start text-white font-Magra font-bold text-base">
+                    <div className="px-4 text-[#FFC700]">Listings</div>
+                    <div>/</div>
+                    <div className="px-4">My Listings</div>
+                  </div>
+                  {/* Filters */}
+                  <div className="flex w-full text-white font-Magra font-bold text-base">
+                    <div className="flex w-full items-end justify-end">
+                      <div className="flex flex-row items-center px-2">
+                        <span>Price</span>
+                        <img
+                          src="image/btnFilterIcon.png"
+                          width={5}
+                          className="w-5 h-2.5 mx-1 rotate-180"
+                          alt="priceFilterIcon"
+                        />
+                      </div>
+                      <div className="flex flex-row items-center px-4">
+                        <span>Time</span>
+                        <img
+                          src="image/btnFilterIcon.png"
+                          width={5}
+                          className="w-5 h-2.5 mx-1"
+                          alt="priceFilterIcon"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Market */}
+              <div className="absolute left-0 top-[11rem] w-full h-[55vh] bg-blue-gray-300">
+                {true ? (
+                  <div className="flex w-full h-full justify-center items-center font-Magra font-bold text-white">
+                    Coming Soon
+                  </div>
+                ) : (
+                  <div className="flex w-full h-full justify-center items-center font-Magra font-bold text-white">
+                    Put Market Here
+                  </div>
+                )}
               </div>
             </div>
           </div>
