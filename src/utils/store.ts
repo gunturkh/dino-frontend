@@ -46,6 +46,11 @@ export type SponsorLinkPanelData = {
   link: string;
 };
 
+export type GoogleAuthPanelData = {
+  show: boolean;
+  mode: 'SET' | 'REMOVE';
+};
+
 type Store = {
   scene: Screen;
   changeScene: (screen: Screen) => void;
@@ -67,6 +72,8 @@ type Store = {
   setSponsorLinkPanel: (data: SponsorLinkPanelData) => void;
   changePasswordPanel: boolean,
   setChangePasswordPanel: (data: boolean) => void
+  googleAuthPanel: GoogleAuthPanelData,
+  setGoogleAuthPanel: (data: GoogleAuthPanelData) => void
 };
 type AuthStore = {
   token: string | null;
@@ -131,6 +138,9 @@ export const useStore = create<Store>((set, get) => ({
   changePasswordPanel: false,
   setChangePasswordPanel: (data) =>
     set(() => ({ changePasswordPanel: data })),
+  googleAuthPanel: { show: false, mode: 'SET' },
+  setGoogleAuthPanel: (data) =>
+    set(() => ({ googleAuthPanel: data })),
 }));
 
 export const useAuthStore = create(

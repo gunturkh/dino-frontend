@@ -4,6 +4,7 @@ import * as PIXI from "pixi.js";
 import { Container, Sprite, Text, useApp, useTick } from "@pixi/react";
 import { useAuthStore, useStore } from "../../utils/store";
 import { toast } from "react-toastify";
+import { axiosInstance } from "../../utils/api";
 
 type Props = {
   onBackBtnClick: () => void;
@@ -18,10 +19,12 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
   // @ts-ignore
   globalThis.__PIXI_APP__ = app;
 
+  const token = useAuthStore((state) => state.token);
   const logout = useAuthStore((state) => state.logout);
   const changeScene = useStore((state) => state.changeScene);
   const userData = useStore((state) => state.userData);
   const setChangePasswordPanel = useStore((state) => state.setChangePasswordPanel);
+  const setGoogleAuthPanel = useStore((state) => state.setGoogleAuthPanel);
   const isNotMobile = app.screen.width > 450;
 
   const [isLoaded, setIsLoaded] = useState(false);
@@ -100,7 +103,7 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
         >
           <Text
             text={userData.username}
-            position={[-10, 0]}
+            position={[-(userData?.username.length * 3), 0]}
             anchor={[0.5, 0.5]}
             style={
               new PIXI.TextStyle({
@@ -129,15 +132,15 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
           anchor={[1, 0.5]}
         >
           <Text
-            text={"Amend"}
-            position={[0, 0]}
+            text={userData?.ga_key ? 'Remove' : 'Yet to Bind'}
+            position={[-12, 0]}
             anchor={[0.5, 0.5]}
             style={
               new PIXI.TextStyle({
                 fontFamily: "Magra Regular",
                 fontSize: isNotMobile ? 18 : 13,
                 fontWeight: "600",
-                fill: ["0x04BA00"],
+                fill: [userData?.ga_key ? "0x04BA00" : "0xFF0000"],
               })
             }
           />
@@ -341,7 +344,32 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
         break;
       case "Google Authenticator":
         console.log("Transactional Password");
+        if (userData?.ga_key) {
+          let options = {
+            headers: {
+              "my-auth-key": token,
+            },
+          };
+          const getOtpRemove2FA = async () => {
+            const result = await axiosInstance({
+              url: "/otp/getOtpRemove2FA",
+              method: "GET",
+              headers: options.headers,
+            });
 
+            console.log("get otp remove 2FA Result:", result);
+            if (result && result.data && result.data.result) {
+              toast(result.data.result);
+              // setGoogleAuthPanel({ show: false, mode: 'SET' });
+            } else {
+              toast(result.data.message);
+            }
+          };
+
+          getOtpRemove2FA()
+          setGoogleAuthPanel({ show: true, mode: 'REMOVE' })
+        }
+        else setGoogleAuthPanel({ show: true, mode: 'SET' })
         break;
       case "Withdraw Verification":
         console.log("Withdrawal Verification");
