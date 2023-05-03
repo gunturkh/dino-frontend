@@ -2964,12 +2964,12 @@ export const AppTemp = () => {
                     alt="pnlJurassicMarketBackground"
                   />
                   <div className="absolute top-4 w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
-                    <div className="flex flex-row justify-center font-bold font-Magra text-white text-lg">
+                    <div className="flex flex-row justify-center font-bold font-Magra text-white text-lg [@media(max-width:400px)]:text-base">
                       Hunter's Rank
                     </div>
                   </div>
                   <div className="absolute top-8 w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
-                    <div className="flex flex-row justify-between px-1 font-bold font-Magra text-white text-base">
+                    <div className="flex flex-row justify-between px-1 font-bold font-Magra text-white text-base [@media(max-width:400px)]:text-sm">
                       <span>Requalification</span>
                       <span>Current Rank</span>
                     </div>
@@ -2997,7 +2997,7 @@ export const AppTemp = () => {
                     </div>
                   </div>
                   <div className="absolute top-12 w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
-                    <div className="flex flex-row justify-between px-1 font-bold font-Magra text-white">
+                    <div className="flex flex-row justify-between px-1 font-bold font-Magra text-white [@media(max-width:400px)]:text-sm">
                       <span>0</span>
                       <span>Dominator</span>
                     </div>
@@ -3015,13 +3015,13 @@ export const AppTemp = () => {
               <div className="absolute left-0 top-[6rem] w-full">
                 <div className="flex flex-row w-full justify-between">
                   {/* Pages */}
-                  <div className="flex w-full justify-start text-white font-Magra font-bold text-base">
+                  <div className="flex w-full justify-start text-white font-Magra font-bold text-base [@media(max-width:400px)]:text-sm">
                     <div className="px-4 text-[#FFC700]">Listings</div>
                     <div>/</div>
                     <div className="px-2">My Listings</div>
                   </div>
                   {/* Filters */}
-                  <div className="flex w-full text-white font-Magra font-bold text-base">
+                  <div className="flex w-full text-white font-Magra font-bold text-base [@media(max-width:400px)]:text-sm">
                     <div className="flex w-full items-end justify-end">
                       <div className="flex flex-row items-center px-2">
                         <span>Price</span>
