@@ -2807,7 +2807,7 @@ export const AppTemp = () => {
           </div>
         </div>
       )}
-      {scene === "DINOCENTER" && (
+      {false && scene === "DINOCENTER" && (
         <div className="absolute w-full h-full flex justify-center items-center">
           <div className="flex z-20 h-[95vh] w-[450px] max-[450px]:w-[calc(100vw)] max-w-[450px] justify-center items-center flex-col sm:px-4 shadow-sm rounded-sm ">
             <div className="flex flex-row w-full justify-between my-4">
