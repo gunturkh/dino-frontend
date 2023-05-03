@@ -115,7 +115,7 @@ export const AppTemp = () => {
   );
   const googleAuthPanel = useStore((state) => state.googleAuthPanel);
   const setGoogleAuthPanel = useStore((state) => state.setGoogleAuthPanel);
-  console.log('googleAuthPanel', googleAuthPanel)
+  console.log("googleAuthPanel", googleAuthPanel);
   const usdtInfo = useToken(USDT_ADDR);
   const usdtBalance = useTokenBalance(USDT_ADDR, account);
   const tokenBalance = useTokenBalance(
@@ -723,7 +723,7 @@ export const AppTemp = () => {
           "my-auth-key": token,
         },
       };
-      if (googleAuthPanel.mode === 'SET') {
+      if (googleAuthPanel.mode === "SET") {
         const validate2FA = async () => {
           const result = await axiosInstance({
             url: "/auth/confirm2FA",
@@ -734,17 +734,15 @@ export const AppTemp = () => {
           console.log("validate2FA Result:", result);
           if (result && result.data && result.data.result) {
             toast("2FA Confirmed");
-            getUserData()
-            setGoogleAuthPanel({ show: false, mode: 'SET' });
+            getUserData();
+            setGoogleAuthPanel({ show: false, mode: "SET" });
           } else {
             toast(result.data.message);
           }
         };
 
         validate2FA();
-      }
-      else if (googleAuthPanel.mode === 'REMOVE') {
-
+      } else if (googleAuthPanel.mode === "REMOVE") {
         const remove2FA = async () => {
           const result = await axiosInstance({
             url: "/auth/remove2FA",
@@ -755,8 +753,8 @@ export const AppTemp = () => {
           console.log("remove 2FA Result:", result);
           if (result && result.data && result.data.result) {
             toast("2FA Removed");
-            getUserData()
-            setGoogleAuthPanel({ show: false, mode: 'SET' });
+            getUserData();
+            setGoogleAuthPanel({ show: false, mode: "SET" });
           } else {
             toast(result.data.message);
           }
@@ -1056,8 +1054,9 @@ export const AppTemp = () => {
     return (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className={`${id === open ? "rotate-180" : ""
-          } h-5 w-5 transition-transform`}
+        className={`${
+          id === open ? "rotate-180" : ""
+        } h-5 w-5 transition-transform`}
         fill="none"
         viewBox="0 0 24 24"
         stroke="white"
@@ -1459,8 +1458,9 @@ export const AppTemp = () => {
                     type={"image"}
                     src={"image/BtnConfirm.png"}
                     onClick={loginForm.submitForm}
-                    className={`${captcha?.length === 0 ? "opacity-50" : ""
-                      } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${
+                      captcha?.length === 0 ? "opacity-50" : ""
+                    } mt-12 px-3.5 py-2.5 text-sm`}
                     disabled={captcha?.length === 0}
                   />
                 </>
@@ -1668,8 +1668,9 @@ export const AppTemp = () => {
                     src={"image/BtnConfirmRegister.png"}
                     disabled={!registerCheckbox}
                     onClick={registerForm.submitForm}
-                    className={`${!registerCheckbox ? "opacity-50" : ""
-                      } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${
+                      !registerCheckbox ? "opacity-50" : ""
+                    } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -1748,8 +1749,9 @@ export const AppTemp = () => {
                     src={"image/BtnSubmit.png"}
                     onClick={registerHandler}
                     disabled={registerCaptcha?.length === 0}
-                    className={`${registerCaptcha?.length === 0 ? "opacity-50" : ""
-                      } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${
+                      registerCaptcha?.length === 0 ? "opacity-50" : ""
+                    } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -1784,10 +1786,11 @@ export const AppTemp = () => {
                     type={"image"}
                     src={"image/BtnSubmit.png"}
                     onClick={loginWalletForm.submitForm}
-                    className={`${loginWalletForm.values.walletAddress.length === 0
-                      ? "opacity-50"
-                      : ""
-                      } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${
+                      loginWalletForm.values.walletAddress.length === 0
+                        ? "opacity-50"
+                        : ""
+                    } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -1827,8 +1830,9 @@ export const AppTemp = () => {
                     src={"image/BtnSubmit.png"}
                     onClick={forgotPasswordForm.submitForm}
                     disabled={forgotPasswordCaptcha?.length === 0}
-                    className={`${forgotPasswordCaptcha?.length === 0 ? "opacity-50" : ""
-                      } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${
+                      forgotPasswordCaptcha?.length === 0 ? "opacity-50" : ""
+                    } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -1836,149 +1840,157 @@ export const AppTemp = () => {
           </div>
         </div>
       )}
-      {googleAuthPanel.show && googleAuthPanel.mode === 'SET' && scene === "PROFILE" && (
-        <div className="absolute h-full flex">
-          <div className=" my-5 flex backdrop-blur-sm  justify-center items-center flex-col bg-white/10 px-3.5 py-2.5 shadow-sm rounded-sm ">
-            <div
-              className="flex justify-start items-center flex-col gap-4 bg-white/50 px-3.5 py-6 shadow-sm rounded-xl "
-              style={{
-                background: `url(image/formBackground.png) no-repeat `,
-                backgroundSize: "cover",
-              }}
-            >
-              <>
-                <div className="flex w-full justify-end">
+      {googleAuthPanel.show &&
+        googleAuthPanel.mode === "SET" &&
+        scene === "PROFILE" && (
+          <div className="absolute h-full flex">
+            <div className=" my-5 flex backdrop-blur-sm  justify-center items-center flex-col bg-white/10 px-3.5 py-2.5 shadow-sm rounded-sm ">
+              <div
+                className="flex justify-start items-center flex-col gap-4 bg-white/50 px-3.5 py-6 shadow-sm rounded-xl "
+                style={{
+                  background: `url(image/formBackground.png) no-repeat `,
+                  backgroundSize: "cover",
+                }}
+              >
+                <>
+                  <div className="flex w-full justify-end">
+                    <img
+                      src="image/logoutBtn.png"
+                      width={30}
+                      height={30}
+                      alt="Close 2FA"
+                      onClick={() =>
+                        setGoogleAuthPanel({ show: false, mode: "SET" })
+                      }
+                    />
+                  </div>
                   <img
-                    src="image/logoutBtn.png"
-                    width={30}
-                    height={30}
-                    alt="Close 2FA"
-                    onClick={() => setGoogleAuthPanel({ show: false, mode: 'SET' })}
+                    src={googleAuthData?.qr}
+                    width={177}
+                    height={177}
+                    alt="2FA QR"
                   />
-                </div>
-                <img
-                  src={googleAuthData?.qr}
-                  width={177}
-                  height={177}
-                  alt="2FA QR"
-                />
-                <div className="flex flex-row items-center justify-around" onClick={() => {
-                  if (navigator && navigator.clipboard) {
-                    var textarea = document.createElement("textarea");
-                    textarea.textContent = `${googleAuthData?.secret}`;
-                    textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
-                    document.body.appendChild(textarea);
-                    textarea.select();
-                    try {
-                      console.log(`2FA secret: ${googleAuthData?.secret}`)
-                      return document.execCommand("copy");
-                    } catch (ex) {
-                      toast("Copy 2FA secret to clipboard failed.");
-                      return false
-                    } finally {
-                      document.body.removeChild(textarea);
-                      toast("2FA Secret Copied!");
-                    }
-                  }
-                }
-                }>
-                  <p className="font-Magra text-white cursor-pointer" >
-                    Secret : {googleAuthData?.secret}
-                  </p>
+                  <div
+                    className="flex flex-row items-center justify-around"
+                    onClick={() => {
+                      if (navigator && navigator.clipboard) {
+                        var textarea = document.createElement("textarea");
+                        textarea.textContent = `${googleAuthData?.secret}`;
+                        textarea.style.position = "fixed"; // Prevent scrolling to bottom of page in MS Edge.
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        try {
+                          console.log(`2FA secret: ${googleAuthData?.secret}`);
+                          return document.execCommand("copy");
+                        } catch (ex) {
+                          toast("Copy 2FA secret to clipboard failed.");
+                          return false;
+                        } finally {
+                          document.body.removeChild(textarea);
+                          toast("2FA Secret Copied!");
+                        }
+                      }
+                    }}
+                  >
+                    <p className="font-Magra text-white cursor-pointer">
+                      Secret : {googleAuthData?.secret}
+                    </p>
 
-                  <img src="/image/copyIcon.png" alt="Copy Icon" />
-                </div>
-                <form onSubmit={googleAuthenticationForm.handleSubmit}>
-                  <div className="flex flex-col">
-                    <input
-                      name="validation"
-                      type="text"
-                      placeholder="Validation"
-                      className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                      style={{
-                        background: `url(image/InputBox.png) no-repeat `,
-                      }}
-                      onChange={googleAuthenticationForm.handleChange}
-                      onBlur={googleAuthenticationForm.handleBlur}
-                      value={googleAuthenticationForm.values.validation}
-                    />
-                    <p className="text-red-500 font-bold font-magra">
-                      {googleAuthenticationForm.errors.validation &&
-                        googleAuthenticationForm.touched.validation &&
-                        googleAuthenticationForm.errors.validation}
-                    </p>
+                    <img src="/image/copyIcon.png" alt="Copy Icon" />
                   </div>
-                </form>
-                <button
-                  type={"submit"}
-                  // src={"image/BtnConfirm.png"}
-                  onClick={googleAuthenticationForm.submitForm}
-                  className="bg-green-500 text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                >
-                  Validation
-                </button>
-              </>
+                  <form onSubmit={googleAuthenticationForm.handleSubmit}>
+                    <div className="flex flex-col">
+                      <input
+                        name="validation"
+                        type="text"
+                        placeholder="Validation"
+                        className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                        style={{
+                          background: `url(image/InputBox.png) no-repeat `,
+                        }}
+                        onChange={googleAuthenticationForm.handleChange}
+                        onBlur={googleAuthenticationForm.handleBlur}
+                        value={googleAuthenticationForm.values.validation}
+                      />
+                      <p className="text-red-500 font-bold font-magra">
+                        {googleAuthenticationForm.errors.validation &&
+                          googleAuthenticationForm.touched.validation &&
+                          googleAuthenticationForm.errors.validation}
+                      </p>
+                    </div>
+                  </form>
+                  <button
+                    type={"submit"}
+                    // src={"image/BtnConfirm.png"}
+                    onClick={googleAuthenticationForm.submitForm}
+                    className="bg-green-500 text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                  >
+                    Validation
+                  </button>
+                </>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-      {googleAuthPanel.show && googleAuthPanel.mode === 'REMOVE' && scene === "PROFILE" && (
-        <div className="absolute h-full flex">
-          <div className=" my-5 flex backdrop-blur-sm  justify-center items-center flex-col bg-white/10 px-3.5 py-2.5 shadow-sm rounded-sm ">
-            <div
-              className="flex justify-start items-center flex-col gap-4 bg-white/50 px-3.5 py-6 shadow-sm rounded-xl "
-              style={{
-                background: `url(image/formBackground.png) no-repeat `,
-                backgroundSize: "cover",
-              }}
-            >
-              <>
-                <div className="flex w-full justify-end">
-                  <img
-                    src="image/logoutBtn.png"
-                    width={30}
-                    height={30}
-                    alt="Close 2FA"
-                    onClick={() => setGoogleAuthPanel({ show: false, mode: 'SET' })}
-                  />
-                </div>
-                <p className="font-Magra text-white">
-                  Remove 2FA
-                </p>
-                <form onSubmit={googleAuthenticationForm.handleSubmit}>
-                  <div className="flex flex-col">
-                    <input
-                      name="validation"
-                      type="text"
-                      placeholder="Validation"
-                      className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                      style={{
-                        background: `url(image/InputBox.png) no-repeat `,
-                      }}
-                      onChange={googleAuthenticationForm.handleChange}
-                      onBlur={googleAuthenticationForm.handleBlur}
-                      value={googleAuthenticationForm.values.validation}
+        )}
+      {googleAuthPanel.show &&
+        googleAuthPanel.mode === "REMOVE" &&
+        scene === "PROFILE" && (
+          <div className="absolute h-full flex">
+            <div className=" my-5 flex backdrop-blur-sm  justify-center items-center flex-col bg-white/10 px-3.5 py-2.5 shadow-sm rounded-sm ">
+              <div
+                className="flex justify-start items-center flex-col gap-4 bg-white/50 px-3.5 py-6 shadow-sm rounded-xl "
+                style={{
+                  background: `url(image/formBackground.png) no-repeat `,
+                  backgroundSize: "cover",
+                }}
+              >
+                <>
+                  <div className="flex w-full justify-end">
+                    <img
+                      src="image/logoutBtn.png"
+                      width={30}
+                      height={30}
+                      alt="Close 2FA"
+                      onClick={() =>
+                        setGoogleAuthPanel({ show: false, mode: "SET" })
+                      }
                     />
-                    <p className="text-red-500 font-bold font-magra">
-                      {googleAuthenticationForm.errors.validation &&
-                        googleAuthenticationForm.touched.validation &&
-                        googleAuthenticationForm.errors.validation}
-                    </p>
                   </div>
-                </form>
-                <button
-                  type={"submit"}
-                  // src={"image/BtnConfirm.png"}
-                  onClick={googleAuthenticationForm.submitForm}
-                  className="bg-green-500 text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                >
-                  Validation
-                </button>
-              </>
+                  <p className="font-Magra text-white">Remove 2FA</p>
+                  <form onSubmit={googleAuthenticationForm.handleSubmit}>
+                    <div className="flex flex-col">
+                      <input
+                        name="validation"
+                        type="text"
+                        placeholder="Validation"
+                        className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                        style={{
+                          background: `url(image/InputBox.png) no-repeat `,
+                        }}
+                        onChange={googleAuthenticationForm.handleChange}
+                        onBlur={googleAuthenticationForm.handleBlur}
+                        value={googleAuthenticationForm.values.validation}
+                      />
+                      <p className="text-red-500 font-bold font-magra">
+                        {googleAuthenticationForm.errors.validation &&
+                          googleAuthenticationForm.touched.validation &&
+                          googleAuthenticationForm.errors.validation}
+                      </p>
+                    </div>
+                  </form>
+                  <button
+                    type={"submit"}
+                    // src={"image/BtnConfirm.png"}
+                    onClick={googleAuthenticationForm.submitForm}
+                    className="bg-green-500 text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                  >
+                    Validation
+                  </button>
+                </>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
       {ticketPanel.show && scene === "HOME" && (
         <div className="absolute h-[80vh] flex">
           <div className=" my-5 flex backdrop-blur-sm  justify-center items-center flex-col bg-white/10 px-3.5 py-2.5 shadow-sm rounded-sm ">
@@ -2005,8 +2017,9 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "BUY" })
                   }
-                  className={`${ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
-                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${
+                    ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
+                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   Buy
                 </button>
@@ -2016,10 +2029,11 @@ export const AppTemp = () => {
                     onClick={() =>
                       setTicketPanel({ ...ticketPanel, mode: "TRANSFER" })
                     }
-                    className={`${ticketPanel.mode === "TRANSFER"
-                      ? "text-blue-500"
-                      : "text-white"
-                      } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                    className={`${
+                      ticketPanel.mode === "TRANSFER"
+                        ? "text-blue-500"
+                        : "text-white"
+                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                   >
                     Transfer
                   </button>
@@ -2029,10 +2043,11 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
                   }
-                  className={`${ticketPanel.mode === "HISTORY"
-                    ? "text-blue-500"
-                    : "text-white"
-                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${
+                    ticketPanel.mode === "HISTORY"
+                      ? "text-blue-500"
+                      : "text-white"
+                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   History
                 </button>
@@ -2083,19 +2098,19 @@ export const AppTemp = () => {
                             console.log("buy with bonus", e);
                             setBuyWithBonus(!buyWithBonus);
                           }}
-                        // onBlur={loginForm.handleBlur}
-                        // value={usd}
+                          // onBlur={loginForm.handleBlur}
+                          // value={usd}
                         />
                         <p className="font-Magra text-md text-white ml-3">
                           Buy with Bonus
                         </p>
                       </div>
 
-                      {!userData?.ga_key && buyWithBonus &&
+                      {!userData?.ga_key && buyWithBonus && (
                         <p className="font-Magra text-md text-red-500 ml-3">
                           Please configure 2FA on Setting
                         </p>
-                      }
+                      )}
 
                       {buyWithBonus && (
                         <input
@@ -2180,15 +2195,18 @@ export const AppTemp = () => {
                         }
                       }
                     }}
-                    className={`${buyWithBonus
-                      ? "bg-green-500"
-                      : ticketAllowance &&
-                        ticketAllowance.toBigInt() < BigInt(usd * 1e18)
+                    className={`${
+                      buyWithBonus
+                        ? "bg-green-500"
+                        : ticketAllowance &&
+                          ticketAllowance.toBigInt() < BigInt(usd * 1e18)
                         ? "bg-red-500"
                         : "bg-green-500"
-                      } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                    } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                     disabled={
-                      (buyWithBonus && GAValue.length < 6 && !userData?.ga_key) ||
+                      (buyWithBonus &&
+                        GAValue.length < 6 &&
+                        !userData?.ga_key) ||
                       sendTicketBuyState.status !== "None"
                     }
                   >
@@ -2196,8 +2214,8 @@ export const AppTemp = () => {
                       ? "Buy with Bonus"
                       : ticketAllowance &&
                         ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                        ? "Approval"
-                        : "Buy Ticket"}
+                      ? "Approval"
+                      : "Buy Ticket"}
                   </button>
                   {sendTicketBuyState.status !== "None" && (
                     <p className="text-white/50 font-Magra">
@@ -2251,11 +2269,11 @@ export const AppTemp = () => {
                         onChange={(e: any) => setGAValue(e.target.value)}
                         value={GAValue}
                       />
-                      {!userData?.ga_key &&
+                      {!userData?.ga_key && (
                         <p className="font-Magra text-md text-red-500 ml-3">
                           Please configure 2FA on Setting
                         </p>
-                      }
+                      )}
                     </div>
                   </form>
                   <button
@@ -2331,14 +2349,16 @@ export const AppTemp = () => {
                         <tr className="text-white text-center">
                           <td>{formattedTime}</td>
                           <td
-                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
-                              }`}
+                            className={`${
+                              t.amount < 0 ? "text-red-500" : "text-green-500"
+                            }`}
                           >
                             {t.amount < 0 ? "OUT" : "IN"}
                           </td>
                           <td
-                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
-                              }`}
+                            className={`${
+                              t.amount < 0 ? "text-red-500" : "text-green-500"
+                            }`}
                           >
                             {t.amount}
                           </td>
@@ -2912,9 +2932,9 @@ export const AppTemp = () => {
           </div>
         </div>
       )}
-      {false && scene === "DINOCENTER" && (
+      {scene === "DINOCENTER" && (
         <div className="absolute w-full h-full flex justify-center items-center">
-          <div className="flex z-20 h-[95vh] w-[450px] max-[450px]:w-[calc(100vw)] max-w-[450px] justify-center items-center flex-col sm:px-4 shadow-sm rounded-sm ">
+          <div className="flex z-20 h-[97vh] w-[450px] max-[450px]:w-[calc(100vw)] max-w-[450px] justify-center items-center flex-col sm:px-4 shadow-sm rounded-sm ">
             <div className="flex flex-row w-full justify-between my-4">
               <img
                 src="image/backBtn.png"
@@ -2931,10 +2951,10 @@ export const AppTemp = () => {
                 width={40}
                 height={40}
                 alt="Back"
-              // onClick={() => changeScene("HOME")}
+                // onClick={() => changeScene("HOME")}
               />
             </div>
-            <div className="flex flex-col h-full w-full px-4 pt-6 pb-6 bg-white/20 backdrop-blur-sm overflow-y-visible overflow-auto">
+            <div className="flex flex-col h-full w-full px-4 pt-0 pb-6 backdrop-blur-sm overflow-y-visible overflow-auto">
               {/* Hunter Details */}
               <div className="absolute left-0 w-full">
                 <>
@@ -2992,7 +3012,7 @@ export const AppTemp = () => {
               </div>
 
               {/* DinoCenter Pages & filters */}
-              <div className="absolute left-0 top-[8.5rem] w-full">
+              <div className="absolute left-0 top-[7rem] w-full">
                 <div className="flex flex-row w-full justify-between">
                   {/* Pages */}
                   <div className="flex w-full justify-start text-white font-Magra font-bold text-base">
@@ -3027,14 +3047,72 @@ export const AppTemp = () => {
               </div>
 
               {/* Market */}
-              <div className="absolute left-0 top-[11rem] w-full h-[55vh] bg-blue-gray-300">
-                {true ? (
+              <div className="absolute left-0 top-[9.5rem] w-full h-[62vh]">
+                {false ? (
                   <div className="flex w-full h-full justify-center items-center font-Magra font-bold text-white">
                     Coming Soon
                   </div>
                 ) : (
-                  <div className="flex w-full h-full justify-center items-center font-Magra font-bold text-white">
-                    Put Market Here
+                  <div className="grid grid-cols-4 h-full">
+                    {[...Array(12)].map((_, index) => {
+                      return (
+                        <div
+                          key={index}
+                          className="flex flex-col items-center content-center "
+                        >
+                          <img
+                            src="image/jurassicEggBg.png"
+                            className="w-24"
+                            alt="jurassicEggBg"
+                          />
+                          <div>
+                            <img
+                              src={`${
+                                false
+                                  ? "image/imgJurassicEggIcon.png"
+                                  : "image/imgJurassicEggIcon2.png"
+                              }`}
+                              className={`w-14 -mt-[5.1rem]`}
+                              alt="imgJurassicEggIcon"
+                            />
+                          </div>
+
+                          {/* price */}
+                          <div className="font magra font-bold decoration-from-font">
+                            <span className="text-[#FFC700]">100 USDT</span>
+                          </div>
+
+                          {/* action button */}
+                          {true ? (
+                            <div>
+                              <img
+                                src="image/BtnPurchaseCountdown.png"
+                                className="w-20 "
+                                alt="BtnPurchaseCountdown"
+                              />
+                              <div className="flex w-full justify-center font magra font-bold decoration-from-font">
+                                <span className="text-white -mt-[1.8rem]">
+                                  00:00:00
+                                </span>
+                              </div>
+                            </div>
+                          ) : (
+                            <div>
+                              <img
+                                src="image/BtnPurchaseActive.png"
+                                className="w-20 "
+                                alt="BtnPurchaseActive"
+                              />
+                              <div className="flex w-full justify-center font magra font-bold decoration-from-font">
+                                <span className="text-white -mt-[1.8rem]">
+                                  Keep
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -3054,7 +3132,7 @@ export const AppTemp = () => {
           onAnimationIteration={() => {
             console.log("animation iteration");
           }}
-        // onMount={(_app) => setApp(_app)}
+          // onMount={(_app) => setApp(_app)}
         >
           {/* @ts-ignore */}
 
