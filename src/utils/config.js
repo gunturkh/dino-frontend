@@ -270,7 +270,7 @@ export const PAYGATEWAY_ADDR = "0x1D243840cf4998f16B39176D74B93f41e3b87acE";
 export const TICKET_ADDR = "0x5B7064C693F7AE5a9fab5DE66C958F615886Ee84";
 export const RPC_ENDPOINT = 'https://data-seed-prebsc-1-s1.binance.org:8545/';
 // export const API_ENDPOINT = 'http://localhost:7878';
-export const API_ENDPOINT = 'https://beta-api.jurassicegg.co';
-// export const API_ENDPOINT = 'https://api.jurassicegg.co';
+// export const API_ENDPOINT = 'https://beta-api.jurassicegg.co';
+export const API_ENDPOINT = 'https://api.jurassicegg.co';
 // trunk-ignore(gitleaks/generic-api-key)
 export const CAPTCHA_KEY = '6Lc4jaMlAAAAAGRgfjJ88dQUZ4WT3GA4xQZRobJN';
