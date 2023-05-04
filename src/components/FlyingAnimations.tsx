@@ -48,6 +48,7 @@ function FlyingAnimations() {
         // timeElapsed += deltaTime;
 
         // Move sprite
+        // sprite.x += direction * (duration * deltaTime);
         sprite.x += direction * ((screenWidth / duration) * deltaTime);
 
         // Check if sprite has reached screen edge
@@ -94,7 +95,7 @@ function FlyingAnimations() {
       // reduce the duration to increase the speed
       // delay for a 8 seconds
       setTimeout(() => {
-        loadSpineAnimation(containerRef.current, app.screen.width, 250);
+        loadSpineAnimation(containerRef.current, app.screen.width, 300);
       }, 8000);
   }, [
     app.screen.height,
