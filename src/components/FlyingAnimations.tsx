@@ -7,12 +7,42 @@ function FlyingAnimations() {
   const app = useApp();
   // memoize dinoAssets from PIXI.Assets.get
   const [dinoAssets, setDinoAssets] = useState<any>(null);
+  const [dinoAssets2, setDinoAssets2] = useState<any>(null);
+  const [dinoAssets3, setDinoAssets3] = useState<any>(null);
+  // const [dinoAssets4, setDinoAssets4] = useState<any>(null);
   const memoizedDinoAssets = useMemo(() => dinoAssets, [dinoAssets]);
+  const memoizedDinoAssets2 = useMemo(() => dinoAssets2, [dinoAssets2]);
+  const memoizedDinoAssets3 = useMemo(() => dinoAssets3, [dinoAssets3]);
+
+  const [animationCounter, setAnimationCounter] = useState<number>(0);
+  // const memoizedDinoAssets4 = useMemo(() => dinoAssets4, [dinoAssets4]);
 
   useEffect(() => {
     const dinoAssets = PIXI.Assets.get("FlyingDino");
     setDinoAssets(dinoAssets);
   }, []);
+
+  // get 2nd flyingdino asset
+  useEffect(() => {
+    const dinoAssets2 = PIXI.Assets.get("FlyingDino2");
+    setDinoAssets2(dinoAssets2);
+  }, []);
+
+  // get 3rd flyingdino asset
+  useEffect(() => {
+    const dinoAssets3 = PIXI.Assets.get("FlyingDino3");
+    setDinoAssets3(dinoAssets3);
+  }, []);
+
+  // // get 4th flyingdino asset
+  // useEffect(() => {
+  //   const dinoAssets4 = PIXI.Assets.get("FlyingDino4");
+  //   setDinoAssets4(dinoAssets4);
+  // }, []);
+
+  console.log("memoizedDinoAssets", memoizedDinoAssets);
+  console.log("memoizedDinoAssets2", memoizedDinoAssets2);
+  console.log("memoizedDinoAssets3", memoizedDinoAssets3);
 
   const containerRef = useRef<PIXI.Container>(null);
   // this will scale the animation to the screen size
@@ -21,87 +51,157 @@ function FlyingAnimations() {
   // load
 
   useEffect(() => {
-    async function loadSpineAnimation(
-      sprite: any,
-      screenWidth: any,
-      duration: any
+    let flyingDino1: any = null;
+    let flyingDino2: any = null;
+    let flyingDino3: any = null;
+
+    const duration = 300; // duration of the animation, set lower to make it faster
+
+    // use waitDuration to wait for a few second before loading the next animation
+    // const waitDuration = 2000;
+    const tickerOutside = new PIXI.Ticker();
+
+    memoizedDinoAssets?.spineData?.animations?.forEach((animation: any) => {
+      const flyingDino = new Spine(memoizedDinoAssets.spineData);
+      flyingDino.state.setAnimation(0, animation.name, true);
+      flyingDino.x = -100;
+      flyingDino.y = 0;
+      flyingDino.zIndex = -1;
+      flyingDino.cullable = true;
+
+      flyingDino.scale.set(0.05);
+
+      flyingDino1 = flyingDino;
+      // containerRef.current?.addChild(flyingDino);
+      // containerRef.current?.addChild(flyingDino1);
+    });
+
+    // 2nd flying dino
+    memoizedDinoAssets2?.spineData?.animations?.forEach((animation: any) => {
+      const flyingDino = new Spine(memoizedDinoAssets2.spineData);
+      flyingDino.state.setAnimation(0, animation.name, true);
+      flyingDino.x = -100;
+      flyingDino.y = 0;
+      flyingDino.zIndex = -1;
+      flyingDino.cullable = true;
+
+      flyingDino.scale.set(0.05);
+
+      flyingDino2 = flyingDino;
+    });
+
+    // 2nd flying dino
+    memoizedDinoAssets3?.spineData?.animations?.forEach((animation: any) => {
+      const flyingDino = new Spine(memoizedDinoAssets3.spineData);
+      flyingDino.state.setAnimation(0, animation.name, true);
+      flyingDino.x = -100;
+      flyingDino.y = 0;
+      flyingDino.zIndex = -1;
+      flyingDino.cullable = true;
+
+      flyingDino.scale.set(0.05);
+
+      flyingDino3 = flyingDino;
+    });
+
+    // load animation 1 first, then wait for a few second to load animation 2 and wait for a few second to load animation 3
+    if (
+      flyingDino1 !== null &&
+      containerRef.current &&
+      memoizedDinoAssets &&
+      animationCounter === 0
     ) {
-      const ticker = new PIXI.Ticker();
-      let direction = 1; // 1 for right, -1 for left
-      const waitDuration = 8000;
+      console.log("first flyingDino loaded");
 
-      memoizedDinoAssets.spineData.animations.forEach((animation: any) => {
-        const flyingDino = new Spine(memoizedDinoAssets.spineData);
-        flyingDino.state.setAnimation(0, animation.name, true);
-        flyingDino.x = -100;
-        flyingDino.y = 0;
-        flyingDino.zIndex = -1;
-        flyingDino.cullable = true;
+      // clear containerRef to make sure there is no other animation inside
+      containerRef.current?.removeChildren();
 
-        flyingDino.scale.set(0.05);
+      containerRef.current?.addChild(flyingDino1);
+      containerRef.current.x = -flyingDino1.width * 1.05;
+      containerRef.current.scale.set(scalePoint);
 
-        containerRef.current?.addChild(flyingDino);
-        // app.stage.addChild(flyingDino);
-      });
+      tickerOutside.add((delta) => {
+        // increase containerRef x position by 10 * delta * scalePoint * direction
+        // @ts-ignore
+        containerRef.current.x += delta * (app.screen.width / duration);
 
-      ticker.add((deltaTime) => {
-        // timeElapsed += deltaTime;
-
-        // Move sprite
-        // sprite.x += direction * (duration * deltaTime);
-        sprite.x += direction * ((screenWidth / duration) * deltaTime);
-
-        // Check if sprite has reached screen edge
+        // if containerRef x position is greater than the screen width + flyingDino1 width * 1.2
         if (
-          sprite.x > screenWidth + sprite.width * 1.2 &&
-          direction === 1 &&
-          sprite
+          // @ts-ignore
+          containerRef.current.x >
+          app.screen.width + flyingDino1.width * 1.2
         ) {
-          // Pause for 2 seconds
-          ticker.stop();
-          setTimeout(() => {
-            direction = -1; // Change direction
-            // mirror the sprite
-            sprite.scale.x *= -1;
-
-            // sprite.y = app.screen.height * Math.random() * 0.1 + 0.25;
-            ticker.start();
-          }, waitDuration);
-        } else if (
-          sprite.x < sprite.width * 1.2 &&
-          direction === -1 &&
-          sprite &&
-          scalePoint
-        ) {
-          // Pause for 2 seconds
-          ticker.stop();
-          setTimeout(() => {
-            direction = 1; // Change direction
-            // sprite.y = app.screen.height * Math.random() * 0.1 + 0.25;
-            sprite.scale.x = scalePoint;
-            ticker.start();
-          }, waitDuration);
+          // console.log("counter flyingDino inside", animationCounter);
+          setAnimationCounter((prev) => prev + 1);
+          tickerOutside.stop();
         }
       });
-
-      ticker.start();
-
-      // Stop the ticker when the container is changed
-      sprite.once("removed", () => {
-        ticker.stop();
-      });
+      tickerOutside.start();
     }
-    if (containerRef.current && memoizedDinoAssets)
-      // reduce the duration to increase the speed
-      // delay for a 8 seconds
-      setTimeout(() => {
-        loadSpineAnimation(containerRef.current, app.screen.width, 300);
-      }, 8000);
+
+    console.log("counter flyingDino outside", animationCounter);
+
+    // check if 2nd flying dino is reached the screen edge and counter is 0 and direction is 1
+    if (flyingDino2 && containerRef.current && animationCounter === 1) {
+      containerRef.current?.removeChildAt(0);
+      containerRef.current?.addChild(flyingDino2);
+      containerRef.current.x = app.screen.width + flyingDino2.width * 1.05;
+
+      // mirror the animation
+      containerRef.current.scale.set(-1 * scalePoint, scalePoint);
+
+      tickerOutside.add((delta) => {
+        // @ts-ignore
+        containerRef.current.x -= delta * (app.screen.width / duration);
+        console.log("speed flyingDino", delta * (app.screen.width / duration));
+
+        if (
+          // @ts-ignore
+          containerRef.current.x <
+          -flyingDino1.width * 1.2
+        ) {
+          setAnimationCounter((prev) => prev + 1);
+          tickerOutside.stop();
+        }
+      });
+      tickerOutside.start();
+    }
+
+    // check if 3rd flying dino is reached the screen edge
+    if (flyingDino3 && containerRef.current && animationCounter === 2) {
+      console.log("first flyingDino loaded");
+
+      containerRef.current?.removeChildAt(0);
+      containerRef.current?.addChild(flyingDino3);
+      containerRef.current.x = -flyingDino3.width * 1.05;
+      // special scale for flying dino 3
+      containerRef.current.scale.set(scalePoint / 1.5);
+
+      tickerOutside.add((delta) => {
+        // increase containerRef x position by 10 * delta * scalePoint * direction
+        // @ts-ignore
+        containerRef.current.x += delta * (app.screen.width / duration);
+
+        // if containerRef x position is greater than the screen width + flyingDino1 width * 1.2
+        if (
+          // @ts-ignore
+          containerRef.current.x >
+          app.screen.width + flyingDino3.width * 1.2
+        ) {
+          // console.log("counter flyingDino inside", animationCounter);
+          // reset the counter to 0 (loop) bcs we only have 3 flying dino
+          setAnimationCounter(0);
+          tickerOutside.stop();
+        }
+      });
+      tickerOutside.start();
+    }
   }, [
-    app.screen.height,
+    animationCounter,
     app.screen.width,
-    app.stage,
     memoizedDinoAssets,
+    memoizedDinoAssets2,
+    memoizedDinoAssets3,
     scalePoint,
   ]);
 
