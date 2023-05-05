@@ -153,7 +153,7 @@ function FlyingAnimations() {
       tickerOutside.add((delta) => {
         // @ts-ignore
         containerRef.current.x -= delta * (app.screen.width / duration);
-        console.log("speed flyingDino", delta * (app.screen.width / duration));
+        // console.log("speed flyingDino", delta * (app.screen.width / duration));
 
         if (
           // @ts-ignore
