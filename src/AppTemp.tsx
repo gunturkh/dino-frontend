@@ -49,7 +49,11 @@ import {
   Option,
 } from "@material-tailwind/react";
 import { BsPlusSquare } from "react-icons/bs";
-import { eggType, rankLoaderBarProgress, rankRequalification } from "./utils/functions";
+import {
+  eggType,
+  rankLoaderBarProgress,
+  rankRequalification,
+} from "./utils/functions";
 import EggComponent from "./components/EggComponent";
 import JurassicMarket from "./pages/JurassicMarket";
 // import { BigNumber, BigNumberish, Contract, utils } from "ethers";
@@ -130,7 +134,9 @@ export const AppTemp = () => {
   const etherBalance = useEtherBalance(account, {
     chainId: BSCTestnet.chainId,
   });
-  const mainnetBalance = useEtherBalance(account, { chainId: BSCTestnet.chainId });
+  const mainnetBalance = useEtherBalance(account, {
+    chainId: BSCTestnet.chainId,
+  });
   const testnetBalance = useEtherBalance(account, {
     chainId: BSCTestnet.chainId,
   });
@@ -172,10 +178,10 @@ export const AppTemp = () => {
     // resetState: resetSendTransactionPayState,
   } = useSendTransaction({ transactionName: "Egg Pay" });
 
-  const period = formatUnits(userData?.bought.period, 18)
-  const group = formatUnits(userData?.bought.group, 18)
-  const total = formatUnits(userData?.bought.total, 18)
-  const progress = (parseInt(group) / parseInt(total)) * 100
+  const period = formatUnits(userData?.bought.period, 18);
+  const group = formatUnits(userData?.bought.group, 18);
+  const total = formatUnits(userData?.bought.total, 18);
+  const progress = (parseInt(group) / parseInt(total)) * 100;
 
   const transactionList = useTransactions();
   const { notifications } = useNotifications();
@@ -1058,8 +1064,9 @@ export const AppTemp = () => {
     return (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className={`${id === open ? "rotate-180" : ""
-          } h-5 w-5 transition-transform`}
+        className={`${
+          id === open ? "rotate-180" : ""
+        } h-5 w-5 transition-transform`}
         fill="none"
         viewBox="0 0 24 24"
         stroke="white"
@@ -1075,63 +1082,23 @@ export const AppTemp = () => {
   };
 
   const ShowUsers = (props: any) => {
-    const { data, setDatas } = props;
+    const { data } = props;
     // const [downline, setDownline] = useState<any>();
 
-    const clickPlus = async () => {
-      let options = {
-        headers: {
-          "my-auth-key": token,
-        },
-      };
-      const response = await axiosInstance({
-        url: "/user/downline?ref=" + data.username,
-        method: "GET",
-        headers: options.headers,
-      });
-      if (response.data.result.length > 0) {
-        // setDownline(response.data.result);
-        setDatas(response.data.result);
-        // let newHistory = buddiesHistories
-        // newHistory.push({ username: data.username, data: response.data.result })
-        // setBuddiesyHistories(newHistory)
-      }
-    };
-
     return (
-      <>
-        <div className="flex items-center m-2 p-2 w-full border border-black">
-          <div className="flex flex-row w-full">
-            <div className="icon">
-              <BsPlusSquare size={20} onClick={clickPlus} />
-            </div>
-            <div className="flex w-full ml-3 justify-evenly font-Magra">
-              <span className="text-yellow-700">{data.username}</span>
-              {/* <span className='col-4'>Bought: $ { ethers.utils.formatUnits(data.bought, 18) }</span>
-                        <span className='col-4'>Group : $ { ethers.utils.formatUnits(data.dl_bought, 18) }</span> */}
-              <span className="">Bought: $ {formatUnits(data.bought, 18)}</span>
-              <span className="">
-                Group : $ {formatUnits(data.dl_bought, 18)}
-              </span>
-            </div>
-          </div>
-        </div>
-        {/* {downline ? (
-          <div className="d-flex flex-wrap ms-4 w-100">
-            {downline.map((elm: any) => (
-              <ShowUsers key={elm.username} data={elm} />
-            ))}
-          </div>
-        ) : (
-          ""
-        )} */}
-      </>
+      <tr>
+        <td>{data.username}</td>
+        <td>{data.sponsor}</td>
+        <td>{data.level}</td>
+        <td>$ {formatUnits(data.bought)}</td>
+      </tr>
     );
   };
 
   const Downline = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [datas, setDatas] = useState<any>();
+    // const [searchParams] = useSearchParams();
 
     const loadDownline = async () => {
       let options = {
@@ -1160,11 +1127,31 @@ export const AppTemp = () => {
           {/* {buddiesHistories.length > 0 ? buddiesHistories[buddiesHistories.length - 1]?.username : `${userData.username}'s buddy`} */}
         </h1>
         {datas ? (
-          <div className="flex flex-col">
-            {datas.map((elm: any) => (
-              <ShowUsers key={elm.username} data={elm} setDatas={setDatas} />
-            ))}
-          </div>
+          // <div className="flex flex-col">
+          //   {datas.map((elm: any) => (
+          //     <ShowUsers key={elm.username} data={elm} setDatas={setDatas} />
+          //   ))}
+          // </div>
+          <>
+            <table className="table table-stripped">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Referral</th>
+                  <th>Level</th>
+                  <th>Sales</th>
+                </tr>
+              </thead>
+              <tbody>
+                {datas.data.map((elm: any) => (
+                  <ShowUsers key={elm.username} data={elm} />
+                ))}
+              </tbody>
+            </table>
+            <div className="paginate">
+              <Paginate total={datas.totalpage} current={datas.pagenow} />
+            </div>
+          </>
         ) : (
           ""
         )}
@@ -1179,6 +1166,25 @@ export const AppTemp = () => {
         )} */}
       </>
     );
+  };
+
+  const Paginate = (props: any) => {
+    var pctn = [];
+    for (let i = 1; i <= props.total; i++) {
+      let uri = "/downline?page=" + i;
+      if (i === 1) uri = "/downline";
+      let classs = "";
+      if (parseInt(props.current) === i) classs = "active";
+      pctn.push(
+        <li key={i}>
+          <a className={classs} href={uri}>
+            {i}
+          </a>
+        </li>
+      );
+    }
+
+    return <ul>{pctn}</ul>;
   };
 
   const DownlineCallback = useCallback(Downline, [token]);
@@ -1461,8 +1467,9 @@ export const AppTemp = () => {
                     type={"image"}
                     src={"image/BtnConfirm.png"}
                     onClick={loginForm.submitForm}
-                    className={`${captcha?.length === 0 ? "opacity-50" : ""
-                      } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${
+                      captcha?.length === 0 ? "opacity-50" : ""
+                    } mt-12 px-3.5 py-2.5 text-sm`}
                     disabled={captcha?.length === 0}
                   />
                 </>
@@ -1670,8 +1677,9 @@ export const AppTemp = () => {
                     src={"image/BtnConfirmRegister.png"}
                     disabled={!registerCheckbox}
                     onClick={registerForm.submitForm}
-                    className={`${!registerCheckbox ? "opacity-50" : ""
-                      } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${
+                      !registerCheckbox ? "opacity-50" : ""
+                    } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -1750,8 +1758,9 @@ export const AppTemp = () => {
                     src={"image/BtnSubmit.png"}
                     onClick={registerHandler}
                     disabled={registerCaptcha?.length === 0}
-                    className={`${registerCaptcha?.length === 0 ? "opacity-50" : ""
-                      } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${
+                      registerCaptcha?.length === 0 ? "opacity-50" : ""
+                    } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -1786,10 +1795,11 @@ export const AppTemp = () => {
                     type={"image"}
                     src={"image/BtnSubmit.png"}
                     onClick={loginWalletForm.submitForm}
-                    className={`${loginWalletForm.values.walletAddress.length === 0
-                      ? "opacity-50"
-                      : ""
-                      } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${
+                      loginWalletForm.values.walletAddress.length === 0
+                        ? "opacity-50"
+                        : ""
+                    } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -1829,8 +1839,9 @@ export const AppTemp = () => {
                     src={"image/BtnSubmit.png"}
                     onClick={forgotPasswordForm.submitForm}
                     disabled={forgotPasswordCaptcha?.length === 0}
-                    className={`${forgotPasswordCaptcha?.length === 0 ? "opacity-50" : ""
-                      } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${
+                      forgotPasswordCaptcha?.length === 0 ? "opacity-50" : ""
+                    } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -2015,8 +2026,9 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "BUY" })
                   }
-                  className={`${ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
-                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${
+                    ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
+                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   Buy
                 </button>
@@ -2026,10 +2038,11 @@ export const AppTemp = () => {
                     onClick={() =>
                       setTicketPanel({ ...ticketPanel, mode: "TRANSFER" })
                     }
-                    className={`${ticketPanel.mode === "TRANSFER"
-                      ? "text-blue-500"
-                      : "text-white"
-                      } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                    className={`${
+                      ticketPanel.mode === "TRANSFER"
+                        ? "text-blue-500"
+                        : "text-white"
+                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                   >
                     Transfer
                   </button>
@@ -2039,10 +2052,11 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
                   }
-                  className={`${ticketPanel.mode === "HISTORY"
-                    ? "text-blue-500"
-                    : "text-white"
-                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${
+                    ticketPanel.mode === "HISTORY"
+                      ? "text-blue-500"
+                      : "text-white"
+                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   History
                 </button>
@@ -2093,8 +2107,8 @@ export const AppTemp = () => {
                             console.log("buy with bonus", e);
                             setBuyWithBonus(!buyWithBonus);
                           }}
-                        // onBlur={loginForm.handleBlur}
-                        // value={usd}
+                          // onBlur={loginForm.handleBlur}
+                          // value={usd}
                         />
                         <p className="font-Magra text-md text-white ml-3">
                           Buy with Bonus
@@ -2190,13 +2204,14 @@ export const AppTemp = () => {
                         }
                       }
                     }}
-                    className={`${buyWithBonus
-                      ? "bg-green-500"
-                      : ticketAllowance &&
-                        ticketAllowance.toBigInt() < BigInt(usd * 1e18)
+                    className={`${
+                      buyWithBonus
+                        ? "bg-green-500"
+                        : ticketAllowance &&
+                          ticketAllowance.toBigInt() < BigInt(usd * 1e18)
                         ? "bg-red-500"
                         : "bg-green-500"
-                      } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                    } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                     disabled={
                       (buyWithBonus &&
                         GAValue.length < 6 &&
@@ -2208,8 +2223,8 @@ export const AppTemp = () => {
                       ? "Buy with Bonus"
                       : ticketAllowance &&
                         ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                        ? "Approval"
-                        : "Buy Ticket"}
+                      ? "Approval"
+                      : "Buy Ticket"}
                   </button>
                   {sendTicketBuyState.status !== "None" && (
                     <p className="text-white/50 font-Magra">
@@ -2343,14 +2358,16 @@ export const AppTemp = () => {
                         <tr className="text-white text-center">
                           <td>{formattedTime}</td>
                           <td
-                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
-                              }`}
+                            className={`${
+                              t.amount < 0 ? "text-red-500" : "text-green-500"
+                            }`}
                           >
                             {t.amount < 0 ? "OUT" : "IN"}
                           </td>
                           <td
-                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
-                              }`}
+                            className={`${
+                              t.amount < 0 ? "text-red-500" : "text-green-500"
+                            }`}
                           >
                             {t.amount}
                           </td>
@@ -3153,7 +3170,7 @@ export const AppTemp = () => {
           onAnimationIteration={() => {
             console.log("animation iteration");
           }}
-        // onMount={(_app) => setApp(_app)}
+          // onMount={(_app) => setApp(_app)}
         >
           {/* @ts-ignore */}
 
