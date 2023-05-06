@@ -175,8 +175,8 @@ const DinoCenter = ({
   const token = useAuthStore((state) => state.token);
   const userData = useStore((state) => state.userData);
   const walletAddress = useStore((state) => state.walletAddress);
-  const eggListsData = useStore((state) => state.eggListsData);
-  const setEggListsData = useStore((state) => state.setEggListsData);
+  // const eggListsData = useStore((state) => state.eggListsData);
+  // const setEggListsData = useStore((state) => state.setEggListsData);
   const eggTransactionData = useStore((state) => state.eggTransactionData);
   const setEggTransactionData = useStore(
     (state) => state.setEggTransactionData
@@ -191,10 +191,10 @@ const DinoCenter = ({
   const [currentPage, setCurrentPage] = useState(1);
   // TODO: tempCards should be set with the actual data from the API
   // const [tempCards, setTempCards] = useState<any>([])
-  const totalPages = Math.ceil(eggListsData.length / eggPerPage);
+  // const totalPages = Math.ceil(eggListsData.length / eggPerPage);
   const startIndex = (currentPage - 1) * eggPerPage;
   const endIndex = startIndex + eggPerPage;
-  const currentEggs = eggListsData.slice(startIndex, endIndex);
+  // const currentEggs = eggListsData.slice(startIndex, endIndex);
 
   const allowance = useTokenAllowance(
     USDT_ADDR,
@@ -276,24 +276,24 @@ const DinoCenter = ({
   //   if (duplicateListingData) setEggListsData(duplicateListingData)
   // }, [])
 
-  useEffect(() => {
-    const pageNumbers = [];
+  // useEffect(() => {
+  //   const pageNumbers = [];
 
-    if (totalPages <= 3) {
-      for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
-      }
-    } else {
-      if (currentPage === 1) {
-        pageNumbers.push(1, 2, 3);
-      } else if (currentPage === totalPages) {
-        pageNumbers.push(totalPages - 2, totalPages - 1, totalPages);
-      } else {
-        pageNumbers.push(currentPage - 1, currentPage, currentPage + 1);
-      }
-    }
-    setPaginationPageNumbers(pageNumbers);
-  }, [currentPage, eggPerPage, totalPages]);
+  //   if (totalPages <= 3) {
+  //     for (let i = 1; i <= totalPages; i++) {
+  //       pageNumbers.push(i);
+  //     }
+  //   } else {
+  //     if (currentPage === 1) {
+  //       pageNumbers.push(1, 2, 3);
+  //     } else if (currentPage === totalPages) {
+  //       pageNumbers.push(totalPages - 2, totalPages - 1, totalPages);
+  //     } else {
+  //       pageNumbers.push(currentPage - 1, currentPage, currentPage + 1);
+  //     }
+  //   }
+  //   setPaginationPageNumbers(pageNumbers);
+  // }, [currentPage, eggPerPage, totalPages]);
 
   const paginate = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -343,7 +343,7 @@ const DinoCenter = ({
     console.log("getEggList Result:", data);
     if (data?.status === 200 && data?.data?.result?.lists) {
       // setEggListsData(data?.data?.result.lists);
-      setEggListsData([]);
+      // setEggListsData([]);
     }
   };
 
@@ -391,7 +391,7 @@ const DinoCenter = ({
 
   console.log("data::", {
     currentPage,
-    currentEggs,
+    // currentEggs,
   });
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -517,7 +517,7 @@ const DinoCenter = ({
               width={isNotMobile ? 450 : app.screen.width * 0.9}
             >
               {/* left side */}
-              <Container position={isNotMobile ? [-190, 30] : [-150, 40]}>
+              {/* <Container position={isNotMobile ? [-190, 30] : [-150, 40]}>
                 <Sprite
                   texture={PIXI.Assets.get("BackBtn")}
                   width={isNotMobile ? 40 : 30}
@@ -527,10 +527,10 @@ const DinoCenter = ({
                   eventMode="static"
                   onpointertap={() => onBackBtnClick()}
                 />
-              </Container>
+              </Container> */}
 
               {/* Text */}
-              <Container position={[0, isNotMobile ? 30 : 40]}>
+              {/* <Container position={[0, isNotMobile ? 30 : 40]}>
                 <Text
                   text={"Jurassic Market"}
                   position={[-2, 0]}
@@ -545,10 +545,10 @@ const DinoCenter = ({
                     })
                   }
                 />
-              </Container>
+              </Container> */}
 
               {/* right side */}
-              <Container position={isNotMobile ? [190, 30] : [150, 40]}>
+              {/* <Container position={isNotMobile ? [190, 30] : [150, 40]}>
                 <Sprite
                   texture={PIXI.Assets.get("LogoutBtn")}
                   width={isNotMobile ? 40 : 30}
@@ -561,7 +561,7 @@ const DinoCenter = ({
                 //   setConfirmQuitPanelVisible(true);
                 // }}
                 />
-              </Container>
+              </Container> */}
               {/* divider */}
               {/* <Container
               position={[0, isNotMobile ? 15 : 10]}
@@ -575,7 +575,7 @@ const DinoCenter = ({
             </Container>
 
             {/* Rank Details */}
-            <Container
+            {/* <Container
               position={[0, isNotMobile ? 135 : 120]}
               ref={RankDetailsRef}
             >
@@ -597,7 +597,6 @@ const DinoCenter = ({
                   })
                 }
               />
-              {/* left side */}
               <Container
                 x={
                   -rankDetailBounds?.width / 2 + rankDetailBounds?.width * 0.01
@@ -635,7 +634,6 @@ const DinoCenter = ({
                 />
               </Container>
 
-              {/* progressbar component */}
               <Container ref={progressBarComponentRef}>
                 <Container
                   y={rankDetailBounds.width * (isNotMobile ? 0.072 : 0.082)}
@@ -671,7 +669,6 @@ const DinoCenter = ({
                 </Container>
               </Container>
 
-              {/* right side */}
               <Container
                 x={rankDetailBounds?.width / 2 - rankDetailBounds?.width * 0.01}
                 y={
@@ -708,14 +705,13 @@ const DinoCenter = ({
                   }
                 />
               </Container>
-            </Container>
+            </Container> */}
 
             {/* filter & Panel */}
-            <Container
+            {/* <Container
               y={rankDetailBounds?.height * (isNotMobile ? 1.85 : 1.65)}
             >
               <Container position={[0, 0]}>
-                {/* Listing */}
                 <Container
                   y={0}
                   x={rankDetailBounds?.width * (isNotMobile ? -0.4 : -0.35)}
@@ -759,7 +755,6 @@ const DinoCenter = ({
                   />
                 </Container>
 
-                {/* My Listings */}
                 <Container
                   y={0}
                   x={rankDetailBounds?.width * (isNotMobile ? -0.15 : -0.15)}
@@ -788,7 +783,6 @@ const DinoCenter = ({
                 </Container>
               </Container>
 
-              {/* filter Price */}
               <Container
                 y={0}
                 x={rankDetailBounds?.width * (isNotMobile ? 0.15 : 0.15)}
@@ -820,7 +814,6 @@ const DinoCenter = ({
                 />
               </Container>
 
-              {/* filter Time */}
               <Container
                 y={0}
                 x={rankDetailBounds?.width * (isNotMobile ? 0.35 : 0.35)}
@@ -851,10 +844,10 @@ const DinoCenter = ({
                   position={[isNotMobile ? 40 : 27, 1]}
                 />
               </Container>
-            </Container>
+            </Container> */}
 
             {/* Listing Component */}
-            <Container
+            {/* <Container
               // ref={eggListingComponentRef}
               y={
                 app.screen.height *
@@ -880,7 +873,7 @@ const DinoCenter = ({
                 }
               // visible={eggTransactionData?.length === 0}
               />
-              {/* {currentEggs.length > 0 &&
+              {currentEggs.length > 0 &&
                 currentEggs?.map((d: any, idx: number) => {
                   // setExpiryTime(d.openat)
                   return (
@@ -910,11 +903,11 @@ const DinoCenter = ({
                       />
                     </>
                   );
-                })} */}
-            </Container>
+                })}
+            </Container> */}
 
             {/* My Listing Component */}
-            <Container
+            {/* <Container
               y={
                 app.screen.height *
                 (isNotMobile ? 0.28 : app.screen.width >= 430 ? 0.3 : 0.38)
@@ -991,12 +984,11 @@ const DinoCenter = ({
                     );
                   }
                 )}
-            </Container>
+            </Container> */}
           </Container>
 
           {/* Pagination & Refresh */}
-          <Container ref={paginationRef}>
-            {/* Pagination */}
+          {/* <Container ref={paginationRef}>
             <Container x={isNotMobile ? 0 : 0} anchor={[0.5, 0.5]}>
               <Sprite
                 texture={
@@ -1060,7 +1052,6 @@ const DinoCenter = ({
               />
             </Container>
 
-            {/* Refresh button */}
             <Sprite
               texture={PIXI.Assets.get("BtnRefreshListing")}
               anchor={[0.5, 0.5]}
@@ -1084,7 +1075,7 @@ const DinoCenter = ({
                 getEggList();
               }}
             />
-          </Container>
+          </Container> */}
         </Container>
       )}
     </>

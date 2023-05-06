@@ -38,6 +38,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
   const walletBalance = useStore((state) => state.walletBalance);
   const userData = useStore((state) => state.userData);
   const setUserData = useStore((state) => state.setUserData);
+  const eggListsData = useStore((state) => state.eggListsData);
   const setEggListsData = useStore((state) => state.setEggListsData);
   const setTicketPanel = useStore((state) => state.setTicketPanel);
   const token = useAuthStore((state) => state.token);
@@ -341,7 +342,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
       });
       console.log("getEggList Result:", data);
       if (data?.status === 200 && data?.data?.result?.lists) {
-        setEggListsData(data?.data?.result.lists);
+        setEggListsData(data?.data?.result);
       }
     };
 
@@ -420,7 +421,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
         x={-5}
         scale={[0.9, 0.9]}
         height={app.screen.height * 0.4}
-        // width={app.screen.width * 0.9}
+      // width={app.screen.width * 0.9}
       >
         <Sprite
           texture={PIXI.Assets.get("EggPlate") || PIXI.Texture.EMPTY}
@@ -591,7 +592,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
               <Container
                 position={[
                   (DinoFundBgBounds?.width / 2) *
-                    (app.screen?.width > 450 ? 1.05 : 1),
+                  (app.screen?.width > 450 ? 1.05 : 1),
                   DinoFundBgBounds?.height / 2 - 7,
                 ]}
               >
@@ -658,7 +659,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 // position={[app.screen.width / 2 - (lfSideBounds.width / 2), 0]}
                 position={[isNotMobile ? 110 : 90, 10]}
                 anchor={[0.5, 0.5]}
-                // width={app.screen.width > 450 ? 450 : app.screen.width}
+              // width={app.screen.width > 450 ? 450 : app.screen.width}
               >
                 <DetailsComponent
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
@@ -687,7 +688,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 <DetailsComponent
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
                   IconTexture={PIXI?.Assets?.get("BonusIcon")}
-                  text={ethers.utils.formatUnits(userData.bonuses, 18)}
+                  text={ethers.utils.formatUnits(userData?.bonuses, 18)}
                   posX={0}
                   posY={35}
                   scaleX={isNotMobile ? 1 : 0.8}
@@ -718,7 +719,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                   isVisible={false}
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
                   IconTexture={PIXI?.Assets?.get("EventFragmentIcon")}
-                  text={userData?.bonuses.toString() || "0"}
+                  text={userData?.bonuses?.toString() || "0"}
                   posX={0}
                   posY={0}
                   scaleX={isNotMobile ? 1 : 0.85}
@@ -740,7 +741,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
                   IconTexture={PIXI?.Assets?.get("DinoTicketIcon")}
                   rightIconVisible
-                  text={userData?.tickets.toString() || "0"}
+                  text={userData?.tickets?.toString() || "0"}
                   posX={0}
                   posY={35}
                   scaleX={isNotMobile ? 1 : 0.85}
@@ -769,7 +770,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 <DetailsComponent
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
                   IconTexture={PIXI?.Assets?.get("DinoEggIcon")}
-                  text={userData.daily.toString()}
+                  text={eggListsData?.remaining?.toString()}
                   posX={0}
                   posY={70}
                   scaleX={isNotMobile ? 1 : 0.85}
@@ -798,7 +799,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
               ref={lowerSectionContainerRef}
               anchor={[0.5, 0.5]}
               x={0}
-              // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
+            // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
             >
               {/* left side */}
               <LowerButtonComponent
@@ -1020,7 +1021,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[
                       buyTicketPanelBounds?.width * 0.5 -
-                        (isNotMobile ? 50 : 25),
+                      (isNotMobile ? 50 : 25),
                       0,
                     ]}
                     eventMode="static"
@@ -1080,11 +1081,11 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[
                       buyTicketPanelBounds?.width * 0.5 -
-                        (isNotMobile ? 50 : 25),
+                      (isNotMobile ? 50 : 25),
                       0,
                     ]}
                     eventMode="static"
-                    // onpointertap={() => setGoogleAuthVisible(false)}
+                  // onpointertap={() => setGoogleAuthVisible(false)}
                   />
                 </Container>
 

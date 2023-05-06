@@ -27,6 +27,11 @@ type Egg = {
   total: string;
 };
 
+type EggListResponse = {
+  remaining: number;
+  lists: Egg[]
+};
+
 export type EggTransactionData = {
   id: string;
   expired: number;
@@ -60,8 +65,8 @@ type Store = {
   setWalletBalance: (balance: string) => void;
   userData: User;
   setUserData: (data: User) => void;
-  eggListsData: Egg[];
-  setEggListsData: (data: Egg[]) => void;
+  eggListsData: EggListResponse;
+  setEggListsData: (data: EggListResponse) => void;
   eggTransactionData: EggTransactionData[];
   setEggTransactionData: (data: EggTransactionData) => void;
   approved: BigNumber | undefined;
@@ -116,7 +121,7 @@ export const useStore = create<Store>((set, get) => ({
     },
   },
   setUserData: (data) => set(() => ({ userData: data })),
-  eggListsData: [],
+  eggListsData: { remaining: 0, lists: [] },
   setEggListsData: (data) => set(() => ({ eggListsData: data })),
   eggTransactionData: [],
   setEggTransactionData: (data) =>
