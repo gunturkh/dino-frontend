@@ -821,18 +821,18 @@ export const manifest: ResolverManifest = {
           name: "RarityBtnFilter",
           srcs: "image/rarityBtnFilterBg.png",
         },
-        {
-          name: "FlyingDino",
-          srcs: BASE_URL + "/animations/flying-dino/skeleton.json",
-        },
-        {
-          name: "FlyingDino2",
-          srcs: BASE_URL + "/animations/flying-dino-2/skeleton.json",
-        },
-        {
-          name: "FlyingDino3",
-          srcs: BASE_URL + "/animations/flying-dino-3/skeleton.json",
-        },
+        // {
+        //   name: "FlyingDino",
+        //   srcs: BASE_URL + "/animations/flying-dino/skeleton.json",
+        // },
+        // {
+        //   name: "FlyingDino2",
+        //   srcs: BASE_URL + "/animations/flying-dino-2/skeleton.json",
+        // },
+        // {
+        //   name: "FlyingDino3",
+        //   srcs: BASE_URL + "/animations/flying-dino-3/skeleton.json",
+        // },
       ],
     },
     {
