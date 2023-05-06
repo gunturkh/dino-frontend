@@ -1,10 +1,22 @@
 import React, { useEffect, useState } from 'react'
-import { useStore } from '../utils/store';
+import { useAuthStore, useStore } from '../utils/store';
 import EggComponent from '../components/EggComponent';
 import { rankRequalification, rankLoaderBarProgress } from '../utils/functions';
 import { formatUnits } from 'ethers/lib/utils';
+import { axiosInstance } from '../utils/api';
+import { PAYGATEWAY_ADDR, USDT_ADDR } from '../utils/config';
+import { toast } from "react-toastify";
 
-function JurassicMarket() {
+function JurassicMarket({
+    sendTransaction,
+    sendPayTransaction,
+}: any) {
+    const token = useAuthStore((state) => state.token);
+    const walletAddress = useStore((state) => state.walletAddress);
+    const eggTransactionData = useStore((state) => state.eggTransactionData);
+    const setEggTransactionData = useStore(
+        (state) => state.setEggTransactionData
+    );
     const userData = useStore((state) => state.userData);
     const eggListsData = useStore((state) => state.eggListsData);
     const changeScene = useStore((state) => state.changeScene);
@@ -14,6 +26,69 @@ function JurassicMarket() {
     const progress = (parseInt(group) / parseInt(total)) * 100
     // const currentTime = new Date().getTime();
     const [currentTime, setCurrentTime] = useState(new Date().getTime())
+
+    const processTransaction = async (id: string, ticket: number) => {
+        let options = {
+            headers: {
+                "my-auth-key": token,
+            },
+        };
+        const data: any = await axiosInstance({
+            url: `/egg/detail?id=${id}`,
+            method: "GET",
+            headers: options.headers,
+        });
+        console.log("processTransaction Result:", data);
+        if (data?.data?.success) {
+            setEggTransactionData({ ...data?.data?.result, ticket });
+            // setSelectedPanel("My Listing");
+        }
+    };
+
+    const getUnfinishedEggTransaction = async () => {
+        let options = {
+            headers: {
+                "my-auth-key": token,
+            },
+        };
+        const { data }: any = await axiosInstance({
+            url: "/egg/unfinished",
+            method: "GET",
+            headers: options.headers,
+        });
+        console.log("get unfinished egg transaction Result:", data);
+        if (data?.success) {
+            // processTransaction(id, ticket);
+        } else {
+            toast(data.message);
+        }
+    };
+
+    const handleKeep = async (id: string, ticket: number) => {
+        let options = {
+            headers: {
+                "my-auth-key": token,
+            },
+        };
+        const { data }: any = await axiosInstance({
+            url: "/egg/keep",
+            method: "POST",
+            headers: options.headers,
+            data: { id },
+        });
+        console.log("handleKeep Result:", data);
+        if (data?.success) {
+            processTransaction(id, ticket);
+        } else {
+            toast(data.message);
+        }
+    };
+
+    // TODO: handle unfinished egg and continue the transaction
+    useEffect(() => {
+        getUnfinishedEggTransaction()
+    }, [])
+
 
     useEffect(() => {
         let timeInterval: any;
@@ -180,60 +255,39 @@ function JurassicMarket() {
                             <div className="grid grid-cols-4">
                                 {eggListsData?.lists.map((egg, index) => {
                                     return (
-                                        <EggComponent key={egg.id} egg={egg} index={index} currentTime={currentTime} customTimer={1683355142 + (1000 * index)} />
-                                        // <div
-                                        //   key={index}
-                                        //   className="flex flex-col items-center content-center "
-                                        // >
-                                        //   <img
-                                        //     src="image/jurassicEggBg.png"
-                                        //     className="w-24 [@media(max-width:400px)]:w-[4.5rem] [@media(max-height:700px)]:w-[4.5rem]"
-                                        //     alt="jurassicEggBg"
-                                        //   />
-                                        //   <div>
-                                        //     <img
-                                        //       src={`${eggType(egg?.ticket)}`}
-                                        //       className={`w-14 -mt-[5.1rem] [@media(max-width:400px)]:w-[2.6rem] [@media(max-height:700px)]:w-[2.6rem] [@media(max-width:400px)]:-mt-[3.9rem] [@media(max-height:700px)]:-mt-[3.9rem]`}
-                                        //       alt="imgJurassicEggIcon"
-                                        //     />
-                                        //   </div>
-
-                                        //   {/* price */}
-                                        //   <div className="font magra font-bold decoration-from-font">
-                                        //     <span className="text-[#FFC700] [@media(max-width:400px)]:text-sm">
-                                        //       {formatUnits(egg?.total, 18)} USDT
-                                        //     </span>
-                                        //   </div>
-
-                                        //   {/* action button */}
-                                        //   {true ? (
-                                        //     <div>
-                                        //       <img
-                                        //         src="image/BtnPurchaseCountdown.png"
-                                        //         className="w-20 "
-                                        //         alt="BtnPurchaseCountdown"
-                                        //       />
-                                        //       <div className="flex w-full justify-center font magra font-bold decoration-from-font">
-                                        //         <span className="text-white -mt-[1.8rem]">
-                                        //           00:00:00
-                                        //         </span>
-                                        //       </div>
-                                        //     </div>
-                                        //   ) : (
-                                        //     <div>
-                                        //       <img
-                                        //         src="image/BtnPurchaseActive.png"
-                                        //         className="w-20 "
-                                        //         alt="BtnPurchaseActive"
-                                        //       />
-                                        //       <div className="flex w-full justify-center font magra font-bold decoration-from-font">
-                                        //         <span className="text-white -mt-[1.8rem]">
-                                        //           Keep
-                                        //         </span>
-                                        //       </div>
-                                        //     </div>
-                                        //   )}
-                                        // </div>
+                                        <EggComponent
+                                            key={egg.id}
+                                            egg={egg}
+                                            index={index}
+                                            currentTime={currentTime}
+                                            customTimer={1683355142 + (1000 * index)}
+                                            onBtnKeepPress={() => {
+                                                // TODO: action button for keep, using idx from props as a differentiator
+                                                console.log("onBtnKeepPress", egg.id);
+                                                handleKeep(egg.id, egg.ticket);
+                                            }}
+                                            onBtnPurchasePress={async () => {
+                                                // console.log("allowance ", allowance);
+                                                // console.log("account approve", walletAddress);
+                                                const txReq = {
+                                                    to: USDT_ADDR,
+                                                    from: walletAddress,
+                                                    data: eggTransactionData.TxRawApproval,
+                                                };
+                                                console.log("txReq", txReq);
+                                                const txSend = await sendTransaction(txReq);
+                                                console.log("txSend", txSend);
+                                            }}
+                                            onBtnPayPress={async (raw: any) => {
+                                                const txReq = {
+                                                    data: raw,
+                                                    to: PAYGATEWAY_ADDR,
+                                                    from: walletAddress,
+                                                };
+                                                const txSend = await sendPayTransaction(txReq, eggTransactionData);
+                                                console.log("txSend payment", txSend);
+                                            }}
+                                        />
                                     );
                                 })}
                             </div>

@@ -1,10 +1,33 @@
 import React, { useEffect, useState } from 'react'
 import { eggType } from '../utils/functions'
 import { formatUnits } from 'ethers/lib/utils'
-import { Egg } from '../utils/store'
+import { Egg, useAuthStore, useStore } from '../utils/store'
+import { axiosInstance } from '../utils/api'
 
-function EggComponent({ egg, index, customTimer, currentTime }: { key?: string, egg: Egg, index: number, customTimer?: number, currentTime: number }) {
+type EggComponentProps = {
+    key?: string,
+    egg: Egg,
+    index: number,
+    customTimer?: number,
+    currentTime: number,
+    onBtnKeepPress: () => void,
+    onBtnPurchasePress: (idx: number) => void,
+    onBtnPayPress?: (raw: string) => void,
+}
 
+function EggComponent({
+    currentTime,
+    customTimer,
+    egg,
+    index,
+    onBtnKeepPress,
+    onBtnPayPress,
+    onBtnPurchasePress,
+}: EggComponentProps) {
+
+
+    const approved = useStore((state) => state.approved);
+    const eggTransactionData = useStore((state) => state.eggTransactionData);
     const [expiryTime, setExpiryTime] = useState(customTimer ? customTimer : egg?.openat);
     // console.log('expiryTime', expiryTime)
     // console.log('currentTime', currentTime, 'index: ', index)
@@ -13,6 +36,7 @@ function EggComponent({ egg, index, customTimer, currentTime }: { key?: string, 
         countdownMinutes: 0,
         countdownSeconds: 0,
     });
+
     useEffect(() => {
         let timeInterval: any;
         // const countdown = () => {
@@ -55,6 +79,8 @@ function EggComponent({ egg, index, customTimer, currentTime }: { key?: string, 
         // };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentTime]);
+
+
 
     const countdownText = () => {
         if (expiryTime === 0) return "Keep";
@@ -112,20 +138,26 @@ function EggComponent({ egg, index, customTimer, currentTime }: { key?: string, 
                     </div>
                 </div>
             ) : (
-                <div>
+                <div onClick={() => {
+                    if (approved && eggTransactionData && approved.toString() >= eggTransactionData.total && onBtnPayPress) {
+                        onBtnPayPress(eggTransactionData.TxRawPayment)
+                    }
+                    else onBtnKeepPress()
+                }}>
                     <img
                         src="image/BtnPurchaseActive.png"
                         className="w-20 "
                         alt="BtnPurchaseActive"
                     />
-                    <div className="flex w-full justify-center font magra font-bold decoration-from-font">
+                    <div className="flex w-full justify-center font magra font-bold decoration-from-font cursor-pointer">
                         <span className="text-white -mt-[1.8rem]">
                             Keep
                         </span>
                     </div>
                 </div>
-            )}
-        </div>
+            )
+            }
+        </div >
     )
 }
 

@@ -3110,7 +3110,36 @@ export const AppTemp = () => {
         //     </div>
         //   </div>
         // </div>
-        <JurassicMarket />
+        <JurassicMarket
+          sendTransaction={async (data: any) => {
+            console.log("sendTransaction triggered from appTemp", data);
+            const txSend = await sendTransaction(data);
+            console.log("txSend from appTemp", txSend);
+          }}
+          sendPayTransaction={async (req: any, transactionData: any) => {
+            const txSend = await sendTransactionPay(req);
+            console.log("sendPayTransaction from appTemp", txSend);
+            if (txSend) {
+              let options = {
+                headers: {
+                  "my-auth-key": token,
+                },
+              };
+              const result = await axiosInstance({
+                url: "/egg/finished",
+                method: "POST",
+                headers: options.headers,
+                data: {
+                  id: transactionData.id,
+                  hash: txSend.transactionHash,
+                },
+              });
+              const { data } = result;
+              console.log("payment finished", data);
+              setTimeout(() => checkValidation(transactionData.id), 3000);
+            }
+          }}
+        />
       )}
       <div>
         <Stage

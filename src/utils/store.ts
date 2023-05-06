@@ -67,7 +67,7 @@ type Store = {
   setUserData: (data: User) => void;
   eggListsData: EggListResponse;
   setEggListsData: (data: EggListResponse) => void;
-  eggTransactionData: EggTransactionData[];
+  eggTransactionData: EggTransactionData;
   setEggTransactionData: (data: EggTransactionData) => void;
   approved: BigNumber | undefined;
   setApproved: (data: BigNumber) => void;
@@ -123,15 +123,15 @@ export const useStore = create<Store>((set, get) => ({
   setUserData: (data) => set(() => ({ userData: data })),
   eggListsData: { remaining: 0, lists: [] },
   setEggListsData: (data) => set(() => ({ eggListsData: data })),
-  eggTransactionData: [],
-  setEggTransactionData: (data) =>
-    set(() => {
-      const currentEggTransactionData = get().eggTransactionData;
-      currentEggTransactionData.push(data);
-      return {
-        eggTransactionData: currentEggTransactionData,
-      };
-    }),
+  eggTransactionData: {
+    id: '',
+    expired: 0,
+    total: '0',
+    TxRawApproval: '',
+    TxRawPayment: '0',
+    ticket: 0
+  },
+  setEggTransactionData: (data) => set(() => ({ eggTransactionData: data })),
   approved: undefined,
   setApproved: (data) => set(() => ({ approved: data })),
   ticketPanel: { show: false, mode: "BUY" },
