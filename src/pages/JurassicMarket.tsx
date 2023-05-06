@@ -25,6 +25,8 @@ function JurassicMarket({
     const total = formatUnits(userData?.bought.total, 18)
     const progress = (parseInt(group) / parseInt(total)) * 100
     // const currentTime = new Date().getTime();
+    const [selectedPanel, setSelectedPanel] = useState("Listing");
+    const [unfinishedTransaction, setUnfinishedTransaction] = useState<string | null>(null);
     const [currentTime, setCurrentTime] = useState(new Date().getTime())
 
     const processTransaction = async (id: string, ticket: number) => {
@@ -41,7 +43,8 @@ function JurassicMarket({
         console.log("processTransaction Result:", data);
         if (data?.data?.success) {
             setEggTransactionData({ ...data?.data?.result, ticket });
-            // setSelectedPanel("My Listing");
+            getUnfinishedEggTransaction()
+            setSelectedPanel("My Listing");
         }
     };
 
@@ -59,6 +62,7 @@ function JurassicMarket({
         console.log("get unfinished egg transaction Result:", data);
         if (data?.success) {
             // processTransaction(id, ticket);
+            setUnfinishedTransaction(data?.result)
         } else {
             toast(data.message);
         }
@@ -88,6 +92,8 @@ function JurassicMarket({
     useEffect(() => {
         getUnfinishedEggTransaction()
     }, [])
+
+    console.log('unfinishedTransaction', unfinishedTransaction)
 
 
     useEffect(() => {
@@ -215,9 +221,9 @@ function JurassicMarket({
                         <div className="flex flex-row w-full justify-between">
                             {/* Pages */}
                             <div className="flex w-full justify-start text-white font-Magra font-bold text-base [@media(max-width:400px)]:text-sm">
-                                <div className="px-4 text-[#FFC700]">Listings</div>
+                                <div className={`cursor-pointer px-4 ${selectedPanel === 'Listing' ? 'text-[#FFC700]' : 'text-white'}`} onClick={() => setSelectedPanel('Listing')}>Listings</div>
                                 <div>/</div>
-                                <div className="px-2">My Listings</div>
+                                <div className={`cursor-pointer px-2 ${selectedPanel === 'My Listing' ? 'text-[#FFC700]' : 'text-white'}`} onClick={() => setSelectedPanel('My Listing')}>My Listings</div>
                             </div>
                             {/* Filters */}
                             <div className="flex w-full text-white font-Magra font-bold text-base [@media(max-width:400px)]:text-sm">
@@ -247,9 +253,14 @@ function JurassicMarket({
 
                     {/* Market */}
                     <div className="absolute left-0 top-[9rem] w-full h-[55vh]">
-                        {false ? (
-                            <div className="flex w-full h-full justify-center items-center font-Magra font-bold text-white">
-                                Coming Soon
+                        {selectedPanel === 'My Listing' ? (
+                            <div className="flex w-full h-full justify-start font-Magra font-bold text-white">
+                                {unfinishedTransaction &&
+                                    <div className='px-4 w-full h-24 border-b-2 border-white'>
+                                        <p className='text-[#FFC700]'>Unfinished</p>
+                                        <p>{unfinishedTransaction}</p>
+                                    </div>
+                                }
                             </div>
                         ) : (
                             <div className="grid grid-cols-4">
