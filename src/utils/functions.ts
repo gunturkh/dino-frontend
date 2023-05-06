@@ -37,3 +37,16 @@ export const rankLoaderBarProgress = (rank: string) => {
             return ['Hunter', 'Predator']
     }
 }
+
+export const eggType = (ticket: number) => {
+    switch (ticket) {
+        case 1:
+            return "image/imgJurassicEggIcon.png"
+        case 2:
+            return "image/imgJurassicEggIcon1.png"
+        case 3:
+            return "image/imgJurassicEggIcon2.png"
+        default:
+            return "image/imgJurassicEggIcon.png"
+    }
+}

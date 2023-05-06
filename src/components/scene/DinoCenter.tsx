@@ -176,7 +176,7 @@ const DinoCenter = ({
   const userData = useStore((state) => state.userData);
   const walletAddress = useStore((state) => state.walletAddress);
   // const eggListsData = useStore((state) => state.eggListsData);
-  // const setEggListsData = useStore((state) => state.setEggListsData);
+  const setEggListsData = useStore((state) => state.setEggListsData);
   const eggTransactionData = useStore((state) => state.eggTransactionData);
   const setEggTransactionData = useStore(
     (state) => state.setEggTransactionData
@@ -342,7 +342,7 @@ const DinoCenter = ({
     });
     console.log("getEggList Result:", data);
     if (data?.status === 200 && data?.data?.result?.lists) {
-      // setEggListsData(data?.data?.result.lists);
+      setEggListsData(data?.data?.result);
       // setEggListsData([]);
     }
   };

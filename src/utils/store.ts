@@ -20,7 +20,7 @@ type User = {
   };
 };
 
-type Egg = {
+export type Egg = {
   id: string;
   openat: number;
   ticket: number;
