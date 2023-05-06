@@ -204,10 +204,7 @@ function FlyingAnimations() {
           containerRef.current.x >
           app.screen.width + flyingDino3.width * 1.2
         ) {
-          // reset the counter to -1 to make it stop the loop and reset counter bcs we only have 3 flying dino
-          setTimeout(() => {
-            setAnimationCounter(-1);
-          }, waitDuration);
+          setAnimationCounter(-1);
           tickerOutside.stop();
         }
       });
