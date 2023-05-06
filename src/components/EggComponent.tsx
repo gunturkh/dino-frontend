@@ -98,7 +98,7 @@ function EggComponent({ egg, index, customTimer, currentTime }: { key?: string, 
             </div>
 
             {/* action button */}
-            {true ? (
+            {expiryTime > 0 ? (
                 <div>
                     <img
                         src="image/BtnPurchaseCountdown.png"
