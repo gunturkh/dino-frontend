@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect, useState } from "react";
 import * as PIXI from "pixi.js";
-import { Container, Sprite, useApp, Text } from "@pixi/react";
+import { Container, Sprite, useApp } from "@pixi/react";
 import { ProgressBar } from "@pixi/ui";
 
 import { formatUnits } from "@ethersproject/units";
-import EggListingComponent from "../EggListingComponent";
-import { EggTransactionData, useAuthStore, useStore } from "../../utils/store";
+// import EggListingComponent from "../EggListingComponent";
+import { useAuthStore, useStore } from "../../utils/store";
 import { axiosInstance } from "../../utils/api";
 import { useTokenAllowance } from "@usedapp/core";
 import { PAYGATEWAY_ADDR, USDT_ADDR } from "../../utils/config";
@@ -164,6 +164,7 @@ const DinoCenter = ({
   console.log("app.screen", app.screen);
   console.log("scene", scene);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [rankDetailBounds, setRankDetailBounds] = useState({
     x: 0,
     y: 0,
@@ -171,29 +172,30 @@ const DinoCenter = ({
     height: 0,
   });
 
-  console.log("rankDetailBounds:", rankDetailBounds);
+  // console.log("rankDetailBounds:", rankDetailBounds);
   const token = useAuthStore((state) => state.token);
   const userData = useStore((state) => state.userData);
   const walletAddress = useStore((state) => state.walletAddress);
   // const eggListsData = useStore((state) => state.eggListsData);
   const setEggListsData = useStore((state) => state.setEggListsData);
-  const eggTransactionData = useStore((state) => state.eggTransactionData);
-  const setEggTransactionData = useStore(
-    (state) => state.setEggTransactionData
-  );
+  // const eggTransactionData = useStore((state) => state.eggTransactionData);
+  // const setEggTransactionData = useStore(
+  //   (state) => state.setEggTransactionData
+  // );
   const approved = useStore((state) => state.approved);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [selectedPanel, setSelectedPanel] = useState("Listing");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_selectedPanel, setSelectedPanel] = useState("Listing");
   // const [eggLists, setEggLists] = useState([]);
 
-  const [eggPerPage] = useState(12);
-  const [paginationPageNumbers, setPaginationPageNumbers] = useState([1]);
-  const [currentPage, setCurrentPage] = useState(1);
+  // const [eggPerPage] = useState(12);
+  // const [paginationPageNumbers, setPaginationPageNumbers] = useState([1]);
+  const [currentPage] = useState(1);
   // TODO: tempCards should be set with the actual data from the API
   // const [tempCards, setTempCards] = useState<any>([])
   // const totalPages = Math.ceil(eggListsData.length / eggPerPage);
-  const startIndex = (currentPage - 1) * eggPerPage;
-  const endIndex = startIndex + eggPerPage;
+  // const startIndex = (currentPage - 1) * eggPerPage;
+  // const endIndex = startIndex + eggPerPage;
   // const currentEggs = eggListsData.slice(startIndex, endIndex);
 
   const allowance = useTokenAllowance(
@@ -205,6 +207,7 @@ const DinoCenter = ({
   console.log("allowance token", allowance);
   console.log("account", walletAddress);
   console.log("approved state", approved?.toString());
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [listingItemBounds, setListingItemBounds] = useState({
     x: 0,
     y: 0,
@@ -248,28 +251,28 @@ const DinoCenter = ({
   //   }
   // }, [app.screen.height, app.screen.width, listingItemBounds.width, rankDetailBounds.width]);
 
-  const paginationRef = useCallback(
-    (node: any) => {
-      if (node !== null) {
-        // x={app.screen.width * 0.4}
+  // const paginationRef = useCallback(
+  //   (node: any) => {
+  //     if (node !== null) {
+  //       // x={app.screen.width * 0.4}
 
-        if (app.screen.width > 430) {
-          node.width = 450 * 0.5;
-          node.x = app.screen.width * 0.47;
-          node.y = app.screen.height * 0.92;
-        } else if (app.screen.width > 400 && app.screen.width <= 430) {
-          node.width = 450 * 0.58;
-          node.x = app.screen.width * 0.42;
-          node.y = app.screen.height * 0.92;
-        } else if (app.screen.width < 400) {
-          node.width = app.screen.width * 0.6;
-          node.x = app.screen.width * 0.4;
-          node.y = app.screen.height * 0.935;
-        }
-      }
-    },
-    [app.screen.height, app.screen.width]
-  );
+  //       if (app.screen.width > 430) {
+  //         node.width = 450 * 0.5;
+  //         node.x = app.screen.width * 0.47;
+  //         node.y = app.screen.height * 0.92;
+  //       } else if (app.screen.width > 400 && app.screen.width <= 430) {
+  //         node.width = 450 * 0.58;
+  //         node.x = app.screen.width * 0.42;
+  //         node.y = app.screen.height * 0.92;
+  //       } else if (app.screen.width < 400) {
+  //         node.width = app.screen.width * 0.6;
+  //         node.x = app.screen.width * 0.4;
+  //         node.y = app.screen.height * 0.935;
+  //       }
+  //     }
+  //   },
+  //   [app.screen.height, app.screen.width]
+  // );
 
   // running this once to get the first 12 eggs
   // useEffect(() => {
@@ -295,32 +298,32 @@ const DinoCenter = ({
   //   setPaginationPageNumbers(pageNumbers);
   // }, [currentPage, eggPerPage, totalPages]);
 
-  const paginate = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-  };
+  // const paginate = (pageNumber: number) => {
+  //   setCurrentPage(pageNumber);
+  // };
 
-  const RankDetailsRef = useCallback(
-    (node: any) => {
-      if (node !== null) {
-        setRankDetailBounds(node.getBounds());
-        if (app.screen.width > 430) {
-          node.width = 450 * 1;
-        } else if (app.screen.width > 400 && app.screen.width <= 430) {
-          node.width = 450 * 0.94;
-        } else if (app.screen.width < 400) {
-          node.width = app.screen.width * 0.95;
-        }
-      }
-    },
-    [app.screen.width]
-  );
+  // const RankDetailsRef = useCallback(
+  //   (node: any) => {
+  //     if (node !== null) {
+  //       setRankDetailBounds(node.getBounds());
+  //       if (app.screen.width > 430) {
+  //         node.width = 450 * 1;
+  //       } else if (app.screen.width > 400 && app.screen.width <= 430) {
+  //         node.width = 450 * 0.94;
+  //       } else if (app.screen.width < 400) {
+  //         node.width = app.screen.width * 0.95;
+  //       }
+  //     }
+  //   },
+  //   [app.screen.width]
+  // );
 
-  const calculateEggXPosition = (index: number) => {
-    return (listingItemBounds.width + 95 * (index % 4)) as number;
-  };
-  const calculateEggYPosition = (index: number) => {
-    return (Math.floor(index / 4) * 135) as number;
-  };
+  // const calculateEggXPosition = (index: number) => {
+  //   return (listingItemBounds.width + 95 * (index % 4)) as number;
+  // };
+  // const calculateEggYPosition = (index: number) => {
+  //   return (Math.floor(index / 4) * 135) as number;
+  // };
 
   useEffect(() => {
     setIsLoaded(true);
@@ -347,43 +350,43 @@ const DinoCenter = ({
     }
   };
 
-  const processTransaction = async (id: string, ticket: number) => {
-    let options = {
-      headers: {
-        "my-auth-key": token,
-      },
-    };
-    const data: any = await axiosInstance({
-      url: `/egg/detail?id=${id}`,
-      method: "GET",
-      headers: options.headers,
-    });
-    console.log("processTransaction Result:", data);
-    if (data?.data?.success) {
-      setEggTransactionData({ ...data?.data?.result, ticket });
-      setSelectedPanel("My Listing");
-    }
-  };
+  // const processTransaction = async (id: string, ticket: number) => {
+  //   let options = {
+  //     headers: {
+  //       "my-auth-key": token,
+  //     },
+  //   };
+  //   const data: any = await axiosInstance({
+  //     url: `/egg/detail?id=${id}`,
+  //     method: "GET",
+  //     headers: options.headers,
+  //   });
+  //   console.log("processTransaction Result:", data);
+  //   if (data?.data?.success) {
+  //     setEggTransactionData({ ...data?.data?.result, ticket });
+  //     setSelectedPanel("My Listing");
+  //   }
+  // };
 
-  const handleKeep = async (id: string, ticket: number) => {
-    let options = {
-      headers: {
-        "my-auth-key": token,
-      },
-    };
-    const { data }: any = await axiosInstance({
-      url: "/egg/keep",
-      method: "POST",
-      headers: options.headers,
-      data: { id },
-    });
-    console.log("handleKeep Result:", data);
-    if (data?.success) {
-      processTransaction(id, ticket);
-    } else {
-      window.alert(data.message);
-    }
-  };
+  // const handleKeep = async (id: string, ticket: number) => {
+  //   let options = {
+  //     headers: {
+  //       "my-auth-key": token,
+  //     },
+  //   };
+  //   const { data }: any = await axiosInstance({
+  //     url: "/egg/keep",
+  //     method: "POST",
+  //     headers: options.headers,
+  //     data: { id },
+  //   });
+  //   console.log("handleKeep Result:", data);
+  //   if (data?.success) {
+  //     processTransaction(id, ticket);
+  //   } else {
+  //     window.alert(data.message);
+  //   }
+  // };
   useEffect(() => {
     // /egg/lists
     getEggList();
@@ -410,70 +413,70 @@ const DinoCenter = ({
   progressBarComponent.width = 230;
   // progressBarComponent.width = rankDetailBounds.width * 0.5;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const expText = new PIXI.Text(`${parseInt(group)}/${parseInt(total)}`, {
-    align: "center",
-    fontFamily: "Magra Bold",
-    fontSize: isNotMobile ? 15 : 14,
-    fontWeight: "600",
-    // strokeThickness: 1,
-    fill: ["white"],
-  });
+  // const expText = new PIXI.Text(`${parseInt(group)}/${parseInt(total)}`, {
+  //   align: "center",
+  //   fontFamily: "Magra Bold",
+  //   fontSize: isNotMobile ? 15 : 14,
+  //   fontWeight: "600",
+  //   // strokeThickness: 1,
+  //   fill: ["white"],
+  // });
   barView.addChild(progressBarComponent);
 
-  const progressBarComponentRef = useCallback(
-    (node: any) => {
-      if (node !== null) {
-        expText.anchor.set(0, 0.5);
-        // barView.width = rankDetailBounds.width * 0.4;
-        expText.position.set(-expText.width / 2, 10);
-        barView.position.set(-barView.width / 2, 0);
-        // barView
-        node.addChild(barView);
-        node.addChild(expText);
-      }
-    },
-    [barView, expText]
-  );
+  // const progressBarComponentRef = useCallback(
+  //   (node: any) => {
+  //     if (node !== null) {
+  //       expText.anchor.set(0, 0.5);
+  //       // barView.width = rankDetailBounds.width * 0.4;
+  //       expText.position.set(-expText.width / 2, 10);
+  //       barView.position.set(-barView.width / 2, 0);
+  //       // barView
+  //       node.addChild(barView);
+  //       node.addChild(expText);
+  //     }
+  //   },
+  //   [barView, expText]
+  // );
 
-  const rankRequalification = (rank: string) => {
-    console.log('rank', rank)
-    switch (rank) {
-      case 'Hunter':
-        return 'N/A'
-      case 'Predator':
-        return '500'
-      case 'Warrior':
-        return '2000'
-      case 'Knight':
-        return '10000'
-      case 'Dominator':
-        return '20000'
-      case 'Legendary':
-        return '50000'
-      default:
-        return 'N/A'
-    }
-  }
+  // const rankRequalification = (rank: string) => {
+  //   console.log('rank', rank)
+  //   switch (rank) {
+  //     case 'Hunter':
+  //       return 'N/A'
+  //     case 'Predator':
+  //       return '500'
+  //     case 'Warrior':
+  //       return '2000'
+  //     case 'Knight':
+  //       return '10000'
+  //     case 'Dominator':
+  //       return '20000'
+  //     case 'Legendary':
+  //       return '50000'
+  //     default:
+  //       return 'N/A'
+  //   }
+  // }
 
-  const rankLoaderBarProgress = (rank: string) => {
-    console.log('rank', rank)
-    switch (rank) {
-      case 'Hunter':
-        return ['Hunter', 'Predator']
-      case 'Predator':
-        return ['Predator', 'Warrior']
-      case 'Warrior':
-        return ['Warrior', 'Knight']
-      case 'Knight':
-        return ['Knight', 'Dominator']
-      case 'Dominator':
-        return ['Dominator', 'Legendary']
-      case 'Legendary':
-        return ['Legendary', '-']
-      default:
-        return ['Hunter', 'Predator']
-    }
-  }
+  // const rankLoaderBarProgress = (rank: string) => {
+  //   console.log('rank', rank)
+  //   switch (rank) {
+  //     case 'Hunter':
+  //       return ['Hunter', 'Predator']
+  //     case 'Predator':
+  //       return ['Predator', 'Warrior']
+  //     case 'Warrior':
+  //       return ['Warrior', 'Knight']
+  //     case 'Knight':
+  //       return ['Knight', 'Dominator']
+  //     case 'Dominator':
+  //       return ['Dominator', 'Legendary']
+  //     case 'Legendary':
+  //       return ['Legendary', '-']
+  //     default:
+  //       return ['Hunter', 'Predator']
+  //   }
+  // }
 
   return (
     <>
