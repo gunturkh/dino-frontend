@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useAuthStore, useStore } from '../utils/store';
 import EggComponent from '../components/EggComponent';
-import { rankRequalification, rankLoaderBarProgress } from '../utils/functions';
+import { rankRequalification, rankLoaderBarProgress, rankProgress } from '../utils/functions';
 import { formatUnits } from 'ethers/lib/utils';
 import { axiosInstance } from '../utils/api';
 import { PAYGATEWAY_ADDR, USDT_ADDR } from '../utils/config';
@@ -25,9 +25,11 @@ function JurassicMarket({
     const total = formatUnits(userData?.bought.total, 18)
     const progress = (parseInt(group) / parseInt(total)) * 100
     // const currentTime = new Date().getTime();
-    const [selectedPanel, setSelectedPanel] = useState("Listing");
+    const [selectedPanel, setSelectedPanel] = useState<'My Listing' | 'Listing' | 'Finish'>("Listing");
     const [unfinishedTransaction, setUnfinishedTransaction] = useState<string | null>(null);
     const [currentTime, setCurrentTime] = useState(new Date().getTime())
+    const [myListingEgg, setMyListingEgg] = useState([])
+    const rank_dateend = new Date(userData?.rank_end * 1000).toLocaleString();
 
     const processTransaction = async (id: string, ticket: number) => {
         let options = {
@@ -44,7 +46,7 @@ function JurassicMarket({
         if (data?.data?.success) {
             setEggTransactionData({ ...data?.data?.result, ticket });
             getUnfinishedEggTransaction()
-            setSelectedPanel("My Listing");
+            setSelectedPanel("Finish");
         }
     };
 
@@ -63,6 +65,27 @@ function JurassicMarket({
         if (data?.success) {
             // processTransaction(id, ticket);
             setUnfinishedTransaction(data?.result)
+        } else {
+            toast(data.message);
+        }
+    };
+
+    const getMyListingEgg = async () => {
+        let options = {
+            headers: {
+                "my-auth-key": token,
+            },
+        };
+        const { data }: any = await axiosInstance({
+            url: "/egg/myListing",
+            method: "GET",
+            headers: options.headers,
+        });
+        console.log("get MyListing egg Result:", data);
+        if (data?.success) {
+            // processTransaction(id, ticket);
+            // setUnfinishedTransaction(data?.result)
+            setMyListingEgg(data?.result)
         } else {
             toast(data.message);
         }
@@ -91,6 +114,7 @@ function JurassicMarket({
     // TODO: handle unfinished egg and continue the transaction
     useEffect(() => {
         getUnfinishedEggTransaction()
+        getMyListingEgg()
     }, [])
 
     console.log('unfinishedTransaction', unfinishedTransaction)
@@ -174,7 +198,7 @@ function JurassicMarket({
                                 </div>
                             </div>
                             <div className="absolute top-8 w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
-                                <div className="flex flex-row justify-between px-1 font-bold font-Magra text-white text-base [@media(max-width:400px)]:text-sm">
+                                <div className="flex flex-row justify-between items-center px-1 font-bold font-Magra text-white text-base [@media(max-width:400px)]:text-sm">
                                     <span>Requalification</span>
                                     <span>Current Rank</span>
                                 </div>
@@ -197,19 +221,20 @@ function JurassicMarket({
                                         />
                                     </div>
                                     <div className="absolute top-[-5px] text-[0.8rem]">
-                                        {`${parseInt(total)}/${parseInt(period)}`}
+                                        {`${parseInt(period)}/${rankProgress(userData?.title)}`}
                                     </div>
                                 </div>
                             </div>
                             <div className="absolute top-12 w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
                                 <div className="flex flex-row justify-between px-1 font-bold font-Magra text-white [@media(max-width:400px)]:text-sm">
                                     <span>{parseInt(period)}</span>
-                                    <span>{rankRequalification(userData?.title)}</span>
+                                    <span>{(userData?.title)}</span>
                                 </div>
                             </div>
                             <div className="absolute top-[4.4rem] w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
                                 <div className="flex flex-row justify-between px-20 font-bold font-Magra text-white text-sm">
                                     <span className="text-red-500">{rankLoaderBarProgress(userData?.title)?.[0]}</span>
+                                    <span className='text-[9px] text-center '>Reset: {rank_dateend}</span>
                                     <span>{rankLoaderBarProgress(userData?.title)?.[1]}</span>
                                 </div>
                             </div>
@@ -253,16 +278,32 @@ function JurassicMarket({
 
                     {/* Market */}
                     <div className="absolute left-0 top-[9rem] w-full h-[55vh]">
-                        {selectedPanel === 'My Listing' ? (
-                            <div className="flex w-full h-full justify-start font-Magra font-bold text-white">
-                                {unfinishedTransaction &&
-                                    <div className='px-4 w-full h-24 border-b-2 border-white'>
-                                        <p className='text-[#FFC700]'>Unfinished</p>
-                                        <p>{unfinishedTransaction}</p>
-                                    </div>
-                                }
-                            </div>
-                        ) : (
+                        {selectedPanel === 'My Listing' &&
+                            <>
+                                <div className="flex w-full justify-start font-Magra font-bold text-white">
+                                    {unfinishedTransaction &&
+                                        <div className='px-4 w-full h-24 border-b-2 border-white'>
+                                            <p className='text-[#FFC700]'>Unfinished</p>
+                                            <button className='bg-red-700 cursor-pointer px-4 py-2 rounded' onClick={() => toast(unfinishedTransaction)}>Click Here to Continue</button>
+                                        </div>
+                                    }
+                                </div>
+
+                                <div className="grid grid-cols-4">
+                                    {myListingEgg?.map((egg, index) => {
+                                        return (
+                                            <EggComponent
+                                                key={index.toString()}
+                                                egg={egg}
+                                                index={index}
+                                            // currentTime={currentTime}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            </>
+                        }
+                        {selectedPanel === 'Listing' &&
                             <div className="grid grid-cols-4">
                                 {eggListsData?.lists.map((egg, index) => {
                                     return (
@@ -271,7 +312,7 @@ function JurassicMarket({
                                             egg={egg}
                                             index={index}
                                             currentTime={currentTime}
-                                            customTimer={1683355142 + (1000 * index)}
+                                            customTimer={1683430121 + (1050 * index)}
                                             onBtnKeepPress={() => {
                                                 // TODO: action button for keep, using idx from props as a differentiator
                                                 console.log("onBtnKeepPress", egg.id);
@@ -302,11 +343,11 @@ function JurassicMarket({
                                     );
                                 })}
                             </div>
-                        )}
+                        }
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 

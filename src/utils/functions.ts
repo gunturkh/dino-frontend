@@ -18,6 +18,26 @@ export const rankRequalification = (rank: string) => {
     }
 }
 
+export const rankProgress = (rank: string) => {
+    // console.log('rank', rank)
+    switch (rank) {
+        case 'Hunter':
+            return '500'
+        case 'Predator':
+            return '2000'
+        case 'Warrior':
+            return '10000'
+        case 'Knight':
+            return '20000'
+        case 'Dominator':
+            return '50000'
+        case 'Legendary':
+            return 'N/A'
+        default:
+            return 'N/A'
+    }
+}
+
 export const rankLoaderBarProgress = (rank: string) => {
     // console.log('rank', rank)
     switch (rank) {

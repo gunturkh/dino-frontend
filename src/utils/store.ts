@@ -18,6 +18,7 @@ type User = {
     period: string;
     group: string;
   };
+  rank_end: number;
 };
 
 export type Egg = {
@@ -119,6 +120,7 @@ export const useStore = create<Store>((set, get) => ({
       period: "0",
       group: "0",
     },
+    rank_end: 0,
   },
   setUserData: (data) => set(() => ({ userData: data })),
   eggListsData: { remaining: 0, lists: [] },

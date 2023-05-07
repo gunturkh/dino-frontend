@@ -9,9 +9,9 @@ type EggComponentProps = {
     egg: Egg,
     index: number,
     customTimer?: number,
-    currentTime: number,
-    onBtnKeepPress: () => void,
-    onBtnPurchasePress: (idx: number) => void,
+    currentTime?: number,
+    onBtnKeepPress?: () => void,
+    onBtnPurchasePress?: (idx: number) => void,
     onBtnPayPress?: (raw: string) => void,
 }
 
@@ -40,7 +40,7 @@ function EggComponent({
     useEffect(() => {
         let timeInterval: any;
         // const countdown = () => {
-        if (expiryTime > 0) {
+        if (expiryTime > 0 && currentTime) {
             // timeInterval = setInterval(() => {
             const countdownDateTime = expiryTime * 1000;
             // const currentTime = new Date().getTime();
@@ -124,38 +124,39 @@ function EggComponent({
             </div>
 
             {/* action button */}
-            {expiryTime > 0 ? (
-                <div>
-                    <img
-                        src="image/BtnPurchaseCountdown.png"
-                        className="w-20 "
-                        alt="BtnPurchaseCountdown"
-                    />
-                    <div className="flex w-full justify-center font magra font-bold decoration-from-font">
-                        <span className="text-white -mt-[1.8rem]">
-                            {countdownText()}
-                        </span>
+            {!currentTime ? null :
+                expiryTime > 0 ? (
+                    <div>
+                        <img
+                            src="image/BtnPurchaseCountdown.png"
+                            className="w-20 "
+                            alt="BtnPurchaseCountdown"
+                        />
+                        <div className="flex w-full justify-center font magra font-bold decoration-from-font">
+                            <span className="text-white -mt-[1.8rem]">
+                                {countdownText()}
+                            </span>
+                        </div>
                     </div>
-                </div>
-            ) : (
-                <div onClick={() => {
-                    if (approved && eggTransactionData && approved.toString() >= eggTransactionData.total && onBtnPayPress) {
-                        onBtnPayPress(eggTransactionData.TxRawPayment)
-                    }
-                    else onBtnKeepPress()
-                }}>
-                    <img
-                        src="image/BtnPurchaseActive.png"
-                        className="w-20 "
-                        alt="BtnPurchaseActive"
-                    />
-                    <div className="flex w-full justify-center font magra font-bold decoration-from-font cursor-pointer">
-                        <span className="text-white -mt-[1.8rem]">
-                            Keep
-                        </span>
+                ) : (
+                    <div onClick={() => {
+                        if (approved && eggTransactionData && approved.toString() >= eggTransactionData.total && onBtnPayPress) {
+                            onBtnPayPress(eggTransactionData.TxRawPayment)
+                        }
+                        else if (onBtnKeepPress) onBtnKeepPress()
+                    }}>
+                        <img
+                            src="image/BtnPurchaseActive.png"
+                            className="w-20 "
+                            alt="BtnPurchaseActive"
+                        />
+                        <div className="flex w-full justify-center font magra font-bold decoration-from-font cursor-pointer">
+                            <span className="text-white -mt-[1.8rem]">
+                                Keep
+                            </span>
+                        </div>
                     </div>
-                </div>
-            )
+                )
             }
         </div >
     )
