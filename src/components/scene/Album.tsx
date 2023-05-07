@@ -2,6 +2,9 @@
 import { useCallback, useEffect, useState } from "react";
 import * as PIXI from "pixi.js";
 import { Container, Sprite, Text, useApp } from "@pixi/react";
+import { toast } from "react-toastify";
+import { axiosInstance } from "../../utils/api";
+import { useAuthStore } from "../../utils/store";
 
 type Props = {
   onBackBtnClick: () => void;
@@ -16,6 +19,7 @@ const Album = ({ onBackBtnClick, visible = true, scene }: Props) => {
 
   const isNotMobile = app.screen.width > 450;
 
+  const token = useAuthStore((state) => state.token);
   const [isLoaded, setIsLoaded] = useState(false);
   const [rarityPanelBounds, setRarityPanelBounds] = useState({
     x: 0,
@@ -24,6 +28,9 @@ const Album = ({ onBackBtnClick, visible = true, scene }: Props) => {
     height: 0,
   });
   const [isRarityPanelVisible, setIsRarityPanelVisible] = useState(false);
+  const [album, setAlbum] = useState([]);
+  const [cardDetails, setCardDetails] = useState({ show: false, id: 0 });
+  console.log('album', album)
   console.log(
     "🚀 ~ file: Album.tsx:32 ~ rarityPanelBounds:",
     rarityPanelBounds
@@ -59,8 +66,28 @@ const Album = ({ onBackBtnClick, visible = true, scene }: Props) => {
     return Math.floor(index / 4) * 110;
   };
 
+  const getAlbum = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const { data }: any = await axiosInstance({
+      url: "/user/collections",
+      method: "GET",
+      headers: options.headers,
+    });
+    console.log("get album Result:", data);
+    if (data?.success) {
+      setAlbum(data?.result)
+    } else {
+      toast(data.message);
+    }
+  };
+
   useEffect(() => {
     setIsLoaded(true);
+    getAlbum()
     return () => {
       setIsLoaded(false);
     };
@@ -612,13 +639,25 @@ const Album = ({ onBackBtnClick, visible = true, scene }: Props) => {
     },
   ];
 
-  const cardItems = [
+  const [cardItems, setCardItems] = useState([
     ...cardItemHerald,
     ...cardItemElite,
     ...cardItemAncient,
     ...cardItemMythical,
     ...cardItemImmortal,
-  ];
+  ])
+
+  useEffect(() => {
+    const newCardItems = cardItems
+    album.forEach((a: any) => {
+      const result = cardItems.findIndex(card => card.id === a.id)
+      newCardItems[result] = { ...newCardItems[result], isLocked: true }
+      console.log('album filtered result', result)
+    })
+    setCardItems(newCardItems)
+  }, [album])
+
+
   // TODO: integrate cardItems to backend data
   console.log("cardItems.length", cardItems.length);
 
@@ -786,13 +825,13 @@ const Album = ({ onBackBtnClick, visible = true, scene }: Props) => {
                 position={
                   isNotMobile
                     ? [
-                        -(450 * 0.38),
-                        app.screen.height - app.screen.height * 0.76,
-                      ]
+                      -(450 * 0.38),
+                      app.screen.height - app.screen.height * 0.76,
+                    ]
                     : [-(app.screen.width * 0.35), app.screen.height * 0.265]
                 }
                 anchor={[0.5, 0.5]}
-                // jitter at first render when set height
+              // jitter at first render when set height
               >
                 {currentCards?.length !== 0 &&
                   currentCards?.map((item: any, index: number) => {
@@ -808,10 +847,28 @@ const Album = ({ onBackBtnClick, visible = true, scene }: Props) => {
                         scale={isNotMobile ? [0.1, 0.1] : [0.095, 0.1]}
                         x={calculateCardXPosition(index)}
                         y={calculateCardYPosition(index)}
+                        interactive={!cardDetails?.show}
+                        onpointertap={() => setCardDetails({ show: true, id: item.id - 1 })
+                        }
                       />
                     );
                   })}
               </Container>
+              <Sprite
+                // key={index}
+                texture={
+                  cardItems[cardDetails?.id]?.imageUnlock || PIXI.Texture.EMPTY
+                }
+                anchor={[0.5, 0.5]}
+                x={0}
+                y={app.screen.height / 2}
+                scale={isNotMobile ? [0.5, 0.5] : [0.45, 0.5]}
+                // x={calculateCardXPosition(index)}
+                // y={calculateCardYPosition(index)}
+                interactive
+                onpointertap={() => setCardDetails({ show: false, id: 999 })}
+                visible={cardDetails?.show}
+              />
             </Container>
 
             {/* Rarity popup */}

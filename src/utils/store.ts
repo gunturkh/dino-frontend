@@ -38,6 +38,7 @@ export type EggPendingListData = {
   opened: number
   posted: number
   total: string
+  ticket: number
 }
 export type EggTransactionData = {
   id: string;
@@ -61,6 +62,11 @@ export type SponsorLinkPanelData = {
 export type GoogleAuthPanelData = {
   show: boolean;
   mode: 'SET' | 'REMOVE';
+};
+
+export type CardDetailsData = {
+  show: boolean;
+  id: number | null;
 };
 
 type Store = {
@@ -88,6 +94,8 @@ type Store = {
   setChangePasswordPanel: (data: boolean) => void
   googleAuthPanel: GoogleAuthPanelData,
   setGoogleAuthPanel: (data: GoogleAuthPanelData) => void
+  cardDetails: CardDetailsData,
+  setCardDetails: (data: CardDetailsData) => void
 };
 type AuthStore = {
   token: string | null;
@@ -158,6 +166,9 @@ export const useStore = create<Store>((set, get) => ({
   googleAuthPanel: { show: false, mode: 'SET' },
   setGoogleAuthPanel: (data) =>
     set(() => ({ googleAuthPanel: data })),
+  cardDetails: { show: false, id: null },
+  setCardDetails: (data) =>
+    set(() => ({ cardDetails: data })),
 }));
 
 export const useAuthStore = create(

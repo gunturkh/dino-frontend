@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { useAuthStore, useStore } from '../utils/store';
 import EggComponent from '../components/EggComponent';
-import { rankRequalification, rankLoaderBarProgress, rankProgress } from '../utils/functions';
+import { rankLoaderBarProgress, rankProgress } from '../utils/functions';
 import { formatUnits } from 'ethers/lib/utils';
 import { axiosInstance } from '../utils/api';
 import { PAYGATEWAY_ADDR, USDT_ADDR } from '../utils/config';
 import { toast } from "react-toastify";
 import ReactPaginate from 'react-paginate';
-import { selected } from '@material-tailwind/react/types/components/select';
+import { useEthers } from '@usedapp/core';
 
 function JurassicMarket({
     sendTransaction,
     sendPayTransaction,
 }: any) {
+    const { activateBrowserWallet, } = useEthers();
     const token = useAuthStore((state) => state.token);
     const walletAddress = useStore((state) => state.walletAddress);
     const eggTransactionData = useStore((state) => state.eggTransactionData);
@@ -23,20 +24,21 @@ function JurassicMarket({
     const eggListsData = useStore((state) => state.eggListsData);
 
     const [currentPage, setCurrentPage] = useState(1);
-    const [postsPerPage] = useState(16);
+    const [postsPerPage] = useState(12);
     const indexOfLastPost = currentPage * postsPerPage;
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
     const currentPosts = eggListsData?.lists.slice(indexOfFirstPost, indexOfLastPost);
 
     const changeScene = useStore((state) => state.changeScene);
     const period = formatUnits(userData?.bought.period, 18)
-    const group = formatUnits(userData?.bought.group, 18)
+    // const group = formatUnits(userData?.bought.group, 18)
     const total = formatUnits(userData?.bought.total, 18)
-    const progress = (parseInt(group) / parseInt(total)) * 100
+    const progress = (parseInt(period) / parseInt(total)) * 100
+    // console.log('progress JurassicMarket', progress)
     const approved = useStore((state) => state.approved);
-    console.log('approved jurassic market', approved)
-    console.log('approved jurassic market to string', approved?.toString())
-    console.log('eggTransactionData jurassic market', eggTransactionData)
+    // console.log('approved jurassic market', approved)
+    // console.log('approved jurassic market to string', approved?.toString())
+    // console.log('eggTransactionData jurassic market', eggTransactionData)
     // console.log('approved.toString() >= eggTransactionData.total ', approved?.toString() >= eggTransactionData.total)
     // const currentTime = new Date().getTime();
     const [selectedPanel, setSelectedPanel] = useState<'My Listing' | 'Listing' | 'Finish'>("Listing");
@@ -133,6 +135,30 @@ function JurassicMarket({
     useEffect(() => {
         getUnfinishedEggTransaction()
         getMyListingEgg()
+
+        // const unlockWallet = async () => {
+        //     console.log('walletAddress', walletAddress)
+        //     // console.log("allowance ", allowance);
+        //     // console.log("account approve", walletAddress);
+        //     if (walletAddress?.length === 0) activateBrowserWallet({ type: 'metamask' })
+        //     else {
+        //         try {
+        //             const txReq = {
+        //                 to: USDT_ADDR,
+        //                 from: walletAddress,
+        //                 data: eggTransactionData.TxRawApproval,
+        //             };
+        //             console.log("txReq", txReq);
+        //             const txSend = await sendTransaction(txReq);
+        //             console.log("txSend", txSend);
+        //         } catch (error) {
+        //             // @ts-ignore
+        //             toast(error)
+        //         }
+        //     }
+        // }
+        // unlockWallet()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     console.log('unfinishedTransaction', unfinishedTransaction)
@@ -142,35 +168,7 @@ function JurassicMarket({
         let timeInterval: any;
         const countdown = () => {
             timeInterval = setInterval(() => {
-                // const countdownDateTime = expiryTime * 1000;
-                // const currentTime = new Date().getTime();
                 setCurrentTime(new Date().getTime())
-                // const remainingDayTime = countdownDateTime - currentTime;
-                // // console.log(`countdownDateTime ${index}`, countdownDateTime);
-                // // console.log(`currentTime ${index}`, currentTime);
-                // // console.log(`remainingDayTime ${index}`, remainingDayTime);
-                // const totalHours = Math.floor(
-                //     (remainingDayTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-                // );
-                // const totalMinutes = Math.floor(
-                //     (remainingDayTime % (1000 * 60 * 60)) / (1000 * 60)
-                // );
-                // const totalSeconds = Math.floor(
-                //     (remainingDayTime % (1000 * 60)) / 1000
-                // );
-
-                // const runningCountdownTime = {
-                //     countdownHours: totalHours,
-                //     countdownMinutes: totalMinutes,
-                //     countdownSeconds: totalSeconds,
-                // };
-
-                // if (remainingDayTime < 0) {
-                //     clearInterval(timeInterval);
-                //     setExpiryTime(0);
-                // } else {
-                //     setCountdownTime(runningCountdownTime);
-                // }
             }, 1000);
         }
         countdown();
@@ -225,17 +223,20 @@ function JurassicMarket({
                             {/* TODO: need to update styling to accept dynamic progress bar fill */}
                             <div className="absolute inline-block top-12 w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
                                 <div className="flex flex-col items-center justify-center font-bold font-Magra text-white text-lg">
-                                    <img
-                                        src="image/RankExpBarBg.png"
-                                        className="object-cover z-10"
-                                        alt="RankExpBarBg"
-                                    />
-                                    {/* progress fill */}
-                                    <div className="absolute top-0 w-auto z-0">
+                                    <div>
+                                        {/* progress fill */}
+                                        <div className="absolute top-0 max-w-[156px] z-0">
+                                            <img
+                                                src="image/imgRankExpBarFill.png"
+                                                className={`h-[25px] relative left-2`}
+                                                alt="imgRankExpBarFill"
+                                                width={progress / 100 * 156}
+                                            />
+                                        </div>
                                         <img
-                                            src="image/imgRankExpBarFill.png"
-                                            className=" object-covef"
-                                            alt="imgRankExpBarFill"
+                                            src="image/RankExpBarBg.png"
+                                            className="object-cover z-10"
+                                            alt="RankExpBarBg"
                                         />
                                     </div>
                                     <div className="absolute top-[-5px] text-[0.8rem]">
@@ -301,30 +302,47 @@ function JurassicMarket({
                                 <div className="flex w-full justify-start font-Magra font-bold text-white">
                                     {eggTransactionData &&
                                         <div className='px-4 w-full h-24 border-b-2 border-white'>
-                                            <p className='text-[#FFC700]'>{eggTransactionData?.id}</p>
-                                            <p className='text-[#FFC700]'>{eggTransactionData?.total}</p>
+                                            {/* <p className='text-[#FFC700]'>{eggTransactionData?.id}</p> */}
+                                            <p className='text-[#FFC700]'>{
+                                                parseFloat(
+                                                    parseFloat(formatUnits(eggTransactionData?.total, 18)).toFixed(2)
+                                                ).toString()} USDT</p>
                                             {approved && approved?.toString() >= eggTransactionData.total ?
                                                 <button className='bg-green-700 cursor-pointer px-4 py-2 rounded' onClick={async (raw: any) => {
-                                                    const txReq = {
-                                                        data: eggTransactionData.TxRawPayment,
-                                                        to: PAYGATEWAY_ADDR,
-                                                        from: walletAddress,
-                                                    };
-                                                    const txSend = await sendPayTransaction(txReq, eggTransactionData);
-                                                    console.log("txSend payment", txSend);
+                                                    try {
+                                                        const txReq = {
+                                                            data: eggTransactionData.TxRawPayment,
+                                                            to: PAYGATEWAY_ADDR,
+                                                            from: walletAddress,
+                                                        };
+                                                        const txSend = await sendPayTransaction(txReq, eggTransactionData);
+                                                        console.log("txSend payment", txSend);
+                                                    } catch (error) {
+                                                        // @ts-ignore
+                                                        toast(error)
+                                                    }
                                                 }}>Purchase</button>
                                                 :
                                                 <button className='bg-red-700 cursor-pointer px-4 py-2 rounded' onClick={async () => {
+                                                    console.log('walletAddress', walletAddress)
                                                     // console.log("allowance ", allowance);
                                                     // console.log("account approve", walletAddress);
-                                                    const txReq = {
-                                                        to: USDT_ADDR,
-                                                        from: walletAddress,
-                                                        data: eggTransactionData.TxRawApproval,
-                                                    };
-                                                    console.log("txReq", txReq);
-                                                    const txSend = await sendTransaction(txReq);
-                                                    console.log("txSend", txSend);
+                                                    if (walletAddress?.length === 0) activateBrowserWallet({ type: 'metamask' })
+                                                    else {
+                                                        try {
+                                                            const txReq = {
+                                                                to: USDT_ADDR,
+                                                                from: walletAddress,
+                                                                data: eggTransactionData.TxRawApproval,
+                                                            };
+                                                            console.log("txReq", txReq);
+                                                            const txSend = await sendTransaction(txReq);
+                                                            console.log("txSend", txSend);
+                                                        } catch (error) {
+                                                            // @ts-ignore
+                                                            toast(error)
+                                                        }
+                                                    }
                                                 }}>Unlock Wallet</button>
 
                                             }
@@ -362,14 +380,14 @@ function JurassicMarket({
                         {selectedPanel === 'Listing' &&
                             <>
                                 <div className="grid grid-cols-4">
-                                    {currentPosts.slice(currentPage).map((egg, index) => {
+                                    {currentPosts.map((egg, index) => {
                                         return (
                                             <EggComponent
                                                 key={egg.id}
                                                 egg={egg}
                                                 index={index}
                                                 currentTime={currentTime}
-                                                customTimer={1683430121 + (1050 * index)}
+                                                // customTimer={1683430121 + (1050 * index)}
                                                 onBtnKeepPress={() => {
                                                     // TODO: action button for keep, using idx from props as a differentiator
                                                     console.log("onBtnKeepPress", egg.id);
@@ -400,17 +418,19 @@ function JurassicMarket({
                                         );
                                     })}
                                 </div>
-                                <ReactPaginate
-                                    onPageChange={paginate}
-                                    pageCount={Math.ceil(eggListsData?.lists?.length / postsPerPage)}
-                                    previousLabel={'Prev'}
-                                    nextLabel={'Next'}
-                                    containerClassName={'pagination'}
-                                    pageLinkClassName={'page-number'}
-                                    previousLinkClassName={'page-number'}
-                                    nextLinkClassName={'page-number'}
-                                    activeLinkClassName={'active'}
-                                />
+                                <div className='flex flex-row justify-center py-8'>
+                                    <ReactPaginate
+                                        onPageChange={paginate}
+                                        pageCount={Math.ceil(eggListsData?.lists?.length / postsPerPage)}
+                                        previousLabel={'<<'}
+                                        nextLabel={'>>'}
+                                        containerClassName={'flex flex-row text-white text-2xl'}
+                                        pageLinkClassName={'font-Magra px-2'}
+                                        previousLinkClassName={'font-Magra text-white px-4'}
+                                        nextLinkClassName={'font-Magra text-white px-4'}
+                                        activeLinkClassName={'text-[#FFC700]'}
+                                    />
+                                </div>
                             </>
                         }
                     </div>

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { eggType } from '../utils/functions'
 import { formatUnits } from 'ethers/lib/utils'
-import { Egg, useAuthStore, useStore } from '../utils/store'
-import { axiosInstance } from '../utils/api'
+import { Egg, useStore } from '../utils/store'
 
 type EggComponentProps = {
     key?: string,
@@ -119,7 +118,10 @@ function EggComponent({
             {/* price */}
             <div className="font magra font-bold decoration-from-font">
                 <span className="text-[#FFC700] [@media(max-width:400px)]:text-sm">
-                    {formatUnits(egg?.total, 18)} USDT
+
+                    {parseFloat(
+                        parseFloat(formatUnits(egg?.total, 18)).toFixed(2)
+                    ).toString()} USDT
                 </span>
             </div>
 

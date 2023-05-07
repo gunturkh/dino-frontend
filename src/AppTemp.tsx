@@ -3,9 +3,9 @@ import { useFormik } from "formik";
 import {
   useEtherBalance,
   useEthers,
-  BSC,
+  // BSC,
   BSCTestnet,
-  useToken,
+  // useToken,
   useContractFunction,
   useTokenBalance,
   useTokenAllowance,
@@ -48,13 +48,6 @@ import {
   Select,
   Option,
 } from "@material-tailwind/react";
-import { BsPlusSquare } from "react-icons/bs";
-import {
-  eggType,
-  rankLoaderBarProgress,
-  rankRequalification,
-} from "./utils/functions";
-import EggComponent from "./components/EggComponent";
 import JurassicMarket from "./pages/JurassicMarket";
 import { Buddies } from "./pages/Buddies";
 // import { BigNumber, BigNumberish, Contract, utils } from "ethers";
@@ -125,6 +118,7 @@ export const AppTemp = () => {
   );
   const googleAuthPanel = useStore((state) => state.googleAuthPanel);
   const setGoogleAuthPanel = useStore((state) => state.setGoogleAuthPanel);
+  // const cardDetails = useStore((state) => state.cardDetails);
   // const eggListsData = useStore((state) => state.eggListsData);
   // console.log("googleAuthPanel", googleAuthPanel);
   // const usdtInfo = useToken(USDT_ADDR);
@@ -172,7 +166,7 @@ export const AppTemp = () => {
   const {
     sendTransaction,
     state: sendTransactionState,
-    resetState: resetSendTransactionState,
+    // resetState: resetSendTransactionState,
   } = useSendTransaction({ transactionName: "Egg Approval" });
   const {
     sendTransaction: sendTransactionPay,
@@ -180,10 +174,10 @@ export const AppTemp = () => {
     // resetState: resetSendTransactionPayState,
   } = useSendTransaction({ transactionName: "Egg Pay" });
 
-  const period = formatUnits(userData?.bought.period, 18);
-  const group = formatUnits(userData?.bought.group, 18);
-  const total = formatUnits(userData?.bought.total, 18);
-  const progress = (parseInt(group) / parseInt(total)) * 100;
+  // const period = formatUnits(userData?.bought.period, 18);
+  // const group = formatUnits(userData?.bought.group, 18);
+  // const total = formatUnits(userData?.bought.total, 18);
+  // const progress = (parseInt(group) / parseInt(total)) * 100;
 
   const transactionList = useTransactions();
   const { notifications } = useNotifications();
@@ -366,9 +360,9 @@ export const AppTemp = () => {
     if (sendTransactionState.status === "Success" && allowance) {
       console.log('allowance appTemp', allowance)
       setApproved(allowance);
-      resetSendTransactionState();
+      // resetSendTransactionState();
     }
-  }, [sendTransactionState]);
+  }, [sendTransactionState, allowance]);
 
   // useEffect(() => {
   //   if (sendTicketApprovalState.status === "Success" && ticketAllowance) {
@@ -456,6 +450,7 @@ export const AppTemp = () => {
     // console.log(result.data);
     if (result.data.result === 1) {
       toast("Egg Transaction Confirmed");
+      getPendingListingEgg()
       changeScene('HOME')
     } else {
       setTimeout(() => checkValidation(id), 5000);
@@ -908,7 +903,7 @@ export const AppTemp = () => {
 
   useEffect(() => {
     getPendingListingEgg()
-  }, [])
+  }, [token])
 
 
   const options = {
