@@ -6,6 +6,8 @@ import { formatUnits } from 'ethers/lib/utils';
 import { axiosInstance } from '../utils/api';
 import { PAYGATEWAY_ADDR, USDT_ADDR } from '../utils/config';
 import { toast } from "react-toastify";
+import ReactPaginate from 'react-paginate';
+import { selected } from '@material-tailwind/react/types/components/select';
 
 function JurassicMarket({
     sendTransaction,
@@ -19,11 +21,23 @@ function JurassicMarket({
     );
     const userData = useStore((state) => state.userData);
     const eggListsData = useStore((state) => state.eggListsData);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [postsPerPage] = useState(16);
+    const indexOfLastPost = currentPage * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    const currentPosts = eggListsData?.lists.slice(indexOfFirstPost, indexOfLastPost);
+
     const changeScene = useStore((state) => state.changeScene);
     const period = formatUnits(userData?.bought.period, 18)
     const group = formatUnits(userData?.bought.group, 18)
     const total = formatUnits(userData?.bought.total, 18)
     const progress = (parseInt(group) / parseInt(total)) * 100
+    const approved = useStore((state) => state.approved);
+    console.log('approved jurassic market', approved)
+    console.log('approved jurassic market to string', approved?.toString())
+    console.log('eggTransactionData jurassic market', eggTransactionData)
+    // console.log('approved.toString() >= eggTransactionData.total ', approved?.toString() >= eggTransactionData.total)
     // const currentTime = new Date().getTime();
     const [selectedPanel, setSelectedPanel] = useState<'My Listing' | 'Listing' | 'Finish'>("Listing");
     const [unfinishedTransaction, setUnfinishedTransaction] = useState<string | null>(null);
@@ -109,6 +123,10 @@ function JurassicMarket({
         } else {
             toast(data.message);
         }
+    };
+
+    const paginate = ({ selected }: { selected: number }) => {
+        setCurrentPage(selected + 1);
     };
 
     // TODO: handle unfinished egg and continue the transaction
@@ -278,13 +296,51 @@ function JurassicMarket({
 
                     {/* Market */}
                     <div className="absolute left-0 top-[9rem] w-full h-[55vh]">
+                        {selectedPanel === 'Finish' &&
+                            <>
+                                <div className="flex w-full justify-start font-Magra font-bold text-white">
+                                    {eggTransactionData &&
+                                        <div className='px-4 w-full h-24 border-b-2 border-white'>
+                                            <p className='text-[#FFC700]'>{eggTransactionData?.id}</p>
+                                            <p className='text-[#FFC700]'>{eggTransactionData?.total}</p>
+                                            {approved && approved?.toString() >= eggTransactionData.total ?
+                                                <button className='bg-green-700 cursor-pointer px-4 py-2 rounded' onClick={async (raw: any) => {
+                                                    const txReq = {
+                                                        data: eggTransactionData.TxRawPayment,
+                                                        to: PAYGATEWAY_ADDR,
+                                                        from: walletAddress,
+                                                    };
+                                                    const txSend = await sendPayTransaction(txReq, eggTransactionData);
+                                                    console.log("txSend payment", txSend);
+                                                }}>Purchase</button>
+                                                :
+                                                <button className='bg-red-700 cursor-pointer px-4 py-2 rounded' onClick={async () => {
+                                                    // console.log("allowance ", allowance);
+                                                    // console.log("account approve", walletAddress);
+                                                    const txReq = {
+                                                        to: USDT_ADDR,
+                                                        from: walletAddress,
+                                                        data: eggTransactionData.TxRawApproval,
+                                                    };
+                                                    console.log("txReq", txReq);
+                                                    const txSend = await sendTransaction(txReq);
+                                                    console.log("txSend", txSend);
+                                                }}>Unlock Wallet</button>
+
+                                            }
+                                        </div>
+                                    }
+                                </div>
+
+                            </>
+                        }
                         {selectedPanel === 'My Listing' &&
                             <>
                                 <div className="flex w-full justify-start font-Magra font-bold text-white">
                                     {unfinishedTransaction &&
                                         <div className='px-4 w-full h-24 border-b-2 border-white'>
                                             <p className='text-[#FFC700]'>Unfinished</p>
-                                            <button className='bg-red-700 cursor-pointer px-4 py-2 rounded' onClick={() => toast(unfinishedTransaction)}>Click Here to Continue</button>
+                                            <button className='bg-red-700 cursor-pointer px-4 py-2 rounded' onClick={() => setSelectedPanel('Finish')}>Click Here to Continue</button>
                                         </div>
                                     }
                                 </div>
@@ -304,45 +360,58 @@ function JurassicMarket({
                             </>
                         }
                         {selectedPanel === 'Listing' &&
-                            <div className="grid grid-cols-4">
-                                {eggListsData?.lists.map((egg, index) => {
-                                    return (
-                                        <EggComponent
-                                            key={egg.id}
-                                            egg={egg}
-                                            index={index}
-                                            currentTime={currentTime}
-                                            customTimer={1683430121 + (1050 * index)}
-                                            onBtnKeepPress={() => {
-                                                // TODO: action button for keep, using idx from props as a differentiator
-                                                console.log("onBtnKeepPress", egg.id);
-                                                handleKeep(egg.id, egg.ticket);
-                                            }}
-                                            onBtnPurchasePress={async () => {
-                                                // console.log("allowance ", allowance);
-                                                // console.log("account approve", walletAddress);
-                                                const txReq = {
-                                                    to: USDT_ADDR,
-                                                    from: walletAddress,
-                                                    data: eggTransactionData.TxRawApproval,
-                                                };
-                                                console.log("txReq", txReq);
-                                                const txSend = await sendTransaction(txReq);
-                                                console.log("txSend", txSend);
-                                            }}
-                                            onBtnPayPress={async (raw: any) => {
-                                                const txReq = {
-                                                    data: raw,
-                                                    to: PAYGATEWAY_ADDR,
-                                                    from: walletAddress,
-                                                };
-                                                const txSend = await sendPayTransaction(txReq, eggTransactionData);
-                                                console.log("txSend payment", txSend);
-                                            }}
-                                        />
-                                    );
-                                })}
-                            </div>
+                            <>
+                                <div className="grid grid-cols-4">
+                                    {currentPosts.slice(currentPage).map((egg, index) => {
+                                        return (
+                                            <EggComponent
+                                                key={egg.id}
+                                                egg={egg}
+                                                index={index}
+                                                currentTime={currentTime}
+                                                customTimer={1683430121 + (1050 * index)}
+                                                onBtnKeepPress={() => {
+                                                    // TODO: action button for keep, using idx from props as a differentiator
+                                                    console.log("onBtnKeepPress", egg.id);
+                                                    handleKeep(egg.id, egg.ticket);
+                                                }}
+                                                onBtnPurchasePress={async () => {
+                                                    // console.log("allowance ", allowance);
+                                                    // console.log("account approve", walletAddress);
+                                                    const txReq = {
+                                                        to: USDT_ADDR,
+                                                        from: walletAddress,
+                                                        data: eggTransactionData.TxRawApproval,
+                                                    };
+                                                    console.log("txReq", txReq);
+                                                    const txSend = await sendTransaction(txReq);
+                                                    console.log("txSend", txSend);
+                                                }}
+                                                onBtnPayPress={async (raw: any) => {
+                                                    const txReq = {
+                                                        data: raw,
+                                                        to: PAYGATEWAY_ADDR,
+                                                        from: walletAddress,
+                                                    };
+                                                    const txSend = await sendPayTransaction(txReq, eggTransactionData);
+                                                    console.log("txSend payment", txSend);
+                                                }}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                                <ReactPaginate
+                                    onPageChange={paginate}
+                                    pageCount={Math.ceil(eggListsData?.lists?.length / postsPerPage)}
+                                    previousLabel={'Prev'}
+                                    nextLabel={'Next'}
+                                    containerClassName={'pagination'}
+                                    pageLinkClassName={'page-number'}
+                                    previousLinkClassName={'page-number'}
+                                    nextLinkClassName={'page-number'}
+                                    activeLinkClassName={'active'}
+                                />
+                            </>
                         }
                     </div>
                 </div>

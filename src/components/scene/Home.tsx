@@ -38,6 +38,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
   const walletBalance = useStore((state) => state.walletBalance);
   const userData = useStore((state) => state.userData);
   const setUserData = useStore((state) => state.setUserData);
+  const eggPendingListData = useStore((state) => state.eggPendingListData);
   const eggListsData = useStore((state) => state.eggListsData);
   const setEggListsData = useStore((state) => state.setEggListsData);
   const setTicketPanel = useStore((state) => state.setTicketPanel);
@@ -436,7 +437,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
           posBtn={[-3, 25]}
           text={"Pre-List"}
           onPress={() => console.log("egg 2 clicked")}
-          visible={!eggData[1].hidden}
+          // visible={!eggData[1].hidden}
         />
 
         {/* egg 3 */}
@@ -446,7 +447,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
           posY={-65}
           text={"Reveal"}
           onPress={() => console.log("egg 3 clicked")}
-          visible={!eggData[2].hidden}
+          // visible={!eggData[2].hidden}
         />
 
         {/* egg 4 */}
@@ -455,7 +456,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
           posX={-79}
           posY={-2}
           onPress={() => console.log("egg 4 clicked")}
-          visible={!eggData[3].hidden}
+          // visible={!eggData[3].hidden}
         />
 
         {/* egg 5 */}
@@ -465,7 +466,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
           posX={7}
           posY={29}
           onPress={() => console.log("egg 5 clicked")}
-          visible={!eggData[4].hidden}
+          // visible={!eggData[4].hidden}
         />
 
         {/* egg 6 */}
@@ -474,7 +475,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
           posX={98}
           posY={-2}
           onPress={() => console.log("egg 6 clicked")}
-          visible={!eggData[5].hidden}
+          // visible={!eggData[5].hidden}
         />
 
         {/* egg 7 */}
@@ -483,7 +484,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
           posX={109}
           posY={-65}
           onPress={() => console.log("egg 7 clicked")}
-          visible={!eggData[6].hidden}
+          // visible={!eggData[6].hidden}
         />
 
         {/* egg 8 */}
@@ -493,7 +494,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
           posY={-112}
           posBtn={[5, 25]}
           onPress={() => console.log("egg 8 clicked")}
-          visible={!eggData[7].hidden}
+          // visible={!eggData[7].hidden}
         />
 
         {/* egg 1 (big) */}
@@ -505,7 +506,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
           scaleBtn={[1.2, 1.3]}
           scaleEgg={[0.95, 0.95]}
           onPress={() => console.log("egg 1 clicked")}
-          visible={!eggData[0].hidden}
+          // visible={!eggData[0].hidden}
         />
       </Container>
     );
@@ -792,7 +793,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
             </Container>
 
             {/* Egg Panel */}
-            {EggPlateComponent(dummyEggLists)}
+            {/* {EggPlateComponent(dummyEggLists)} */}
+            {EggPlateComponent(eggPendingListData)}
 
             {/* Lower Button Container */}
             <Container

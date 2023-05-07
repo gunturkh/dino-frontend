@@ -32,7 +32,13 @@ type EggListResponse = {
   remaining: number;
   lists: Egg[]
 };
-
+export type EggPendingListData = {
+  id: string
+  listedat: number
+  opened: number
+  posted: number
+  total: string
+}
 export type EggTransactionData = {
   id: string;
   expired: number;
@@ -66,12 +72,14 @@ type Store = {
   setWalletBalance: (balance: string) => void;
   userData: User;
   setUserData: (data: User) => void;
+  eggPendingListData: EggPendingListData[];
+  setEggPendingListData: (data: EggPendingListData[]) => void;
   eggListsData: EggListResponse;
   setEggListsData: (data: EggListResponse) => void;
   eggTransactionData: EggTransactionData;
   setEggTransactionData: (data: EggTransactionData) => void;
-  approved: BigNumber | undefined;
-  setApproved: (data: BigNumber) => void;
+  approved: BigNumber | undefined | null;
+  setApproved: (data: BigNumber | null) => void;
   ticketPanel: TicketPanelData;
   setTicketPanel: (data: TicketPanelData) => void;
   sponsorLinkPanel: SponsorLinkPanelData;
@@ -123,6 +131,8 @@ export const useStore = create<Store>((set, get) => ({
     rank_end: 0,
   },
   setUserData: (data) => set(() => ({ userData: data })),
+  eggPendingListData: [],
+  setEggPendingListData: (data) => set(() => ({ eggPendingListData: data })),
   eggListsData: { remaining: 0, lists: [] },
   setEggListsData: (data) => set(() => ({ eggListsData: data })),
   eggTransactionData: {

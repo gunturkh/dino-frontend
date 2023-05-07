@@ -115,6 +115,7 @@ export const AppTemp = () => {
   const setWalletBalance = useStore((state) => state.setWalletBalance);
   // const approved = useStore((state) => state.approved);
   const setApproved = useStore((state) => state.setApproved);
+  const setEggPendingListData = useStore((state) => state.setEggPendingListData);
   const ticketPanel = useStore((state) => state.ticketPanel);
   const setTicketPanel = useStore((state) => state.setTicketPanel);
   const changePasswordPanel = useStore((state) => state.changePasswordPanel);
@@ -123,7 +124,7 @@ export const AppTemp = () => {
   );
   const googleAuthPanel = useStore((state) => state.googleAuthPanel);
   const setGoogleAuthPanel = useStore((state) => state.setGoogleAuthPanel);
-  const eggListsData = useStore((state) => state.eggListsData);
+  // const eggListsData = useStore((state) => state.eggListsData);
   // console.log("googleAuthPanel", googleAuthPanel);
   // const usdtInfo = useToken(USDT_ADDR);
   const usdtBalance = useTokenBalance(USDT_ADDR, account);
@@ -362,6 +363,7 @@ export const AppTemp = () => {
 
   useEffect(() => {
     if (sendTransactionState.status === "Success" && allowance) {
+      console.log('allowance appTemp', allowance)
       setApproved(allowance);
       resetSendTransactionState();
     }
@@ -405,6 +407,24 @@ export const AppTemp = () => {
       });
     // axios.post(API_ENDPOINT + '/ticket/validate', { hash: hash }, options)
   };
+  const getPendingListingEgg = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const { data }: any = await axiosInstance({
+      url: "/egg/pendingListing",
+      method: "GET",
+      headers: options.headers,
+    });
+    console.log("get pendingListing egg Result:", data);
+    if (data?.success) {
+      setEggPendingListData(data?.result)
+    } else {
+      toast(data.message);
+    }
+  };
   useEffect(() => {
     if (
       sendTicketBuyState &&
@@ -415,7 +435,7 @@ export const AppTemp = () => {
       // checkValidateTx(sendTicketBuyState.transaction.hash);
       resetSendTicketBuyState();
     }
-    console.log("sendTicketBuyState", sendTicketBuyState);
+    // console.log("sendTicketBuyState", sendTicketBuyState);
     if (sendTicketBuyState.status === "Exception")
       toast(sendTicketBuyState.errorMessage);
   }, [sendTicketBuyState]);
@@ -432,10 +452,10 @@ export const AppTemp = () => {
       headers: options.headers,
       data: { id: id },
     });
-    console.log(result.data);
+    // console.log(result.data);
     if (result.data.result === 1) {
-      alert("Transaction Confirmed");
-      // window.location = '/pending-list';
+      toast("Egg Transaction Confirmed");
+      changeScene('HOME')
     } else {
       setTimeout(() => checkValidation(id), 5000);
     }
@@ -885,6 +905,11 @@ export const AppTemp = () => {
     }
   }, [setWalletBalance, usdtBalance]);
 
+  useEffect(() => {
+    getPendingListingEgg()
+  }, [])
+
+
   const options = {
     backgroundColor: 0x1099bb,
     antialias: true,
@@ -1064,9 +1089,8 @@ export const AppTemp = () => {
     return (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className={`${
-          id === open ? "rotate-180" : ""
-        } h-5 w-5 transition-transform`}
+        className={`${id === open ? "rotate-180" : ""
+          } h-5 w-5 transition-transform`}
         fill="none"
         viewBox="0 0 24 24"
         stroke="white"
@@ -1467,9 +1491,8 @@ export const AppTemp = () => {
                     type={"image"}
                     src={"image/BtnConfirm.png"}
                     onClick={loginForm.submitForm}
-                    className={`${
-                      captcha?.length === 0 ? "opacity-50" : ""
-                    } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${captcha?.length === 0 ? "opacity-50" : ""
+                      } mt-12 px-3.5 py-2.5 text-sm`}
                     disabled={captcha?.length === 0}
                   />
                 </>
@@ -1677,9 +1700,8 @@ export const AppTemp = () => {
                     src={"image/BtnConfirmRegister.png"}
                     disabled={!registerCheckbox}
                     onClick={registerForm.submitForm}
-                    className={`${
-                      !registerCheckbox ? "opacity-50" : ""
-                    } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${!registerCheckbox ? "opacity-50" : ""
+                      } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -1758,9 +1780,8 @@ export const AppTemp = () => {
                     src={"image/BtnSubmit.png"}
                     onClick={registerHandler}
                     disabled={registerCaptcha?.length === 0}
-                    className={`${
-                      registerCaptcha?.length === 0 ? "opacity-50" : ""
-                    } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${registerCaptcha?.length === 0 ? "opacity-50" : ""
+                      } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -1795,11 +1816,10 @@ export const AppTemp = () => {
                     type={"image"}
                     src={"image/BtnSubmit.png"}
                     onClick={loginWalletForm.submitForm}
-                    className={`${
-                      loginWalletForm.values.walletAddress.length === 0
-                        ? "opacity-50"
-                        : ""
-                    } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${loginWalletForm.values.walletAddress.length === 0
+                      ? "opacity-50"
+                      : ""
+                      } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -1839,9 +1859,8 @@ export const AppTemp = () => {
                     src={"image/BtnSubmit.png"}
                     onClick={forgotPasswordForm.submitForm}
                     disabled={forgotPasswordCaptcha?.length === 0}
-                    className={`${
-                      forgotPasswordCaptcha?.length === 0 ? "opacity-50" : ""
-                    } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${forgotPasswordCaptcha?.length === 0 ? "opacity-50" : ""
+                      } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -2026,9 +2045,8 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "BUY" })
                   }
-                  className={`${
-                    ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
-                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
+                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   Buy
                 </button>
@@ -2038,11 +2056,10 @@ export const AppTemp = () => {
                     onClick={() =>
                       setTicketPanel({ ...ticketPanel, mode: "TRANSFER" })
                     }
-                    className={`${
-                      ticketPanel.mode === "TRANSFER"
-                        ? "text-blue-500"
-                        : "text-white"
-                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                    className={`${ticketPanel.mode === "TRANSFER"
+                      ? "text-blue-500"
+                      : "text-white"
+                      } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                   >
                     Transfer
                   </button>
@@ -2052,11 +2069,10 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
                   }
-                  className={`${
-                    ticketPanel.mode === "HISTORY"
-                      ? "text-blue-500"
-                      : "text-white"
-                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${ticketPanel.mode === "HISTORY"
+                    ? "text-blue-500"
+                    : "text-white"
+                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   History
                 </button>
@@ -2107,8 +2123,8 @@ export const AppTemp = () => {
                             console.log("buy with bonus", e);
                             setBuyWithBonus(!buyWithBonus);
                           }}
-                          // onBlur={loginForm.handleBlur}
-                          // value={usd}
+                        // onBlur={loginForm.handleBlur}
+                        // value={usd}
                         />
                         <p className="font-Magra text-md text-white ml-3">
                           Buy with Bonus
@@ -2204,14 +2220,13 @@ export const AppTemp = () => {
                         }
                       }
                     }}
-                    className={`${
-                      buyWithBonus
-                        ? "bg-green-500"
-                        : ticketAllowance &&
-                          ticketAllowance.toBigInt() < BigInt(usd * 1e18)
+                    className={`${buyWithBonus
+                      ? "bg-green-500"
+                      : ticketAllowance &&
+                        ticketAllowance.toBigInt() < BigInt(usd * 1e18)
                         ? "bg-red-500"
                         : "bg-green-500"
-                    } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                      } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                     disabled={
                       (buyWithBonus &&
                         GAValue.length < 6 &&
@@ -2223,8 +2238,8 @@ export const AppTemp = () => {
                       ? "Buy with Bonus"
                       : ticketAllowance &&
                         ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                      ? "Approval"
-                      : "Buy Ticket"}
+                        ? "Approval"
+                        : "Buy Ticket"}
                   </button>
                   {sendTicketBuyState.status !== "None" && (
                     <p className="text-white/50 font-Magra">
@@ -2358,16 +2373,14 @@ export const AppTemp = () => {
                         <tr className="text-white text-center">
                           <td>{formattedTime}</td>
                           <td
-                            className={`${
-                              t.amount < 0 ? "text-red-500" : "text-green-500"
-                            }`}
+                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
+                              }`}
                           >
                             {t.amount < 0 ? "OUT" : "IN"}
                           </td>
                           <td
-                            className={`${
-                              t.amount < 0 ? "text-red-500" : "text-green-500"
-                            }`}
+                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
+                              }`}
                           >
                             {t.amount}
                           </td>
@@ -3153,6 +3166,9 @@ export const AppTemp = () => {
               });
               const { data } = result;
               console.log("payment finished", data);
+              if (data.success) {
+                setApproved(null)
+              }
               setTimeout(() => checkValidation(transactionData.id), 3000);
             }
           }}
@@ -3170,7 +3186,7 @@ export const AppTemp = () => {
           onAnimationIteration={() => {
             console.log("animation iteration");
           }}
-          // onMount={(_app) => setApp(_app)}
+        // onMount={(_app) => setApp(_app)}
         >
           {/* @ts-ignore */}
 
