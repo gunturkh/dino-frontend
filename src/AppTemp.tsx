@@ -56,6 +56,7 @@ import {
 } from "./utils/functions";
 import EggComponent from "./components/EggComponent";
 import JurassicMarket from "./pages/JurassicMarket";
+import { Buddies } from "./pages/Buddies";
 // import { BigNumber, BigNumberish, Contract, utils } from "ethers";
 // import { Interface } from "ethers/lib/utils";
 
@@ -1104,114 +1105,6 @@ export const AppTemp = () => {
   const handleOpenGameGuide = (value: number) => {
     setOpenGameGuide(openGameGuide === value ? 0 : value);
   };
-
-  const ShowUsers = (props: any) => {
-    const { data } = props;
-    // const [downline, setDownline] = useState<any>();
-
-    return (
-      <tr>
-        <td>{data.username}</td>
-        <td>{data.sponsor}</td>
-        <td>{data.level}</td>
-        <td>$ {formatUnits(data.bought)}</td>
-      </tr>
-    );
-  };
-
-  const Downline = () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [datas, setDatas] = useState<any>();
-    // const [searchParams] = useSearchParams();
-
-    const loadDownline = async () => {
-      let options = {
-        headers: {
-          "my-auth-key": token,
-        },
-      };
-      const response = await axiosInstance({
-        url: "/user/downline",
-        method: "GET",
-        headers: options.headers,
-      });
-      setDatas(response.data.result);
-      // setBuddiesyHistories([{ username: userData?.username, data: response.data.result }])
-    };
-
-    useEffect(() => {
-      if (!datas) loadDownline();
-      // if (buddiesHistories.length === 0) loadDownline();
-    }, []);
-
-    return (
-      <>
-        <h1 className="font-Magra text-yellow-700 text-center text-xl">
-          {`${userData.username} Buddy`}
-          {/* {buddiesHistories.length > 0 ? buddiesHistories[buddiesHistories.length - 1]?.username : `${userData.username}'s buddy`} */}
-        </h1>
-        {datas ? (
-          // <div className="flex flex-col">
-          //   {datas.map((elm: any) => (
-          //     <ShowUsers key={elm.username} data={elm} setDatas={setDatas} />
-          //   ))}
-          // </div>
-          <>
-            <table className="table table-stripped">
-              <thead>
-                <tr>
-                  <th>Username</th>
-                  <th>Referral</th>
-                  <th>Level</th>
-                  <th>Sales</th>
-                </tr>
-              </thead>
-              <tbody>
-                {datas.data.map((elm: any) => (
-                  <ShowUsers key={elm.username} data={elm} />
-                ))}
-              </tbody>
-            </table>
-            <div className="paginate">
-              <Paginate total={datas.totalpage} current={datas.pagenow} />
-            </div>
-          </>
-        ) : (
-          ""
-        )}
-        {/* {buddiesHistories.length > 0 ? (
-          <div className="flex flex-col">
-            {buddiesHistories[buddiesHistories.length - 1]?.data?.map((elm: any) => (
-              <ShowUsers key={elm.username} data={elm} setDatas={setDatas} />
-            ))}
-          </div>
-        ) : (
-          ""
-        )} */}
-      </>
-    );
-  };
-
-  const Paginate = (props: any) => {
-    var pctn = [];
-    for (let i = 1; i <= props.total; i++) {
-      let uri = "/downline?page=" + i;
-      if (i === 1) uri = "/downline";
-      let classs = "";
-      if (parseInt(props.current) === i) classs = "active";
-      pctn.push(
-        <li key={i}>
-          <a className={classs} href={uri}>
-            {i}
-          </a>
-        </li>
-      );
-    }
-
-    return <ul>{pctn}</ul>;
-  };
-
-  const DownlineCallback = useCallback(Downline, [token]);
 
   // const walletStatus = (status: string) => {
   //   switch (status) {
@@ -2929,31 +2822,7 @@ export const AppTemp = () => {
           </div>
         </div>
       )}
-      {scene === "BUDDIES" && (
-        <div className="absolute w-full h-full flex justify-center items-center">
-          <img
-            src="image/profileBackground.png"
-            className="absolute w-full h-full object-cover "
-            alt="background"
-          />
-          <div className="flex z-20 h-[80vh] w-[450px] max-[450px]:w-[calc(100vw)] max-w-[450px] justify-center items-center flex-col sm:px-4 shadow-sm rounded-sm ">
-            <div className="flex w-full justify-start">
-              <img
-                src="image/backBtn.png"
-                width={30}
-                height={30}
-                alt="Back"
-                onClick={() => changeScene("HOME")}
-              />
-            </div>
-            <div className="flex flex-col h-full w-full px-4 pt-6 pb-6 bg-gray-700/20 backdrop-blur-sm overflow-y-visible overflow-auto">
-              <div className="bg-transparent">
-                <DownlineCallback />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {scene === "BUDDIES" && <Buddies />}
       {scene === "DINOCENTER" && (
         // <div className="absolute w-full h-full flex justify-center items-center">
         //   <div className="flex z-20 h-[100vh] w-[450px] max-[450px]:w-[calc(100vw)] max-w-[450px] justify-center items-center flex-col sm:px-4 shadow-sm rounded-sm ">
