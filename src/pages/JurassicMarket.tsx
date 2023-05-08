@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useAuthStore, useStore } from '../utils/store';
 import EggComponent from '../components/EggComponent';
-import { rankLoaderBarProgress, rankProgress } from '../utils/functions';
+import { eggType, rankLoaderBarProgress, rankProgress } from '../utils/functions';
 import { formatUnits } from 'ethers/lib/utils';
 import { axiosInstance } from '../utils/api';
 import { PAYGATEWAY_ADDR, USDT_ADDR } from '../utils/config';
@@ -10,6 +10,7 @@ import ReactPaginate from 'react-paginate';
 import { useEthers } from '@usedapp/core';
 
 function JurassicMarket({
+    sendEggApproval,
     sendTransaction,
     sendPayTransaction,
 }: any) {
@@ -19,6 +20,10 @@ function JurassicMarket({
     const eggTransactionData = useStore((state) => state.eggTransactionData);
     const setEggTransactionData = useStore(
         (state) => state.setEggTransactionData
+    );
+    const eggTransactionState = useStore((state) => state.eggTransactionState);
+    const setEggTransactionState = useStore(
+        (state) => state.setEggTransactionState
     );
     const userData = useStore((state) => state.userData);
     const eggListsData = useStore((state) => state.eggListsData);
@@ -63,7 +68,7 @@ function JurassicMarket({
         if (data?.data?.success) {
             setEggTransactionData({ ...data?.data?.result, ticket });
             getUnfinishedEggTransaction()
-            setSelectedPanel("Finish");
+            setSelectedPanel("My Listing");
         }
     };
 
@@ -82,6 +87,16 @@ function JurassicMarket({
         if (data?.success) {
             // processTransaction(id, ticket);
             setUnfinishedTransaction(data?.result)
+            const response: any = await axiosInstance({
+                url: `/egg/detail?id=${data?.result}`,
+                method: "GET",
+                headers: options.headers,
+            });
+            console.log("processTransaction Result:", response);
+            if (response?.data?.success) {
+                setEggTransactionData({ ...response?.data?.result });
+                // if (selectedPanel === 'My Listing') setSelectedPanel("Finish");
+            }
         } else {
             toast(data.message);
         }
@@ -177,10 +192,14 @@ function JurassicMarket({
         // }
         // unlockWallet()
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [selectedPanel])
 
-    console.log('unfinishedTransaction', unfinishedTransaction)
-
+    // console.log('unfinishedTransaction', unfinishedTransaction)
+    // console.log('eggTransactionData', eggTransactionData)
+    // console.log('myListingEgg', myListingEgg)
+    const rankValue = parseInt(rankProgress(userData?.title))
+    const periodValue = parseInt(period)
+    const requalificationScore = rankValue - periodValue < 0 ? 0 : rankValue - periodValue
 
     useEffect(() => {
         let timeInterval: any;
@@ -264,7 +283,7 @@ function JurassicMarket({
                             </div>
                             <div className="absolute top-12 w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
                                 <div className="flex flex-row justify-between px-1 font-bold font-Magra text-white [@media(max-width:400px)]:text-sm">
-                                    <span>{parseInt(period)}</span>
+                                    <span>{requalificationScore}</span>
                                     <span>{(userData?.title)}</span>
                                 </div>
                             </div>
@@ -318,54 +337,6 @@ function JurassicMarket({
                         {selectedPanel === 'Finish' &&
                             <>
                                 <div className="flex w-full justify-start font-Magra font-bold text-white">
-                                    {eggTransactionData &&
-                                        <div className='px-4 w-full h-24 border-b-2 border-white'>
-                                            {/* <p className='text-[#FFC700]'>{eggTransactionData?.id}</p> */}
-                                            <p className='text-[#FFC700]'>{
-                                                parseFloat(
-                                                    parseFloat(formatUnits(eggTransactionData?.total, 18)).toFixed(2)
-                                                ).toString()} USDT</p>
-                                            {approved && approved?.toString() >= eggTransactionData.total ?
-                                                <button className='bg-green-700 cursor-pointer px-4 py-2 rounded' onClick={async (raw: any) => {
-                                                    try {
-                                                        const txReq = {
-                                                            data: eggTransactionData.TxRawPayment,
-                                                            to: PAYGATEWAY_ADDR,
-                                                            from: walletAddress,
-                                                        };
-                                                        const txSend = await sendPayTransaction(txReq, eggTransactionData);
-                                                        console.log("txSend payment", txSend);
-                                                    } catch (error) {
-                                                        // @ts-ignore
-                                                        toast(error)
-                                                    }
-                                                }}>Purchase</button>
-                                                :
-                                                <button className='bg-red-700 cursor-pointer px-4 py-2 rounded' onClick={async () => {
-                                                    console.log('walletAddress', walletAddress)
-                                                    // console.log("allowance ", allowance);
-                                                    // console.log("account approve", walletAddress);
-                                                    if (walletAddress?.length === 0) activateBrowserWallet({ type: 'metamask' })
-                                                    else {
-                                                        try {
-                                                            const txReq = {
-                                                                to: USDT_ADDR,
-                                                                from: walletAddress,
-                                                                data: eggTransactionData.TxRawApproval,
-                                                            };
-                                                            console.log("txReq", txReq);
-                                                            const txSend = await sendTransaction(txReq);
-                                                            console.log("txSend", txSend);
-                                                        } catch (error) {
-                                                            // @ts-ignore
-                                                            toast(error)
-                                                        }
-                                                    }
-                                                }}>Unlock Wallet</button>
-
-                                            }
-                                        </div>
-                                    }
                                 </div>
 
                             </>
@@ -374,9 +345,73 @@ function JurassicMarket({
                             <>
                                 <div className="flex w-full justify-start font-Magra font-bold text-white">
                                     {unfinishedTransaction &&
-                                        <div className='px-4 w-full h-24 border-b-2 border-white'>
-                                            <p className='text-[#FFC700]'>Unfinished</p>
-                                            <button className='bg-red-700 cursor-pointer px-4 py-2 rounded' onClick={() => setSelectedPanel('Finish')}>Click Here to Continue</button>
+                                        eggTransactionData &&
+                                        <div className='p-4 w-full border-b-2 border-white'>
+                                            {/* <p className='text-[#FFC700]'>{eggTransactionData?.id}</p> */}
+
+                                            <div
+                                                className="flex flex-col items-center content-center "
+                                            >
+                                                <img
+                                                    src="image/jurassicEggBg.png"
+                                                    className="w-24 [@media(max-width:400px)]:w-[4.5rem] [@media(max-height:700px)]:w-[4.5rem]"
+                                                    alt="jurassicEggBg"
+                                                />
+                                                <div>
+                                                    <img
+                                                        src={`${eggType(eggTransactionData?.ticket)}`}
+                                                        className={`w-14 -mt-[5.1rem] [@media(max-width:400px)]:w-[2.6rem] [@media(max-height:700px)]:w-[2.6rem] [@media(max-width:400px)]:-mt-[3.9rem] [@media(max-height:700px)]:-mt-[3.9rem]`}
+                                                        alt="imgJurassicEggIcon"
+                                                    />
+                                                </div>
+                                                <p className='text-[#FFC700]'>{
+                                                    parseFloat(
+                                                        parseFloat(formatUnits(eggTransactionData?.total, 18)).toFixed(2)
+                                                    ).toString()} USDT</p>
+                                                {approved && approved?.toString() >= eggTransactionData.total ?
+                                                    <button className='bg-green-700 cursor-pointer px-4 py-2 rounded' onClick={async (raw: any) => {
+                                                        try {
+                                                            const txReq = {
+                                                                data: eggTransactionData.TxRawPayment,
+                                                                to: PAYGATEWAY_ADDR,
+                                                                from: walletAddress,
+                                                            };
+                                                            const txSend = await sendPayTransaction(txReq, eggTransactionData);
+                                                            setEggTransactionState('Loading')
+                                                            console.log("txSend payment", txSend);
+                                                        } catch (error) {
+                                                            // @ts-ignore
+                                                            toast(error)
+                                                        }
+                                                    }}>Purchase</button>
+                                                    :
+                                                    <button className={`${eggTransactionState === 'Loading' ? 'bg-[#FFC700]' : 'bg-red-700'} cursor-pointer px-4 py-2 rounded`} onClick={async () => {
+                                                        console.log('walletAddress', walletAddress)
+                                                        // console.log("allowance ", allowance);
+                                                        // console.log("account approve", walletAddress);
+                                                        if (walletAddress?.length === 0) activateBrowserWallet({ type: 'metamask' })
+                                                        else {
+                                                            try {
+                                                                const txReq = {
+                                                                    to: USDT_ADDR,
+                                                                    from: walletAddress,
+                                                                    data: eggTransactionData.TxRawApproval,
+                                                                };
+                                                                // sendEggApproval(USDT_ADDR, eggTransactionData?.total)
+                                                                console.log("txReq", txReq);
+                                                                const txSend = await sendTransaction(txReq);
+                                                                console.log("txSend", txSend);
+                                                            } catch (error) {
+                                                                // @ts-ignore
+                                                                toast(error)
+                                                            }
+                                                        }
+                                                    }}
+                                                        disabled={eggTransactionState === 'Loading'}
+                                                    >{eggTransactionState ? 'Waiting...' : 'Unlock Wallet'}</button>
+
+                                                }
+                                            </div>
                                         </div>
                                     }
                                 </div>

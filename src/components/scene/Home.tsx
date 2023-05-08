@@ -536,11 +536,9 @@ const Home = ({ onProfileClick, scene }: Props) => {
               // console.log(result.data);
               if (result.data.success) {
                 const p = result.data.result;
-                toast(
-                  `Horray, you get ${p.reward_name} valued $ ` +
-                    ethers.utils.formatEther(p.reward_value)
-                );
-                getPendingListingEgg();
+                if (p.reward_name === '') toast('Oh no! The Dinosaur broke free!')
+                else toast(`Horray, you get ${p.reward_name} valued $ ` + ethers.utils.formatEther(p.reward_value));
+                getPendingListingEgg()
                 // window.location.reload()
               } else {
                 toast("Error when trying to open egg");
@@ -632,34 +630,31 @@ const Home = ({ onProfileClick, scene }: Props) => {
 
         {eggData?.map((egg: EggPendingListData, eggIndex: number) => {
           if (eggIndex === 0) {
-            return (
-              <NormalEggComponent
-                data={egg}
-                currentTime={currentTime}
-                eggTexture={PIXI.Assets.get(`BigEggIcon${egg.ticket}`)}
-                posX={position[eggIndex]?.posX}
-                posY={position[eggIndex]?.posY}
-                posBtn={position[eggIndex]?.posBtn}
-                scaleBtn={[1.2, 1.3]}
-                scaleEgg={[0.95, 0.95]}
-                onPress={() => console.log("egg 1 clicked")}
-                // visible={!eggData[0]}
-              />
-            );
-          } else
-            return (
-              <NormalEggComponent
-                data={egg}
-                currentTime={currentTime}
-                eggTexture={PIXI.Assets.get(`EggIcon${egg?.ticket}`)}
-                posX={position[eggIndex]?.posX}
-                posY={position[eggIndex]?.posY}
-                posBtn={position[eggIndex]?.posBtn}
-                // text={"Pre-List"}
-                onPress={() => console.log(`egg ${eggIndex} clicked`)}
-                // visible={!eggData[1]}
-              />
-            );
+            return <NormalEggComponent
+              data={egg}
+              currentTime={currentTime}
+              eggTexture={PIXI.Assets.get(`BigEggIcon${egg?.ticket === 4 ? '3' : egg?.ticket}`)}
+              posX={position[eggIndex]?.posX}
+              posY={position[eggIndex]?.posY}
+              posBtn={position[eggIndex]?.posBtn}
+              scaleBtn={[1.2, 1.3]}
+              scaleEgg={[0.95, 0.95]}
+              onPress={() => console.log("egg 1 clicked")}
+            // visible={!eggData[0]}
+            />
+          }
+          else
+            return <NormalEggComponent
+              data={egg}
+              currentTime={currentTime}
+              eggTexture={PIXI.Assets.get(`EggIcon${egg?.ticket === 4 ? '3' : egg?.ticket}`)}
+              posX={position[eggIndex]?.posX}
+              posY={position[eggIndex]?.posY}
+              posBtn={position[eggIndex]?.posBtn}
+              // text={"Pre-List"}
+              onPress={() => console.log(`egg ${eggIndex} clicked`)}
+            // visible={!eggData[1]}
+            />
         })}
         {/* egg 2 */}
         {/* <NormalEggComponent

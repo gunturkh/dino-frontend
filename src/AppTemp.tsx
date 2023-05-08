@@ -109,9 +109,8 @@ export const AppTemp = () => {
   const setWalletBalance = useStore((state) => state.setWalletBalance);
   // const approved = useStore((state) => state.approved);
   const setApproved = useStore((state) => state.setApproved);
-  const setEggPendingListData = useStore(
-    (state) => state.setEggPendingListData
-  );
+  const setEggPendingListData = useStore((state) => state.setEggPendingListData);
+  const setEggTransactionState = useStore((state) => state.setEggTransactionState);
   const ticketPanel = useStore((state) => state.ticketPanel);
   const setTicketPanel = useStore((state) => state.setTicketPanel);
   const withdrawPanel = useStore((state) => state.withdrawPanel);
@@ -273,7 +272,15 @@ export const AppTemp = () => {
   const { state, send } = useContractFunction(USDTContract, "approve", {
     transactionName: "Ticket Approval",
   });
+
+  const { state: eggApprovalState, send: sendEggApproval } = useContractFunction(USDTContract, "approve", {
+    transactionName: "Egg Approval",
+  });
+
+  console.log('eggApprovalState', eggApprovalState)
+
   console.log("contractFunction state", state);
+
   useEffect(() => {
     toast(state.errorMessage);
   }, [state.errorMessage]);
@@ -454,8 +461,9 @@ export const AppTemp = () => {
     // console.log(result.data);
     if (result.data.result === 1) {
       toast("Egg Transaction Confirmed");
-      getPendingListingEgg();
-      changeScene("HOME");
+      setEggTransactionState('')
+      getPendingListingEgg()
+      changeScene('HOME')
     } else {
       setTimeout(() => checkValidation(id), 5000);
     }
@@ -3289,6 +3297,7 @@ export const AppTemp = () => {
         //   </div>
         // </div>
         <JurassicMarket
+          sendEggApproval={sendEggApproval}
           sendTransaction={async (data: any) => {
             console.log("sendTransaction triggered from appTemp", data);
             const txSend = await sendTransaction(data);
@@ -3315,7 +3324,8 @@ export const AppTemp = () => {
               const { data } = result;
               console.log("payment finished", data);
               if (data.success) {
-                setApproved(null);
+                setApproved(null)
+                setEggTransactionState('')
               }
               setTimeout(() => checkValidation(transactionData.id), 3000);
             }

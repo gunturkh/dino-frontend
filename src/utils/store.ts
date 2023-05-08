@@ -89,6 +89,8 @@ type Store = {
   setEggListsData: (data: EggListResponse) => void;
   eggTransactionData: EggTransactionData;
   setEggTransactionData: (data: EggTransactionData) => void;
+  eggTransactionState: 'Loading' | '';
+  setEggTransactionState: (data: 'Loading' | '') => void;
   approved: BigNumber | undefined | null;
   setApproved: (data: BigNumber | null) => void;
   ticketPanel: TicketPanelData;
@@ -159,6 +161,8 @@ export const useStore = create<Store>((set, get) => ({
     ticket: 0,
   },
   setEggTransactionData: (data) => set(() => ({ eggTransactionData: data })),
+  eggTransactionState: '',
+  setEggTransactionState: (data) => set(() => ({ eggTransactionState: data })),
   approved: undefined,
   setApproved: (data) => set(() => ({ approved: data })),
   ticketPanel: { show: false, mode: "BUY" },
