@@ -34,7 +34,9 @@ type Props = {
 
 const Home = ({ onProfileClick, scene }: Props) => {
   const app = useApp();
-  const setEggPendingListData = useStore((state) => state.setEggPendingListData);
+  const setEggPendingListData = useStore(
+    (state) => state.setEggPendingListData
+  );
   const changeScene = useStore((state) => state.changeScene);
   // const walletAddress = useStore((state) => state.walletAddress);
   const walletBalance = useStore((state) => state.walletBalance);
@@ -44,6 +46,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
   const eggListsData = useStore((state) => state.eggListsData);
   const setEggListsData = useStore((state) => state.setEggListsData);
   const setTicketPanel = useStore((state) => state.setTicketPanel);
+  const setWithdrawPanel = useStore((state) => state.setWithdrawPanel);
   const token = useAuthStore((state) => state.token);
   // const { sendTransaction, state } = useSendTransaction({ transactionName: 'Buy Ticket' })
   console.log("token from home", token);
@@ -58,15 +61,15 @@ const Home = ({ onProfileClick, scene }: Props) => {
   const [buyTicketPanelVisible, setBuyTicketPanelVisible] = useState(false);
   const [toggleBtnAudio, setToggleBtnAudio] = useState(false);
 
-  const [currentTime, setCurrentTime] = useState(new Date().getTime())
+  const [currentTime, setCurrentTime] = useState(new Date().getTime());
 
   useEffect(() => {
     let timeInterval: any;
     const countdown = () => {
       timeInterval = setInterval(() => {
-        setCurrentTime(new Date().getTime())
+        setCurrentTime(new Date().getTime());
       }, 1000);
-    }
+    };
     countdown();
     return () => {
       clearInterval(timeInterval);
@@ -347,7 +350,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
     });
     console.log("get pendingListing egg Result:", data);
     if (data?.success) {
-      setEggPendingListData(data?.result)
+      setEggPendingListData(data?.result);
     } else {
       toast(data.message);
     }
@@ -384,7 +387,6 @@ const Home = ({ onProfileClick, scene }: Props) => {
       }
     };
 
-
     if (token && token?.length > 0) {
       getUserData();
       getEggList();
@@ -407,9 +409,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
     text,
     visible,
   }: any) => {
-
     const [expiryTime, setExpiryTime] = useState(data?.listedat);
-    console.log('expiryTime NormalEgg', expiryTime)
+    console.log("expiryTime NormalEgg", expiryTime);
     // console.log('currentTime', currentTime, 'index: ', index)
     const [countdownTime, setCountdownTime] = useState({
       countdownHours: 0,
@@ -422,19 +423,21 @@ const Home = ({ onProfileClick, scene }: Props) => {
       if (expiryTime === 0 && data?.posted === 1) return "Gatcha";
       else
         return (
-          `${countdownTime.countdownHours.toString().length === 1
-            ? `0${countdownTime.countdownHours}`
-            : countdownTime.countdownHours
-          }:${countdownTime.countdownMinutes.toString().length === 1
-            ? `0${countdownTime.countdownMinutes}`
-            : countdownTime.countdownMinutes
-          }:${countdownTime.countdownSeconds.toString().length === 1
-            ? `0${countdownTime.countdownSeconds}`
-            : countdownTime.countdownSeconds
+          `${
+            countdownTime.countdownHours.toString().length === 1
+              ? `0${countdownTime.countdownHours}`
+              : countdownTime.countdownHours
+          }:${
+            countdownTime.countdownMinutes.toString().length === 1
+              ? `0${countdownTime.countdownMinutes}`
+              : countdownTime.countdownMinutes
+          }:${
+            countdownTime.countdownSeconds.toString().length === 1
+              ? `0${countdownTime.countdownSeconds}`
+              : countdownTime.countdownSeconds
           }` || ""
         );
-    }
-
+    };
 
     useEffect(() => {
       let timeInterval: any;
@@ -496,7 +499,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
           scale={scaleBtn ? scaleBtn : [0.6, 0.7]}
           eventMode="static"
           onpointertap={async () => {
-            if (formatText() === 'Pre-List') {
+            if (formatText() === "Pre-List") {
               let options = {
                 headers: {
                   "my-auth-key": token,
@@ -511,14 +514,14 @@ const Home = ({ onProfileClick, scene }: Props) => {
               // console.log(result.data);
               if (result.data.success) {
                 toast("Pre-List Egg Success");
-                getPendingListingEgg()
+                getPendingListingEgg();
                 // window.location.reload()
                 // changeScene('HOME')
               } else {
-                toast("Error when trying to pre-list egg")
+                toast("Error when trying to pre-list egg");
               }
             }
-            if (formatText() === 'Gatcha') {
+            if (formatText() === "Gatcha") {
               let options = {
                 headers: {
                   "my-auth-key": token,
@@ -533,13 +536,15 @@ const Home = ({ onProfileClick, scene }: Props) => {
               // console.log(result.data);
               if (result.data.success) {
                 const p = result.data.result;
-                toast(`Horray, you get ${p.reward_name} valued $ ` + ethers.utils.formatEther(p.reward_value));
-                getPendingListingEgg()
+                toast(
+                  `Horray, you get ${p.reward_name} valued $ ` +
+                    ethers.utils.formatEther(p.reward_value)
+                );
+                getPendingListingEgg();
                 // window.location.reload()
               } else {
-                toast("Error when trying to open egg")
+                toast("Error when trying to open egg");
               }
-
             }
           }}
         >
@@ -572,7 +577,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
   };
 
   const EggPlateComponent = (eggData: any) => {
-    console.log('eggData', eggData)
+    console.log("eggData", eggData);
 
     const position = [
       {
@@ -593,32 +598,32 @@ const Home = ({ onProfileClick, scene }: Props) => {
       },
       {
         posX: -79,
-        posY: -2
+        posY: -2,
       },
       {
         posX: 7,
-        posY: 29
+        posY: 29,
       },
       {
         posX: 98,
-        posY: -2
+        posY: -2,
       },
       {
         posX: 109,
-        posY: -65
+        posY: -65,
       },
       {
         posX: 70,
         posY: -112,
-      }
-    ]
+      },
+    ];
     return (
       <Container
         ref={eggPlateContainerRef}
         x={-5}
         scale={[0.9, 0.9]}
         height={app.screen.height * 0.4}
-      // width={app.screen.width * 0.9}
+        // width={app.screen.width * 0.9}
       >
         <Sprite
           texture={PIXI.Assets.get("EggPlate") || PIXI.Texture.EMPTY}
@@ -627,31 +632,34 @@ const Home = ({ onProfileClick, scene }: Props) => {
 
         {eggData?.map((egg: EggPendingListData, eggIndex: number) => {
           if (eggIndex === 0) {
-            return <NormalEggComponent
-              data={egg}
-              currentTime={currentTime}
-              eggTexture={PIXI.Assets.get(`BigEggIcon${egg.ticket}`)}
-              posX={position[eggIndex]?.posX}
-              posY={position[eggIndex]?.posY}
-              posBtn={position[eggIndex]?.posBtn}
-              scaleBtn={[1.2, 1.3]}
-              scaleEgg={[0.95, 0.95]}
-              onPress={() => console.log("egg 1 clicked")}
-            // visible={!eggData[0]}
-            />
-          }
-          else
-            return <NormalEggComponent
-              data={egg}
-              currentTime={currentTime}
-              eggTexture={PIXI.Assets.get(`EggIcon${egg?.ticket}`)}
-              posX={position[eggIndex]?.posX}
-              posY={position[eggIndex]?.posY}
-              posBtn={position[eggIndex]?.posBtn}
-              // text={"Pre-List"}
-              onPress={() => console.log(`egg ${eggIndex} clicked`)}
-            // visible={!eggData[1]}
-            />
+            return (
+              <NormalEggComponent
+                data={egg}
+                currentTime={currentTime}
+                eggTexture={PIXI.Assets.get(`BigEggIcon${egg.ticket}`)}
+                posX={position[eggIndex]?.posX}
+                posY={position[eggIndex]?.posY}
+                posBtn={position[eggIndex]?.posBtn}
+                scaleBtn={[1.2, 1.3]}
+                scaleEgg={[0.95, 0.95]}
+                onPress={() => console.log("egg 1 clicked")}
+                // visible={!eggData[0]}
+              />
+            );
+          } else
+            return (
+              <NormalEggComponent
+                data={egg}
+                currentTime={currentTime}
+                eggTexture={PIXI.Assets.get(`EggIcon${egg?.ticket}`)}
+                posX={position[eggIndex]?.posX}
+                posY={position[eggIndex]?.posY}
+                posBtn={position[eggIndex]?.posBtn}
+                // text={"Pre-List"}
+                onPress={() => console.log(`egg ${eggIndex} clicked`)}
+                // visible={!eggData[1]}
+              />
+            );
         })}
         {/* egg 2 */}
         {/* <NormalEggComponent
@@ -817,7 +825,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
               <Container
                 position={[
                   (DinoFundBgBounds?.width / 2) *
-                  (app.screen?.width > 450 ? 1.05 : 1),
+                    (app.screen?.width > 450 ? 1.05 : 1),
                   DinoFundBgBounds?.height / 2 - 7,
                 ]}
               >
@@ -884,7 +892,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 // position={[app.screen.width / 2 - (lfSideBounds.width / 2), 0]}
                 position={[isNotMobile ? 110 : 90, 10]}
                 anchor={[0.5, 0.5]}
-              // width={app.screen.width > 450 ? 450 : app.screen.width}
+                // width={app.screen.width > 450 ? 450 : app.screen.width}
               >
                 <DetailsComponent
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
@@ -906,8 +914,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
                   }
                   textYOffest={-3}
                   textXOffest={10}
-                  onPress={() => {
-                    console.log("onPress BNBDetails");
+                  onPress={async () => {
+                    setWithdrawPanel({ show: true, mode: "WITHDRAW" });
                   }}
                 />
                 <DetailsComponent
@@ -1025,7 +1033,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
               ref={lowerSectionContainerRef}
               anchor={[0.5, 0.5]}
               x={0}
-            // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
+              // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
             >
               {/* left side */}
               <LowerButtonComponent
@@ -1247,7 +1255,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[
                       buyTicketPanelBounds?.width * 0.5 -
-                      (isNotMobile ? 50 : 25),
+                        (isNotMobile ? 50 : 25),
                       0,
                     ]}
                     eventMode="static"
@@ -1307,11 +1315,11 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[
                       buyTicketPanelBounds?.width * 0.5 -
-                      (isNotMobile ? 50 : 25),
+                        (isNotMobile ? 50 : 25),
                       0,
                     ]}
                     eventMode="static"
-                  // onpointertap={() => setGoogleAuthVisible(false)}
+                    // onpointertap={() => setGoogleAuthVisible(false)}
                   />
                 </Container>
 

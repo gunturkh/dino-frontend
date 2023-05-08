@@ -30,16 +30,16 @@ export type Egg = {
 
 type EggListResponse = {
   remaining: number;
-  lists: Egg[]
+  lists: Egg[];
 };
 export type EggPendingListData = {
-  id: string
-  listedat: number
-  opened: number
-  posted: number
-  total: string
-  ticket: number
-}
+  id: string;
+  listedat: number;
+  opened: number;
+  posted: number;
+  total: string;
+  ticket: number;
+};
 export type EggTransactionData = {
   id: string;
   expired: number;
@@ -54,6 +54,11 @@ export type TicketPanelData = {
   mode: "BUY" | "TRANSFER" | "HISTORY";
 };
 
+export type WithdrawPanelData = {
+  show: boolean;
+  mode: "WITHDRAW" | "HISTORY";
+};
+
 export type SponsorLinkPanelData = {
   show: boolean;
   link: string;
@@ -61,7 +66,7 @@ export type SponsorLinkPanelData = {
 
 export type GoogleAuthPanelData = {
   show: boolean;
-  mode: 'SET' | 'REMOVE';
+  mode: "SET" | "REMOVE";
 };
 
 export type CardDetailsData = {
@@ -90,12 +95,14 @@ type Store = {
   setTicketPanel: (data: TicketPanelData) => void;
   sponsorLinkPanel: SponsorLinkPanelData;
   setSponsorLinkPanel: (data: SponsorLinkPanelData) => void;
-  changePasswordPanel: boolean,
-  setChangePasswordPanel: (data: boolean) => void
-  googleAuthPanel: GoogleAuthPanelData,
-  setGoogleAuthPanel: (data: GoogleAuthPanelData) => void
-  cardDetails: CardDetailsData,
-  setCardDetails: (data: CardDetailsData) => void
+  changePasswordPanel: boolean;
+  setChangePasswordPanel: (data: boolean) => void;
+  googleAuthPanel: GoogleAuthPanelData;
+  setGoogleAuthPanel: (data: GoogleAuthPanelData) => void;
+  cardDetails: CardDetailsData;
+  setCardDetails: (data: CardDetailsData) => void;
+  withdrawPanel: WithdrawPanelData;
+  setWithdrawPanel: (data: WithdrawPanelData) => void;
 };
 type AuthStore = {
   token: string | null;
@@ -144,12 +151,12 @@ export const useStore = create<Store>((set, get) => ({
   eggListsData: { remaining: 0, lists: [] },
   setEggListsData: (data) => set(() => ({ eggListsData: data })),
   eggTransactionData: {
-    id: '',
+    id: "",
     expired: 0,
-    total: '0',
-    TxRawApproval: '',
-    TxRawPayment: '0',
-    ticket: 0
+    total: "0",
+    TxRawApproval: "",
+    TxRawPayment: "0",
+    ticket: 0,
   },
   setEggTransactionData: (data) => set(() => ({ eggTransactionData: data })),
   approved: undefined,
@@ -157,18 +164,16 @@ export const useStore = create<Store>((set, get) => ({
   ticketPanel: { show: false, mode: "BUY" },
   setTicketPanel: ({ show, mode }) =>
     set(() => ({ ticketPanel: { show, mode } })),
-  sponsorLinkPanel: { show: false, link: '' },
-  setSponsorLinkPanel: (data) =>
-    set(() => ({ sponsorLinkPanel: data })),
+  sponsorLinkPanel: { show: false, link: "" },
+  setSponsorLinkPanel: (data) => set(() => ({ sponsorLinkPanel: data })),
   changePasswordPanel: false,
-  setChangePasswordPanel: (data) =>
-    set(() => ({ changePasswordPanel: data })),
-  googleAuthPanel: { show: false, mode: 'SET' },
-  setGoogleAuthPanel: (data) =>
-    set(() => ({ googleAuthPanel: data })),
+  setChangePasswordPanel: (data) => set(() => ({ changePasswordPanel: data })),
+  googleAuthPanel: { show: false, mode: "SET" },
+  setGoogleAuthPanel: (data) => set(() => ({ googleAuthPanel: data })),
   cardDetails: { show: false, id: null },
-  setCardDetails: (data) =>
-    set(() => ({ cardDetails: data })),
+  setCardDetails: (data) => set(() => ({ cardDetails: data })),
+  withdrawPanel: { show: false, mode: "WITHDRAW" },
+  setWithdrawPanel: (data) => set(() => ({ withdrawPanel: data })),
 }));
 
 export const useAuthStore = create(

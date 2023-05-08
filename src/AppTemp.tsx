@@ -109,9 +109,13 @@ export const AppTemp = () => {
   const setWalletBalance = useStore((state) => state.setWalletBalance);
   // const approved = useStore((state) => state.approved);
   const setApproved = useStore((state) => state.setApproved);
-  const setEggPendingListData = useStore((state) => state.setEggPendingListData);
+  const setEggPendingListData = useStore(
+    (state) => state.setEggPendingListData
+  );
   const ticketPanel = useStore((state) => state.ticketPanel);
   const setTicketPanel = useStore((state) => state.setTicketPanel);
+  const withdrawPanel = useStore((state) => state.withdrawPanel);
+  const setWithdrawPanel = useStore((state) => state.setWithdrawPanel);
   const changePasswordPanel = useStore((state) => state.changePasswordPanel);
   const setChangePasswordPanel = useStore(
     (state) => state.setChangePasswordPanel
@@ -358,7 +362,7 @@ export const AppTemp = () => {
 
   useEffect(() => {
     if (sendTransactionState.status === "Success" && allowance) {
-      console.log('allowance appTemp', allowance)
+      console.log("allowance appTemp", allowance);
       setApproved(allowance);
       // resetSendTransactionState();
     }
@@ -415,7 +419,7 @@ export const AppTemp = () => {
     });
     console.log("get pendingListing egg Result:", data);
     if (data?.success) {
-      setEggPendingListData(data?.result)
+      setEggPendingListData(data?.result);
     } else {
       toast(data.message);
     }
@@ -450,8 +454,8 @@ export const AppTemp = () => {
     // console.log(result.data);
     if (result.data.result === 1) {
       toast("Egg Transaction Confirmed");
-      getPendingListingEgg()
-      changeScene('HOME')
+      getPendingListingEgg();
+      changeScene("HOME");
     } else {
       setTimeout(() => checkValidation(id), 5000);
     }
@@ -902,9 +906,8 @@ export const AppTemp = () => {
   }, [setWalletBalance, usdtBalance]);
 
   useEffect(() => {
-    getPendingListingEgg()
-  }, [token])
-
+    getPendingListingEgg();
+  }, [token]);
 
   const options = {
     backgroundColor: 0x1099bb,
@@ -1085,8 +1088,9 @@ export const AppTemp = () => {
     return (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className={`${id === open ? "rotate-180" : ""
-          } h-5 w-5 transition-transform`}
+        className={`${
+          id === open ? "rotate-180" : ""
+        } h-5 w-5 transition-transform`}
         fill="none"
         viewBox="0 0 24 24"
         stroke="white"
@@ -1379,8 +1383,9 @@ export const AppTemp = () => {
                     type={"image"}
                     src={"image/BtnConfirm.png"}
                     onClick={loginForm.submitForm}
-                    className={`${captcha?.length === 0 ? "opacity-50" : ""
-                      } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${
+                      captcha?.length === 0 ? "opacity-50" : ""
+                    } mt-12 px-3.5 py-2.5 text-sm`}
                     disabled={captcha?.length === 0}
                   />
                 </>
@@ -1588,8 +1593,9 @@ export const AppTemp = () => {
                     src={"image/BtnConfirmRegister.png"}
                     disabled={!registerCheckbox}
                     onClick={registerForm.submitForm}
-                    className={`${!registerCheckbox ? "opacity-50" : ""
-                      } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${
+                      !registerCheckbox ? "opacity-50" : ""
+                    } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -1668,8 +1674,9 @@ export const AppTemp = () => {
                     src={"image/BtnSubmit.png"}
                     onClick={registerHandler}
                     disabled={registerCaptcha?.length === 0}
-                    className={`${registerCaptcha?.length === 0 ? "opacity-50" : ""
-                      } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${
+                      registerCaptcha?.length === 0 ? "opacity-50" : ""
+                    } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -1704,10 +1711,11 @@ export const AppTemp = () => {
                     type={"image"}
                     src={"image/BtnSubmit.png"}
                     onClick={loginWalletForm.submitForm}
-                    className={`${loginWalletForm.values.walletAddress.length === 0
-                      ? "opacity-50"
-                      : ""
-                      } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${
+                      loginWalletForm.values.walletAddress.length === 0
+                        ? "opacity-50"
+                        : ""
+                    } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -1747,8 +1755,9 @@ export const AppTemp = () => {
                     src={"image/BtnSubmit.png"}
                     onClick={forgotPasswordForm.submitForm}
                     disabled={forgotPasswordCaptcha?.length === 0}
-                    className={`${forgotPasswordCaptcha?.length === 0 ? "opacity-50" : ""
-                      } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${
+                      forgotPasswordCaptcha?.length === 0 ? "opacity-50" : ""
+                    } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -1933,8 +1942,9 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "BUY" })
                   }
-                  className={`${ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
-                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${
+                    ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
+                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   Buy
                 </button>
@@ -1944,10 +1954,11 @@ export const AppTemp = () => {
                     onClick={() =>
                       setTicketPanel({ ...ticketPanel, mode: "TRANSFER" })
                     }
-                    className={`${ticketPanel.mode === "TRANSFER"
-                      ? "text-blue-500"
-                      : "text-white"
-                      } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                    className={`${
+                      ticketPanel.mode === "TRANSFER"
+                        ? "text-blue-500"
+                        : "text-white"
+                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                   >
                     Transfer
                   </button>
@@ -1957,10 +1968,11 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
                   }
-                  className={`${ticketPanel.mode === "HISTORY"
-                    ? "text-blue-500"
-                    : "text-white"
-                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${
+                    ticketPanel.mode === "HISTORY"
+                      ? "text-blue-500"
+                      : "text-white"
+                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   History
                 </button>
@@ -2011,8 +2023,8 @@ export const AppTemp = () => {
                             console.log("buy with bonus", e);
                             setBuyWithBonus(!buyWithBonus);
                           }}
-                        // onBlur={loginForm.handleBlur}
-                        // value={usd}
+                          // onBlur={loginForm.handleBlur}
+                          // value={usd}
                         />
                         <p className="font-Magra text-md text-white ml-3">
                           Buy with Bonus
@@ -2108,13 +2120,14 @@ export const AppTemp = () => {
                         }
                       }
                     }}
-                    className={`${buyWithBonus
-                      ? "bg-green-500"
-                      : ticketAllowance &&
-                        ticketAllowance.toBigInt() < BigInt(usd * 1e18)
+                    className={`${
+                      buyWithBonus
+                        ? "bg-green-500"
+                        : ticketAllowance &&
+                          ticketAllowance.toBigInt() < BigInt(usd * 1e18)
                         ? "bg-red-500"
                         : "bg-green-500"
-                      } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                    } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                     disabled={
                       (buyWithBonus &&
                         GAValue.length < 6 &&
@@ -2126,8 +2139,8 @@ export const AppTemp = () => {
                       ? "Buy with Bonus"
                       : ticketAllowance &&
                         ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                        ? "Approval"
-                        : "Buy Ticket"}
+                      ? "Approval"
+                      : "Buy Ticket"}
                   </button>
                   {sendTicketBuyState.status !== "None" && (
                     <p className="text-white/50 font-Magra">
@@ -2261,18 +2274,289 @@ export const AppTemp = () => {
                         <tr className="text-white text-center">
                           <td>{formattedTime}</td>
                           <td
-                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
-                              }`}
+                            className={`${
+                              t.amount < 0 ? "text-red-500" : "text-green-500"
+                            }`}
                           >
                             {t.amount < 0 ? "OUT" : "IN"}
                           </td>
                           <td
-                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
-                              }`}
+                            className={`${
+                              t.amount < 0 ? "text-red-500" : "text-green-500"
+                            }`}
                           >
                             {t.amount}
                           </td>
                           <td>{t.description}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+      {/* withdraw panel */}
+      {withdrawPanel.show && scene === "HOME" && (
+        <div className="absolute h-[80vh] flex">
+          <div className=" my-5 flex backdrop-blur-sm  justify-center items-center flex-col bg-white/10 px-3.5 py-2.5 shadow-sm rounded-sm ">
+            <div className="flex w-full justify-end">
+              <img
+                src="image/logoutBtn.png"
+                width={30}
+                height={30}
+                alt="Close Withdraw"
+                onClick={() =>
+                  setWithdrawPanel({ show: false, mode: "WITHDRAW" })
+                }
+              />
+            </div>
+            <div
+              className="flex justify-start items-center flex-col gap-4 bg-white/50 px-3.5 py-6 shadow-sm rounded-xl "
+              style={{
+                background: `url(image/formBackground.png) no-repeat `,
+                backgroundSize: "cover",
+                overflow: "auto",
+              }}
+            >
+              <div className="flex gap-2 justify-start py-2 w-full">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setWithdrawPanel({ ...withdrawPanel, mode: "WITHDRAW" })
+                  }
+                  className={`${
+                    withdrawPanel.mode === "WITHDRAW"
+                      ? "text-blue-500"
+                      : "text-white"
+                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                >
+                  Withdraw
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    // setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
+                    setWithdrawPanel({ ...withdrawPanel, mode: "HISTORY" })
+                  }
+                  className={`${
+                    withdrawPanel.mode === "HISTORY"
+                      ? "text-blue-500"
+                      : "text-white"
+                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                >
+                  History
+                </button>
+              </div>
+              {withdrawPanel.mode === "WITHDRAW" && (
+                <>
+                  <form onSubmit={loginForm.handleSubmit}>
+                    <div className="flex flex-col">
+                      <p className="text-white font-Magra mb-3">Amount</p>
+                      <input
+                        name="amount"
+                        type="number"
+                        className="py-1 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                        style={{
+                          background: `url(image/InputBox.png) no-repeat `,
+                        }}
+                        onChange={changeQuantity}
+                        value={qty}
+                      />
+                      <p className="text-white font-Magra my-3">Address</p>
+                      <input
+                        name="Address"
+                        type="text"
+                        className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                        style={{
+                          background: `url(image/InputBox.png) no-repeat `,
+                        }}
+                        readOnly
+                        // onChange={loginForm.handleChange}
+                        // onBlur={loginForm.handleBlur}
+                        value={usd}
+                      />
+                      <p className="text-white font-Magra my-3">F2A Code</p>
+                      <input
+                        name="F2A-code"
+                        type="text"
+                        className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                        style={{
+                          background: `url(image/InputBox.png) no-repeat `,
+                        }}
+                        readOnly
+                        // onChange={loginForm.handleChange}
+                        // onBlur={loginForm.handleBlur}
+                        value={usd}
+                      />
+
+                      {!userData?.ga_key && buyWithBonus && (
+                        <p className="font-Magra text-md text-red-500 ml-3">
+                          Please configure 2FA on Setting
+                        </p>
+                      )}
+
+                      {buyWithBonus && (
+                        <input
+                          name="2FA"
+                          type="number"
+                          placeholder="2FA"
+                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          onChange={(e: any) => setGAValue(e.target.value)}
+                          value={GAValue}
+                        />
+                      )}
+                    </div>
+                  </form>
+                  <button
+                    type={"submit"}
+                    // disabled={}
+                    onClick={async () => {
+                      console.log("usd amount approval", usd);
+                      if (buyWithBonus) {
+                        console.log("Buy with bonus clicked", {
+                          qty: parseInt(qty as string),
+                          facode: GAValue.toString(),
+                        });
+                        let options = {
+                          headers: {
+                            "my-auth-key": token,
+                          },
+                        };
+                        const response = await axiosInstance({
+                          url: "/ticket/buyWithBonuses",
+                          method: "POST",
+                          headers: options.headers,
+                          data: {
+                            qty: parseInt(qty as string),
+                            facode: GAValue.toString(),
+                          },
+                        });
+                        if (response.data.success) {
+                          toast("Buy Ticket Confirmed");
+                          getUserData();
+                        } else alert(response.data.message);
+                      } else if (!buyWithBonus) {
+                        if (
+                          ticketAllowance &&
+                          ticketAllowance.toBigInt() < BigInt(usd * 1e18)
+                        ) {
+                          // const txReq = { value: BigInt(usd * 1e18) }
+                          const txSend = await send(
+                            TICKET_ADDR,
+                            BigInt(usd * 1e18)
+                          );
+                          console.log("txSend ticketApproval", txSend);
+                        } else {
+                          let options = {
+                            headers: {
+                              "my-auth-key": token,
+                            },
+                          };
+                          const response = await axiosInstance({
+                            url: "/ticket/createRawBuyTickets",
+                            method: "POST",
+                            headers: options.headers,
+                            data: {
+                              qty: qty,
+                            },
+                          });
+                          console.log(response.data);
+                          if (response.data.success) {
+                            const txReq = {
+                              data: response.data.result,
+                              to: TICKET_ADDR,
+                              from: walletAddress,
+                            };
+                            const txSend = await sendTicketBuy(txReq);
+                            console.log("txSend buy ticket", txSend);
+                            if (txSend && txSend.transactionHash)
+                              checkValidateTx(txSend.transactionHash);
+                          }
+                        }
+                      }
+                    }}
+                    className={`${
+                      buyWithBonus
+                        ? "bg-green-500"
+                        : ticketAllowance &&
+                          ticketAllowance.toBigInt() < BigInt(usd * 1e18)
+                        ? "bg-red-500"
+                        : "bg-green-500"
+                    } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                    disabled={
+                      (buyWithBonus &&
+                        GAValue.length < 6 &&
+                        !userData?.ga_key) ||
+                      sendTicketBuyState.status !== "None"
+                    }
+                  >
+                    {buyWithBonus
+                      ? "Buy with Bonus"
+                      : ticketAllowance &&
+                        ticketAllowance.toBigInt() < BigInt(usd * 1e18)
+                      ? "Approval"
+                      : "Transfer"}
+                  </button>
+                  {sendTicketBuyState.status !== "None" && (
+                    <p className="text-white/50 font-Magra">
+                      {sendTicketBuyState.status}
+                    </p>
+                  )}
+                </>
+              )}
+              {withdrawPanel.mode === "HISTORY" && (
+                <table className="w-full text-base">
+                  <thead className=" uppercase border-y ">
+                    <tr className="text-yellow-500 font-Magra">
+                      <th scope="col" className="w-[5rem]">
+                        Date
+                      </th>
+                      <th scope="col" className="w-[10rem] pr-1">
+                        Description
+                      </th>
+                      <th scope="col" className="py-1">
+                        Amt
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {ticketHistories.map((t: any) => {
+                      var date = new Date(t.timestamp * 1000);
+
+                      // Will display time in 10:30:23 format
+                      var formattedTime =
+                        date.getDate() +
+                        "/" +
+                        (date.getMonth() + 1) +
+                        "/" +
+                        date.getFullYear() +
+                        " " +
+                        date.getHours() +
+                        ":" +
+                        date.getMinutes() +
+                        ":" +
+                        date.getSeconds();
+                      return (
+                        <tr className="text-white text-left">
+                          <td>{formattedTime}</td>
+                          <td className={"text-white text-base"}>
+                            {
+                              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum massa."
+                            }
+                          </td>
+                          <td
+                            className={`${
+                              t.amount < 0 ? "text-red-500" : "text-green-500"
+                            }`}
+                          >
+                            {"$ 1000"}
+                          </td>
                         </tr>
                       );
                     })}
@@ -3031,7 +3315,7 @@ export const AppTemp = () => {
               const { data } = result;
               console.log("payment finished", data);
               if (data.success) {
-                setApproved(null)
+                setApproved(null);
               }
               setTimeout(() => checkValidation(transactionData.id), 3000);
             }
@@ -3050,7 +3334,7 @@ export const AppTemp = () => {
           onAnimationIteration={() => {
             console.log("animation iteration");
           }}
-        // onMount={(_app) => setApp(_app)}
+          // onMount={(_app) => setApp(_app)}
         >
           {/* @ts-ignore */}
 
