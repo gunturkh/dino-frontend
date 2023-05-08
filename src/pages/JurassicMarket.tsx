@@ -22,6 +22,7 @@ function JurassicMarket({
     );
     const userData = useStore((state) => state.userData);
     const eggListsData = useStore((state) => state.eggListsData);
+    const setEggListsData = useStore((state) => state.setEggListsData);
 
     const [currentPage, setCurrentPage] = useState(1);
     const [postsPerPage] = useState(12);
@@ -44,7 +45,7 @@ function JurassicMarket({
     const [selectedPanel, setSelectedPanel] = useState<'My Listing' | 'Listing' | 'Finish'>("Listing");
     const [unfinishedTransaction, setUnfinishedTransaction] = useState<string | null>(null);
     const [currentTime, setCurrentTime] = useState(new Date().getTime())
-    const [myListingEgg, setMyListingEgg] = useState([])
+    const [myListingEgg, setMyListingEgg] = useState<any>([])
     const rank_dateend = new Date(userData?.rank_end * 1000).toLocaleString();
 
     const processTransaction = async (id: string, ticket: number) => {
@@ -83,6 +84,23 @@ function JurassicMarket({
             setUnfinishedTransaction(data?.result)
         } else {
             toast(data.message);
+        }
+    };
+
+    const getEggList = async () => {
+        let options = {
+            headers: {
+                "my-auth-key": token,
+            },
+        };
+        const data: any = await axiosInstance({
+            url: "/egg/lists",
+            method: "GET",
+            headers: options.headers,
+        });
+        console.log("getEggList Result:", data);
+        if (data?.status === 200 && data?.data?.result?.lists) {
+            setEggListsData(data?.data?.result);
         }
     };
 
@@ -158,7 +176,7 @@ function JurassicMarket({
         //     }
         // }
         // unlockWallet()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     console.log('unfinishedTransaction', unfinishedTransaction)
@@ -364,12 +382,12 @@ function JurassicMarket({
                                 </div>
 
                                 <div className="grid grid-cols-4">
-                                    {myListingEgg?.map((egg, index) => {
+                                    {myListingEgg?.map((egg: any, index: number) => {
                                         return (
                                             <EggComponent
                                                 key={index.toString()}
                                                 egg={egg}
-                                                index={index}
+                                                index={egg?.id}
                                             // currentTime={currentTime}
                                             />
                                         );
@@ -385,7 +403,7 @@ function JurassicMarket({
                                             <EggComponent
                                                 key={egg.id}
                                                 egg={egg}
-                                                index={index}
+                                                index={egg?.id}
                                                 currentTime={currentTime}
                                                 // customTimer={1683430121 + (1050 * index)}
                                                 onBtnKeepPress={() => {
@@ -393,27 +411,27 @@ function JurassicMarket({
                                                     console.log("onBtnKeepPress", egg.id);
                                                     handleKeep(egg.id, egg.ticket);
                                                 }}
-                                                onBtnPurchasePress={async () => {
-                                                    // console.log("allowance ", allowance);
-                                                    // console.log("account approve", walletAddress);
-                                                    const txReq = {
-                                                        to: USDT_ADDR,
-                                                        from: walletAddress,
-                                                        data: eggTransactionData.TxRawApproval,
-                                                    };
-                                                    console.log("txReq", txReq);
-                                                    const txSend = await sendTransaction(txReq);
-                                                    console.log("txSend", txSend);
-                                                }}
-                                                onBtnPayPress={async (raw: any) => {
-                                                    const txReq = {
-                                                        data: raw,
-                                                        to: PAYGATEWAY_ADDR,
-                                                        from: walletAddress,
-                                                    };
-                                                    const txSend = await sendPayTransaction(txReq, eggTransactionData);
-                                                    console.log("txSend payment", txSend);
-                                                }}
+                                            // onBtnPurchasePress={async () => {
+                                            //     // console.log("allowance ", allowance);
+                                            //     // console.log("account approve", walletAddress);
+                                            //     const txReq = {
+                                            //         to: USDT_ADDR,
+                                            //         from: walletAddress,
+                                            //         data: eggTransactionData.TxRawApproval,
+                                            //     };
+                                            //     console.log("txReq", txReq);
+                                            //     const txSend = await sendTransaction(txReq);
+                                            //     console.log("txSend", txSend);
+                                            // }}
+                                            // onBtnPayPress={async (raw: any) => {
+                                            //     const txReq = {
+                                            //         data: raw,
+                                            //         to: PAYGATEWAY_ADDR,
+                                            //         from: walletAddress,
+                                            //     };
+                                            //     const txSend = await sendPayTransaction(txReq, eggTransactionData);
+                                            //     console.log("txSend payment", txSend);
+                                            // }}
                                             />
                                         );
                                     })}
@@ -429,6 +447,13 @@ function JurassicMarket({
                                         previousLinkClassName={'font-Magra text-white px-4'}
                                         nextLinkClassName={'font-Magra text-white px-4'}
                                         activeLinkClassName={'text-[#FFC700]'}
+                                    />
+                                    <img
+                                        onClick={() => getEggList()}
+                                        src="image/BtnRefreshListing.png"
+                                        // width={5}
+                                        className="mx-1 cursor-pointer"
+                                        alt="Refresh"
                                     />
                                 </div>
                             </>

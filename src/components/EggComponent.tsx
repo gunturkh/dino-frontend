@@ -6,7 +6,7 @@ import { Egg, useStore } from '../utils/store'
 type EggComponentProps = {
     key?: string,
     egg: Egg,
-    index: number,
+    index: string,
     customTimer?: number,
     currentTime?: number,
     onBtnKeepPress?: () => void,
