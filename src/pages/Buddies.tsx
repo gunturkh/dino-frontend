@@ -55,8 +55,8 @@ export function Buddies() {
         </h1>
         {datas ? (
           <>
-            <table className="w-full text-base text-left text-black dark:text-gray-400">
-              <thead className="text-xs text-black uppercase border-y ">
+            <table className="w-full text-base text-left text-white dark:text-gray-400">
+              <thead className="text-xs text-white uppercase border-y ">
                 <tr>
                   <th scope="col" className="py-3">
                     Username
@@ -157,7 +157,7 @@ export function Buddies() {
             onClick={() => changeScene("HOME")}
           />
         </div>
-        <div className="flex flex-col h-full w-full px-4 pt-6 pb-6 bg-gray-700/20 backdrop-blur-sm overflow-y-visible overflow-auto">
+        <div className="flex flex-col h-full w-full px-4 pt-6 pb-6 bg-gray-800/30 backdrop-blur-sm overflow-y-visible overflow-auto">
           <div className="bg-transparent">
             <DownlineCallback />
           </div>
