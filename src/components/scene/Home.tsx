@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import * as PIXI from "pixi.js";
-import { Container, Sprite, useApp, Text, Graphics } from "@pixi/react";
+import {
+  Container, Sprite, useApp, Text,
+  // Graphics
+} from "@pixi/react";
 // import { useSendTransaction } from "@usedapp/core";
 import DinoFundComponent from "../DinoFundComponent";
 import ProfileComponent from "../ProfileComponent";
@@ -538,7 +541,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 else
                   toast(
                     `Horray, you get ${p.reward_name} valued $ ` +
-                      ethers.utils.formatEther(p.reward_value)
+                    ethers.utils.formatEther(p.reward_value)
                   );
                 getPendingListingEgg();
                 // window.location.reload()
@@ -661,7 +664,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 scaleBtn={[1.2, 1.3]}
                 scaleEgg={[0.95, 0.95]}
                 onPress={() => console.log("egg 1 clicked")}
-                // visible={!eggData[0]}
+              // visible={!eggData[0]}
               />
             );
           } else
@@ -677,7 +680,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 posBtn={position[eggIndex]?.posBtn}
                 // text={"Pre-List"}
                 onPress={() => console.log(`egg ${eggIndex} clicked`)}
-                // visible={!eggData[1]}
+              // visible={!eggData[1]}
               />
             );
         })}
