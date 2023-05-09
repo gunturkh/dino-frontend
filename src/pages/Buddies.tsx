@@ -78,7 +78,7 @@ export function Buddies() {
                 ))}
               </tbody>
             </table>
-            <div className="absolute bottom-3 pt-3">
+            <div className="flex flex-col justify-end h-auto pt-3">
               <Paginate total={datas.totalpage} current={datas.pagenow} />
             </div>
           </>
