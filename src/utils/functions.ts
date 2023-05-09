@@ -24,15 +24,15 @@ export const rankProgress = (rank: string) => {
         case 'Hunter':
             return '500'
         case 'Predator':
-            return '2000'
+            return '5000'
         case 'Warrior':
-            return '10000'
-        case 'Knight':
-            return '20000'
-        case 'Dominator':
             return '50000'
+        case 'Knight':
+            return '250000'
+        case 'Dominator':
+            return '500000'
         case 'Legendary':
-            return 'N/A'
+            return '1000000'
         default:
             return 'N/A'
     }
