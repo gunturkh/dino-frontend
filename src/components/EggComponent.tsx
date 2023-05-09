@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { eggType } from '../utils/functions'
 import { formatUnits } from 'ethers/lib/utils'
-import { Egg, useStore } from '../utils/store'
+import { Egg, useAuthStore, useStore } from '../utils/store'
+import { axiosInstance } from '../utils/api'
 
 type EggComponentProps = {
     key?: string,
@@ -25,8 +26,10 @@ function EggComponent({
 }: EggComponentProps) {
 
 
+    const token = useAuthStore((state) => state.token);
     const approved = useStore((state) => state.approved);
     const eggTransactionData = useStore((state) => state.eggTransactionData);
+    const setEggListsData = useStore((state) => state.setEggListsData);
     const [expiryTime, setExpiryTime] = useState(customTimer ? customTimer : egg?.openat);
     // console.log('expiryTime', expiryTime)
     // console.log('currentTime', currentTime, 'index: ', index)
@@ -36,6 +39,22 @@ function EggComponent({
         countdownSeconds: 0,
     });
 
+    const getEggList = async () => {
+        let options = {
+            headers: {
+                "my-auth-key": token,
+            },
+        };
+        const data: any = await axiosInstance({
+            url: "/egg/lists",
+            method: "GET",
+            headers: options.headers,
+        });
+        console.log("getEggList Result:", data);
+        if (data?.status === 200 && data?.data?.result?.lists) {
+            setEggListsData(data?.data?.result);
+        }
+    };
     useEffect(() => {
         let timeInterval: any;
         // const countdown = () => {
@@ -66,6 +85,7 @@ function EggComponent({
             if (remainingDayTime < 0) {
                 clearInterval(timeInterval);
                 setExpiryTime(0);
+                getEggList()
             } else {
                 setCountdownTime(runningCountdownTime);
             }

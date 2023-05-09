@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import * as PIXI from "pixi.js";
-import { Container, Sprite, useApp, Text } from "@pixi/react";
+import { Container, Sprite, useApp, Text, Graphics } from "@pixi/react";
 // import { useSendTransaction } from "@usedapp/core";
 import DinoFundComponent from "../DinoFundComponent";
 import ProfileComponent from "../ProfileComponent";
@@ -423,18 +423,15 @@ const Home = ({ onProfileClick, scene }: Props) => {
       if (expiryTime === 0 && data?.posted === 1) return "Gatcha";
       else
         return (
-          `${
-            countdownTime.countdownHours.toString().length === 1
-              ? `0${countdownTime.countdownHours}`
-              : countdownTime.countdownHours
-          }:${
-            countdownTime.countdownMinutes.toString().length === 1
-              ? `0${countdownTime.countdownMinutes}`
-              : countdownTime.countdownMinutes
-          }:${
-            countdownTime.countdownSeconds.toString().length === 1
-              ? `0${countdownTime.countdownSeconds}`
-              : countdownTime.countdownSeconds
+          `${countdownTime.countdownHours.toString().length === 1
+            ? `0${countdownTime.countdownHours}`
+            : countdownTime.countdownHours
+          }:${countdownTime.countdownMinutes.toString().length === 1
+            ? `0${countdownTime.countdownMinutes}`
+            : countdownTime.countdownMinutes
+          }:${countdownTime.countdownSeconds.toString().length === 1
+            ? `0${countdownTime.countdownSeconds}`
+            : countdownTime.countdownSeconds
           }` || ""
         );
     };
@@ -581,7 +578,21 @@ const Home = ({ onProfileClick, scene }: Props) => {
 
   const EggPlateComponent = (eggData: any) => {
     console.log("eggData", eggData);
-
+    // const draw = useCallback((g: any) => {
+    //   g.lineStyle(2, 0xaaaaaa, 1)
+    //   g.moveTo(10, -75)
+    //   g.lineTo(-53, -112)
+    //   g.lineTo(-92, -65)
+    //   g.lineTo(-79, -2)
+    //   g.lineTo(7, 29)
+    //   g.lineTo(98, -2)
+    //   g.lineTo(109, -65)
+    //   g.lineTo(70, -112)
+    //   // g.arcTo(350, 200, 450, 900, 100)
+    //   // g.lineTo(200, 500)
+    //   // g.lineTo(700, 100)
+    //   // g.bezierCurveTo(700, 100, 700, 400, 100, 100);
+    // }, []);
     const position = [
       {
         posX: 10,
@@ -626,12 +637,14 @@ const Home = ({ onProfileClick, scene }: Props) => {
         x={-5}
         scale={[0.9, 0.9]}
         height={app.screen.height * 0.4}
-        // width={app.screen.width * 0.9}
+      // width={app.screen.width * 0.9}
       >
         <Sprite
           texture={PIXI.Assets.get("EggPlate") || PIXI.Texture.EMPTY}
           anchor={[0.5, 0.5]}
         />
+
+        {/* <Graphics draw={draw} /> */}
 
         {eggData?.map((egg: EggPendingListData, eggIndex: number) => {
           if (eggIndex === 0) {
@@ -832,7 +845,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
               <Container
                 position={[
                   (DinoFundBgBounds?.width / 2) *
-                    (app.screen?.width > 450 ? 1.05 : 1),
+                  (app.screen?.width > 450 ? 1.05 : 1),
                   DinoFundBgBounds?.height / 2 - 7,
                 ]}
               >
@@ -899,7 +912,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 // position={[app.screen.width / 2 - (lfSideBounds.width / 2), 0]}
                 position={[isNotMobile ? 110 : 90, 10]}
                 anchor={[0.5, 0.5]}
-                // width={app.screen.width > 450 ? 450 : app.screen.width}
+              // width={app.screen.width > 450 ? 450 : app.screen.width}
               >
                 <DetailsComponent
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
@@ -1040,7 +1053,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
               ref={lowerSectionContainerRef}
               anchor={[0.5, 0.5]}
               x={0}
-              // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
+            // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
             >
               {/* left side */}
               <LowerButtonComponent
@@ -1262,7 +1275,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[
                       buyTicketPanelBounds?.width * 0.5 -
-                        (isNotMobile ? 50 : 25),
+                      (isNotMobile ? 50 : 25),
                       0,
                     ]}
                     eventMode="static"
@@ -1322,11 +1335,11 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[
                       buyTicketPanelBounds?.width * 0.5 -
-                        (isNotMobile ? 50 : 25),
+                      (isNotMobile ? 50 : 25),
                       0,
                     ]}
                     eventMode="static"
-                    // onpointertap={() => setGoogleAuthVisible(false)}
+                  // onpointertap={() => setGoogleAuthVisible(false)}
                   />
                 </Container>
 
