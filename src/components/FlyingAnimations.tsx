@@ -68,7 +68,7 @@ function FlyingAnimations() {
     const duration = 300; // duration of the animation, set lower to make it faster
 
     // use waitDuration to wait for a few second before loading the next animation
-    const waitDuration = 8000;
+    const waitDuration = 5000;
     const tickerOutside = new PIXI.Ticker();
 
     memoizedDinoAssets?.spineData?.animations?.forEach((animation: any) => {
@@ -119,7 +119,7 @@ function FlyingAnimations() {
       setTimeout(() => {
         setAnimationCounter(0);
         console.log("flyingDino timer triggered");
-      }, waitDuration);
+      }, 1000);
     }
 
     // load animation 1 first, then wait for a few second to load animation 2 and wait for a few second to load animation 3

@@ -88,8 +88,8 @@ const Loader = ({ onFinishLoading, visible = true }: LoaderProps) => {
       scale={[1, 1]}
     >
       <Sprite
-        // texture={assets.LoaderScene['LoaderBarBg'].texture}
-        image={"image/ListingBackground.png"}
+        // texture={sceneBg}
+        image={"image/loadingSceneBg.png"}
         width={
           app.screen.width < 450 ? app.screen.width * 1.5 : app.screen.width
         }
