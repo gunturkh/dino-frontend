@@ -463,6 +463,7 @@ export const AppTemp = () => {
       toast("Egg Transaction Confirmed");
       setEggTransactionState('')
       getPendingListingEgg()
+      getUserData()
       changeScene('HOME')
     } else {
       setTimeout(() => checkValidation(id), 5000);
