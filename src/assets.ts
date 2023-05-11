@@ -916,5 +916,70 @@ export const manifest: ResolverManifest = {
         },
       ],
     },
+    {
+      name: "JPassScene",
+      assets: [
+        {
+          name: "JPassBackground",
+          srcs: "image/JPassBackground.png",
+        },
+        {
+          name: "JPassCardBg",
+          srcs: "image/imgJPassCardBg.png",
+        },
+        {
+          name: "JPassItemBg",
+          srcs: "image/imgJpassItemBg.png",
+        },
+        {
+          name: "JPassBtnPurchase",
+          srcs: "image/BtnJpassPurchaseBg.png",
+        },
+        {
+          name: "JPassCardItem1",
+          srcs: "image/imgJPassCardItem1.png",
+        },
+        {
+          name: "JPassCardItem2",
+          srcs: "image/imgJPassCardItem2.png",
+        },
+        {
+          name: "JPassCardItem3",
+          srcs: "image/imgJPassCardItem3.png",
+        },
+        {
+          name: "JpassPageBg",
+          srcs: "image/BtnJpassPageBg.png",
+        },
+        {
+          name: "JpassPageBgHighlight",
+          srcs: "image/BtnJpassPageHighlightBg.png",
+        },
+        {
+          name: "JPassItemAutoListing",
+          srcs: "image/iconJpassAutoListing.png",
+        },
+        {
+          name: "JPassItemDailyPurchase",
+          srcs: "image/iconJpassDailyPurchase.png",
+        },
+        {
+          name: "JPassItemUpgradeHuntingValue",
+          srcs: "image/iconJpassUpgradeHuntingValue.png",
+        },
+        {
+          name: "JPassItemShortenHunting1",
+          srcs: "image/iconJpassShortenHunting1.png",
+        },
+        {
+          name: "JPassItemShortenHunting2",
+          srcs: "image/iconJpassShortenHunting2.png",
+        },
+        {
+          name: "JPassItemShortenHunting3",
+          srcs: "image/iconJpassShortenHunting3.png",
+        },
+      ],
+    },
   ],
 };
