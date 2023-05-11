@@ -179,15 +179,15 @@ function JurassicMarket({
   // TODO: need to check the logic and where to look for the data
   const filterEggList = (filter: string) => {
     if (filter === "Price") {
-      const sortedList = eggListsData?.lists.sort((a: any, b: any) => {
-        return a.price - b.price;
-      });
+      // const sortedList = eggListsData?.lists.sort((a: any, b: any) => {
+      //   return a.price - b.price;
+      // });
       // setEggListsData({ ...eggListsData, lists: sortedList });
       setMarketFilter("Price");
     } else if (filter === "Time") {
-      const sortedList = eggListsData?.lists.sort((a: any, b: any) => {
-        return a.time - b.time;
-      });
+      // const sortedList = eggListsData?.lists.sort((a: any, b: any) => {
+      //   return a.time - b.time;
+      // });
       // setEggListsData({ ...eggListsData, lists: sortedList });
       setMarketFilter("Time");
     }
