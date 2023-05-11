@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import * as PIXI from "pixi.js";
 import {
-  Container, Sprite, useApp, Text,
+  Container,
+  Sprite,
+  useApp,
+  Text,
   // Graphics
 } from "@pixi/react";
 // import { useSendTransaction } from "@usedapp/core";
@@ -426,15 +429,18 @@ const Home = ({ onProfileClick, scene }: Props) => {
       if (expiryTime === 0 && data?.posted === 1) return "Gatcha";
       else
         return (
-          `${countdownTime.countdownHours.toString().length === 1
-            ? `0${countdownTime.countdownHours}`
-            : countdownTime.countdownHours
-          }:${countdownTime.countdownMinutes.toString().length === 1
-            ? `0${countdownTime.countdownMinutes}`
-            : countdownTime.countdownMinutes
-          }:${countdownTime.countdownSeconds.toString().length === 1
-            ? `0${countdownTime.countdownSeconds}`
-            : countdownTime.countdownSeconds
+          `${
+            countdownTime.countdownHours.toString().length === 1
+              ? `0${countdownTime.countdownHours}`
+              : countdownTime.countdownHours
+          }:${
+            countdownTime.countdownMinutes.toString().length === 1
+              ? `0${countdownTime.countdownMinutes}`
+              : countdownTime.countdownMinutes
+          }:${
+            countdownTime.countdownSeconds.toString().length === 1
+              ? `0${countdownTime.countdownSeconds}`
+              : countdownTime.countdownSeconds
           }` || ""
         );
     };
@@ -541,7 +547,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 else
                   toast(
                     `Horray, you get ${p.reward_name} valued $ ` +
-                    ethers.utils.formatEther(p.reward_value)
+                      ethers.utils.formatEther(p.reward_value)
                   );
                 getPendingListingEgg();
                 // window.location.reload()
@@ -640,7 +646,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
         x={-5}
         scale={[0.9, 0.9]}
         height={app.screen.height * 0.4}
-      // width={app.screen.width * 0.9}
+        // width={app.screen.width * 0.9}
       >
         <Sprite
           texture={PIXI.Assets.get("EggPlate") || PIXI.Texture.EMPTY}
@@ -664,7 +670,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 scaleBtn={[1.2, 1.3]}
                 scaleEgg={[0.95, 0.95]}
                 onPress={() => console.log("egg 1 clicked")}
-              // visible={!eggData[0]}
+                // visible={!eggData[0]}
               />
             );
           } else
@@ -680,7 +686,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 posBtn={position[eggIndex]?.posBtn}
                 // text={"Pre-List"}
                 onPress={() => console.log(`egg ${eggIndex} clicked`)}
-              // visible={!eggData[1]}
+                // visible={!eggData[1]}
               />
             );
         })}
@@ -848,7 +854,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
               <Container
                 position={[
                   (DinoFundBgBounds?.width / 2) *
-                  (app.screen?.width > 450 ? 1.05 : 1),
+                    (app.screen?.width > 450 ? 1.05 : 1),
                   DinoFundBgBounds?.height / 2 - 7,
                 ]}
               >
@@ -915,7 +921,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 // position={[app.screen.width / 2 - (lfSideBounds.width / 2), 0]}
                 position={[isNotMobile ? 110 : 90, 10]}
                 anchor={[0.5, 0.5]}
-              // width={app.screen.width > 450 ? 450 : app.screen.width}
+                // width={app.screen.width > 450 ? 450 : app.screen.width}
               >
                 <DetailsComponent
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
@@ -1056,7 +1062,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
               ref={lowerSectionContainerRef}
               anchor={[0.5, 0.5]}
               x={0}
-            // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
+              // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
             >
               {/* left side */}
               <LowerButtonComponent
@@ -1152,6 +1158,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     fill: ["0xFFC700"],
                   })
                 }
+                onPress={() => changeScene("JPASS")}
               />
               {/* center button */}
 
@@ -1278,7 +1285,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[
                       buyTicketPanelBounds?.width * 0.5 -
-                      (isNotMobile ? 50 : 25),
+                        (isNotMobile ? 50 : 25),
                       0,
                     ]}
                     eventMode="static"
@@ -1338,11 +1345,11 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[
                       buyTicketPanelBounds?.width * 0.5 -
-                      (isNotMobile ? 50 : 25),
+                        (isNotMobile ? 50 : 25),
                       0,
                     ]}
                     eventMode="static"
-                  // onpointertap={() => setGoogleAuthVisible(false)}
+                    // onpointertap={() => setGoogleAuthVisible(false)}
                   />
                 </Container>
 

@@ -26,6 +26,7 @@ import Register from "./components/scene/Register";
 import Loading from "./components/scene/Loader";
 import ProfileTemp from "./components/scene/ProfileTemp";
 import Album from "./components/scene/Album";
+import JPass from "./components/scene/JPass";
 
 import DinoCenter from "./components/scene/DinoCenter";
 
@@ -109,8 +110,12 @@ export const AppTemp = () => {
   const setWalletBalance = useStore((state) => state.setWalletBalance);
   // const approved = useStore((state) => state.approved);
   const setApproved = useStore((state) => state.setApproved);
-  const setEggPendingListData = useStore((state) => state.setEggPendingListData);
-  const setEggTransactionState = useStore((state) => state.setEggTransactionState);
+  const setEggPendingListData = useStore(
+    (state) => state.setEggPendingListData
+  );
+  const setEggTransactionState = useStore(
+    (state) => state.setEggTransactionState
+  );
   const ticketPanel = useStore((state) => state.ticketPanel);
   const setTicketPanel = useStore((state) => state.setTicketPanel);
   const withdrawPanel = useStore((state) => state.withdrawPanel);
@@ -273,11 +278,12 @@ export const AppTemp = () => {
     transactionName: "Ticket Approval",
   });
 
-  const { state: eggApprovalState, send: sendEggApproval } = useContractFunction(USDTContract, "approve", {
-    transactionName: "Egg Approval",
-  });
+  const { state: eggApprovalState, send: sendEggApproval } =
+    useContractFunction(USDTContract, "approve", {
+      transactionName: "Egg Approval",
+    });
 
-  console.log('eggApprovalState', eggApprovalState)
+  console.log("eggApprovalState", eggApprovalState);
 
   console.log("contractFunction state", state);
 
@@ -461,10 +467,10 @@ export const AppTemp = () => {
     // console.log(result.data);
     if (result.data.result === 1) {
       toast("Egg Transaction Confirmed");
-      setEggTransactionState('')
-      getPendingListingEgg()
-      getUserData()
-      changeScene('HOME')
+      setEggTransactionState("");
+      getPendingListingEgg();
+      getUserData();
+      changeScene("HOME");
     } else {
       setTimeout(() => checkValidation(id), 5000);
     }
@@ -3325,8 +3331,8 @@ export const AppTemp = () => {
               const { data } = result;
               console.log("payment finished", data);
               if (data.success) {
-                setApproved(null)
-                setEggTransactionState('')
+                setApproved(null);
+                setEggTransactionState("");
               }
               setTimeout(() => checkValidation(transactionData.id), 3000);
             }
@@ -3385,41 +3391,7 @@ export const AppTemp = () => {
           )}
           {scene === "DINOCENTER" && (
             <>
-              <DinoCenter
-                scene={scene}
-                onBackBtnClick={() => {
-                  changeScene("HOME");
-                  console.log("back");
-                }}
-                sendTransaction={async (data: any) => {
-                  console.log("sendTransaction triggered from appTemp", data);
-                  const txSend = await sendTransaction(data);
-                  console.log("txSend from appTemp", txSend);
-                }}
-                sendPayTransaction={async (req: any, transactionData: any) => {
-                  const txSend = await sendTransactionPay(req);
-                  console.log("sendPayTransaction from appTemp", txSend);
-                  if (txSend) {
-                    let options = {
-                      headers: {
-                        "my-auth-key": token,
-                      },
-                    };
-                    const result = await axiosInstance({
-                      url: "/egg/finished",
-                      method: "POST",
-                      headers: options.headers,
-                      data: {
-                        id: transactionData.id,
-                        hash: txSend.transactionHash,
-                      },
-                    });
-                    const { data } = result;
-                    console.log("payment finished", data);
-                    setTimeout(() => checkValidation(transactionData.id), 3000);
-                  }
-                }}
-              />
+              <DinoCenter visible={scene === "DINOCENTER"} />
             </>
           )}
           {scene === "ALBUM" && (
@@ -3431,6 +3403,18 @@ export const AppTemp = () => {
                   console.log("back");
                 }}
                 visible={scene === "ALBUM"}
+              />
+            </>
+          )}
+          {scene === "JPASS" && (
+            <>
+              {/* TODO: JPASS component here */}
+              <JPass
+                scene={scene}
+                onBackBtnClick={() => {
+                  changeScene("HOME");
+                }}
+                visible={scene === "JPASS"}
               />
             </>
           )}

@@ -89,8 +89,8 @@ type Store = {
   setEggListsData: (data: EggListResponse) => void;
   eggTransactionData: EggTransactionData;
   setEggTransactionData: (data: EggTransactionData) => void;
-  eggTransactionState: 'Loading' | '';
-  setEggTransactionState: (data: 'Loading' | '') => void;
+  eggTransactionState: "Loading" | "";
+  setEggTransactionState: (data: "Loading" | "") => void;
   approved: BigNumber | undefined | null;
   setApproved: (data: BigNumber | null) => void;
   ticketPanel: TicketPanelData;
@@ -120,7 +120,8 @@ type Screen =
   | "PROFILE"
   | "ALBUM"
   | "GAMEGUIDE"
-  | "BUDDIES";
+  | "BUDDIES"
+  | "JPASS";
 
 export const useStore = create<Store>((set, get) => ({
   scene: "LOADING",
@@ -161,7 +162,7 @@ export const useStore = create<Store>((set, get) => ({
     ticket: 0,
   },
   setEggTransactionData: (data) => set(() => ({ eggTransactionData: data })),
-  eggTransactionState: '',
+  eggTransactionState: "",
   setEggTransactionState: (data) => set(() => ({ eggTransactionState: data })),
   approved: undefined,
   setApproved: (data) => set(() => ({ approved: data })),
