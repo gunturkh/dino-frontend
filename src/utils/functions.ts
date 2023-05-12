@@ -1,3 +1,5 @@
+import { Rank } from "./store"
+
 export const rankRequalification = (rank: string) => {
     // console.log('rank', rank)
     switch (rank) {
@@ -18,7 +20,7 @@ export const rankRequalification = (rank: string) => {
     }
 }
 
-export const rankProgress = (rank: string) => {
+export const rankProgress = ({ rank }: { rank: Rank }) => {
     // console.log('rank', rank)
     switch (rank) {
         case 'Hunter':
@@ -36,6 +38,36 @@ export const rankProgress = (rank: string) => {
         default:
             return 'N/A'
     }
+}
+
+export const requalificationRankProgress = ({ rank }: { rank: Rank }) => {
+    // console.log('rank', rank)
+    switch (rank) {
+        case 'Hunter':
+            return '500'
+        case 'Predator':
+            return '2000'
+        case 'Warrior':
+            return '10000'
+        case 'Knight':
+            return '20000'
+        case 'Dominator':
+            return '500000'
+        case 'Legendary':
+            return '500000'
+        default:
+            return 'N/A'
+    }
+}
+
+export const maxRankValue = ({ group }: { group: number }) => {
+    // console.log('rank', rank)
+    if (group <= 5000) return '5000'
+    if (group > 5000 && group <= 50000) return '50000'
+    if (group > 50000 && group <= 250000) return '250000'
+    if (group > 250000 && group <= 500000) return '500000'
+    if (group > 500000 && group <= 1000000) return '1000000'
+    if (group > 1000000 && group <= 1000000000000) return 'MAX'
 }
 
 export const rankLoaderBarProgress = (rank: string) => {

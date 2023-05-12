@@ -1,6 +1,7 @@
 import { BigNumber } from "ethers";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+export type Rank = 'Hunter' | 'Predator' | 'Warrior' | 'Knight' | 'Dominator' | 'Legendary'
 
 type User = {
   email: string;
@@ -11,10 +12,10 @@ type User = {
   sponsor: string;
   daily: number;
   tf_ticket: boolean;
-  title: string;
+  title: Rank;
   ability_end: number;
   bought: {
-    total: string;
+    total?: string;
     period: string;
     group: string;
   };
@@ -139,7 +140,7 @@ export const useStore = create<Store>((set, get) => ({
     username: "",
     daily: 0,
     tf_ticket: false,
-    title: "",
+    title: "Warrior",
     ability_end: 0,
     bought: {
       total: "0",
