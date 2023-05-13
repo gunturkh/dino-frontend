@@ -69,39 +69,6 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
   console.log("isLoaded", isLoaded);
   console.log("app profile screen", app.screen);
 
-  const rarityItems = [
-    {
-      id: 0,
-      name: "ALL",
-      image: PIXI.Assets.get("RarityBtnAllFilter"),
-    },
-    {
-      id: 1,
-      name: "H",
-      image: PIXI.Assets.get("RarityBtnFilter"),
-    },
-    {
-      id: 2,
-      name: "E",
-      image: PIXI.Assets.get("RarityBtnFilter"),
-    },
-    {
-      id: 3,
-      name: "A",
-      image: PIXI.Assets.get("RarityBtnFilter"),
-    },
-    {
-      id: 4,
-      name: "M",
-      image: PIXI.Assets.get("RarityBtnFilter"),
-    },
-    {
-      id: 5,
-      name: "I",
-      image: PIXI.Assets.get("RarityBtnFilter"),
-    },
-  ];
-
   const jPassCardInfo = [
     {
       id: 1,
