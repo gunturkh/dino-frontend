@@ -24,6 +24,7 @@ type User = {
 
 export type Egg = {
   id: string;
+  listat: number;
   openat: number;
   ticket: number;
   total: string;
@@ -36,6 +37,7 @@ type EggListResponse = {
 export type EggPendingListData = {
   id: string;
   listedat: number;
+  openat: number;
   opened: number;
   posted: number;
   total: string;
@@ -87,6 +89,8 @@ type Store = {
   setUserData: (data: User) => void;
   eggPendingListData: EggPendingListData[];
   setEggPendingListData: (data: EggPendingListData[]) => void;
+  myListingEggData: Egg[];
+  setMyListingEggData: (data: Egg[]) => void;
   eggListsData: EggListResponse;
   setEggListsData: (data: EggListResponse) => void;
   eggTransactionData: EggTransactionData;
@@ -157,6 +161,8 @@ export const useStore = create<Store>((set, get) => ({
   setUserData: (data) => set(() => ({ userData: data })),
   eggPendingListData: [],
   setEggPendingListData: (data) => set(() => ({ eggPendingListData: data })),
+  myListingEggData: [],
+  setMyListingEggData: (data) => set(() => ({ myListingEggData: data })),
   eggListsData: { remaining: 0, lists: [] },
   setEggListsData: (data) => set(() => ({ eggListsData: data })),
   eggTransactionData: {

@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
+import { useRef, useCallback, useEffect, useState } from "react";
 import * as PIXI from "pixi.js";
 import {
   Container,
   Sprite,
   useApp,
   Text,
-  // Graphics
+  Graphics,
 } from "@pixi/react";
 // import { useSendTransaction } from "@usedapp/core";
 import DinoFundComponent from "../DinoFundComponent";
@@ -18,8 +18,9 @@ import { ethers } from "ethers";
 import { manifest } from "../../assets";
 import FlyingAnimations from "../FlyingAnimations";
 import { toast } from "react-toastify";
+import NormalEggComponent from "../NormalEggComponent";
+import gsap from "gsap";
 // import { TICKET_ADDR } from "../../utils/config";
-
 type Props = {
   onProfileClick: () => void;
   setScene?: (value: string) => void;
@@ -38,8 +39,14 @@ type Props = {
 //   }
 // };
 
+interface Draggable extends PIXI.DisplayObject {
+  data: any;
+  dragging: boolean;
+}
 const Home = ({ onProfileClick, scene }: Props) => {
   const app = useApp();
+  const pathRef = useRef(null);
+  const eggRef = useRef(null);
   const setEggPendingListData = useStore(
     (state) => state.setEggPendingListData
   );
@@ -72,6 +79,48 @@ const Home = ({ onProfileClick, scene }: Props) => {
   const [toggleBtnAudio, setToggleBtnAudio] = useState(false);
 
   const [currentTime, setCurrentTime] = useState(new Date().getTime());
+  console.log('currentTime', Math.floor(currentTime / 1000), Math.floor(currentTime / 1000) % 8)
+
+  const onDragStart = useCallback((event: any) => {
+    // console.log('eggRef', eggRef)
+    const sprite = event.currentTarget as Draggable;
+    sprite.alpha = 0.5;
+    sprite.data = event.data;
+    sprite.dragging = true;
+    if (eggRef && eggRef?.current) {
+      gsap.to(eggRef, { rotation: 360, duration: 5 })
+    }
+  }, []);
+
+  const onDragEnd = useCallback((event: any) => {
+    const sprite = event.currentTarget as Draggable;
+    sprite.alpha = 1;
+    sprite.dragging = false;
+    sprite.data = null;
+  }, []);
+
+  const onDragMove = useCallback((event: any) => {
+    const sprite = event.currentTarget as Draggable;
+    // let values = [];
+    if (sprite.dragging) {
+      // console.log('pathRef', pathRef && (pathRef?.current as any)?.geometry?.graphicsData[0]?.points)
+      // const points = (pathRef?.current as any)?.geometry?.graphicsData[0]?.points
+      // console.log("points", points)
+      // for (var i = 0; i < points.length; i += 2) {
+      //   values.push({ x: points[i], y: points[i + 1] });
+      // }
+
+      const newPosition = sprite.data!.getLocalPosition(sprite.parent);
+      // console.log('points', points)
+      // console.log('newPosition', newPosition)
+      sprite.x = newPosition.x;
+      sprite.y = newPosition.y;
+      // sprite.x = points[5];
+      // sprite.y = points[6];
+      // console.log('points', points)
+      // console.log('sprite position', sprite)
+    }
+  }, []);
 
   useEffect(() => {
     let timeInterval: any;
@@ -229,6 +278,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
     },
     [app.screen.width]
   );
+  console.log('homecontainerRef', homecontainerRef)
 
   const detailsContainerRef = useCallback(
     (node: any) => {
@@ -459,204 +509,24 @@ const Home = ({ onProfileClick, scene }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  const NormalEggComponent = ({
-    data,
-    currentTime,
-    eggTexture,
-    ref,
-    posX,
-    posY,
-    onPress,
-    scaleEgg,
-    scaleBtn,
-    posBtn,
-    text,
-    visible,
-  }: any) => {
-    const [expiryTime, setExpiryTime] = useState(data?.listedat);
-    console.log("expiryTime NormalEgg", expiryTime);
-    // console.log('currentTime', currentTime, 'index: ', index)
-    const [countdownTime, setCountdownTime] = useState({
-      countdownHours: 0,
-      countdownMinutes: 0,
-      countdownSeconds: 0,
-    });
-
-    const formatText = () => {
-      if (expiryTime === 0 && data?.posted === 0) return "Pre-List";
-      if (expiryTime === 0 && data?.posted === 1) return "Gatcha";
-      else
-        return (
-          `${countdownTime.countdownHours.toString().length === 1
-            ? `0${countdownTime.countdownHours}`
-            : countdownTime.countdownHours
-          }:${countdownTime.countdownMinutes.toString().length === 1
-            ? `0${countdownTime.countdownMinutes}`
-            : countdownTime.countdownMinutes
-          }:${countdownTime.countdownSeconds.toString().length === 1
-            ? `0${countdownTime.countdownSeconds}`
-            : countdownTime.countdownSeconds
-          }` || ""
-        );
-    };
-
-    useEffect(() => {
-      let timeInterval: any;
-      // const countdown = () => {
-      if (expiryTime > 0 && currentTime) {
-        // timeInterval = setInterval(() => {
-        const countdownDateTime = expiryTime * 1000;
-        // const currentTime = new Date().getTime();
-        const remainingDayTime = countdownDateTime - currentTime;
-        // console.log(`countdownDateTime ${index}`, countdownDateTime);
-        // console.log(`currentTime ${index}`, currentTime);
-        // console.log(`remainingDayTime ${index}`, remainingDayTime);
-        const totalHours = Math.floor(
-          (remainingDayTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-        );
-        const totalMinutes = Math.floor(
-          (remainingDayTime % (1000 * 60 * 60)) / (1000 * 60)
-        );
-        const totalSeconds = Math.floor(
-          (remainingDayTime % (1000 * 60)) / 1000
-        );
-
-        const runningCountdownTime = {
-          countdownHours: totalHours,
-          countdownMinutes: totalMinutes,
-          countdownSeconds: totalSeconds,
-        };
-
-        if (remainingDayTime < 0) {
-          clearInterval(timeInterval);
-          setExpiryTime(0);
-        } else {
-          setCountdownTime(runningCountdownTime);
-        }
-        // }, 1000);
-      }
-      // };
-      // countdown();
-      // return () => {
-      //     clearInterval(timeInterval);
-      // };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentTime]);
-    return (
-      <Container
-        ref={ref || null}
-        x={posX || 0}
-        y={posY || 0}
-        visible={visible}
-      >
-        <Sprite
-          texture={eggTexture || PIXI.Texture.EMPTY}
-          anchor={[0.5, 0.5]}
-          scale={scaleEgg ? scaleEgg : [0.9, 0.9]}
-        />
-        {/* action button */}
-        <Container
-          position={posBtn ? posBtn : [0, 25]}
-          scale={scaleBtn ? scaleBtn : [0.6, 0.7]}
-          eventMode="static"
-          onpointertap={async () => {
-            if (formatText() === "Pre-List") {
-              let options = {
-                headers: {
-                  "my-auth-key": token,
-                },
-              };
-              const result = await axiosInstance({
-                url: "/egg/postEgg",
-                method: "POST",
-                headers: options.headers,
-                data: { id: data?.id },
-              });
-              // console.log(result.data);
-              if (result.data.success) {
-                toast("Pre-List Egg Success");
-                getPendingListingEgg();
-                // window.location.reload()
-                // changeScene('HOME')
-              } else {
-                toast("Error when trying to pre-list egg");
-              }
-            }
-            if (formatText() === "Gatcha") {
-              let options = {
-                headers: {
-                  "my-auth-key": token,
-                },
-              };
-              const result = await axiosInstance({
-                url: "/egg/gatcha",
-                method: "POST",
-                headers: options.headers,
-                data: { id: data?.id },
-              });
-              // console.log(result.data);
-              if (result.data.success) {
-                const p = result.data.result;
-                if (p.reward_name === "")
-                  toast("Oh no! The Dinosaur broke free!");
-                else
-                  toast(
-                    `Horray, you get ${p.reward_name} valued $ ` +
-                    ethers.utils.formatEther(p.reward_value)
-                  );
-                getPendingListingEgg();
-                // window.location.reload()
-              } else {
-                toast("Error when trying to open egg");
-              }
-            }
-          }}
-        >
-          <Sprite
-            position={[0, 0]}
-            texture={
-              PIXI.Assets.get(
-                true ? "BtnPurchaseActive" : "BtnPurchaseCountdown"
-              ) || PIXI.Texture.EMPTY
-            }
-            anchor={[0.5, 0.5]}
-          />
-          <Text
-            text={formatText()}
-            position={[0, 0]}
-            anchor={[0.5, 0.5]}
-            style={
-              new PIXI.TextStyle({
-                fontFamily: "Magra Bold",
-                fontSize: 13,
-                fontWeight: "600",
-                strokeThickness: 1,
-                fill: ["white"],
-              })
-            }
-          />
-        </Container>
-      </Container>
-    );
-  };
-
   const EggPlateComponent = (eggData: any) => {
-    console.log("eggData", eggData);
-    // const draw = useCallback((g: any) => {
-    //   g.lineStyle(2, 0xaaaaaa, 1)
-    //   g.moveTo(10, -75)
-    //   g.lineTo(-53, -112)
-    //   g.lineTo(-92, -65)
-    //   g.lineTo(-79, -2)
-    //   g.lineTo(7, 29)
-    //   g.lineTo(98, -2)
-    //   g.lineTo(109, -65)
-    //   g.lineTo(70, -112)
-    //   // g.arcTo(350, 200, 450, 900, 100)
-    //   // g.lineTo(200, 500)
-    //   // g.lineTo(700, 100)
-    //   // g.bezierCurveTo(700, 100, 700, 400, 100, 100);
-    // }, []);
+    // console.log("eggData", eggData);
+    const draw = useCallback((g: any) => {
+      g.lineStyle(2, 0xaaaaaa, 1)
+      g.moveTo(10, -75)
+      g.lineTo(-53, -112)
+      g.lineTo(-92, -65)
+      g.lineTo(-79, -2)
+      g.lineTo(7, 29)
+      g.lineTo(98, -2)
+      g.lineTo(109, -65)
+      g.lineTo(70, -112)
+      // g.arcTo(350, 200, 450, 900, 100)
+      // g.lineTo(200, 500)
+      // g.lineTo(700, 100)
+      // g.bezierCurveTo(700, 100, 700, 400, 100, 100);
+    }, []);
+    // console.log('draw', draw)
     const position = [
       {
         posX: 10,
@@ -695,6 +565,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
         posY: -112,
       },
     ];
+
     return (
       <Container
         ref={eggPlateContainerRef}
@@ -708,12 +579,13 @@ const Home = ({ onProfileClick, scene }: Props) => {
           anchor={[0.5, 0.5]}
         />
 
-        {/* <Graphics draw={draw} /> */}
+        <Graphics draw={draw} ref={pathRef} />
 
         {eggData?.map((egg: EggPendingListData, eggIndex: number) => {
           if (eggIndex === 0) {
             return (
               <NormalEggComponent
+                ref={eggRef}
                 data={egg}
                 currentTime={currentTime}
                 eggTexture={PIXI.Assets.get(
@@ -722,9 +594,15 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 posX={position[eggIndex]?.posX}
                 posY={position[eggIndex]?.posY}
                 posBtn={position[eggIndex]?.posBtn}
+                // posX={position[currentTime % 8]?.posX}
+                // posY={position[currentTime % 8]?.posY}
+                // posBtn={position[currentTime % 8]?.posBtn}
                 scaleBtn={[1.2, 1.3]}
                 scaleEgg={[0.95, 0.95]}
                 onPress={() => console.log("egg 1 clicked")}
+                onDragStart={onDragStart}
+                onDragMove={onDragMove}
+                onDragEnd={onDragEnd}
               // visible={!eggData[0]}
               />
             );
@@ -739,9 +617,15 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 posX={position[eggIndex]?.posX}
                 posY={position[eggIndex]?.posY}
                 posBtn={position[eggIndex]?.posBtn}
+                // posX={position[currentTime % 8]?.posX}
+                // posY={position[currentTime % 8]?.posY}
+                // posBtn={position[currentTime % 8]?.posBtn}
                 // text={"Pre-List"}
                 onPress={() => console.log(`egg ${eggIndex} clicked`)}
-              // visible={!eggData[1]}
+                // visible={!eggData[1]}
+                onDragStart={onDragStart}
+                onDragMove={onDragMove}
+                onDragEnd={onDragEnd}
               />
             );
         })}

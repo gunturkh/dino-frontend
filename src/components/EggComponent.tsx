@@ -32,7 +32,8 @@ function EggComponent({
     (state) => state.setEggPendingListData
   );
   const [expiryTime, setExpiryTime] = useState(
-    customTimer ? customTimer : egg?.openat
+    // customTimer ? customTimer : egg?.openat
+    egg?.listat ? egg?.listat : egg?.openat
   );
   // console.log('expiryTime', expiryTime)
   // console.log('currentTime', currentTime, 'index: ', index)
@@ -171,7 +172,7 @@ function EggComponent({
             <span className="text-white -mt-[1.8rem]">{countdownText()}</span>
           </div>
         </div>
-      ) : (
+      ) : !egg?.listat && !!egg?.openat ? (
         <div
           onClick={() => {
             if (
@@ -193,9 +194,9 @@ function EggComponent({
             <span className="text-white -mt-[1.8rem]">Keep</span>
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
 
-export default React.memo(EggComponent);
+export default EggComponent;
