@@ -28,6 +28,9 @@ function EggComponent({
   const approved = useStore((state) => state.approved);
   const eggTransactionData = useStore((state) => state.eggTransactionData);
   const setEggListsData = useStore((state) => state.setEggListsData);
+  const setEggPendingListData = useStore(
+    (state) => state.setEggPendingListData
+  );
   const [expiryTime, setExpiryTime] = useState(
     customTimer ? customTimer : egg?.openat
   );
@@ -53,6 +56,23 @@ function EggComponent({
     console.log("getEggList Result:", data);
     if (data?.status === 200 && data?.data?.result?.lists) {
       setEggListsData(data?.data?.result);
+    }
+  };
+
+  const getPendingListingEgg = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const { data }: any = await axiosInstance({
+      url: "/egg/pendingListing",
+      method: "GET",
+      headers: options.headers,
+    });
+    console.log("get pendingListing egg Result:", data);
+    if (data?.success) {
+      setEggPendingListData(data?.result);
     }
   };
   useEffect(() => {
@@ -84,6 +104,7 @@ function EggComponent({
         clearInterval(timeInterval);
         setExpiryTime(0);
         getEggList();
+        getPendingListingEgg();
       } else {
         setCountdownTime(runningCountdownTime);
       }
@@ -101,18 +122,15 @@ function EggComponent({
     if (expiryTime === 0) return "Keep";
     else
       return (
-        `${
-          countdownTime.countdownHours.toString().length === 1
-            ? `0${countdownTime.countdownHours}`
-            : countdownTime.countdownHours
-        }:${
-          countdownTime.countdownMinutes.toString().length === 1
-            ? `0${countdownTime.countdownMinutes}`
-            : countdownTime.countdownMinutes
-        }:${
-          countdownTime.countdownSeconds.toString().length === 1
-            ? `0${countdownTime.countdownSeconds}`
-            : countdownTime.countdownSeconds
+        `${countdownTime.countdownHours.toString().length === 1
+          ? `0${countdownTime.countdownHours}`
+          : countdownTime.countdownHours
+        }:${countdownTime.countdownMinutes.toString().length === 1
+          ? `0${countdownTime.countdownMinutes}`
+          : countdownTime.countdownMinutes
+        }:${countdownTime.countdownSeconds.toString().length === 1
+          ? `0${countdownTime.countdownSeconds}`
+          : countdownTime.countdownSeconds
         }` || ""
       );
   };

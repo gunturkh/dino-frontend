@@ -73,6 +73,7 @@ export type GoogleAuthPanelData = {
 export type CardDetailsData = {
   show: boolean;
   id: number | null;
+  isLocked: boolean;
 };
 
 type Store = {
@@ -106,6 +107,10 @@ type Store = {
   setCardDetails: (data: CardDetailsData) => void;
   withdrawPanel: WithdrawPanelData;
   setWithdrawPanel: (data: WithdrawPanelData) => void;
+  notification: string[];
+  setNotification: (data: string[]) => void;
+  jFundBalance: string;
+  setJFundBalance: (data: string) => void;
 };
 type AuthStore = {
   token: string | null;
@@ -176,10 +181,14 @@ export const useStore = create<Store>((set, get) => ({
   setChangePasswordPanel: (data) => set(() => ({ changePasswordPanel: data })),
   googleAuthPanel: { show: false, mode: "SET" },
   setGoogleAuthPanel: (data) => set(() => ({ googleAuthPanel: data })),
-  cardDetails: { show: false, id: null },
+  cardDetails: { show: false, id: null, isLocked: true },
   setCardDetails: (data) => set(() => ({ cardDetails: data })),
   withdrawPanel: { show: false, mode: "WITHDRAW" },
   setWithdrawPanel: (data) => set(() => ({ withdrawPanel: data })),
+  notification: [],
+  setNotification: (data) => set(() => ({ notification: data })),
+  jFundBalance: '',
+  setJFundBalance: (data) => set(() => ({ jFundBalance: data })),
 }));
 
 export const useAuthStore = create(

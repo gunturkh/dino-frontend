@@ -29,7 +29,7 @@ const Album = ({ onBackBtnClick, visible = true, scene }: Props) => {
   });
   const [isRarityPanelVisible, setIsRarityPanelVisible] = useState(false);
   const [album, setAlbum] = useState([]);
-  const [cardDetails, setCardDetails] = useState({ show: false, id: 0 });
+  const [cardDetails, setCardDetails] = useState({ show: false, id: 0, isLocked: true });
   console.log('album', album)
   console.log(
     "🚀 ~ file: Album.tsx:32 ~ rarityPanelBounds:",
@@ -848,7 +848,7 @@ const Album = ({ onBackBtnClick, visible = true, scene }: Props) => {
                         x={calculateCardXPosition(index)}
                         y={calculateCardYPosition(index)}
                         interactive={!cardDetails?.show}
-                        onpointertap={() => setCardDetails({ show: true, id: item.id - 1 })
+                        onpointertap={() => setCardDetails({ show: true, id: item.id - 1, isLocked: item?.isLocked })
                         }
                       />
                     );
@@ -857,7 +857,7 @@ const Album = ({ onBackBtnClick, visible = true, scene }: Props) => {
               <Sprite
                 // key={index}
                 texture={
-                  cardItems[cardDetails?.id]?.imageUnlock || PIXI.Texture.EMPTY
+                  cardItems[cardDetails?.id]?.[`${cardDetails?.isLocked ? 'imageUnlock' : 'image'}`] || PIXI.Texture.EMPTY
                 }
                 anchor={[0.5, 0.5]}
                 x={0}
@@ -866,7 +866,7 @@ const Album = ({ onBackBtnClick, visible = true, scene }: Props) => {
                 // x={calculateCardXPosition(index)}
                 // y={calculateCardYPosition(index)}
                 interactive
-                onpointertap={() => setCardDetails({ show: false, id: 999 })}
+                onpointertap={() => setCardDetails({ show: false, id: 999, isLocked: true })}
                 visible={cardDetails?.show}
               />
             </Container>
