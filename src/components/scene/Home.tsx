@@ -183,25 +183,32 @@ const Home = ({ onProfileClick, scene }: Props) => {
       if (node !== null) {
         node.x = app.screen.width / 2;
         node.y = 0;
+        node.scale.set(1, 0.9);
 
-        if (app.screen.width > 430) {
-          node.scale.set(1.1, 1);
-        } else if (app.screen.width > 400 && app.screen.width <= 430) {
-          // node.width = 450 * 0.95;
-          node.scale.set(0.95, 1);
-          // node.height = app.screen.height * 0.97
-        } else if (app.screen.width < 400) {
-          node.scale.set(0.9, 1);
-          if (app.screen.height > 800) {
-            node.scale.set(0.9, 1);
-          } else if (app.screen.height >= 700 && app.screen.height <= 800) {
-            node.scale.set(0.9, 1);
-          } else if (app.screen.height >= 400 && app.screen.height <= 500) {
-            node.scale.set(0.9, 1);
-          } else if (app.screen.height < 400) {
-            node.scale.set(0.9, 1);
-          }
-        }
+        // if (app.screen.height >= 700 && app.screen.height <= 800) {
+        //   node.scale.set(1, 0.9);
+        // }
+
+        // if (app.screen.width > 430) {
+        //   node.scale.set(1.1, 1);
+        // } else if (app.screen.width > 400 && app.screen.width <= 430) {
+        //   // node.width = 450 * 0.95;
+        //   node.scale.set(0.95, 1);
+        //   // node.height = app.screen.height * 0.97
+        // } else if (app.screen.width < 400) {
+        //   node.scale.set(0.9, 1);
+        //   if (app.screen.height > 800) {
+        //     node.scale.set(0.9, 1);
+        //   } else if (app.screen.height >= 700 && app.screen.height <= 800) {
+        //     node.scale.set(0.9, 1);
+        //   } else if (app.screen.height >= 500 && app.screen.height <= 600) {
+        //     node.scale.set(0.9, 0.6);
+        //   } else if (app.screen.height >= 400 && app.screen.height <= 500) {
+        //     node.scale.set(0.9, 1);
+        //   } else if (app.screen.height < 400) {
+        //     node.scale.set(0.9, 1);
+        //   }
+        // }
         // else if (app.screen.width < 400) {
         //   // node.width = app.screen.width * 0.95;
         //   node.height = app.screen.height * 0.9
@@ -216,29 +223,29 @@ const Home = ({ onProfileClick, scene }: Props) => {
         );
       }
     },
-    [app.screen.height, app.screen.width]
+    [app.screen.width]
   );
 
   const detailsContainerRef = useCallback(
     (node: any) => {
       if (node !== null) {
-        // y={app.screen?.width > 450 ? 130 : 110}
-        if (app.screen.width > 430) {
-          node.y = app.screen.height * 0.15;
-        } else if (app.screen.width > 400 && app.screen.width <= 430) {
-          node.y = app.screen.height * 0.12;
-        } else if (app.screen.width < 400) {
-          node.y = app.screen.height * 0.15;
-          if (app.screen.height > 800) {
-            node.scale.set(0.9, 1);
-          } else if (app.screen.height >= 700 && app.screen.height <= 800) {
-            node.scale.set(0.9, 1);
-          } else if (app.screen.height >= 400 && app.screen.height <= 500) {
-            node.scale.set(0.9, 1);
-          } else if (app.screen.height < 400) {
-            node.scale.set(0.9, 1);
-          }
-        }
+        node.y = app.screen.height * 0.2;
+        // if (app.screen.width > 430) {
+        //   node.y = app.screen.height * 0.19;
+        // } else if (app.screen.width > 400 && app.screen.width <= 430) {
+        //   node.y = app.screen.height * 0.15;
+        // } else if (app.screen.width < 400) {
+        //   node.y = app.screen.height * 0.15;
+        //   if (app.screen.height > 800) {
+        //     node.scale.set(0.9, 1);
+        //   } else if (app.screen.height >= 700 && app.screen.height <= 800) {
+        //     node.scale.set(0.9, 1);
+        //   } else if (app.screen.height >= 400 && app.screen.height <= 500) {
+        //     node.scale.set(0.9, 1);
+        //   } else if (app.screen.height < 400) {
+        //     node.scale.set(0.9, 1);
+        //   }
+        // }
         console.log(
           "upperContainerRef node.height",
           node.height,
@@ -248,7 +255,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
         );
       }
     },
-    [app.screen.height, app.screen.width]
+    [app.screen.height]
   );
 
   // const [lowerContainerBounds, setLowerContainerBounds] = useState(defaultBounds);
@@ -256,39 +263,45 @@ const Home = ({ onProfileClick, scene }: Props) => {
   const lowerSectionContainerRef = useCallback(
     (node: any) => {
       if (node !== null && isLoaded) {
-        // setLowerContainerBounds(node.getBounds(true))
-        // node.y = 0
-        // console.log("lowerBounds local bounds", node.getLocalBounds());
-        // console.log("lowerBounds get bounds", node.getBounds());
-        // const localBounds = node.getLocalBounds();
-        // console.log(
-        //   "🚀 ~ file: home.tsx:136 ~ lowerSectionContainerRef ~ localBounds:",
-        //   localBounds
-        // );
+        node.y = app.screen.height * 0.9;
 
-        if (app.screen.width > 430) {
+        if (app.screen.height >= 700 && app.screen.height <= 800) {
+          node.y = app.screen.height * 0.85;
+        } else if (app.screen.height >= 600 && app.screen.height <= 700) {
           node.y = app.screen.height * 0.8;
-        } else if (app.screen.width > 400 && app.screen.width <= 430) {
-          node.y = app.screen.height * 0.8;
-        } else if (app.screen.width < 400) {
-          node.y = app.screen.height * 0.61;
-          if (app.screen.height > 800) {
-            node.y = app.screen.height * 0.78;
-          } else if (app.screen.height >= 700 && app.screen.height <= 800) {
-            node.y = app.screen.height * 0.7;
-          } else if (app.screen.height > 500 && app.screen.height <= 700) {
-            node.y = app.screen.height * 0.7;
-          } else if (app.screen.height >= 400 && app.screen.height <= 500) {
-            node.y = app.screen.height * 0.65;
-          } else if (app.screen.height < 400) {
-            node.y = app.screen.height * 0.57;
-          }
+        } else if (app.screen.height >= 500 && app.screen.height <= 600) {
+          node.y = app.screen.height * 0.75;
+        } else if (app.screen.height >= 400 && app.screen.height <= 500) {
+          node.y = app.screen.height * 0.7;
+        } else if (app.screen.height < 400) {
+          node.y = app.screen.height * 0.7;
         }
+
+        // if (app.screen.width > 430) {
+        //   node.y = app.screen.height * 0.7;
+        // } else if (app.screen.width > 400 && app.screen.width <= 430) {
+        //   node.y = app.screen.height * 0.8;
+        // } else if (app.screen.width < 400) {
+        //   node.y = app.screen.height * 0.61;
+        //   if (app.screen.height > 800) {
+        //     node.y = app.screen.height * 0.78;
+        //   } else if (app.screen.height >= 700 && app.screen.height <= 800) {
+        //     node.y = app.screen.height * 0.7;
+        //   } else if (app.screen.height > 500 && app.screen.height <= 700) {
+        //     node.y = app.screen.height * 0.7;
+        //   } else if (app.screen.height > 500 && app.screen.height <= 600) {
+        //     node.y = app.screen.height * 0.7;
+        //   } else if (app.screen.height >= 400 && app.screen.height <= 500) {
+        //     node.y = app.screen.height * 0.65;
+        //   } else if (app.screen.height < 400) {
+        //     node.y = app.screen.height * 0.57;
+        //   }
+        // }
 
         // console.log('lowerSectionContainerRef node.height', node.height, node.width, node.y, node.x)
       }
     },
-    [app.screen.height, app.screen.width, isLoaded]
+    [app.screen.height, isLoaded]
   );
 
   // const [eggPlateContainerBounds, setEggPlateContainerBounds] = useState({

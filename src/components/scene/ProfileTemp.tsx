@@ -23,7 +23,9 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
   const logout = useAuthStore((state) => state.logout);
   const changeScene = useStore((state) => state.changeScene);
   const userData = useStore((state) => state.userData);
-  const setChangePasswordPanel = useStore((state) => state.setChangePasswordPanel);
+  const setChangePasswordPanel = useStore(
+    (state) => state.setChangePasswordPanel
+  );
   const setGoogleAuthPanel = useStore((state) => state.setGoogleAuthPanel);
   const isNotMobile = app.screen.width > 450;
 
@@ -43,8 +45,9 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
 
   const obscureEmail = (email: string) => {
     const [name, domain] = email.split("@");
-    return `${name[0]}${new Array(4).join("*")}${name[name.length - 1]
-      }@${domain}`;
+    return `${name[0]}${new Array(4).join("*")}${
+      name[name.length - 1]
+    }@${domain}`;
   };
 
   useEffect(() => {
@@ -85,15 +88,17 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
             if (navigator && navigator.clipboard) {
               var textarea = document.createElement("textarea");
               textarea.textContent = `${window.location.origin}?sponsor=${userData.username}`;
-              textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
+              textarea.style.position = "fixed"; // Prevent scrolling to bottom of page in MS Edge.
               document.body.appendChild(textarea);
               textarea.select();
               try {
-                console.log(`sponsor link: ${window.location.origin}?sponsor=${userData.username} `)
+                console.log(
+                  `sponsor link: ${window.location.origin}?sponsor=${userData.username} `
+                );
                 return document.execCommand("copy");
               } catch (ex) {
                 toast("Copy to clipboard failed.");
-                return false
+                return false;
               } finally {
                 document.body.removeChild(textarea);
                 toast("Sponsor Link Copied!");
@@ -132,7 +137,7 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
           anchor={[1, 0.5]}
         >
           <Text
-            text={userData?.ga_key ? 'Remove' : 'Yet to Bind'}
+            text={userData?.ga_key ? "Remove" : "Yet to Bind"}
             position={[-12, 0]}
             anchor={[0.5, 0.5]}
             style={
@@ -366,10 +371,9 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
             }
           };
 
-          getOtpRemove2FA()
-          setGoogleAuthPanel({ show: true, mode: 'REMOVE' })
-        }
-        else setGoogleAuthPanel({ show: true, mode: 'SET' })
+          getOtpRemove2FA();
+          setGoogleAuthPanel({ show: true, mode: "REMOVE" });
+        } else setGoogleAuthPanel({ show: true, mode: "SET" });
         break;
       case "Withdraw Verification":
         console.log("Withdrawal Verification");
@@ -403,7 +407,7 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
         break;
 
       case "Change Password":
-        setChangePasswordPanel(true)
+        setChangePasswordPanel(true);
         break;
       default:
         break;
@@ -540,7 +544,7 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
                 width={isNotMobile ? 450 : app.screen.width * 0.9}
                 height={
                   // menuItemBounds?.height + menuItemBounds?.height / 2 + 20
-                  app.screen.height * 0.8
+                  window.innerHeight * 1.3
                 }
                 anchor={[0.5, 0]}
                 scale={[1, 2]}
@@ -617,7 +621,7 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
               <Container
                 position={[0, isNotMobile ? 295 : 240]}
                 ref={upperComponentRef}
-              // scale={[1, 1]}
+                // scale={[1, 1]}
               >
                 {menuItem.map((item, i) => (
                   <Container

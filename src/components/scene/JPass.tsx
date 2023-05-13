@@ -112,15 +112,15 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
     },
     {
       id: 2,
-      header: "15-Day Ultimate Pass",
+      header: "14-Day Ultimate Pass",
       image: PIXI.Assets.get("JPassCardItem2"),
-      price: 16.9,
+      price: 15.9,
     },
     {
       id: 3,
       header: "30-Day Ultimate Pass",
       image: PIXI.Assets.get("JPassCardItem3"),
-      price: 29.9,
+      price: 27.9,
     },
   ];
 
@@ -204,9 +204,9 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
               position={isNotMobile ? [110, 110] : [110, 95]}
               anchor={[0.5, 0.5]}
               eventMode="static"
-              onpointertap={() =>
-                setIsRarityPanelVisible(!isRarityPanelVisible)
-              }
+              // onpointertap={() =>
+              //   setIsRarityPanelVisible(!isRarityPanelVisible)
+              // }
             >
               <Text
                 text={"Statement"}
@@ -581,51 +581,6 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
                     eventMode="static"
                     onpointertap={() => setIsRarityPanelVisible(false)}
                   />
-                </Container>
-
-                {/* filter Button */}
-                <Container
-                  position={[
-                    0,
-                    rarityPanelBounds?.height * (isNotMobile ? -0.1 : -0.15),
-                  ]}
-                >
-                  {rarityItems?.map((item: any, index: number) => {
-                    return (
-                      <Container
-                        key={index}
-                        position={[
-                          (index % 2) * 120,
-                          Math.floor(index / 2) * 55,
-                        ]}
-                        eventMode="static"
-                        onpointertap={() => {
-                          // filterCards(item?.id);
-                          setIsRarityPanelVisible(false);
-                        }}
-                      >
-                        <Sprite
-                          texture={item?.image}
-                          anchor={[1, 0.5]}
-                          position={[0, 0]}
-                        />
-                        <Text
-                          text={item?.name}
-                          position={[-55, 0]}
-                          anchor={[0.5, 0.5]}
-                          style={
-                            new PIXI.TextStyle({
-                              fontFamily: "Magra Bold",
-                              fontSize: isNotMobile ? 20 : 18,
-                              fontWeight: "600",
-                              strokeThickness: 1,
-                              fill: ["white"],
-                            })
-                          }
-                        />
-                      </Container>
-                    );
-                  })}
                 </Container>
               </Container>
             </Container>
