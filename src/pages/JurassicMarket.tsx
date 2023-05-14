@@ -271,13 +271,15 @@ function JurassicMarket({
           <div className="flex flex-col items-center justify-center text-[1.5rem] text-white font-bold font-magra ">
             Jurrasic Market
           </div>
-          <img
+          <div className="w-10 h-10"></div>
+          {/* <img
             src="image/logoutBtn.png"
             width={40}
             height={40}
+            className="w-10"
             alt="Back"
-          // onClick={() => changeScene("HOME")}
-          />
+            // onClick={() => changeScene("HOME")}
+          /> */}
         </div>
         <div className="flex flex-col h-full w-full px-4 pb-6 backdrop-blur-none overflow-y-visible overflow-auto">
           {/* Hunter Details */}
@@ -351,20 +353,22 @@ function JurassicMarket({
               {/* Pages */}
               <div className="flex w-full justify-start text-white font-Magra font-bold text-base [@media(max-width:400px)]:text-sm">
                 <div
-                  className={`cursor-pointer px-4 ${selectedPanel === "Listing"
+                  className={`cursor-pointer px-4 ${
+                    selectedPanel === "Listing"
                       ? "text-[#FFC700]"
                       : "text-white"
-                    }`}
+                  }`}
                   onClick={() => setSelectedPanel("Listing")}
                 >
                   Listings
                 </div>
                 <div>/</div>
                 <div
-                  className={`cursor-pointer px-2 ${selectedPanel === "My Listing"
+                  className={`cursor-pointer px-2 ${
+                    selectedPanel === "My Listing"
                       ? "text-[#FFC700]"
                       : "text-white"
-                    }`}
+                  }`}
                   onClick={() => setSelectedPanel("My Listing")}
                 >
                   My Listings
@@ -381,8 +385,9 @@ function JurassicMarket({
                     <img
                       src="image/btnFilterIcon.png"
                       width={5}
-                      className={`w-[0.7rem] ml-2 ${marketFilter === "Price" ? "rotate-180" : ""
-                        }`}
+                      className={`w-[0.7rem] ml-2 ${
+                        marketFilter === "Price" ? "rotate-180" : ""
+                      }`}
                       alt="priceFilterIcon"
                     />
                   </div>
@@ -394,8 +399,9 @@ function JurassicMarket({
                     <img
                       src="image/btnFilterIcon.png"
                       width={5}
-                      className={`w-[0.7rem] ml-2 ${marketFilter === "Time" ? "rotate-180" : ""
-                        }`}
+                      className={`w-[0.7rem] ml-2 ${
+                        marketFilter === "Time" ? "rotate-180" : ""
+                      }`}
                       alt="priceFilterIcon"
                     />
                   </div>
@@ -440,7 +446,7 @@ function JurassicMarket({
                           USDT
                         </p>
                         {approved &&
-                          approved?.toString() >= eggTransactionData.total ? (
+                        approved?.toString() >= eggTransactionData.total ? (
                           <button
                             className="bg-green-700 cursor-pointer px-4 py-2 rounded"
                             onClick={async (raw: any) => {
@@ -466,10 +472,11 @@ function JurassicMarket({
                           </button>
                         ) : (
                           <button
-                            className={`${eggTransactionState === "Loading"
+                            className={`${
+                              eggTransactionState === "Loading"
                                 ? "bg-[#FFC700]"
                                 : "bg-red-700"
-                              } cursor-pointer px-4 py-2 rounded`}
+                            } cursor-pointer px-4 py-2 rounded`}
                             onClick={async () => {
                               console.log("walletAddress", walletAddress);
                               // console.log("allowance ", allowance);
@@ -535,27 +542,27 @@ function JurassicMarket({
                           console.log("onBtnKeepPress", egg.id);
                           handleKeep(egg.id, egg.ticket);
                         }}
-                      // onBtnPurchasePress={async () => {
-                      //     // console.log("allowance ", allowance);
-                      //     // console.log("account approve", walletAddress);
-                      //     const txReq = {
-                      //         to: USDT_ADDR,
-                      //         from: walletAddress,
-                      //         data: eggTransactionData.TxRawApproval,
-                      //     };
-                      //     console.log("txReq", txReq);
-                      //     const txSend = await sendTransaction(txReq);
-                      //     console.log("txSend", txSend);
-                      // }}
-                      // onBtnPayPress={async (raw: any) => {
-                      //     const txReq = {
-                      //         data: raw,
-                      //         to: PAYGATEWAY_ADDR,
-                      //         from: walletAddress,
-                      //     };
-                      //     const txSend = await sendPayTransaction(txReq, eggTransactionData);
-                      //     console.log("txSend payment", txSend);
-                      // }}
+                        // onBtnPurchasePress={async () => {
+                        //     // console.log("allowance ", allowance);
+                        //     // console.log("account approve", walletAddress);
+                        //     const txReq = {
+                        //         to: USDT_ADDR,
+                        //         from: walletAddress,
+                        //         data: eggTransactionData.TxRawApproval,
+                        //     };
+                        //     console.log("txReq", txReq);
+                        //     const txSend = await sendTransaction(txReq);
+                        //     console.log("txSend", txSend);
+                        // }}
+                        // onBtnPayPress={async (raw: any) => {
+                        //     const txReq = {
+                        //         data: raw,
+                        //         to: PAYGATEWAY_ADDR,
+                        //         from: walletAddress,
+                        //     };
+                        //     const txSend = await sendPayTransaction(txReq, eggTransactionData);
+                        //     console.log("txSend payment", txSend);
+                        // }}
                       />
                     );
                   })}
