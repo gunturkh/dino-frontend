@@ -1,12 +1,6 @@
 import { useRef, useCallback, useEffect, useState } from "react";
 import * as PIXI from "pixi.js";
-import {
-  Container,
-  Sprite,
-  useApp,
-  Text,
-  Graphics,
-} from "@pixi/react";
+import { Container, Sprite, useApp, Text, Graphics } from "@pixi/react";
 // import { useSendTransaction } from "@usedapp/core";
 import DinoFundComponent from "../DinoFundComponent";
 import ProfileComponent from "../ProfileComponent";
@@ -79,7 +73,11 @@ const Home = ({ onProfileClick, scene }: Props) => {
   const [toggleBtnAudio, setToggleBtnAudio] = useState(false);
 
   const [currentTime, setCurrentTime] = useState(new Date().getTime());
-  console.log('currentTime', Math.floor(currentTime / 1000), Math.floor(currentTime / 1000) % 8)
+  console.log(
+    "currentTime",
+    Math.floor(currentTime / 1000),
+    Math.floor(currentTime / 1000) % 8
+  );
 
   const onDragStart = useCallback((event: any) => {
     // console.log('eggRef', eggRef)
@@ -88,7 +86,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
     sprite.data = event.data;
     sprite.dragging = true;
     if (eggRef && eggRef?.current) {
-      gsap.to(eggRef, { rotation: 360, duration: 5 })
+      gsap.to(eggRef, { rotation: 360, duration: 5 });
     }
   }, []);
 
@@ -278,7 +276,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
     },
     [app.screen.width]
   );
-  console.log('homecontainerRef', homecontainerRef)
+  console.log("homecontainerRef", homecontainerRef);
 
   const detailsContainerRef = useCallback(
     (node: any) => {
@@ -321,36 +319,19 @@ const Home = ({ onProfileClick, scene }: Props) => {
 
         if (app.screen.height >= 700 && app.screen.height <= 800) {
           node.y = app.screen.height * 0.85;
-        } else if (app.screen.height >= 600 && app.screen.height <= 700) {
+        }
+        if (app.screen.height >= 600 && app.screen.height <= 700) {
+          node.y = app.screen.height * 0.82;
+        }
+        if (app.screen.height >= 500 && app.screen.height <= 600) {
           node.y = app.screen.height * 0.8;
-        } else if (app.screen.height >= 500 && app.screen.height <= 600) {
+        }
+        if (app.screen.height >= 400 && app.screen.height <= 500) {
           node.y = app.screen.height * 0.75;
-        } else if (app.screen.height >= 400 && app.screen.height <= 500) {
-          node.y = app.screen.height * 0.7;
-        } else if (app.screen.height < 400) {
+        }
+        if (app.screen.height < 400) {
           node.y = app.screen.height * 0.7;
         }
-
-        // if (app.screen.width > 430) {
-        //   node.y = app.screen.height * 0.7;
-        // } else if (app.screen.width > 400 && app.screen.width <= 430) {
-        //   node.y = app.screen.height * 0.8;
-        // } else if (app.screen.width < 400) {
-        //   node.y = app.screen.height * 0.61;
-        //   if (app.screen.height > 800) {
-        //     node.y = app.screen.height * 0.78;
-        //   } else if (app.screen.height >= 700 && app.screen.height <= 800) {
-        //     node.y = app.screen.height * 0.7;
-        //   } else if (app.screen.height > 500 && app.screen.height <= 700) {
-        //     node.y = app.screen.height * 0.7;
-        //   } else if (app.screen.height > 500 && app.screen.height <= 600) {
-        //     node.y = app.screen.height * 0.7;
-        //   } else if (app.screen.height >= 400 && app.screen.height <= 500) {
-        //     node.y = app.screen.height * 0.65;
-        //   } else if (app.screen.height < 400) {
-        //     node.y = app.screen.height * 0.57;
-        //   }
-        // }
 
         // console.log('lowerSectionContainerRef node.height', node.height, node.width, node.y, node.x)
       }
@@ -381,14 +362,26 @@ const Home = ({ onProfileClick, scene }: Props) => {
           node.width = app.screen.width * 0.7;
           node.scale.set(0.8, 0.8);
         }
-        // console.log(
-        //   "eggplate node.height",
-        //   node.height,
-        //   node.width,
-        //   node.y,
-        //   node.x
-        // );
-        // setEggPlateContainerBounds(node.getBounds());
+
+        if (app.screen.height > 800) {
+          node.y = app.screen.height / 2;
+          node.scale.set(1, 1);
+        }
+        if (app.screen.height >= 700 && app.screen.height <= 800) {
+          node.y = app.screen.height * 0.61;
+        }
+        if (app.screen.height >= 600 && app.screen.height <= 700) {
+          node.y = app.screen.height * 0.6;
+        }
+        if (app.screen.height >= 500 && app.screen.height <= 600) {
+          node.y = app.screen.height * 0.6;
+        }
+        if (app.screen.height >= 400 && app.screen.height <= 500) {
+          node.y = app.screen.height * 0.6;
+        }
+        if (app.screen.height < 400) {
+          node.y = app.screen.height * 0.59;
+        }
       }
     },
     [app.screen.height, app.screen.width]
@@ -512,15 +505,15 @@ const Home = ({ onProfileClick, scene }: Props) => {
   const EggPlateComponent = (eggData: any) => {
     // console.log("eggData", eggData);
     const draw = useCallback((g: any) => {
-      g.lineStyle(2, 0xaaaaaa, 1)
-      g.moveTo(10, -75)
-      g.lineTo(-53, -112)
-      g.lineTo(-92, -65)
-      g.lineTo(-79, -2)
-      g.lineTo(7, 29)
-      g.lineTo(98, -2)
-      g.lineTo(109, -65)
-      g.lineTo(70, -112)
+      g.lineStyle(2, 0xaaaaaa, 1);
+      g.moveTo(10, -75);
+      g.lineTo(-53, -112);
+      g.lineTo(-92, -65);
+      g.lineTo(-79, -2);
+      g.lineTo(7, 29);
+      g.lineTo(98, -2);
+      g.lineTo(109, -65);
+      g.lineTo(70, -112);
       // g.arcTo(350, 200, 450, 900, 100)
       // g.lineTo(200, 500)
       // g.lineTo(700, 100)
@@ -572,7 +565,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
         x={-5}
         scale={[0.9, 0.9]}
         height={app.screen.height * 0.4}
-      // width={app.screen.width * 0.9}
+        // width={app.screen.width * 0.9}
       >
         <Sprite
           texture={PIXI.Assets.get("EggPlate") || PIXI.Texture.EMPTY}
@@ -603,7 +596,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 onDragStart={onDragStart}
                 onDragMove={onDragMove}
                 onDragEnd={onDragEnd}
-              // visible={!eggData[0]}
+                // visible={!eggData[0]}
               />
             );
           } else
@@ -775,7 +768,13 @@ const Home = ({ onProfileClick, scene }: Props) => {
               <DinoFundComponent
                 spriteTexture={PIXI?.Assets?.get("DinoFundBg")}
                 // text="0"
-                text={jFundBalance !== '' ? parseFloat(ethers.utils.formatUnits(jFundBalance, 18)).toFixed(2) : '0'}
+                text={
+                  jFundBalance !== ""
+                    ? parseFloat(
+                        ethers.utils.formatUnits(jFundBalance, 18)
+                      ).toFixed(2)
+                    : "0"
+                }
                 // text={`w=${getHomeContainerBounds.width.toFixed()} h=${getHomeContainerBounds.height}`}
                 posX={0}
                 posY={0}
@@ -794,7 +793,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
               <Container
                 position={[
                   (DinoFundBgBounds?.width / 2) *
-                  (app.screen?.width > 450 ? 1.05 : 1),
+                    (app.screen?.width > 450 ? 1.05 : 1),
                   DinoFundBgBounds?.height / 2 - 7,
                 ]}
               >
@@ -861,7 +860,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 // position={[app.screen.width / 2 - (lfSideBounds.width / 2), 0]}
                 position={[isNotMobile ? 110 : 90, 10]}
                 anchor={[0.5, 0.5]}
-              // width={app.screen.width > 450 ? 450 : app.screen.width}
+                // width={app.screen.width > 450 ? 450 : app.screen.width}
               >
                 <DetailsComponent
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
@@ -1002,7 +1001,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
               ref={lowerSectionContainerRef}
               anchor={[0.5, 0.5]}
               x={0}
-            // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
+              // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
             >
               {/* left side */}
               <LowerButtonComponent
@@ -1225,7 +1224,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[
                       buyTicketPanelBounds?.width * 0.5 -
-                      (isNotMobile ? 50 : 25),
+                        (isNotMobile ? 50 : 25),
                       0,
                     ]}
                     eventMode="static"
@@ -1285,11 +1284,11 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[
                       buyTicketPanelBounds?.width * 0.5 -
-                      (isNotMobile ? 50 : 25),
+                        (isNotMobile ? 50 : 25),
                       0,
                     ]}
                     eventMode="static"
-                  // onpointertap={() => setGoogleAuthVisible(false)}
+                    // onpointertap={() => setGoogleAuthVisible(false)}
                   />
                 </Container>
 
