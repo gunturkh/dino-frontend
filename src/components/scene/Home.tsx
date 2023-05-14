@@ -376,8 +376,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
         }
 
         if (app.screen.height > 800) {
-          node.y = app.screen.height / 2;
-          node.scale.set(1, 1);
+          node.y = app.screen.height * 0.6;
         }
         if (app.screen.height >= 700 && app.screen.height <= 800) {
           node.y = app.screen.height * 0.61;
@@ -511,7 +510,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
 
       // if (gatchaAnimationStatus.show) {
       if (gatchaAnimationStatus) {
-        console.log('gatchaAnimationStatus on Home', gatchaAnimationStatus)
+        console.log("gatchaAnimationStatus on Home", gatchaAnimationStatus);
         if (gatcha1 && ticketCnt === 1) {
           gatcha1.visible = true;
           node?.addChild(gatcha1);
@@ -780,7 +779,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
         x={-5}
         scale={[0.9, 0.9]}
         height={app.screen.height * 0.4}
-      // width={app.screen.width * 0.9}
+        // width={app.screen.width * 0.9}
       >
         <Sprite
           texture={PIXI.Assets.get("EggPlate") || PIXI.Texture.EMPTY}
@@ -811,10 +810,10 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 onPress={() => console.log("egg 1 clicked")}
                 setTicketCnt={setTicketCnt}
                 setGatchaAnimationStatus={setGatchaAnimationStatus}
-              // onDragStart={onDragStart}
-              // onDragMove={onDragMove}
-              // onDragEnd={onDragEnd}
-              // visible={!eggData[0]}
+                // onDragStart={onDragStart}
+                // onDragMove={onDragMove}
+                // onDragEnd={onDragEnd}
+                // visible={!eggData[0]}
               />
             );
           } else
@@ -836,10 +835,10 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 onPress={() => console.log(`egg ${eggIndex} clicked`)}
                 setTicketCnt={setTicketCnt}
                 setGatchaAnimationStatus={setGatchaAnimationStatus}
-              // visible={!eggData[1]}
-              // onDragStart={onDragStart}
-              // onDragMove={onDragMove}
-              // onDragEnd={onDragEnd}
+                // visible={!eggData[1]}
+                // onDragStart={onDragStart}
+                // onDragMove={onDragMove}
+                // onDragEnd={onDragEnd}
               />
             );
         })}
@@ -992,8 +991,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 text={
                   jFundBalance !== ""
                     ? parseFloat(
-                      ethers.utils.formatUnits(jFundBalance, 18)
-                    ).toFixed(2)
+                        ethers.utils.formatUnits(jFundBalance, 18)
+                      ).toFixed(2)
                     : "0"
                 }
                 // text={`w=${getHomeContainerBounds.width.toFixed()} h=${getHomeContainerBounds.height}`}
@@ -1014,7 +1013,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
               <Container
                 position={[
                   (DinoFundBgBounds?.width / 2) *
-                  (app.screen?.width > 450 ? 1.05 : 1),
+                    (app.screen?.width > 450 ? 1.05 : 1),
                   DinoFundBgBounds?.height / 2 - 7,
                 ]}
               >
@@ -1081,7 +1080,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 // position={[app.screen.width / 2 - (lfSideBounds.width / 2), 0]}
                 position={[isNotMobile ? 110 : 90, 10]}
                 anchor={[0.5, 0.5]}
-              // width={app.screen.width > 450 ? 450 : app.screen.width}
+                // width={app.screen.width > 450 ? 450 : app.screen.width}
               >
                 <DetailsComponent
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
@@ -1225,7 +1224,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
               ref={lowerSectionContainerRef}
               anchor={[0.5, 0.5]}
               x={0}
-            // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
+              // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
             >
               {/* left side */}
               <LowerButtonComponent
@@ -1283,9 +1282,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                   })
                 }
                 onPress={() => {
-                  setTicketCnt(4);
-                  // setGatchaAnimationStatus({ show: true, ticket: 4 });
-                  setGatchaAnimationStatus(true);
+                  changeScene("BULLETIN");
                 }}
               />
               <LowerButtonComponent
@@ -1401,9 +1398,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                   })
                 }
                 onPress={() => {
-                  setTicketCnt(2);
-                  // setGatchaAnimationStatus({ show: true, ticket: 2 });
-                  setGatchaAnimationStatus(true);
+                  changeScene("HISTORY");
                 }}
               />
             </Container>
@@ -1458,7 +1453,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[
                       buyTicketPanelBounds?.width * 0.5 -
-                      (isNotMobile ? 50 : 25),
+                        (isNotMobile ? 50 : 25),
                       0,
                     ]}
                     eventMode="static"
@@ -1518,11 +1513,11 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[
                       buyTicketPanelBounds?.width * 0.5 -
-                      (isNotMobile ? 50 : 25),
+                        (isNotMobile ? 50 : 25),
                       0,
                     ]}
                     eventMode="static"
-                  // onpointertap={() => setGoogleAuthVisible(false)}
+                    // onpointertap={() => setGoogleAuthVisible(false)}
                   />
                 </Container>
 

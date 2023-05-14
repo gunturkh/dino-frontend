@@ -4,7 +4,7 @@ import * as PIXI from "pixi.js";
 import { Container, Sprite, Text, useApp } from "@pixi/react";
 import { toast } from "react-toastify";
 import { axiosInstance } from "../../utils/api";
-import { useAuthStore } from "../../utils/store";
+import { useAuthStore, useStore } from "../../utils/store";
 
 type Props = {
   onBackBtnClick: () => void;
@@ -20,6 +20,7 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
   const isNotMobile = app.screen.width > 450;
 
   const token = useAuthStore((state) => state.token);
+  const setJPassPanel = useStore((state) => state.setJPassPanel);
   const [isLoaded, setIsLoaded] = useState(false);
   const [rarityPanelBounds, setRarityPanelBounds] = useState({
     x: 0,
@@ -467,6 +468,8 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
               x={0}
               y={app.screen.height * (isNotMobile ? 0.9 : 0.94)}
               scale={isNotMobile ? [1, 1] : [0.75, 0.75]}
+              eventMode="static"
+              onpointertap={() => setJPassPanel(true)}
             >
               <Sprite
                 texture={PIXI.Assets.get("JPassBtnPurchase")}

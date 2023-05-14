@@ -127,6 +127,8 @@ type Store = {
   setCardDetails: (data: CardDetailsData) => void;
   withdrawPanel: WithdrawPanelData;
   setWithdrawPanel: (data: WithdrawPanelData) => void;
+  jPassPanel: boolean;
+  setJPassPanel: (data: boolean) => void;
   notification: string[];
   setNotification: (data: string[]) => void;
   jFundBalance: string;
@@ -151,7 +153,9 @@ type Screen =
   | "ALBUM"
   | "GAMEGUIDE"
   | "BUDDIES"
-  | "JPASS";
+  | "JPASS"
+  | "HISTORY"
+  | "BULLETIN";
 
 export const useStore = create<Store>((set, get) => ({
   scene: "LOADING",
@@ -211,6 +215,8 @@ export const useStore = create<Store>((set, get) => ({
   setCardDetails: (data) => set(() => ({ cardDetails: data })),
   withdrawPanel: { show: false, mode: "WITHDRAW" },
   setWithdrawPanel: (data) => set(() => ({ withdrawPanel: data })),
+  jPassPanel: false,
+  setJPassPanel: (data) => set(() => ({ jPassPanel: data })),
   notification: [],
   setNotification: (data) => set(() => ({ notification: data })),
   jFundBalance: "",
@@ -218,7 +224,8 @@ export const useStore = create<Store>((set, get) => ({
   setWithdrawalHistory: (data) => set(() => ({ withdrawalHistory: data })),
   withdrawalHistory: [],
   gatchaAnimationStatus: { show: false, ticket: 0 },
-  setGatchaAnimationStatus: (data) => set(() => ({ gatchaAnimationStatus: data })),
+  setGatchaAnimationStatus: (data) =>
+    set(() => ({ gatchaAnimationStatus: data })),
 }));
 
 export const useAuthStore = create(
