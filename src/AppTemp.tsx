@@ -15,6 +15,7 @@ import {
 } from "@usedapp/core";
 import { Stage } from "@pixi/react";
 import { useState, useEffect, useCallback, useRef } from "react";
+import Marquee from "react-fast-marquee";
 import { axiosInstance } from "./utils/api";
 // import { getCountries } from "react-phone-number-input/input";
 // import en from "react-phone-number-input/locale/en.json";
@@ -129,6 +130,8 @@ export const AppTemp = () => {
   const googleAuthPanel = useStore((state) => state.googleAuthPanel);
   const setGoogleAuthPanel = useStore((state) => state.setGoogleAuthPanel);
   const withdrawalHistory = useStore((state) => state.withdrawalHistory);
+  const notification = useStore((state) => state.notification);
+  console.log('notification text', notification.map((i: any) => (i.text)).join(' '))
   // const cardDetails = useStore((state) => state.cardDetails);
   // const eggListsData = useStore((state) => state.eggListsData);
   // console.log("googleAuthPanel", googleAuthPanel);
@@ -3330,6 +3333,11 @@ export const AppTemp = () => {
             }
           }}
         />
+      )}
+      {scene === "HOME" && (
+        <div className="absolute top-[100px] flex flex-col">
+          <Marquee speed={50} className="font-Magra text-[#FFC700]">{notification.map((i: any) => (i.text)).join(' ')}</Marquee>
+        </div>
       )}
       <div>
         <Stage

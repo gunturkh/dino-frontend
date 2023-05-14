@@ -618,6 +618,11 @@ const Home = ({ onProfileClick, scene }: Props) => {
     console.log("get notification gacha egg Result:", data);
     if (data?.success) {
       setNotification(data?.result);
+      if (data?.result?.length > 0) {
+        data?.result?.forEach((item: { id: number, text: string }) => {
+          if (item.text.includes('Egg')) toast(item.text)
+        })
+      }
       setTimeout(getNotification, 300000);
     } else {
       toast(data.message);
