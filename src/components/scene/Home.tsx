@@ -1,6 +1,12 @@
-import { useCallback, useEffect, useState, useRef, useMemo } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import * as PIXI from "pixi.js";
-import { Container, Sprite, useApp, Text, Graphics } from "@pixi/react";
+import {
+  Container,
+  Sprite,
+  useApp,
+  Text,
+  // Graphics,
+} from "@pixi/react";
 // import { useSendTransaction } from "@usedapp/core";
 import DinoFundComponent from "../DinoFundComponent";
 import ProfileComponent from "../ProfileComponent";
@@ -13,7 +19,7 @@ import { manifest } from "../../assets";
 import FlyingAnimations from "../FlyingAnimations";
 import { toast } from "react-toastify";
 import NormalEggComponent from "../NormalEggComponent";
-import gsap from "gsap";
+// import gsap from "gsap";
 import { Spine } from "pixi-spine";
 // import { TICKET_ADDR } from "../../utils/config";
 type Props = {
@@ -34,14 +40,14 @@ type Props = {
 //   }
 // };
 
-interface Draggable extends PIXI.DisplayObject {
-  data: any;
-  dragging: boolean;
-}
+// interface Draggable extends PIXI.DisplayObject {
+//   data: any;
+//   dragging: boolean;
+// }
 const Home = ({ onProfileClick, scene }: Props) => {
   const app = useApp();
-  const pathRef = useRef(null);
-  const eggRef = useRef(null);
+  // const pathRef = useRef(null);
+  // const eggRef = useRef(null);
   const setEggPendingListData = useStore(
     (state) => state.setEggPendingListData
   );
@@ -60,6 +66,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
   const jFundBalance = useStore((state) => state.jFundBalance);
   const setJFundBalance = useStore((state) => state.setJFundBalance);
   const setWithdrawalHistory = useStore((state) => state.setWithdrawalHistory);
+  // const gatchaAnimationStatus = useStore((state) => state.gatchaAnimationStatus);
+  // const setGatchaAnimationStatus = useStore((state) => state.setGatchaAnimationStatus);
 
   const token = useAuthStore((state) => state.token);
 
@@ -83,46 +91,46 @@ const Home = ({ onProfileClick, scene }: Props) => {
     Math.floor(currentTime / 1000) % 8
   );
 
-  const onDragStart = useCallback((event: any) => {
-    // console.log('eggRef', eggRef)
-    const sprite = event.currentTarget as Draggable;
-    sprite.alpha = 0.5;
-    sprite.data = event.data;
-    sprite.dragging = true;
-    if (eggRef && eggRef?.current) {
-      gsap.to(eggRef, { rotation: 360, duration: 5 });
-    }
-  }, []);
+  // const onDragStart = useCallback((event: any) => {
+  //   // console.log('eggRef', eggRef)
+  //   const sprite = event.currentTarget as Draggable;
+  //   sprite.alpha = 0.5;
+  //   sprite.data = event.data;
+  //   sprite.dragging = true;
+  //   if (eggRef && eggRef?.current) {
+  //     gsap.to(eggRef, { rotation: 360, duration: 5 })
+  //   }
+  // }, []);
 
-  const onDragEnd = useCallback((event: any) => {
-    const sprite = event.currentTarget as Draggable;
-    sprite.alpha = 1;
-    sprite.dragging = false;
-    sprite.data = null;
-  }, []);
+  // const onDragEnd = useCallback((event: any) => {
+  //   const sprite = event.currentTarget as Draggable;
+  //   sprite.alpha = 1;
+  //   sprite.dragging = false;
+  //   sprite.data = null;
+  // }, []);
 
-  const onDragMove = useCallback((event: any) => {
-    const sprite = event.currentTarget as Draggable;
-    // let values = [];
-    if (sprite.dragging) {
-      // console.log('pathRef', pathRef && (pathRef?.current as any)?.geometry?.graphicsData[0]?.points)
-      // const points = (pathRef?.current as any)?.geometry?.graphicsData[0]?.points
-      // console.log("points", points)
-      // for (var i = 0; i < points.length; i += 2) {
-      //   values.push({ x: points[i], y: points[i + 1] });
-      // }
+  // const onDragMove = useCallback((event: any) => {
+  //   const sprite = event.currentTarget as Draggable;
+  //   // let values = [];
+  //   if (sprite.dragging) {
+  //     // console.log('pathRef', pathRef && (pathRef?.current as any)?.geometry?.graphicsData[0]?.points)
+  //     // const points = (pathRef?.current as any)?.geometry?.graphicsData[0]?.points
+  //     // console.log("points", points)
+  //     // for (var i = 0; i < points.length; i += 2) {
+  //     //   values.push({ x: points[i], y: points[i + 1] });
+  //     // }
 
-      const newPosition = sprite.data!.getLocalPosition(sprite.parent);
-      // console.log('points', points)
-      // console.log('newPosition', newPosition)
-      sprite.x = newPosition.x;
-      sprite.y = newPosition.y;
-      // sprite.x = points[5];
-      // sprite.y = points[6];
-      // console.log('points', points)
-      // console.log('sprite position', sprite)
-    }
-  }, []);
+  //     const newPosition = sprite.data!.getLocalPosition(sprite.parent);
+  //     // console.log('points', points)
+  //     // console.log('newPosition', newPosition)
+  //     sprite.x = newPosition.x;
+  //     sprite.y = newPosition.y;
+  //     // sprite.x = points[5];
+  //     // sprite.y = points[6];
+  //     // console.log('points', points)
+  //     // console.log('sprite position', sprite)
+  //   }
+  // }, []);
 
   useEffect(() => {
     let timeInterval: any;
@@ -432,6 +440,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
 
   const onGatchaAnimationEnd = useCallback(() => {
     console.log("onGatchaAnimationEnd");
+    // setGatchaAnimationStatus({ show: false, ticket: 0 });
     setGatchaAnimationStatus(false);
     setTicketCnt(0);
   }, []);
@@ -500,7 +509,9 @@ const Home = ({ onProfileClick, scene }: Props) => {
         }
       );
 
+      // if (gatchaAnimationStatus.show) {
       if (gatchaAnimationStatus) {
+        console.log('gatchaAnimationStatus on Home', gatchaAnimationStatus)
         if (gatcha1 && ticketCnt === 1) {
           gatcha1.visible = true;
           node?.addChild(gatcha1);
@@ -549,8 +560,9 @@ const Home = ({ onProfileClick, scene }: Props) => {
       memoizedGatchaAnimation2,
       memoizedGatchaAnimation3,
       gatchaAnimationStatus,
-      app.screen.height,
+      // gatchaAnimationStatus.ticket,
       ticketCnt,
+      app.screen.height,
       onGatchaAnimationEnd,
     ]
   );
@@ -692,210 +704,27 @@ const Home = ({ onProfileClick, scene }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  const NormalEggComponent = ({
-    data,
-    currentTime,
-    eggTexture,
-    ref,
-    posX,
-    posY,
-    onPress,
-    scaleEgg,
-    scaleBtn,
-    posBtn,
-    text,
-    visible,
-  }: any) => {
-    const [expiryTime, setExpiryTime] = useState(data?.listedat);
-    console.log("expiryTime NormalEgg", expiryTime);
-    // console.log('currentTime', currentTime, 'index: ', index)
-    const [countdownTime, setCountdownTime] = useState({
-      countdownHours: 0,
-      countdownMinutes: 0,
-      countdownSeconds: 0,
-    });
-
-    const formatText = () => {
-      if (expiryTime === 0 && data?.posted === 0) return "Pre-List";
-      if (expiryTime === 0 && data?.posted === 1) return "Gatcha";
-      else
-        return (
-          `${
-            countdownTime.countdownHours.toString().length === 1
-              ? `0${countdownTime.countdownHours}`
-              : countdownTime.countdownHours
-          }:${
-            countdownTime.countdownMinutes.toString().length === 1
-              ? `0${countdownTime.countdownMinutes}`
-              : countdownTime.countdownMinutes
-          }:${
-            countdownTime.countdownSeconds.toString().length === 1
-              ? `0${countdownTime.countdownSeconds}`
-              : countdownTime.countdownSeconds
-          }` || ""
-        );
-    };
-
-    useEffect(() => {
-      let timeInterval: any;
-      // const countdown = () => {
-      if (expiryTime > 0 && currentTime) {
-        // timeInterval = setInterval(() => {
-        const countdownDateTime = expiryTime * 1000;
-        // const currentTime = new Date().getTime();
-        const remainingDayTime = countdownDateTime - currentTime;
-        // console.log(`countdownDateTime ${index}`, countdownDateTime);
-        // console.log(`currentTime ${index}`, currentTime);
-        // console.log(`remainingDayTime ${index}`, remainingDayTime);
-        const totalHours = Math.floor(
-          (remainingDayTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-        );
-        const totalMinutes = Math.floor(
-          (remainingDayTime % (1000 * 60 * 60)) / (1000 * 60)
-        );
-        const totalSeconds = Math.floor(
-          (remainingDayTime % (1000 * 60)) / 1000
-        );
-
-        const runningCountdownTime = {
-          countdownHours: totalHours,
-          countdownMinutes: totalMinutes,
-          countdownSeconds: totalSeconds,
-        };
-
-        if (remainingDayTime < 0) {
-          clearInterval(timeInterval);
-          setExpiryTime(0);
-        } else {
-          setCountdownTime(runningCountdownTime);
-        }
-        // }, 1000);
-      }
-      // };
-      // countdown();
-      // return () => {
-      //     clearInterval(timeInterval);
-      // };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentTime]);
-    return (
-      <Container
-        ref={ref || null}
-        x={posX || 0}
-        y={posY || 0}
-        visible={visible}
-      >
-        <Sprite
-          texture={eggTexture || PIXI.Texture.EMPTY}
-          anchor={[0.5, 0.5]}
-          scale={scaleEgg ? scaleEgg : [0.9, 0.9]}
-        />
-        {/* action button */}
-        <Container
-          position={posBtn ? posBtn : [0, 25]}
-          scale={scaleBtn ? scaleBtn : [0.6, 0.7]}
-          eventMode="static"
-          onpointertap={async () => {
-            if (formatText() === "Pre-List") {
-              let options = {
-                headers: {
-                  "my-auth-key": token,
-                },
-              };
-              const result = await axiosInstance({
-                url: "/egg/postEgg",
-                method: "POST",
-                headers: options.headers,
-                data: { id: data?.id },
-              });
-              // console.log(result.data);
-              if (result.data.success) {
-                toast("Pre-List Egg Success");
-                getPendingListingEgg();
-                // window.location.reload()
-                // changeScene('HOME')
-              } else {
-                toast("Error when trying to pre-list egg");
-              }
-            }
-            if (formatText() === "Gatcha") {
-              let options = {
-                headers: {
-                  "my-auth-key": token,
-                },
-              };
-              const result = await axiosInstance({
-                url: "/egg/gatcha",
-                method: "POST",
-                headers: options.headers,
-                data: { id: data?.id },
-              });
-              // console.log(result.data);
-              if (result.data.success) {
-                const p = result.data.result;
-                if (p.reward_name === "")
-                  toast("Oh no! The Dinosaur broke free!");
-                else
-                  toast(
-                    `Horray, you get ${p.reward_name} valued $ ` +
-                      ethers.utils.formatEther(p.reward_value)
-                  );
-                getPendingListingEgg();
-                // window.location.reload()
-              } else {
-                toast("Error when trying to open egg");
-              }
-            }
-          }}
-        >
-          <Sprite
-            position={[0, 0]}
-            texture={
-              PIXI.Assets.get(
-                true ? "BtnPurchaseActive" : "BtnPurchaseCountdown"
-              ) || PIXI.Texture.EMPTY
-            }
-            anchor={[0.5, 0.5]}
-          />
-          <Text
-            text={formatText()}
-            position={[0, 0]}
-            anchor={[0.5, 0.5]}
-            style={
-              new PIXI.TextStyle({
-                fontFamily: "Magra Bold",
-                fontSize: 13,
-                fontWeight: "600",
-                strokeThickness: 1,
-                fill: ["white"],
-              })
-            }
-          />
-        </Container>
-      </Container>
-    );
-  };
-
   const EggPlateComponent = (eggData: any) => {
     // console.log("eggData", eggData);
-    const draw = useCallback((g: any) => {
-      g.lineStyle(2, 0xaaaaaa, 1);
-      g.moveTo(10, -75);
-      g.lineTo(-53, -112);
-      g.lineTo(-92, -65);
-      g.lineTo(-79, -2);
-      g.lineTo(7, 29);
-      g.lineTo(98, -2);
-      g.lineTo(109, -65);
-      g.lineTo(70, -112);
-      // g.arcTo(350, 200, 450, 900, 100)
-      // g.lineTo(200, 500)
-      // g.lineTo(700, 100)
-      // g.bezierCurveTo(700, 100, 700, 400, 100, 100);
-    }, []);
+    // const draw = useCallback((g: any) => {
+    //   g.lineStyle(2, 0xaaaaaa, 1)
+    //   g.moveTo(10, -75)
+    //   g.lineTo(-53, -112)
+    //   g.lineTo(-92, -65)
+    //   g.lineTo(-79, -2)
+    //   g.lineTo(7, 29)
+    //   g.lineTo(98, -2)
+    //   g.lineTo(109, -65)
+    //   g.lineTo(70, -112)
+    //   // g.arcTo(350, 200, 450, 900, 100)
+    //   // g.lineTo(200, 500)
+    //   // g.lineTo(700, 100)
+    //   // g.bezierCurveTo(700, 100, 700, 400, 100, 100);
+    // }, []);
     // console.log('draw', draw)
     const position = [
       {
+        // 1
         posX: 10,
         posY: -75,
         posBtn: [0, 50],
@@ -903,33 +732,40 @@ const Home = ({ onProfileClick, scene }: Props) => {
         scaleEgg: [0.95, 0.95],
       },
       {
-        posX: -53,
-        posY: -112,
-        posBtn: [-3, 25],
-      },
-      {
-        posX: -92,
-        posY: -65,
-      },
-      {
-        posX: -79,
-        posY: -2,
-      },
-      {
+        // 5
         posX: 7,
         posY: 29,
       },
       {
+        // 6
         posX: 98,
         posY: -2,
       },
       {
+        // 4
+        posX: -79,
+        posY: -2,
+      },
+      {
+        // 7
         posX: 109,
         posY: -65,
       },
       {
+        // 3
+        posX: -92,
+        posY: -65,
+      },
+      {
+        // 8
         posX: 70,
         posY: -112,
+      },
+      {
+        // 2
+        posX: -53,
+        posY: -112,
+        posBtn: [-3, 25],
       },
     ];
 
@@ -939,20 +775,21 @@ const Home = ({ onProfileClick, scene }: Props) => {
         x={-5}
         scale={[0.9, 0.9]}
         height={app.screen.height * 0.4}
-        // width={app.screen.width * 0.9}
+      // width={app.screen.width * 0.9}
       >
         <Sprite
           texture={PIXI.Assets.get("EggPlate") || PIXI.Texture.EMPTY}
           anchor={[0.5, 0.5]}
         />
 
-        <Graphics draw={draw} ref={pathRef} />
+        {/* <Graphics draw={draw} ref={pathRef} /> */}
 
         {eggData?.map((egg: EggPendingListData, eggIndex: number) => {
           if (eggIndex === 0) {
             return (
               <NormalEggComponent
-                ref={eggRef}
+                // ref={eggRef}
+                key={egg?.id}
                 data={egg}
                 currentTime={currentTime}
                 eggTexture={PIXI.Assets.get(
@@ -967,15 +804,18 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 scaleBtn={[1.2, 1.3]}
                 scaleEgg={[0.95, 0.95]}
                 onPress={() => console.log("egg 1 clicked")}
-                onDragStart={onDragStart}
-                onDragMove={onDragMove}
-                onDragEnd={onDragEnd}
-                // visible={!eggData[0]}
+                setTicketCnt={setTicketCnt}
+                setGatchaAnimationStatus={setGatchaAnimationStatus}
+              // onDragStart={onDragStart}
+              // onDragMove={onDragMove}
+              // onDragEnd={onDragEnd}
+              // visible={!eggData[0]}
               />
             );
           } else
             return (
               <NormalEggComponent
+                key={egg?.id}
                 data={egg}
                 currentTime={currentTime}
                 eggTexture={PIXI.Assets.get(
@@ -989,10 +829,12 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 // posBtn={position[currentTime % 8]?.posBtn}
                 // text={"Pre-List"}
                 onPress={() => console.log(`egg ${eggIndex} clicked`)}
-                // visible={!eggData[1]}
-                onDragStart={onDragStart}
-                onDragMove={onDragMove}
-                onDragEnd={onDragEnd}
+                setTicketCnt={setTicketCnt}
+                setGatchaAnimationStatus={setGatchaAnimationStatus}
+              // visible={!eggData[1]}
+              // onDragStart={onDragStart}
+              // onDragMove={onDragMove}
+              // onDragEnd={onDragEnd}
               />
             );
         })}
@@ -1145,8 +987,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 text={
                   jFundBalance !== ""
                     ? parseFloat(
-                        ethers.utils.formatUnits(jFundBalance, 18)
-                      ).toFixed(2)
+                      ethers.utils.formatUnits(jFundBalance, 18)
+                    ).toFixed(2)
                     : "0"
                 }
                 // text={`w=${getHomeContainerBounds.width.toFixed()} h=${getHomeContainerBounds.height}`}
@@ -1167,7 +1009,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
               <Container
                 position={[
                   (DinoFundBgBounds?.width / 2) *
-                    (app.screen?.width > 450 ? 1.05 : 1),
+                  (app.screen?.width > 450 ? 1.05 : 1),
                   DinoFundBgBounds?.height / 2 - 7,
                 ]}
               >
@@ -1234,7 +1076,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 // position={[app.screen.width / 2 - (lfSideBounds.width / 2), 0]}
                 position={[isNotMobile ? 110 : 90, 10]}
                 anchor={[0.5, 0.5]}
-                // width={app.screen.width > 450 ? 450 : app.screen.width}
+              // width={app.screen.width > 450 ? 450 : app.screen.width}
               >
                 <DetailsComponent
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
@@ -1259,6 +1101,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                   onPress={async () => {
                     console.log("onPress USDTDetails");
                     setTicketCnt(1);
+                    // setGatchaAnimationStatus({ show: true, ticket: 1 });
                     setGatchaAnimationStatus(true);
                   }}
                 />
@@ -1377,7 +1220,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
               ref={lowerSectionContainerRef}
               anchor={[0.5, 0.5]}
               x={0}
-              // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
+            // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
             >
               {/* left side */}
               <LowerButtonComponent
@@ -1436,6 +1279,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 }
                 onPress={() => {
                   setTicketCnt(4);
+                  // setGatchaAnimationStatus({ show: true, ticket: 4 });
                   setGatchaAnimationStatus(true);
                 }}
               />
@@ -1553,6 +1397,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 }
                 onPress={() => {
                   setTicketCnt(2);
+                  // setGatchaAnimationStatus({ show: true, ticket: 2 });
                   setGatchaAnimationStatus(true);
                 }}
               />
@@ -1608,7 +1453,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[
                       buyTicketPanelBounds?.width * 0.5 -
-                        (isNotMobile ? 50 : 25),
+                      (isNotMobile ? 50 : 25),
                       0,
                     ]}
                     eventMode="static"
@@ -1668,11 +1513,11 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[
                       buyTicketPanelBounds?.width * 0.5 -
-                        (isNotMobile ? 50 : 25),
+                      (isNotMobile ? 50 : 25),
                       0,
                     ]}
                     eventMode="static"
-                    // onpointertap={() => setGoogleAuthVisible(false)}
+                  // onpointertap={() => setGoogleAuthVisible(false)}
                   />
                 </Container>
 

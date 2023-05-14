@@ -96,9 +96,9 @@ export const eggType = (ticket: number) => {
         case 1:
             return "image/imgJurassicEggIcon.png"
         case 2:
-            return "image/imgJurassicEggIcon1.png"
-        case 4:
             return "image/imgJurassicEggIcon2.png"
+        case 4:
+            return "image/imgJurassicEggIcon1.png"
         default:
             return "image/imgJurassicEggIcon.png"
     }

@@ -268,14 +268,119 @@ export const USDT_ABI = [
 // not deployed for mainnet paygateway, tbd
 // export const PAYGATEWAY_ADDR = "0x1D243840cf4998f16B39176D74B93f41e3b87acE";
 // export const TICKET_ADDR = "0x5B7064C693F7AE5a9fab5DE66C958F615886Ee84";
-export const RPC_ENDPOINT = 'https://data-seed-prebsc-1-s1.binance.org:8545/';
+export const RPC_ENDPOINT = "https://data-seed-prebsc-1-s1.binance.org:8545/";
 // export const API_ENDPOINT = 'http://localhost:7878';
-export const API_ENDPOINT = 'https://beta-api.jurassicegg.co';
+export const API_ENDPOINT = "https://beta-api.jurassicegg.co";
 // export const API_ENDPOINT = 'https://api.jurassicegg.co';
 // trunk-ignore(gitleaks/generic-api-key)
-export const CAPTCHA_KEY = '6Lc4jaMlAAAAAGRgfjJ88dQUZ4WT3GA4xQZRobJN';
+export const CAPTCHA_KEY = "6Lc4jaMlAAAAAGRgfjJ88dQUZ4WT3GA4xQZRobJN";
 
 // DEV
-export const USDT_ADDR = '0x0Ed04d340a054382383eE2eDFf0cEd66eAd7496C';
-export const PAYGATEWAY_ADDR = '0x1D243840cf4998f16B39176D74B93f41e3b87acE';
-export const TICKET_ADDR = '0x52baeD82A5eF62c20dd5643Ae9C73B7F7695d4a0';
+export const USDT_ADDR = "0x0Ed04d340a054382383eE2eDFf0cEd66eAd7496C";
+export const PAYGATEWAY_ADDR = "0x1D243840cf4998f16B39176D74B93f41e3b87acE";
+export const TICKET_ADDR = "0x52baeD82A5eF62c20dd5643Ae9C73B7F7695d4a0";
+
+export const COUNTRIES = [
+  "AE",
+  "AU",
+  "BD",
+  "BN",
+  "CF",
+  "CN",
+  "DE",
+  "DK",
+  "ES",
+  "FI",
+  "FR",
+  "GB",
+  "GH",
+  "GR",
+  "HK",
+  "HR",
+  "ID",
+  "IE",
+  "IN",
+  "IS",
+  "IT",
+  "JM",
+  "JP",
+  "KP",
+  "KR",
+  "LA",
+  "LK",
+  "MM",
+  "MO",
+  "MY",
+  "NL",
+  "NO",
+  "NZ",
+  "PH",
+  "PK",
+  "PL",
+  "PT",
+  "QA",
+  "RO",
+  "RS",
+  "RU",
+  "SA",
+  "SE",
+  "SG",
+  "TH",
+  "TR",
+  "TW",
+  "US",
+  "VN",
+  "ZA",
+];
+export const COUNTRIESLABEL = {
+  AE: "United Arab Emirates",
+  AU: "Australia",
+  BD: "Bangladesh",
+  BN: "Brunei Darussalam",
+  CF: "Central African Republic",
+  CN: "China",
+  DE: "Germany",
+  DK: "Denmark",
+  ES: "Spain",
+  FI: "Finland",
+  FR: "France",
+  GB: "United Kingdom",
+  GH: "Ghana",
+  GR: "Greece",
+  HK: "Hong Kong",
+  HR: "Croatia",
+  ID: "Indonesia",
+  IE: "Ireland",
+  IN: "India",
+  IS: "Iceland",
+  IT: "Italy",
+  JM: "Jamaica",
+  JP: "Japan",
+  KP: "North Korea",
+  KR: "South Korea",
+  LA: "Laos",
+  LK: "Sri Lanka",
+  MM: "Myanmar",
+  MO: "Macao",
+  MY: "Malaysia",
+  NL: "Netherlands",
+  NO: "Norway",
+  NZ: "New Zealand",
+  PH: "Philippines",
+  PK: "Pakistan",
+  PL: "Poland",
+  PT: "Portugal",
+  QA: "Qatar",
+  RO: "Romania",
+  RS: "Serbia",
+  RU: "Russia",
+  SA: "Saudi Arabia",
+  SE: "Sweden",
+  SG: "Singapore",
+  TH: "Thailand",
+  TR: "Turkey",
+  TW: "Taiwan",
+  US: "United States",
+  VN: "Vietnam",
+  ZA: "South Africa",
+};

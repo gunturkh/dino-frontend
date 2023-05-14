@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore, useStore } from "../utils/store";
 import EggComponent from "../components/EggComponent";
 import {
@@ -28,6 +28,7 @@ function JurassicMarket({
     (state) => state.setEggTransactionData
   );
   const eggTransactionState = useStore((state) => state.eggTransactionState);
+  console.log('eggTransactionState', eggTransactionState)
   const setEggTransactionState = useStore(
     (state) => state.setEggTransactionState
   );
@@ -37,6 +38,7 @@ function JurassicMarket({
   const myListingEggData = useStore((state) => state.myListingEggData);
   const setMyListingEggData = useStore((state) => state.setMyListingEggData);
 
+  // const [transactionState, setTransactionState] = useState<'APPROVAL' | 'PURCHASE'>('APPROVAL')
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage] = useState(12);
   const indexOfLastPost = currentPage * postsPerPage;
@@ -50,9 +52,12 @@ function JurassicMarket({
   const period = formatUnits(userData?.bought.period, 18);
   const group = formatUnits(userData?.bought.group, 18);
   // const group = formatUnits(userData?.bought.group, 18)
-  // const total = formatUnits(userData?.bought.total, 18);
+  // const total = formatUnits(userData.bought.total, 18);
   // console.log('progress JurassicMarket', progress)
   const approved = useStore((state) => state.approved);
+  console.log('eggTransactionData', eggTransactionData)
+  // if (parseFloat(approved as string) >= parseFloat(eggTransactionData.total))  setTransactionState('PURCHASE')
+  console.log('approved JurassicMarket', (approved))
   // console.log('approved jurassic market', approved)
   // console.log('approved jurassic market to string', approved?.toString())
   // console.log('eggTransactionData jurassic market', eggTransactionData)
@@ -185,13 +190,13 @@ function JurassicMarket({
   const filterEggList = (filter: string) => {
     if (filter === "Price") {
       // const sortedList = eggListsData?.lists.sort((a: any, b: any) => {
-      //   return a.price - b.price;
+      //   return a.total - b.total;
       // });
       // setEggListsData({ ...eggListsData, lists: sortedList });
       setMarketFilter("Price");
     } else if (filter === "Time") {
       // const sortedList = eggListsData?.lists.sort((a: any, b: any) => {
-      //   return a.time - b.time;
+      //   return a.openat - b.openat;
       // });
       // setEggListsData({ ...eggListsData, lists: sortedList });
       setMarketFilter("Time");
@@ -244,6 +249,11 @@ function JurassicMarket({
       ? 0
       : requalificationRankValue - periodValue;
 
+  const [countdownTime, setCountdownTime] = useState({
+    countdownHours: 0,
+    countdownMinutes: 0,
+    countdownSeconds: 0,
+  });
   useEffect(() => {
     let timeInterval: any;
     const countdown = () => {
@@ -256,7 +266,50 @@ function JurassicMarket({
       clearInterval(timeInterval);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [eggTransactionState]);
+
+  useEffect(() => {
+    let timeInterval: any;
+    // const countdown = () => {
+    if (eggTransactionData?.expired > 0 && currentTime) {
+      // timeInterval = setInterval(() => {
+      const countdownDateTime = eggTransactionData?.expired * 1000;
+      // const currentTime = new Date().getTime();
+      const remainingDayTime = countdownDateTime - currentTime;
+      // console.log(`countdownDateTime ${index}`, countdownDateTime);
+      // console.log(`currentTime ${index}`, currentTime);
+      // console.log(`remainingDayTime ${index}`, remainingDayTime);
+      const totalHours = Math.floor(
+        (remainingDayTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const totalMinutes = Math.floor(
+        (remainingDayTime % (1000 * 60 * 60)) / (1000 * 60)
+      );
+      const totalSeconds = Math.floor(
+        (remainingDayTime % (1000 * 60)) / 1000
+      );
+
+      const runningCountdownTime = {
+        countdownHours: totalHours,
+        countdownMinutes: totalMinutes,
+        countdownSeconds: totalSeconds,
+      };
+
+      if (remainingDayTime < 0) {
+        clearInterval(timeInterval);
+        // getPendingListingEgg()
+      } else {
+        setCountdownTime(runningCountdownTime);
+      }
+      // }, 1000);
+    }
+    // };
+    // countdown();
+    // return () => {
+    //     clearInterval(timeInterval);
+    // };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTime, eggTransactionData?.expired]);
   return (
     <div className="absolute w-full h-full flex justify-center items-center">
       <div className="flex z-20 h-[100vh] w-[450px] max-[450px]:w-[calc(100vw)] max-w-[450px] justify-center items-center flex-col sm:px-4 shadow-sm rounded-sm ">
@@ -445,11 +498,24 @@ function JurassicMarket({
                           ).toString()}{" "}
                           USDT
                         </p>
-                        {approved &&
-                        approved?.toString() >= eggTransactionData.total ? (
+                        <p className="p-1 bg-gray-700 rounded-sm mb-2">{`${countdownTime.countdownHours.toString().length === 1
+                          ? `0${countdownTime.countdownHours}`
+                          : countdownTime.countdownHours
+                          }:${countdownTime.countdownMinutes.toString().length === 1
+                            ? `0${countdownTime.countdownMinutes}`
+                            : countdownTime.countdownMinutes
+                          }:${countdownTime.countdownSeconds.toString().length === 1
+                            ? `0${countdownTime.countdownSeconds}`
+                            : countdownTime.countdownSeconds
+                          }` || ""}</p>
+                        {approved && parseFloat(approved as string) >= parseFloat(eggTransactionData.total) ? (
                           <button
-                            className="bg-green-700 cursor-pointer px-4 py-2 rounded"
+                            className={`${eggTransactionState === "Loading"
+                              ? "bg-[#FFC700]"
+                              : "bg-green-700 "} cursor-pointer px-4 py-2 rounded`}
                             onClick={async (raw: any) => {
+                              setEggTransactionState("Loading");
+                              // setTransactionState('PURCHASE')
                               try {
                                 const txReq = {
                                   data: eggTransactionData.TxRawPayment,
@@ -460,15 +526,17 @@ function JurassicMarket({
                                   txReq,
                                   eggTransactionData
                                 );
-                                setEggTransactionState("Loading");
                                 console.log("txSend payment", txSend);
                               } catch (error) {
                                 // @ts-ignore
                                 toast(error);
                               }
                             }}
+                            disabled={eggTransactionState === 'Loading'}
                           >
-                            Purchase
+                            {eggTransactionState === 'Loading'
+                              ? "Waiting..."
+                              : "Purchase"}
                           </button>
                         ) : (
                           <button
@@ -478,7 +546,9 @@ function JurassicMarket({
                                 : "bg-red-700"
                             } cursor-pointer px-4 py-2 rounded`}
                             onClick={async () => {
-                              console.log("walletAddress", walletAddress);
+                              setEggTransactionState("Loading");
+                              // setTransactionState('APPROVAL')
+                              // console.log("walletAddress", walletAddress);
                               // console.log("allowance ", allowance);
                               // console.log("account approve", walletAddress);
                               if (walletAddress?.length === 0)
@@ -502,9 +572,9 @@ function JurassicMarket({
                             }}
                             disabled={eggTransactionState === "Loading"}
                           >
-                            {eggTransactionState
+                            {eggTransactionState === 'Loading'
                               ? "Waiting..."
-                              : "Unlock Wallet"}
+                              : "Approval"}
                           </button>
                         )}
                       </div>

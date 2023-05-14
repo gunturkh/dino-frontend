@@ -84,6 +84,11 @@ export type CardDetailsData = {
   isLocked: boolean;
 };
 
+export type GatchaAnimationStatus = {
+  show: boolean;
+  ticket: number;
+};
+
 type Store = {
   scene: Screen;
   changeScene: (screen: Screen) => void;
@@ -103,8 +108,8 @@ type Store = {
   setEggTransactionData: (data: EggTransactionData) => void;
   eggTransactionState: "Loading" | "";
   setEggTransactionState: (data: "Loading" | "") => void;
-  approved: BigNumber | undefined | null;
-  setApproved: (data: BigNumber | null) => void;
+  approved: BigNumber | string | undefined | null;
+  setApproved: (data: BigNumber | string | null) => void;
   ticketPanel: TicketPanelData;
   setTicketPanel: (data: TicketPanelData) => void;
   sponsorLinkPanel: SponsorLinkPanelData;
@@ -123,6 +128,8 @@ type Store = {
   setJFundBalance: (data: string) => void;
   setWithdrawalHistory: (data: any) => void;
   withdrawalHistory: string[];
+  gatchaAnimationStatus: GatchaAnimationStatus;
+  setGatchaAnimationStatus: (data: GatchaAnimationStatus) => void;
 };
 type AuthStore = {
   token: string | null;
@@ -205,6 +212,8 @@ export const useStore = create<Store>((set, get) => ({
   setJFundBalance: (data) => set(() => ({ jFundBalance: data })),
   setWithdrawalHistory: (data) => set(() => ({ withdrawalHistory: data })),
   withdrawalHistory: [],
+  gatchaAnimationStatus: { show: false, ticket: 0 },
+  setGatchaAnimationStatus: (data) => set(() => ({ gatchaAnimationStatus: data })),
 }));
 
 export const useAuthStore = create(

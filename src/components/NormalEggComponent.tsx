@@ -15,6 +15,7 @@ import { useAuthStore, useStore } from '../utils/store';
 //     dragging: boolean;
 // }
 const NormalEggComponent = ({
+    key,
     data,
     currentTime,
     eggTexture,
@@ -30,20 +31,27 @@ const NormalEggComponent = ({
     onDragStart,
     onDragMove,
     onDragEnd,
+    setTicketCnt,
+    setGatchaAnimationStatus,
 }: any) => {
 
     // console.log('eggRef', eggRef)
     const token = useAuthStore((state) => state.token);
+    // const setGatchaAnimationStatus = useStore((state) => state.setGatchaAnimationStatus);
     const setMyListingEggData = useStore((state) => state.setMyListingEggData);
+    // const eggPendingListData = useStore(
+    //     (state) => state.eggPendingListData
+    // );
     const setEggPendingListData = useStore(
         (state) => state.setEggPendingListData
     );
     const [expiryTime, setExpiryTime] = useState(data?.openat > 0 ? data?.openat : data?.listedat);
+    // const [eggText, setEggText] = useState('')
     // useEffect(() => {
     //     setExpiryTime(data?.openat)
     // }, [data?.openat])
 
-    console.log("expiryTime NormalEgg", expiryTime, data.id);
+    console.log("expiryTime NormalEgg", currentTime, expiryTime, data.id);
     // console.log('currentTime', currentTime, 'index: ', index)
     const [countdownTime, setCountdownTime] = useState({
         countdownHours: 0,
@@ -51,9 +59,9 @@ const NormalEggComponent = ({
         countdownSeconds: 0,
     });
 
-    const formatText = () => {
-        if (expiryTime === 0 && data?.posted === 0) return "Pre-List";
-        if (expiryTime === 0 && data?.posted === 1) return "Gatcha";
+    const formatText = ({ expired, posted }: { expired: number, posted: number }) => {
+        if (expired === 0 && posted === 0) return "Pre-List";
+        else if (expired === 0 && posted === 1) return "Gatcha";
         else
             return (
                 `${countdownTime.countdownHours.toString().length === 1
@@ -68,6 +76,7 @@ const NormalEggComponent = ({
                 }` || ""
             );
     };
+    // console.log('formatText', formatText(), data.id)
 
     useEffect(() => {
         let timeInterval: any;
@@ -176,6 +185,7 @@ const NormalEggComponent = ({
     };
     return (
         <Container
+            key={key}
             ref={ref || null}
             x={posX || 0}
             y={posY || 0}
@@ -198,7 +208,7 @@ const NormalEggComponent = ({
                 scale={scaleBtn ? scaleBtn : [0.6, 0.7]}
                 eventMode="static"
                 onpointertap={async () => {
-                    if (formatText() === "Pre-List") {
+                    if (formatText({ expired: expiryTime, posted: data?.posted }) === "Pre-List") {
                         let options = {
                             headers: {
                                 "my-auth-key": token,
@@ -213,15 +223,24 @@ const NormalEggComponent = ({
                         // console.log(result.data);
                         if (result.data.success) {
                             toast("Pre-List Egg Success");
-                            getPendingListingEgg();
-                            getMyListingEgg();
+                            // dirty way to force start / show the
+                            // countdown after press prelist is to set it to empty array
+                            setEggPendingListData([])
+                            await getPendingListingEgg();
+                            await getMyListingEgg();
+                            console.log("prelist egg", data)
+                            // setExpiryTime(data?.openat)
                             // window.location.reload()
                             // changeScene('HOME')
                         } else {
                             toast("Error when trying to pre-list egg");
                         }
                     }
-                    if (formatText() === "Gatcha") {
+                    if (formatText({ expired: expiryTime, posted: data?.posted }) === "Gatcha") {
+                        // setGatchaAnimationStatus({ show: true, ticket: data?.ticket })
+                        setTicketCnt(Number(data?.ticket))
+                        setGatchaAnimationStatus(true)
+                        console.log('gatcha', { show: true, ticket: data?.ticket })
                         let options = {
                             headers: {
                                 "my-auth-key": token,
@@ -244,7 +263,7 @@ const NormalEggComponent = ({
                                     (p.reward_value)
                                     // ethers.utils.formatEther(p.reward_value) || 0
                                 );
-                            getPendingListingEgg();
+                            await getPendingListingEgg();
                             // window.location.reload()
                         } else {
                             toast("Error when trying to open egg");
@@ -263,7 +282,7 @@ const NormalEggComponent = ({
 
                 />
                 <Text
-                    text={formatText()}
+                    text={formatText({ expired: expiryTime, posted: data?.posted })}
                     position={[0, 0]}
                     anchor={[0.5, 0.5]}
                     style={

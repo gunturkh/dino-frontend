@@ -889,11 +889,11 @@ export const manifest: ResolverManifest = {
         },
         {
           name: "EggIcon2",
-          srcs: "image/imgJurassicEggIcon1.png",
+          srcs: "image/imgJurassicEggIcon2.png",
         },
         {
           name: "EggIcon3",
-          srcs: "image/imgJurassicEggIcon2.png",
+          srcs: "image/imgJurassicEggIcon1.png",
         },
         {
           name: "ListingBackground",
@@ -921,11 +921,11 @@ export const manifest: ResolverManifest = {
         },
         {
           name: "BigEggIcon2",
-          srcs: "image/imgJurassicEggBigIcon1.png",
+          srcs: "image/imgJurassicEggBigIcon2.png",
         },
         {
           name: "BigEggIcon3",
-          srcs: "image/imgJurassicEggBigIcon2.png",
+          srcs: "image/imgJurassicEggBigIcon1.png",
         },
       ],
     },

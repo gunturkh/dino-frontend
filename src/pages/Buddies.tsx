@@ -73,13 +73,13 @@ export function Buddies() {
                 </tr>
               </thead>
               <tbody>
-                {datas.data.map((elm: any) => (
+                {datas?.data?.length > 0 ? datas?.data?.map((elm: any) => (
                   <ShowUsers key={elm.username} data={elm} />
-                ))}
+                )) : null}
               </tbody>
             </table>
             <div className="flex flex-col justify-end h-auto pt-3">
-              <Paginate total={datas.totalpage} current={datas.pagenow} />
+              <Paginate total={datas?.totalpage} current={datas?.pagenow} />
             </div>
           </>
         ) : (
@@ -118,11 +118,10 @@ export function Buddies() {
       pctn.push(
         <li
           key={i}
-          className={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer ${
-            classs === "active"
+          className={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer ${classs === "active"
               ? "bg-yellow-700 text-white"
               : "bg-white text-black"
-          }`}
+            }`}
           onClick={() => loadDownlineWithPage(i)}
         >
           {i}
