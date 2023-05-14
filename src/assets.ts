@@ -203,6 +203,14 @@ export const manifest: ResolverManifest = {
           name: "EggPlate",
           srcs: "image/eggPlate.png",
         },
+        {
+          name: "GatchaAnimation1",
+          srcs: "gatcha/testegg1/egg1.json",
+        },
+        {
+          name: "GatchaAnimation2",
+          srcs: "gatcha/testegg2/egg2.json",
+        },
       ],
     },
     {

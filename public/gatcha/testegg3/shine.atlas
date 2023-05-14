@@ -1,0 +1,11 @@
+shine.png
+size:3060,2938
+filter:Linear,Linear
+pma:true
+efek/flare2
+bounds:2,2,2934,2000
+offsets:0,0,3000,2000
+rotate:90
+efek/light
+bounds:2004,1622,1054,1314
+offsets:50,16,1148,1344
