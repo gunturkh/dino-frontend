@@ -131,6 +131,7 @@ export const AppTemp = () => {
   const setGoogleAuthPanel = useStore((state) => state.setGoogleAuthPanel);
   const withdrawalHistory = useStore((state) => state.withdrawalHistory);
   const notification = useStore((state) => state.notification);
+  const setNotification = useStore((state) => state.setNotification);
   console.log('notification text', notification.map((i: any) => (i.text)).join(' '))
   // const cardDetails = useStore((state) => state.cardDetails);
   // const eggListsData = useStore((state) => state.eggListsData);
@@ -286,6 +287,10 @@ export const AppTemp = () => {
   const { state, send } = useContractFunction(USDTContract, "approve", {
     transactionName: "Ticket Approval",
   });
+
+  // const { state: JPassApprovalState, send: JPassApprovalSend } = useContractFunction(USDTContract, "approve", {
+  //   transactionName: "JPass Approval",
+  // });
 
   const { state: eggApprovalState, send: sendEggApproval } =
     useContractFunction(USDTContract, "approve", {
@@ -3336,7 +3341,11 @@ export const AppTemp = () => {
       )}
       {scene === "HOME" && (
         <div className="absolute top-[100px] flex flex-col">
-          <Marquee speed={50} className="font-Magra text-[#FFC700]">{notification.map((i: any) => (i.text)).join(' ')}</Marquee>
+          <Marquee
+            loop={1}
+            onFinish={() => setNotification([])}
+            speed={50}
+            className="font-Magra text-[#FFC700]">{notification.map((i: any) => (i.text)).join(' ')}</Marquee>
         </div>
       )}
       <div>
