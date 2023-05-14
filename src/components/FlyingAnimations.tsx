@@ -225,7 +225,7 @@ function FlyingAnimations() {
       containerRef.current.scale.set(scalePoint);
 
       if (app.screen.height >= 800) {
-        containerRef.current.y = app.screen.height * 0.3;
+        containerRef.current.y = app.screen.height * 0.35;
       }
       if (app.screen.height >= 700 && app.screen.height < 800) {
         containerRef.current.y = app.screen.height * 0.34;

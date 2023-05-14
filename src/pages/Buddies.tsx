@@ -19,7 +19,7 @@ export function Buddies() {
         <td>{data.username}</td>
         <td>{data.sponsor}</td>
         <td className="text-center">{data.level}</td>
-        <td>$ {formatUnits(data.bought)}</td>
+        <td>$ {parseFloat(formatUnits(data.bought)).toFixed(2)}</td>
       </tr>
     );
   };
@@ -73,9 +73,11 @@ export function Buddies() {
                 </tr>
               </thead>
               <tbody>
-                {datas?.data?.length > 0 ? datas?.data?.map((elm: any) => (
-                  <ShowUsers key={elm.username} data={elm} />
-                )) : null}
+                {datas?.data?.length > 0
+                  ? datas?.data?.map((elm: any) => (
+                      <ShowUsers key={elm.username} data={elm} />
+                    ))
+                  : null}
               </tbody>
             </table>
             <div className="flex flex-col justify-end h-auto pt-3">
@@ -118,10 +120,11 @@ export function Buddies() {
       pctn.push(
         <li
           key={i}
-          className={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer ${classs === "active"
+          className={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer ${
+            classs === "active"
               ? "bg-yellow-700 text-white"
               : "bg-white text-black"
-            }`}
+          }`}
           onClick={() => loadDownlineWithPage(i)}
         >
           {i}
@@ -146,15 +149,27 @@ export function Buddies() {
         className="absolute w-full h-full object-cover "
         alt="background"
       />
-      <div className="flex z-20 h-[80vh] w-[450px] max-[450px]:w-[calc(100vw)] max-w-[450px] justify-center items-center flex-col sm:px-4 shadow-sm rounded-sm ">
-        <div className="flex w-full justify-start">
+      <div className="flex z-20 h-[100vh] w-[450px] max-[450px]:w-[calc(100vw)] max-w-[450px] justify-center items-center flex-col sm:px-4 shadow-sm rounded-sm ">
+        <div className="flex flex-row w-full justify-between mt-4 mb-1">
           <img
             src="image/backBtn.png"
-            width={30}
-            height={30}
+            width={40}
+            height={40}
             alt="Back"
             onClick={() => changeScene("HOME")}
           />
+          <div className="flex flex-col items-center justify-center text-[1.5rem] text-white font-bold font-magra ">
+            Buddies
+          </div>
+          <div className="w-10 h-10"></div>
+          {/* <img
+            src="image/logoutBtn.png"
+            width={40}
+            height={40}
+            className="w-10"
+            alt="Back"
+            // onClick={() => changeScene("HOME")}
+          /> */}
         </div>
         <div className="flex flex-col h-full w-full px-4 pt-6 pb-6 bg-gray-800/30 backdrop-blur-sm overflow-y-visible overflow-auto">
           <div className="bg-transparent">
