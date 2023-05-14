@@ -10,6 +10,7 @@ type EggComponentProps = {
   index: string;
   customTimer?: number;
   currentTime?: number;
+  filter?: string;
   onBtnKeepPress?: () => void;
   onBtnPurchasePress?: (idx: number) => void;
   onBtnPayPress?: (raw: string) => void;
@@ -20,6 +21,7 @@ function EggComponent({
   customTimer,
   egg,
   index,
+  filter,
   onBtnKeepPress,
   onBtnPayPress,
   onBtnPurchasePress,
@@ -104,8 +106,10 @@ function EggComponent({
       if (remainingDayTime < 0) {
         clearInterval(timeInterval);
         setExpiryTime(0);
-        getEggList();
-        getPendingListingEgg();
+        if (!filter) {
+          getPendingListingEgg()
+          getEggList()
+        }
       } else {
         setCountdownTime(runningCountdownTime);
       }
@@ -199,4 +203,4 @@ function EggComponent({
   );
 }
 
-export default EggComponent;
+export default React.memo(EggComponent);

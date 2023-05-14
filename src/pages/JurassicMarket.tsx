@@ -14,6 +14,7 @@ import { PAYGATEWAY_ADDR, USDT_ADDR } from "../utils/config";
 import { toast } from "react-toastify";
 import ReactPaginate from "react-paginate";
 import { useEthers } from "@usedapp/core";
+import React from "react";
 
 function JurassicMarket({
   sendEggApproval,
@@ -189,16 +190,16 @@ function JurassicMarket({
   // TODO: need to check the logic and where to look for the data
   const filterEggList = (filter: string) => {
     if (filter === "Price") {
-      // const sortedList = eggListsData?.lists.sort((a: any, b: any) => {
-      //   return a.total - b.total;
-      // });
-      // setEggListsData({ ...eggListsData, lists: sortedList });
+      const sortedList = eggListsData?.lists.sort((a: any, b: any) => {
+        return a.total - b.total;
+      });
+      setEggListsData({ ...eggListsData, lists: sortedList });
       setMarketFilter("Price");
     } else if (filter === "Time") {
-      // const sortedList = eggListsData?.lists.sort((a: any, b: any) => {
-      //   return a.openat - b.openat;
-      // });
-      // setEggListsData({ ...eggListsData, lists: sortedList });
+      const sortedList = eggListsData?.lists.sort((a: any, b: any) => {
+        return a.openat - b.openat;
+      });
+      setEggListsData({ ...eggListsData, lists: sortedList });
       setMarketFilter("Time");
     }
   };
@@ -310,6 +311,13 @@ function JurassicMarket({
     // };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTime, eggTransactionData?.expired]);
+
+  useEffect(() => {
+    console.log('check approved', approved)
+    if (parseFloat(approved as string) >= parseFloat(eggTransactionData.total)) setEggTransactionState({ mode: 'PURCHASE', state: '' })
+    else setEggTransactionState({ mode: 'APPROVAL', state: '' })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   return (
     <div className="absolute w-full h-full flex justify-center items-center">
       <div className="flex z-20 h-[100vh] w-[450px] max-[450px]:w-[calc(100vw)] max-w-[450px] justify-center items-center flex-col sm:px-4 shadow-sm rounded-sm ">
@@ -406,22 +414,20 @@ function JurassicMarket({
               {/* Pages */}
               <div className="flex w-full justify-start text-white font-Magra font-bold text-base [@media(max-width:400px)]:text-sm">
                 <div
-                  className={`cursor-pointer px-4 ${
-                    selectedPanel === "Listing"
-                      ? "text-[#FFC700]"
-                      : "text-white"
-                  }`}
+                  className={`cursor-pointer px-4 ${selectedPanel === "Listing"
+                    ? "text-[#FFC700]"
+                    : "text-white"
+                    }`}
                   onClick={() => setSelectedPanel("Listing")}
                 >
                   Listings
                 </div>
                 <div>/</div>
                 <div
-                  className={`cursor-pointer px-2 ${
-                    selectedPanel === "My Listing"
-                      ? "text-[#FFC700]"
-                      : "text-white"
-                  }`}
+                  className={`cursor-pointer px-2 ${selectedPanel === "My Listing"
+                    ? "text-[#FFC700]"
+                    : "text-white"
+                    }`}
                   onClick={() => setSelectedPanel("My Listing")}
                 >
                   My Listings
@@ -438,9 +444,8 @@ function JurassicMarket({
                     <img
                       src="image/btnFilterIcon.png"
                       width={5}
-                      className={`w-[0.7rem] ml-2 ${
-                        marketFilter === "Price" ? "rotate-180" : ""
-                      }`}
+                      className={`w-[0.7rem] ml-2 ${marketFilter === "Price" ? "rotate-180" : ""
+                        }`}
                       alt="priceFilterIcon"
                     />
                   </div>
@@ -452,9 +457,8 @@ function JurassicMarket({
                     <img
                       src="image/btnFilterIcon.png"
                       width={5}
-                      className={`w-[0.7rem] ml-2 ${
-                        marketFilter === "Time" ? "rotate-180" : ""
-                      }`}
+                      className={`w-[0.7rem] ml-2 ${marketFilter === "Time" ? "rotate-180" : ""
+                        }`}
                       alt="priceFilterIcon"
                     />
                   </div>
@@ -508,13 +512,13 @@ function JurassicMarket({
                             ? `0${countdownTime.countdownSeconds}`
                             : countdownTime.countdownSeconds
                           }` || ""}</p>
-                        {approved && parseFloat(approved as string) >= parseFloat(eggTransactionData.total) ? (
+                        {eggTransactionState?.mode === 'PURCHASE' && approved && parseFloat(approved as string) >= parseFloat(eggTransactionData.total) && (
                           <button
-                            className={`${eggTransactionState === "Loading"
+                            className={`${eggTransactionState?.state === "LOADING"
                               ? "bg-[#FFC700]"
                               : "bg-green-700 "} cursor-pointer px-4 py-2 rounded`}
                             onClick={async (raw: any) => {
-                              setEggTransactionState("Loading");
+                              setEggTransactionState({ mode: 'PURCHASE', state: 'LOADING' });
                               // setTransactionState('PURCHASE')
                               try {
                                 const txReq = {
@@ -532,21 +536,21 @@ function JurassicMarket({
                                 toast(error);
                               }
                             }}
-                            disabled={eggTransactionState === 'Loading'}
+                            disabled={eggTransactionState?.state === 'LOADING'}
                           >
-                            {eggTransactionState === 'Loading'
+                            {eggTransactionState?.state === 'LOADING'
                               ? "Waiting..."
                               : "Purchase"}
                           </button>
-                        ) : (
+                        )}
+                        {(eggTransactionState?.mode === 'APPROVAL' &&
                           <button
-                            className={`${
-                              eggTransactionState === "Loading"
-                                ? "bg-[#FFC700]"
-                                : "bg-red-700"
-                            } cursor-pointer px-4 py-2 rounded`}
+                            className={`${eggTransactionState?.state === "LOADING"
+                              ? "bg-[#FFC700]"
+                              : "bg-red-700"
+                              } cursor-pointer px-4 py-2 rounded`}
                             onClick={async () => {
-                              setEggTransactionState("Loading");
+                              setEggTransactionState({ mode: 'APPROVAL', state: 'LOADING' });
                               // setTransactionState('APPROVAL')
                               // console.log("walletAddress", walletAddress);
                               // console.log("allowance ", allowance);
@@ -570,9 +574,9 @@ function JurassicMarket({
                                 }
                               }
                             }}
-                            disabled={eggTransactionState === "Loading"}
+                            disabled={eggTransactionState?.state === "LOADING"}
                           >
-                            {eggTransactionState === 'Loading'
+                            {eggTransactionState?.state === 'LOADING'
                               ? "Waiting..."
                               : "Approval"}
                           </button>
@@ -605,6 +609,7 @@ function JurassicMarket({
                         key={egg.id}
                         egg={egg}
                         index={egg?.id}
+                        filter={marketFilter}
                         currentTime={currentTime}
                         // customTimer={1683430121 + (1050 * index)}
                         onBtnKeepPress={() => {
@@ -612,27 +617,27 @@ function JurassicMarket({
                           console.log("onBtnKeepPress", egg.id);
                           handleKeep(egg.id, egg.ticket);
                         }}
-                        // onBtnPurchasePress={async () => {
-                        //     // console.log("allowance ", allowance);
-                        //     // console.log("account approve", walletAddress);
-                        //     const txReq = {
-                        //         to: USDT_ADDR,
-                        //         from: walletAddress,
-                        //         data: eggTransactionData.TxRawApproval,
-                        //     };
-                        //     console.log("txReq", txReq);
-                        //     const txSend = await sendTransaction(txReq);
-                        //     console.log("txSend", txSend);
-                        // }}
-                        // onBtnPayPress={async (raw: any) => {
-                        //     const txReq = {
-                        //         data: raw,
-                        //         to: PAYGATEWAY_ADDR,
-                        //         from: walletAddress,
-                        //     };
-                        //     const txSend = await sendPayTransaction(txReq, eggTransactionData);
-                        //     console.log("txSend payment", txSend);
-                        // }}
+                      // onBtnPurchasePress={async () => {
+                      //     // console.log("allowance ", allowance);
+                      //     // console.log("account approve", walletAddress);
+                      //     const txReq = {
+                      //         to: USDT_ADDR,
+                      //         from: walletAddress,
+                      //         data: eggTransactionData.TxRawApproval,
+                      //     };
+                      //     console.log("txReq", txReq);
+                      //     const txSend = await sendTransaction(txReq);
+                      //     console.log("txSend", txSend);
+                      // }}
+                      // onBtnPayPress={async (raw: any) => {
+                      //     const txReq = {
+                      //         data: raw,
+                      //         to: PAYGATEWAY_ADDR,
+                      //         from: walletAddress,
+                      //     };
+                      //     const txSend = await sendPayTransaction(txReq, eggTransactionData);
+                      //     console.log("txSend payment", txSend);
+                      // }}
                       />
                     );
                   })}
@@ -671,9 +676,9 @@ function JurassicMarket({
             )}
           </div>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }
 
-export default JurassicMarket;
+export default React.memo(JurassicMarket);

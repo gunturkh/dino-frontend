@@ -89,6 +89,11 @@ export type GatchaAnimationStatus = {
   ticket: number;
 };
 
+export type EggTransactionState = {
+  mode: 'PURCHASE' | 'APPROVAL' | 'DONE',
+  state: 'LOADING' | ''
+}
+
 type Store = {
   scene: Screen;
   changeScene: (screen: Screen) => void;
@@ -106,8 +111,8 @@ type Store = {
   setEggListsData: (data: EggListResponse) => void;
   eggTransactionData: EggTransactionData;
   setEggTransactionData: (data: EggTransactionData) => void;
-  eggTransactionState: "Loading" | "";
-  setEggTransactionState: (data: "Loading" | "") => void;
+  eggTransactionState: EggTransactionState;
+  setEggTransactionState: (data: EggTransactionState) => void;
   approved: BigNumber | string | undefined | null;
   setApproved: (data: BigNumber | string | null) => void;
   ticketPanel: TicketPanelData;
@@ -189,7 +194,7 @@ export const useStore = create<Store>((set, get) => ({
     ticket: 0,
   },
   setEggTransactionData: (data) => set(() => ({ eggTransactionData: data })),
-  eggTransactionState: "",
+  eggTransactionState: { mode: 'APPROVAL', state: '' },
   setEggTransactionState: (data) => set(() => ({ eggTransactionState: data })),
   approved: undefined,
   setApproved: (data) => set(() => ({ approved: data })),

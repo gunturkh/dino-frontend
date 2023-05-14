@@ -116,6 +116,9 @@ export const AppTemp = () => {
   const setEggPendingListData = useStore(
     (state) => state.setEggPendingListData
   );
+  const eggTransactionState = useStore(
+    (state) => state.eggTransactionState
+  );
   const setEggTransactionState = useStore(
     (state) => state.setEggTransactionState
   );
@@ -169,6 +172,7 @@ export const AppTemp = () => {
   const [registerCaptcha, setRegisterCaptcha] = useState("");
   const [forgotPasswordCaptcha, setForgotPasswordCaptcha] = useState("");
   const [ticketHistories, setTicketHistories] = useState([]);
+  const [ticketState, setTicketState] = useState('');
   // const [googleAuthPanel, setGoogleAuthPanel] = useState(false);
   const [googleAuthData, setGoogleAuthData] = useState<{
     qr: string;
@@ -182,11 +186,11 @@ export const AppTemp = () => {
   const {
     sendTransaction,
     state: sendTransactionState,
-    // resetState: resetSendTransactionState,
+    resetState: resetSendTransactionState,
   } = useSendTransaction({ transactionName: "Egg Approval" });
   const {
     sendTransaction: sendTransactionPay,
-    // state: sendTransactionPayState,
+    state: sendTransactionPayState,
     // resetState: resetSendTransactionPayState,
   } = useSendTransaction({ transactionName: "Egg Pay" });
 
@@ -199,6 +203,16 @@ export const AppTemp = () => {
   const { notifications } = useNotifications();
 
   console.log("withdrawalHistory", withdrawalHistory);
+
+  useEffect(() => {
+    if (sendTransactionPayState.status === "Success") {
+      console.log('sendTransactionPayState', sendTransactionPayState)
+      setEggTransactionState({ mode: 'DONE', state: '' });
+    }
+    if (sendTransactionPayState.status === 'Exception') {
+      setEggTransactionState({ ...eggTransactionState, state: '' });
+    }
+  }, [sendTransactionPayState])
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -388,11 +402,15 @@ export const AppTemp = () => {
   }, [googleAuthPanel.show]);
 
   useEffect(() => {
+    console.log('sendTransactionState', sendTransactionState)
     if (sendTransactionState.status === "Success" && allowance) {
       console.log("allowance appTemp", allowance);
       setApproved((allowance.toString()));
-      setEggTransactionState("");
-      // resetSendTransactionState();
+      setEggTransactionState({ mode: 'PURCHASE', state: '' });
+      resetSendTransactionState();
+    }
+    if (sendTransactionState.status === 'Exception') {
+      setEggTransactionState({ ...eggTransactionState, state: '' });
     }
   }, [sendTransactionState, allowance]);
 
@@ -428,6 +446,7 @@ export const AppTemp = () => {
         // console.log(response.data);
         if (response.data.result === 1) {
           toast("Buy Ticket Confirmed");
+          setTicketState('')
           setTicketPanel({ show: false, mode: "BUY" });
           getUserData();
         } else {
@@ -487,7 +506,7 @@ export const AppTemp = () => {
     // console.log(result.data);
     if (result.data.result === 1) {
       toast("Egg Transaction Confirmed");
-      setEggTransactionState("");
+      setEggTransactionState({ mode: 'DONE', state: '' });
       getPendingListingEgg();
       getUserData();
       changeScene("HOME");
@@ -2078,100 +2097,110 @@ export const AppTemp = () => {
                       )}
                     </div>
                   </form>
-                  <button
-                    type={"submit"}
-                    // disabled={}
-                    onClick={async () => {
-                      console.log("usd amount approval", usd);
-                      if (buyWithBonus) {
-                        console.log("Buy with bonus clicked", {
-                          qty: parseInt(qty as string),
-                          facode: GAValue.toString(),
-                        });
-                        let options = {
-                          headers: {
-                            "my-auth-key": token,
-                          },
-                        };
-                        const response = await axiosInstance({
-                          url: "/ticket/buyWithBonuses",
-                          method: "POST",
-                          headers: options.headers,
-                          data: {
+                  {ticketState !== 'LOADING' &&
+                    <button
+                      type={"submit"}
+                      // disabled={}
+                      onClick={async () => {
+                        console.log("usd amount approval", usd);
+                        setTicketState('LOADING')
+                        if (buyWithBonus) {
+                          console.log("Buy with bonus clicked", {
                             qty: parseInt(qty as string),
                             facode: GAValue.toString(),
-                          },
-                        });
-                        if (response.data.success) {
-                          toast("Buy Ticket Confirmed");
-                          getUserData();
-                        } else alert(response.data.message);
-                      } else if (!buyWithBonus) {
-                        if (
-                          ticketAllowance &&
-                          ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                        ) {
-                          // const txReq = { value: BigInt(usd * 1e18) }
-                          const txSend = await send(
-                            TICKET_ADDR,
-                            BigInt(usd * 1e18)
-                          );
-                          console.log("txSend ticketApproval", txSend);
-                        } else {
+                          });
                           let options = {
                             headers: {
                               "my-auth-key": token,
                             },
                           };
                           const response = await axiosInstance({
-                            url: "/ticket/createRawBuyTickets",
+                            url: "/ticket/buyWithBonuses",
                             method: "POST",
                             headers: options.headers,
                             data: {
-                              qty: qty,
+                              qty: parseInt(qty as string),
+                              facode: GAValue.toString(),
                             },
                           });
-                          console.log(response.data);
                           if (response.data.success) {
-                            const txReq = {
-                              data: response.data.result,
-                              to: TICKET_ADDR,
-                              from: walletAddress,
+                            setTicketState('')
+                            toast("Buy Ticket Confirmed");
+                            getUserData();
+                          } else alert(response.data.message);
+                        } else if (!buyWithBonus) {
+                          if (
+                            ticketAllowance &&
+                            ticketAllowance.toBigInt() < BigInt(usd * 1e18)
+                          ) {
+                            // const txReq = { value: BigInt(usd * 1e18) }
+                            const txSend = await send(
+                              TICKET_ADDR,
+                              BigInt(usd * 1e18)
+                            );
+                            setTicketState('')
+                            console.log("txSend ticketApproval", txSend);
+                          } else {
+                            let options = {
+                              headers: {
+                                "my-auth-key": token,
+                              },
                             };
-                            const txSend = await sendTicketBuy(txReq);
-                            console.log("txSend buy ticket", txSend);
-                            if (txSend && txSend.transactionHash)
-                              checkValidateTx(txSend.transactionHash);
+                            const response = await axiosInstance({
+                              url: "/ticket/createRawBuyTickets",
+                              method: "POST",
+                              headers: options.headers,
+                              data: {
+                                qty: qty,
+                              },
+                            });
+                            console.log(response.data);
+                            if (response.data.success) {
+                              const txReq = {
+                                data: response.data.result,
+                                to: TICKET_ADDR,
+                                from: walletAddress,
+                              };
+                              const txSend = await sendTicketBuy(txReq);
+                              console.log("txSend buy ticket", txSend);
+                              if (txSend && txSend.transactionHash)
+                                checkValidateTx(txSend.transactionHash);
+                            }
                           }
                         }
+                      }}
+                      className={`${buyWithBonus
+                        ? "bg-green-500"
+                        : ticketAllowance &&
+                          ticketAllowance.toBigInt() < BigInt(usd * 1e18)
+                          ? "bg-red-500"
+                          : "bg-green-500"
+                        } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                      disabled={
+                        (buyWithBonus &&
+                          GAValue.length < 6 &&
+                          !userData?.ga_key) ||
+                        sendTicketBuyState.status !== "None"
                       }
-                    }}
-                    className={`${buyWithBonus
-                      ? "bg-green-500"
-                      : ticketAllowance &&
-                        ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                        ? "bg-red-500"
-                        : "bg-green-500"
-                      } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
-                    disabled={
-                      (buyWithBonus &&
-                        GAValue.length < 6 &&
-                        !userData?.ga_key) ||
-                      sendTicketBuyState.status !== "None"
-                    }
-                  >
-                    {buyWithBonus
-                      ? "Buy with Bonus"
-                      : ticketAllowance &&
-                        ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                        ? "Approval"
-                        : "Buy Ticket"}
-                  </button>
-                  {sendTicketBuyState.status !== "None" && (
+                    >
+                      {buyWithBonus
+                        ? "Buy with Bonus"
+                        : ticketAllowance &&
+                          ticketAllowance.toBigInt() < BigInt(usd * 1e18)
+                          ? "Approval"
+                          : "Buy Ticket"}
+                    </button>
+                  }
+                  {ticketState === "LOADING" && (
+                    <p className="text-white/50 font-Magra">
+                      Waiting...
+                    </p>
+                  )}
+                  {/* {sendTicketBuyState.status !== "None" && (
                     <p className="text-white/50 font-Magra">
                       {sendTicketBuyState.status}
                     </p>
-                  )}
+                  )} */}
                 </>
               )}
               {ticketPanel.mode === "TRANSFER" && (
@@ -2523,11 +2552,11 @@ export const AppTemp = () => {
                         ? "Approval"
                         : "Transfer"}
                   </button>
-                  {sendTicketBuyState.status !== "None" && (
+                  {/* {sendTicketBuyState.status !== "None" && (
                     <p className="text-white/50 font-Magra">
                       {sendTicketBuyState.status}
                     </p>
-                  )}
+                  )} */}
                 </>
               )}
               {withdrawPanel.mode === "HISTORY" && (
@@ -3332,7 +3361,7 @@ export const AppTemp = () => {
               console.log("payment finished", data);
               if (data.success) {
                 // setApproved(allowance);
-                setEggTransactionState("");
+                // setEggTransactionState("");
               }
               setTimeout(() => checkValidation(transactionData.id), 3000);
             }
