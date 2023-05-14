@@ -205,11 +205,15 @@ export const manifest: ResolverManifest = {
         },
         {
           name: "GatchaAnimation1",
-          srcs: "gatcha/testegg1/egg1.json",
+          srcs: BASE_URL + "/animations/cards/testegg1/egg1.json",
         },
         {
           name: "GatchaAnimation2",
-          srcs: "gatcha/testegg2/egg2.json",
+          srcs: BASE_URL + "/animations/cards/testegg2/egg2.json",
+        },
+        {
+          name: "GatchaAnimation3",
+          srcs: BASE_URL + "/animations/cards/testegg3/egg3.json",
         },
       ],
     },
