@@ -288,6 +288,8 @@ export const AppTemp = () => {
     }
   };
 
+  console.log("jPassPanel", jPassPanel);
+
   useEffect(() => {
     if (token) getTicketHistories();
   }, [ticketPanel.show, token]);
@@ -2627,7 +2629,7 @@ export const AppTemp = () => {
           </div>
         </div>
       )}
-      {jPassPanel && scene === "JPASS" && (
+      {jPassPanel.show && scene === "JPASS" && (
         <div className="absolute h-[80vh] flex">
           <div className=" my-5 flex backdrop-blur-sm  justify-center items-center flex-col bg-white/10 px-3.5 py-2.5 shadow-sm rounded-sm ">
             <div className="flex w-full justify-end">
@@ -2636,7 +2638,7 @@ export const AppTemp = () => {
                 width={30}
                 height={30}
                 alt="Close Ticket"
-                onClick={() => setJPassPanel(false)}
+                onClick={() => setJPassPanel({ show: false, data: [] })}
               />
             </div>
             <div
@@ -2650,51 +2652,52 @@ export const AppTemp = () => {
               <div className="flex gap-2 justify-center py-5 w-full text-white font-Magra text-xl font-bold">
                 Buy Subscription
               </div>
+              <div className="flex gap-2 justify-center py-1 w-full text-white font-Magra text-lg font-bold">
+                {jPassPanel.data?.header}
+              </div>
               <>
                 <form onSubmit={loginForm.handleSubmit}>
-                  <div className="flex flex-col w-full">
-                    <div className="flex flex-row py-3">
-                      <input
-                        name="buyWithBonus"
-                        type="checkbox"
-                        // placeholder="Password"
-                        // className="py-3"
-                        // style={{
-                        //   background: `url(image/InputBox.png) no-repeat `,
-                        // }}
-                        checked={buyWithBonus}
-                        onChange={(e: any) => {
-                          console.log("buy with bonus", e);
-                          setBuyWithBonus(!buyWithBonus);
-                        }}
-                        // onBlur={loginForm.handleBlur}
-                        // value={usd}
-                      />
-                      <p className="w-64 font-Magra text-md text-white ml-3">
-                        Buy with Bonus
-                      </p>
-                    </div>
-
-                    {!userData?.ga_key && buyWithBonus && (
-                      <p className="font-Magra text-md text-red-500 ml-3">
-                        Please configure 2FA on Setting
-                      </p>
-                    )}
-
-                    {buyWithBonus && (
-                      <input
-                        name="2FA"
-                        type="number"
-                        placeholder="2FA"
-                        className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                        style={{
-                          background: `url(image/InputBox.png) no-repeat `,
-                        }}
-                        onChange={(e: any) => setGAValue(e.target.value)}
-                        value={GAValue}
-                      />
-                    )}
+                  <div className="flex flex-row py-3">
+                    <input
+                      name="buyWithBonus"
+                      type="checkbox"
+                      // placeholder="Password"
+                      // className="py-3"
+                      // style={{
+                      //   background: `url(image/InputBox.png) no-repeat `,
+                      // }}
+                      checked={buyWithBonus}
+                      onChange={(e: any) => {
+                        console.log("buy with bonus", e);
+                        setBuyWithBonus(!buyWithBonus);
+                      }}
+                      // onBlur={loginForm.handleBlur}
+                      // value={usd}
+                    />
+                    <p className="w-64 font-Magra text-md text-white ml-3">
+                      Buy with Bonus
+                    </p>
                   </div>
+
+                  {!userData?.ga_key && buyWithBonus && (
+                    <p className="font-Magra text-md text-red-500 ml-3">
+                      Please configure 2FA on Setting
+                    </p>
+                  )}
+
+                  {buyWithBonus && (
+                    <input
+                      name="2FA"
+                      type="number"
+                      placeholder="2FA"
+                      className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                      style={{
+                        background: `url(image/InputBox.png) no-repeat `,
+                      }}
+                      onChange={(e: any) => setGAValue(e.target.value)}
+                      value={GAValue}
+                    />
+                  )}
                 </form>
                 <button
                   type={"submit"}
@@ -3632,7 +3635,6 @@ export const AppTemp = () => {
           )}
           {scene === "JPASS" && (
             <>
-              {/* TODO: JPASS component here */}
               <JPass
                 scene={scene}
                 onBackBtnClick={() => {

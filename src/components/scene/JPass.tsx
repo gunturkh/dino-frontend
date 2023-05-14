@@ -77,18 +77,21 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
       // get texture from PIXI.Assets
       image: PIXI.Assets.get("JPassCardItem1"),
       price: 8.9,
+      purchaseCode: "special1",
     },
     {
       id: 2,
       header: "14-Day Ultimate Pass",
       image: PIXI.Assets.get("JPassCardItem2"),
       price: 15.9,
+      purchaseCode: "special2",
     },
     {
       id: 3,
       header: "30-Day Ultimate Pass",
       image: PIXI.Assets.get("JPassCardItem3"),
       price: 27.9,
+      purchaseCode: "special3",
     },
   ];
 
@@ -469,7 +472,13 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
               y={app.screen.height * (isNotMobile ? 0.9 : 0.94)}
               scale={isNotMobile ? [1, 1] : [0.75, 0.75]}
               eventMode="static"
-              onpointertap={() => setJPassPanel(true)}
+              onpointertap={() => {
+                const tempData = jPassCardInfo.filter(
+                  (item) => item.id === selectedJpass
+                )[0];
+                setJPassPanel({ show: true, data: tempData });
+                console.log("test purchase");
+              }}
             >
               <Sprite
                 texture={PIXI.Assets.get("JPassBtnPurchase")}

@@ -68,6 +68,11 @@ export type WithdrawPanelData = {
   mode: "WITHDRAW" | "HISTORY";
 };
 
+export type JPassPanelData = {
+  show: boolean;
+  data: any;
+};
+
 export type SponsorLinkPanelData = {
   show: boolean;
   link: string;
@@ -127,8 +132,8 @@ type Store = {
   setCardDetails: (data: CardDetailsData) => void;
   withdrawPanel: WithdrawPanelData;
   setWithdrawPanel: (data: WithdrawPanelData) => void;
-  jPassPanel: boolean;
-  setJPassPanel: (data: boolean) => void;
+  jPassPanel: JPassPanelData;
+  setJPassPanel: (data: JPassPanelData) => void;
   notification: string[];
   setNotification: (data: string[]) => void;
   jFundBalance: string;
@@ -215,7 +220,7 @@ export const useStore = create<Store>((set, get) => ({
   setCardDetails: (data) => set(() => ({ cardDetails: data })),
   withdrawPanel: { show: false, mode: "WITHDRAW" },
   setWithdrawPanel: (data) => set(() => ({ withdrawPanel: data })),
-  jPassPanel: false,
+  jPassPanel: { show: false, data: [] },
   setJPassPanel: (data) => set(() => ({ jPassPanel: data })),
   notification: [],
   setNotification: (data) => set(() => ({ notification: data })),
