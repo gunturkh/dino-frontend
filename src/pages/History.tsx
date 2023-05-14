@@ -3,21 +3,21 @@ import { axiosInstance } from "../utils/api";
 import { formatUnits } from "@ethersproject/units";
 import { useAuthStore, useStore } from "../utils/store";
 
+type Page = "Transactions" | "Rewards";
+
 export function History() {
   const token = useAuthStore((state) => state.token);
-  // const userData = useStore((state) => state.userData);
   const changeScene = useStore((state) => state.changeScene);
 
   const [datas, setDatas] = useState<any>();
 
-  // TODO: need to integrate with API, right now still using downline API
+  const [rewardDatas, setRewardDatas] = useState<any>();
+
+  const [selectedPage, setSelectedPage] = useState<Page>("Transactions");
 
   const ShowData = (props: any) => {
     const { data } = props;
-    // const [downline, setDownline] = useState<any>();
-
-    // TODO: need to change this static date
-    var date = new Date(1683692254 * 1000);
+    var date = new Date(data.created * 1000);
 
     // Will display time in 10:30:23 format
     var formattedTime =
@@ -36,34 +36,56 @@ export function History() {
     return (
       <tr className="table-row">
         <td>{formattedTime}</td>
-        <td>$ {parseFloat(formatUnits(data.bought)).toFixed(2)}</td>
-        <td>{data.sponsor}</td>
+        <td>$ {parseFloat(formatUnits(data.total)).toFixed(2)}</td>
+        <td>{data.type}</td>
+      </tr>
+    );
+  };
+  const ShowRewardsData = (props: any) => {
+    const { data } = props;
+    var date = new Date(data.created * 1000);
+
+    // Will display time in 10:30:23 format
+    var formattedTime =
+      date.getDate() +
+      "/" +
+      (date.getMonth() + 1) +
+      "/" +
+      date.getFullYear() +
+      " " +
+      date.getHours() +
+      ":" +
+      date.getMinutes() +
+      ":" +
+      date.getSeconds();
+
+    return (
+      <tr className="table-row">
+        <td>{formattedTime}</td>
+        <td>$ {parseFloat(formatUnits(data.total)).toFixed(2)}</td>
       </tr>
     );
   };
 
   const History = () => {
-    const loadDownline = async () => {
+    const loadHistory = async () => {
       let options = {
         headers: {
           "my-auth-key": token,
         },
       };
       const response = await axiosInstance({
-        url: "/user/downline",
+        url: "/report/egg",
         method: "GET",
         headers: options.headers,
       });
 
       console.log("response", response);
-
-      // comment this to check if there's no data
-      setDatas([]);
-      // setDatas(response.data.result);
+      setDatas(response.data.result);
     };
 
     useEffect(() => {
-      if (!datas) loadDownline();
+      if (!datas) loadHistory();
     }, []);
 
     return (
@@ -79,7 +101,49 @@ export function History() {
           <tbody>
             {datas?.data?.length > 0
               ? datas?.data?.map((elm: any, idx: number) => (
-                  <ShowData key={elm.idx} data={elm} />
+                  <ShowData key={idx} data={elm} />
+                ))
+              : null}
+          </tbody>
+        </table>
+      </>
+    );
+  };
+
+  const EggRewards = () => {
+    const loadEggRewards = async () => {
+      let options = {
+        headers: {
+          "my-auth-key": token,
+        },
+      };
+      const response = await axiosInstance({
+        url: "/report/reward",
+        method: "GET",
+        headers: options.headers,
+      });
+
+      console.log("response", response);
+      setRewardDatas(response.data.result);
+    };
+
+    useEffect(() => {
+      if (!rewardDatas) loadEggRewards();
+    }, []);
+
+    return (
+      <>
+        <table className="w-full text-base text-left text-white dark:text-gray-400">
+          <thead className="text-xs text-white uppercase border-y ">
+            <tr>
+              <th className="w-[20rem] py-3">Date</th>
+              <th className="w-[10rem] py-3">Amt</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rewardDatas?.data?.length > 0
+              ? rewardDatas?.data?.map((elm: any, idx: number) => (
+                  <ShowRewardsData key={idx} data={elm} />
                 ))
               : null}
           </tbody>
@@ -92,22 +156,65 @@ export function History() {
   const Paginate = (props: any) => {
     var pctn = [];
     const loadDownlineWithPage = async (props: any) => {
-      // let options = {
-      //   headers: {
-      //     "my-auth-key": token,
-      //   },
-      // };
-      // const response = await axiosInstance({
-      //   url: "/user/downline",
-      //   params: {
-      //     page: props,
-      //   },
-      //   method: "GET",
-      //   headers: options.headers,
-      // });
-      // console.log("page response", response);
-      // console.log("page props", props.current);
-      // setDatas(response.data.result);
+      let options = {
+        headers: {
+          "my-auth-key": token,
+        },
+      };
+      const response = await axiosInstance({
+        url: "/report/egg",
+        params: {
+          page: props,
+        },
+        method: "GET",
+        headers: options.headers,
+      });
+      console.log("page response", response);
+      console.log("page props", props.current);
+      setDatas(response.data.result);
+    };
+
+    for (let i = 1; i <= props.total; i++) {
+      let classs = "";
+      if (parseInt(props.current) === i) classs = "active";
+      pctn.push(
+        <li
+          key={i}
+          className={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer ${
+            classs === "active"
+              ? "bg-yellow-700 text-white"
+              : "bg-white text-black"
+          }`}
+          onClick={() => loadDownlineWithPage(i)}
+        >
+          {i}
+        </li>
+      );
+    }
+
+    return <ul className="flex flex-row space-x-2">{pctn}</ul>;
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const PaginateRewards = (props: any) => {
+    var pctn = [];
+    const loadDownlineWithPage = async (props: any) => {
+      let options = {
+        headers: {
+          "my-auth-key": token,
+        },
+      };
+      const response = await axiosInstance({
+        url: "/report/egg",
+        params: {
+          page: props,
+        },
+        method: "GET",
+        headers: options.headers,
+      });
+      console.log("page response", response);
+      console.log("page props", props.current);
+      setRewardDatas(response.data.result);
     };
 
     for (let i = 1; i <= props.total; i++) {
@@ -132,6 +239,7 @@ export function History() {
   };
 
   const HistoryCallback = useCallback(History, [datas, token]);
+  const EggRewardCallback = useCallback(EggRewards, [rewardDatas, token]);
 
   return (
     <div className="absolute w-full h-full flex justify-center items-center">
@@ -155,8 +263,29 @@ export function History() {
           <div className="w-10 h-10"></div>
         </div>
         <div className="flex flex-col h-full w-full px-4 pt-6 pb-6 bg-gray-800/30 backdrop-blur-sm overflow-y-visible overflow-auto">
+          <div className="flex w-full flex-row items-center">
+            <button
+              type="button"
+              onClick={() => setSelectedPage("Transactions")}
+              className={`${
+                selectedPage === "Transactions" ? "text-blue-500" : "text-white"
+              } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+            >
+              Transactions
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedPage("Rewards")}
+              className={`${
+                selectedPage === "Rewards" ? "text-blue-500" : "text-white"
+              } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+            >
+              Rewards
+            </button>
+          </div>
           <div className="bg-transparent">
-            <HistoryCallback />
+            {selectedPage === "Transactions" && <HistoryCallback />}
+            {selectedPage === "Rewards" && <EggRewardCallback />}
           </div>
           {!(datas?.data?.length > 0) && (
             <div className="flex w-full h-full flex-col justify-center items-center">
@@ -171,7 +300,15 @@ export function History() {
         </div>
         <div>
           <div className="flex flex-col justify-end h-auto pt-3">
-            <Paginate total={datas?.totalpage} current={datas?.pagenow} />
+            {selectedPage === "Transactions" && (
+              <Paginate total={datas?.totalpage} current={datas?.pagenow} />
+            )}
+            {selectedPage === "Rewards" && (
+              <PaginateRewards
+                total={rewardDatas?.totalpage}
+                current={rewardDatas?.pagenow}
+              />
+            )}
           </div>
         </div>
       </div>

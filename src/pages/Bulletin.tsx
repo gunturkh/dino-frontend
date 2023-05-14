@@ -36,7 +36,7 @@ export function Bulletin() {
     return (
       <tr className="table-row">
         <td>{formattedTime}</td>
-        <td>$ {parseFloat(formatUnits(data.bought)).toFixed(2)}</td>
+        {/* <td>$ {parseFloat(formatUnits(data.bought)).toFixed(2)}</td> */}
         <td>{data.sponsor}</td>
       </tr>
     );
@@ -50,7 +50,7 @@ export function Bulletin() {
         },
       };
       const response = await axiosInstance({
-        url: "/user/downline",
+        url: "/report/egg",
         method: "GET",
         headers: options.headers,
       });
@@ -58,7 +58,7 @@ export function Bulletin() {
       console.log("response", response);
 
       // comment this to check if there's no data
-      setDatas([]);
+      // setDatas([]);
       // setDatas(response.data.result);
     };
 
@@ -72,7 +72,7 @@ export function Bulletin() {
           <thead className="text-xs text-white uppercase border-y ">
             <tr>
               <th className="w-[5rem] py-3">Date</th>
-              <th className="w-[7rem] py-3">Amt</th>
+              {/* <th className="w-[7rem] py-3">Amt</th> */}
               <th className="w-[8rem] py-3">Description</th>
             </tr>
           </thead>
