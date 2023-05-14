@@ -39,6 +39,8 @@ const NormalEggComponent = ({
     // console.log('eggRef', eggRef)
     const token = useAuthStore((state) => state.token);
     // const setGatchaAnimationStatus = useStore((state) => state.setGatchaAnimationStatus);
+    const userData = useStore((state) => state.userData);
+    console.log('userData', userData)
     const setMyListingEggData = useStore((state) => state.setMyListingEggData);
     // const eggPendingListData = useStore(
     //     (state) => state.eggPendingListData
@@ -59,23 +61,50 @@ const NormalEggComponent = ({
         countdownMinutes: 0,
         countdownSeconds: 0,
     });
+    useEffect(() => {
+        if (data?.openat > currentTime) setExpiryTime(data?.openat)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [data?.openat])
+
 
     const formatText = ({ expired, posted }: { expired: number, posted: number }) => {
-        if (expired === 0 && posted === 0) return "Pre-List";
-        else if (expired === 0 && posted === 1) return "Gatcha";
-        else
-            return (
-                `${countdownTime.countdownHours.toString().length === 1
-                    ? `0${countdownTime.countdownHours}`
-                    : countdownTime.countdownHours
-                }:${countdownTime.countdownMinutes.toString().length === 1
-                    ? `0${countdownTime.countdownMinutes}`
-                    : countdownTime.countdownMinutes
-                }:${countdownTime.countdownSeconds.toString().length === 1
-                    ? `0${countdownTime.countdownSeconds}`
-                    : countdownTime.countdownSeconds
-                }` || ""
-            );
+        const haveJPass = currentTime >= userData?.ability_end
+        console.log('haveJPass', haveJPass)
+        console.log('currentTime', currentTime)
+        if (haveJPass) {
+            // if (expired === 0 && posted === 0) return "Pre-List";
+            if (expired === 0) return "Gatcha";
+            else
+                return (
+                    `${countdownTime.countdownHours.toString().length === 1
+                        ? `0${countdownTime.countdownHours}`
+                        : countdownTime.countdownHours
+                    }:${countdownTime.countdownMinutes.toString().length === 1
+                        ? `0${countdownTime.countdownMinutes}`
+                        : countdownTime.countdownMinutes
+                    }:${countdownTime.countdownSeconds.toString().length === 1
+                        ? `0${countdownTime.countdownSeconds}`
+                        : countdownTime.countdownSeconds
+                    }` || ""
+                );
+        }
+        else {
+            if (expired === 0 && posted === 0) return "Pre-List";
+            else if (expired === 0 && posted === 1) return "Gatcha";
+            else
+                return (
+                    `${countdownTime.countdownHours.toString().length === 1
+                        ? `0${countdownTime.countdownHours}`
+                        : countdownTime.countdownHours
+                    }:${countdownTime.countdownMinutes.toString().length === 1
+                        ? `0${countdownTime.countdownMinutes}`
+                        : countdownTime.countdownMinutes
+                    }:${countdownTime.countdownSeconds.toString().length === 1
+                        ? `0${countdownTime.countdownSeconds}`
+                        : countdownTime.countdownSeconds
+                    }` || ""
+                );
+        }
     };
     // console.log('formatText', formatText(), data.id)
 
@@ -109,6 +138,7 @@ const NormalEggComponent = ({
             if (remainingDayTime < 0) {
                 clearInterval(timeInterval);
                 setExpiryTime(0);
+                // setEggPendingListData([])
                 getPendingListingEgg()
             } else {
                 setCountdownTime(runningCountdownTime);

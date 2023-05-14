@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { axiosInstance } from "../utils/api";
-import { formatUnits } from "@ethersproject/units";
+// import { formatUnits } from "@ethersproject/units";
 import { useAuthStore, useStore } from "../utils/store";
 
 export function Bulletin() {
@@ -8,6 +8,7 @@ export function Bulletin() {
   // const userData = useStore((state) => state.userData);
   const changeScene = useStore((state) => state.changeScene);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [datas, setDatas] = useState<any>();
 
   // TODO: need to integrate with API, right now still using downline API

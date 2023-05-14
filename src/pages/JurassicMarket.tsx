@@ -314,10 +314,21 @@ function JurassicMarket({
 
   useEffect(() => {
     console.log('check approved', approved)
-    if (parseFloat(approved as string) >= parseFloat(eggTransactionData.total)) setEggTransactionState({ mode: 'PURCHASE', state: '' })
+    if (approved !== '0' && parseFloat(approved as string) >= parseFloat(eggTransactionData.total)) {
+      console.log('check approved purchase', parseFloat(approved as string) >= parseFloat(eggTransactionData.total))
+      setEggTransactionState({ mode: 'PURCHASE', state: '' })
+    }
     else setEggTransactionState({ mode: 'APPROVAL', state: '' })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  useEffect(() => {
+    if (eggListsData?.lists.length > 0) {
+      console.log('egg list jurassic currentTime', currentTime)
+      console.log('egg list jurassic', eggListsData?.lists?.map((item: any) => (item.openat)).sort((a, b) => (b - a)))
+
+    }
+  }, [currentTime, eggListsData?.lists])
+
   return (
     <div className="absolute w-full h-full flex justify-center items-center">
       <div className="flex z-20 h-[100vh] w-[450px] max-[450px]:w-[calc(100vw)] max-w-[450px] justify-center items-center flex-col sm:px-4 shadow-sm rounded-sm ">
