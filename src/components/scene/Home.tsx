@@ -1,4 +1,4 @@
-import { useRef, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef, useMemo } from "react";
 import * as PIXI from "pixi.js";
 import { Container, Sprite, useApp, Text, Graphics } from "@pixi/react";
 // import { useSendTransaction } from "@usedapp/core";
@@ -14,6 +14,7 @@ import FlyingAnimations from "../FlyingAnimations";
 import { toast } from "react-toastify";
 import NormalEggComponent from "../NormalEggComponent";
 import gsap from "gsap";
+import { Spine } from "pixi-spine";
 // import { TICKET_ADDR } from "../../utils/config";
 type Props = {
   onProfileClick: () => void;
@@ -387,6 +388,172 @@ const Home = ({ onProfileClick, scene }: Props) => {
     [app.screen.height, app.screen.width]
   );
 
+  const [gatchaAnimation1, setGatchaAnimation1] = useState<any>(null);
+  const [gatchaAnimation2, setGatchaAnimation2] = useState<any>(null);
+  const [gatchaAnimation3, setGatchaAnimation3] = useState<any>(null);
+
+  const memoizedGatchaAnimation1 = useMemo(
+    () => gatchaAnimation1,
+    [gatchaAnimation1]
+  );
+  const memoizedGatchaAnimation2 = useMemo(
+    () => gatchaAnimation2,
+    [gatchaAnimation2]
+  );
+  const memoizedGatchaAnimation3 = useMemo(
+    () => gatchaAnimation3,
+    [gatchaAnimation3]
+  );
+
+  useEffect(() => {
+    PIXI.Assets.load([
+      "GatchaAnimation1",
+      "GatchaAnimation2",
+      "GatchaAnimation3",
+    ])
+      .then((resources) => {
+        console.log("res gatchaAnimation", resources);
+        // set a matched key to dinoAssets
+        setGatchaAnimation1(resources["GatchaAnimation1"]);
+        setGatchaAnimation2(resources["GatchaAnimation2"]);
+        setGatchaAnimation3(resources["GatchaAnimation3"]);
+      })
+      .catch((err) => {
+        console.log("err flyingDino", err);
+      });
+  }, []);
+
+  const [gatchaAnimationStatus, setGatchaAnimationStatus] = useState(false);
+  // gatcha ticket count
+  const [ticketCnt, setTicketCnt] = useState(0);
+
+  const onGatchaAnimationEnd = useCallback(() => {
+    console.log("onGatchaAnimationEnd");
+    setGatchaAnimationStatus(false);
+    setTicketCnt(0);
+  }, []);
+
+  const gatchaAnimationRef = useCallback(
+    (node: PIXI.Container) => {
+      if (node !== null) {
+        node.x = 0;
+        node.y = app.screen.height / 2;
+        node.scale.set(0.8, 0.8);
+      }
+
+      let gatcha1: any = null;
+      let gatcha2: any = null;
+      let gatcha3: any = null;
+
+      // load animation
+      memoizedGatchaAnimation1?.spineData?.animations?.forEach(
+        (animation: any) => {
+          const gatcha = new Spine(memoizedGatchaAnimation1.spineData);
+          gatcha.state.setAnimation(0, animation.name, false);
+
+          gatcha.x = 0;
+          gatcha.y = 0;
+          // gatcha.zIndex = -1;
+          // gatcha.cullable = true;
+
+          gatcha.scale.set(0.2);
+
+          // node?.addChild(gatcha);
+          gatcha1 = gatcha;
+        }
+      );
+
+      memoizedGatchaAnimation2?.spineData?.animations?.forEach(
+        (animation: any) => {
+          const gatcha = new Spine(memoizedGatchaAnimation2.spineData);
+          gatcha.state.setAnimation(0, animation.name, false);
+
+          gatcha.x = 0;
+          gatcha.y = 0;
+          // gatcha.zIndex = -1;
+          // gatcha.cullable = true;
+
+          gatcha.scale.set(0.2);
+
+          // node?.addChild(gatcha);
+          gatcha2 = gatcha;
+        }
+      );
+
+      memoizedGatchaAnimation3?.spineData?.animations?.forEach(
+        (animation: any) => {
+          const gatcha = new Spine(memoizedGatchaAnimation3.spineData);
+          gatcha.state.setAnimation(0, animation.name, false);
+
+          gatcha.x = 0;
+          gatcha.y = 0;
+          // gatcha.zIndex = -1;
+          // gatcha.cullable = true;
+
+          gatcha.scale.set(0.2);
+
+          // node?.addChild(gatcha);
+          gatcha3 = gatcha;
+        }
+      );
+
+      if (gatchaAnimationStatus) {
+        if (gatcha1 && ticketCnt === 1) {
+          gatcha1.visible = true;
+          node?.addChild(gatcha1);
+        } else if (gatcha2 && ticketCnt === 2) {
+          gatcha2.visible = true;
+          node?.addChild(gatcha2);
+        } else if (gatcha3 && ticketCnt === 4) {
+          gatcha3.visible = true;
+          node?.addChild(gatcha3);
+        }
+      }
+
+      if (gatcha1) {
+        // node?.addChild(gatcha1);
+        gatcha1.state.addListener({
+          complete: (entry: any) => {
+            gatcha1.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+      if (gatcha2) {
+        // node?.addChild(gatcha2);
+        gatcha2.state.addListener({
+          complete: (entry: any) => {
+            gatcha2.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+      if (gatcha3) {
+        // node?.addChild(gatcha3);
+        gatcha3.state.addListener({
+          complete: (entry: any) => {
+            gatcha3.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+    },
+    [
+      memoizedGatchaAnimation1,
+      memoizedGatchaAnimation2,
+      memoizedGatchaAnimation3,
+      gatchaAnimationStatus,
+      app.screen.height,
+      ticketCnt,
+      onGatchaAnimationEnd,
+    ]
+  );
+
+  console.log("gatchaAnimationStatus", gatchaAnimationStatus);
+
   const [buyTicketPanelBounds, setBuyTicketPanelBounds] =
     useState(defaultBounds);
 
@@ -501,6 +668,190 @@ const Home = ({ onProfileClick, scene }: Props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
+
+  const NormalEggComponent = ({
+    data,
+    currentTime,
+    eggTexture,
+    ref,
+    posX,
+    posY,
+    onPress,
+    scaleEgg,
+    scaleBtn,
+    posBtn,
+    text,
+    visible,
+  }: any) => {
+    const [expiryTime, setExpiryTime] = useState(data?.listedat);
+    console.log("expiryTime NormalEgg", expiryTime);
+    // console.log('currentTime', currentTime, 'index: ', index)
+    const [countdownTime, setCountdownTime] = useState({
+      countdownHours: 0,
+      countdownMinutes: 0,
+      countdownSeconds: 0,
+    });
+
+    const formatText = () => {
+      if (expiryTime === 0 && data?.posted === 0) return "Pre-List";
+      if (expiryTime === 0 && data?.posted === 1) return "Gatcha";
+      else
+        return (
+          `${
+            countdownTime.countdownHours.toString().length === 1
+              ? `0${countdownTime.countdownHours}`
+              : countdownTime.countdownHours
+          }:${
+            countdownTime.countdownMinutes.toString().length === 1
+              ? `0${countdownTime.countdownMinutes}`
+              : countdownTime.countdownMinutes
+          }:${
+            countdownTime.countdownSeconds.toString().length === 1
+              ? `0${countdownTime.countdownSeconds}`
+              : countdownTime.countdownSeconds
+          }` || ""
+        );
+    };
+
+    useEffect(() => {
+      let timeInterval: any;
+      // const countdown = () => {
+      if (expiryTime > 0 && currentTime) {
+        // timeInterval = setInterval(() => {
+        const countdownDateTime = expiryTime * 1000;
+        // const currentTime = new Date().getTime();
+        const remainingDayTime = countdownDateTime - currentTime;
+        // console.log(`countdownDateTime ${index}`, countdownDateTime);
+        // console.log(`currentTime ${index}`, currentTime);
+        // console.log(`remainingDayTime ${index}`, remainingDayTime);
+        const totalHours = Math.floor(
+          (remainingDayTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const totalMinutes = Math.floor(
+          (remainingDayTime % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const totalSeconds = Math.floor(
+          (remainingDayTime % (1000 * 60)) / 1000
+        );
+
+        const runningCountdownTime = {
+          countdownHours: totalHours,
+          countdownMinutes: totalMinutes,
+          countdownSeconds: totalSeconds,
+        };
+
+        if (remainingDayTime < 0) {
+          clearInterval(timeInterval);
+          setExpiryTime(0);
+        } else {
+          setCountdownTime(runningCountdownTime);
+        }
+        // }, 1000);
+      }
+      // };
+      // countdown();
+      // return () => {
+      //     clearInterval(timeInterval);
+      // };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentTime]);
+    return (
+      <Container
+        ref={ref || null}
+        x={posX || 0}
+        y={posY || 0}
+        visible={visible}
+      >
+        <Sprite
+          texture={eggTexture || PIXI.Texture.EMPTY}
+          anchor={[0.5, 0.5]}
+          scale={scaleEgg ? scaleEgg : [0.9, 0.9]}
+        />
+        {/* action button */}
+        <Container
+          position={posBtn ? posBtn : [0, 25]}
+          scale={scaleBtn ? scaleBtn : [0.6, 0.7]}
+          eventMode="static"
+          onpointertap={async () => {
+            if (formatText() === "Pre-List") {
+              let options = {
+                headers: {
+                  "my-auth-key": token,
+                },
+              };
+              const result = await axiosInstance({
+                url: "/egg/postEgg",
+                method: "POST",
+                headers: options.headers,
+                data: { id: data?.id },
+              });
+              // console.log(result.data);
+              if (result.data.success) {
+                toast("Pre-List Egg Success");
+                getPendingListingEgg();
+                // window.location.reload()
+                // changeScene('HOME')
+              } else {
+                toast("Error when trying to pre-list egg");
+              }
+            }
+            if (formatText() === "Gatcha") {
+              let options = {
+                headers: {
+                  "my-auth-key": token,
+                },
+              };
+              const result = await axiosInstance({
+                url: "/egg/gatcha",
+                method: "POST",
+                headers: options.headers,
+                data: { id: data?.id },
+              });
+              // console.log(result.data);
+              if (result.data.success) {
+                const p = result.data.result;
+                if (p.reward_name === "")
+                  toast("Oh no! The Dinosaur broke free!");
+                else
+                  toast(
+                    `Horray, you get ${p.reward_name} valued $ ` +
+                      ethers.utils.formatEther(p.reward_value)
+                  );
+                getPendingListingEgg();
+                // window.location.reload()
+              } else {
+                toast("Error when trying to open egg");
+              }
+            }
+          }}
+        >
+          <Sprite
+            position={[0, 0]}
+            texture={
+              PIXI.Assets.get(
+                true ? "BtnPurchaseActive" : "BtnPurchaseCountdown"
+              ) || PIXI.Texture.EMPTY
+            }
+            anchor={[0.5, 0.5]}
+          />
+          <Text
+            text={formatText()}
+            position={[0, 0]}
+            anchor={[0.5, 0.5]}
+            style={
+              new PIXI.TextStyle({
+                fontFamily: "Magra Bold",
+                fontSize: 13,
+                fontWeight: "600",
+                strokeThickness: 1,
+                fill: ["white"],
+              })
+            }
+          />
+        </Container>
+      </Container>
+    );
+  };
 
   const EggPlateComponent = (eggData: any) => {
     // console.log("eggData", eggData);
@@ -884,6 +1235,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
                   textXOffest={10}
                   onPress={async () => {
                     console.log("onPress USDTDetails");
+                    setTicketCnt(1);
+                    setGatchaAnimationStatus(true);
                   }}
                 />
                 <DetailsComponent
@@ -1058,6 +1411,10 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     fill: ["0xFFC700"],
                   })
                 }
+                onPress={() => {
+                  setTicketCnt(4);
+                  setGatchaAnimationStatus(true);
+                }}
               />
               <LowerButtonComponent
                 spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}
@@ -1171,6 +1528,10 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     fill: ["0xFFC700"],
                   })
                 }
+                onPress={() => {
+                  setTicketCnt(2);
+                  setGatchaAnimationStatus(true);
+                }}
               />
             </Container>
 
@@ -1328,6 +1689,9 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 </Container>
               </Container>
             </Container>
+
+            {/* Gatcha Animation */}
+            <Container ref={gatchaAnimationRef}></Container>
           </Container>
         </Container>
       )}
