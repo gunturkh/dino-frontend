@@ -126,6 +126,7 @@ export const AppTemp = () => {
   );
   const googleAuthPanel = useStore((state) => state.googleAuthPanel);
   const setGoogleAuthPanel = useStore((state) => state.setGoogleAuthPanel);
+  const withdrawalHistory = useStore((state) => state.withdrawalHistory);
   // const cardDetails = useStore((state) => state.cardDetails);
   // const eggListsData = useStore((state) => state.eggListsData);
   // console.log("googleAuthPanel", googleAuthPanel);
@@ -189,6 +190,8 @@ export const AppTemp = () => {
 
   const transactionList = useTransactions();
   const { notifications } = useNotifications();
+
+  console.log("withdrawalHistory", withdrawalHistory);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -2529,20 +2532,20 @@ export const AppTemp = () => {
                 <table className="w-full text-base">
                   <thead className=" uppercase border-y ">
                     <tr className="text-yellow-500 font-Magra">
-                      <th scope="col" className="w-[5rem]">
+                      <th scope="col" className="w-[6rem]">
                         Date
                       </th>
-                      <th scope="col" className="w-[10rem] pr-1">
+                      <th scope="col" className="w-[7rem] pr-1">
                         Description
                       </th>
-                      <th scope="col" className="py-1">
+                      <th scope="col" className="w-[4rem] py-1">
                         Amt
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {ticketHistories.map((t: any) => {
-                      var date = new Date(t.timestamp * 1000);
+                    {withdrawalHistory.map((t: any) => {
+                      var date = new Date(t.recdate * 1000);
 
                       // Will display time in 10:30:23 format
                       var formattedTime =
@@ -2560,17 +2563,13 @@ export const AppTemp = () => {
                       return (
                         <tr className="text-white text-left">
                           <td>{formattedTime}</td>
-                          <td className={"text-white text-base"}>
-                            {
-                              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum massa."
-                            }
-                          </td>
+                          <td className={"text-white text-base"}>{t.txtype}</td>
                           <td
                             className={`${
                               t.amount < 0 ? "text-red-500" : "text-green-500"
-                            }`}
+                            } pl-4`}
                           >
-                            {"$ 1000"}
+                            {`$ ${formatUnits(t.amount, 18)}`}
                           </td>
                         </tr>
                       );

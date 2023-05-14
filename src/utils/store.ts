@@ -1,7 +1,13 @@
 import { BigNumber } from "ethers";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-export type Rank = 'Hunter' | 'Predator' | 'Warrior' | 'Knight' | 'Dominator' | 'Legendary'
+export type Rank =
+  | "Hunter"
+  | "Predator"
+  | "Warrior"
+  | "Knight"
+  | "Dominator"
+  | "Legendary";
 
 type User = {
   email: string;
@@ -115,6 +121,8 @@ type Store = {
   setNotification: (data: string[]) => void;
   jFundBalance: string;
   setJFundBalance: (data: string) => void;
+  setWithdrawalHistory: (data: any) => void;
+  withdrawalHistory: string[];
 };
 type AuthStore = {
   token: string | null;
@@ -193,8 +201,10 @@ export const useStore = create<Store>((set, get) => ({
   setWithdrawPanel: (data) => set(() => ({ withdrawPanel: data })),
   notification: [],
   setNotification: (data) => set(() => ({ notification: data })),
-  jFundBalance: '',
+  jFundBalance: "",
   setJFundBalance: (data) => set(() => ({ jFundBalance: data })),
+  setWithdrawalHistory: (data) => set(() => ({ withdrawalHistory: data })),
+  withdrawalHistory: [],
 }));
 
 export const useAuthStore = create(

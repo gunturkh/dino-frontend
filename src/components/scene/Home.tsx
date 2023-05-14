@@ -59,7 +59,10 @@ const Home = ({ onProfileClick, scene }: Props) => {
   const setNotification = useStore((state) => state.setNotification);
   const jFundBalance = useStore((state) => state.jFundBalance);
   const setJFundBalance = useStore((state) => state.setJFundBalance);
+  const setWithdrawalHistory = useStore((state) => state.setWithdrawalHistory);
+
   const token = useAuthStore((state) => state.token);
+
   // const { sendTransaction, state } = useSendTransaction({ transactionName: 'Buy Ticket' })
   console.log("token from home", token);
   const isNotMobile = app.screen.width > 450;
@@ -628,6 +631,25 @@ const Home = ({ onProfileClick, scene }: Props) => {
     }
   };
 
+  const getWithdrawHistory = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const { data }: any = await axiosInstance({
+      url: "/bonus/history",
+      method: "GET",
+      headers: options.headers,
+    });
+    console.log("getWithdrawHistory Result:", data);
+    if (data?.success) {
+      setWithdrawalHistory(data?.result);
+    } else {
+      toast(data.message);
+    }
+  };
+
   useEffect(() => {
     // /user/getUserData
     let options = {
@@ -665,6 +687,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
       getPendingListingEgg();
       getNotification();
       getJFundBalance();
+      getWithdrawHistory();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
