@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 import { axiosInstance } from '../utils/api';
 import { useAuthStore, useStore } from '../utils/store';
+import { ethers } from "ethers";
 
 // interface Draggable extends PIXI.DisplayObject {
 //     data: any;
@@ -260,7 +261,7 @@ const NormalEggComponent = ({
                             else
                                 toast(
                                     `Horray, you get ${p.reward_name} valued $ ` +
-                                    (p.reward_value)
+                                    ethers.utils.formatEther(p.reward_value)
                                     // ethers.utils.formatEther(p.reward_value) || 0
                                 );
                             await getPendingListingEgg();

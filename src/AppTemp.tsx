@@ -3374,7 +3374,7 @@ export const AppTemp = () => {
             loop={1}
             onFinish={() => setNotification([])}
             speed={50}
-            className="font-Magra text-[#FFC700]">{notification.map((i: any) => (i.text)).join(' ')}</Marquee>
+            className="font-Magra text-[#FFC700]">{notification.map((i: any) => (i.text)).join('  |  ')}</Marquee>
         </div>
       )}
       <div>
