@@ -3626,7 +3626,7 @@ export const AppTemp = () => {
         />
       )}
       {scene === "HOME" && (
-        <div className="absolute top-[100px] flex flex-col">
+        <div className="absolute top-[87px] flex flex-col">
           <Marquee
             loop={1}
             onFinish={() => setNotification([])}
