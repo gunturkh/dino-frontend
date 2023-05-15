@@ -693,7 +693,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
       });
       console.log("getEggList Result:", data);
       if (data?.status === 200 && data?.data?.result?.lists) {
-        setEggListsData(data?.data?.result);
+        // setEggListsData(data?.data?.result);
+        setEggListsData({remaining: 0, lists: []});
       }
     };
 
@@ -708,222 +709,74 @@ const Home = ({ onProfileClick, scene }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  const EggPlateComponent = (eggData: any) => {
-    // console.log("eggData", eggData);
-    // const draw = useCallback((g: any) => {
-    //   g.lineStyle(2, 0xaaaaaa, 1)
-    //   g.moveTo(10, -75)
-    //   g.lineTo(-53, -112)
-    //   g.lineTo(-92, -65)
-    //   g.lineTo(-79, -2)
-    //   g.lineTo(7, 29)
-    //   g.lineTo(98, -2)
-    //   g.lineTo(109, -65)
-    //   g.lineTo(70, -112)
-    //   // g.arcTo(350, 200, 450, 900, 100)
-    //   // g.lineTo(200, 500)
-    //   // g.lineTo(700, 100)
-    //   // g.bezierCurveTo(700, 100, 700, 400, 100, 100);
-    // }, []);
-    // console.log('draw', draw)
-    const position = [
-      {
-        // 1
-        posX: 10,
-        posY: -75,
-        posBtn: [0, 50],
-        scaleBtn: [1.2, 1.3],
-        scaleEgg: [0.95, 0.95],
-      },
-      {
-        // 5
-        posX: 7,
-        posY: 29,
-      },
-      {
-        // 6
-        posX: 98,
-        posY: -2,
-      },
-      {
-        // 4
-        posX: -79,
-        posY: -2,
-      },
-      {
-        // 7
-        posX: 109,
-        posY: -65,
-      },
-      {
-        // 3
-        posX: -92,
-        posY: -65,
-      },
-      {
-        // 8
-        posX: 70,
-        posY: -112,
-      },
-      {
-        // 2
-        posX: -53,
-        posY: -112,
-        posBtn: [-3, 25],
-      },
-    ];
+  const position = [
+    {
+      // 1
+      posX: 10,
+      posY: -75,
+      posBtn: [0, 50],
+      scaleBtn: [1.2, 1.3],
+      scaleEgg: [0.95, 0.95],
+    },
+    {
+      // 5
+      posX: 7,
+      posY: 29,
+    },
+    {
+      // 6
+      posX: 98,
+      posY: -2,
+    },
+    {
+      // 4
+      posX: -79,
+      posY: -2,
+    },
+    {
+      // 7
+      posX: 109,
+      posY: -65,
+    },
+    {
+      // 3
+      posX: -92,
+      posY: -65,
+    },
+    {
+      // 8
+      posX: 70,
+      posY: -112,
+    },
+    {
+      // 2
+      posX: -53,
+      posY: -112,
+      posBtn: [-3, 25],
+    },
+  ];
+  // const EggPlateComponent = (eggData: any) => {
+  //   console.log("eggData", eggData);
+  //   // const draw = useCallback((g: any) => {
+  //   //   g.lineStyle(2, 0xaaaaaa, 1)
+  //   //   g.moveTo(10, -75)
+  //   //   g.lineTo(-53, -112)
+  //   //   g.lineTo(-92, -65)
+  //   //   g.lineTo(-79, -2)
+  //   //   g.lineTo(7, 29)
+  //   //   g.lineTo(98, -2)
+  //   //   g.lineTo(109, -65)
+  //   //   g.lineTo(70, -112)
+  //   //   // g.arcTo(350, 200, 450, 900, 100)
+  //   //   // g.lineTo(200, 500)
+  //   //   // g.lineTo(700, 100)
+  //   //   // g.bezierCurveTo(700, 100, 700, 400, 100, 100);
+  //   // }, []);
+  //   // console.log('draw', draw)
 
-    return (
-      <Container
-        ref={eggPlateContainerRef}
-        x={-5}
-        scale={[0.9, 0.9]}
-        height={app.screen.height * 0.4}
-        // width={app.screen.width * 0.9}
-      >
-        <Sprite
-          texture={PIXI.Assets.get("EggPlate") || PIXI.Texture.EMPTY}
-          anchor={[0.5, 0.5]}
-        />
-
-        {/* <Graphics draw={draw} ref={pathRef} /> */}
-
-        {eggData?.map((egg: EggPendingListData, eggIndex: number) => {
-          if (eggIndex === 0) {
-            return (
-              <NormalEggComponent
-                // ref={eggRef}
-                key={egg?.id}
-                data={egg}
-                currentTime={currentTime}
-                eggTexture={PIXI.Assets.get(
-                  `BigEggIcon${egg?.ticket === 4 ? "3" : egg?.ticket}`
-                )}
-                posX={position[eggIndex]?.posX}
-                posY={position[eggIndex]?.posY}
-                posBtn={position[eggIndex]?.posBtn}
-                // posX={position[currentTime % 8]?.posX}
-                // posY={position[currentTime % 8]?.posY}
-                // posBtn={position[currentTime % 8]?.posBtn}
-                scaleBtn={[1.2, 1.3]}
-                scaleEgg={[0.95, 0.95]}
-                onPress={() => console.log("egg 1 clicked")}
-                setTicketCnt={setTicketCnt}
-                setGatchaAnimationStatus={setGatchaAnimationStatus}
-                // onDragStart={onDragStart}
-                // onDragMove={onDragMove}
-                // onDragEnd={onDragEnd}
-                // visible={!eggData[0]}
-              />
-            );
-          } else
-            return (
-              <NormalEggComponent
-                key={egg?.id}
-                data={egg}
-                currentTime={currentTime}
-                eggTexture={PIXI.Assets.get(
-                  `EggIcon${egg?.ticket === 4 ? "3" : egg?.ticket}`
-                )}
-                posX={position[eggIndex]?.posX}
-                posY={position[eggIndex]?.posY}
-                posBtn={position[eggIndex]?.posBtn}
-                // posX={position[currentTime % 8]?.posX}
-                // posY={position[currentTime % 8]?.posY}
-                // posBtn={position[currentTime % 8]?.posBtn}
-                // text={"Pre-List"}
-                onPress={() => console.log(`egg ${eggIndex} clicked`)}
-                setTicketCnt={setTicketCnt}
-                setGatchaAnimationStatus={setGatchaAnimationStatus}
-                // visible={!eggData[1]}
-                // onDragStart={onDragStart}
-                // onDragMove={onDragMove}
-                // onDragEnd={onDragEnd}
-              />
-            );
-        })}
-        {/* egg 2 */}
-        {/* <NormalEggComponent
-          eggTexture={PIXI.Assets.get(`EggIcon${eggData[1]?.ticket}`)}
-          posX={-53}
-          posY={-112}
-          posBtn={[-3, 25]}
-          text={"Pre-List"}
-          onPress={() => console.log("egg 2 clicked")}
-          visible={!eggData[1]}
-        /> */}
-
-        {/* egg 3 */}
-        {/* <NormalEggComponent
-          eggTexture={PIXI.Assets.get(`EggIcon${eggData[2]?.ticket}`)}
-          posX={-92}
-          posY={-65}
-          text={"Reveal"}
-          onPress={() => console.log("egg 3 clicked")}
-          visible={!eggData[2]}
-        /> */}
-
-        {/* egg 4 */}
-        {/* <NormalEggComponent
-          eggTexture={PIXI.Assets.get(`EggIcon${eggData[3]?.ticket}`)}
-          posX={-79}
-          posY={-2}
-          onPress={() => console.log("egg 4 clicked")}
-          visible={!eggData[3]}
-        /> */}
-
-        {/* egg 5 */}
-        {/* <NormalEggComponent
-          // ref={normalEggref}
-          eggTexture={PIXI.Assets.get(`EggIcon${eggData[4]?.ticket}`)}
-          posX={7}
-          posY={29}
-          onPress={() => console.log("egg 5 clicked")}
-          visible={!eggData[4]}
-        /> */}
-
-        {/* egg 6 */}
-        {/* <NormalEggComponent
-          eggTexture={PIXI.Assets.get(`EggIcon${eggData[5]?.ticket}`)}
-          posX={98}
-          posY={-2}
-          onPress={() => console.log("egg 6 clicked")}
-          visible={!eggData[5]}
-        /> */}
-
-        {/* egg 7 */}
-        {/* <NormalEggComponent
-          eggTexture={PIXI.Assets.get(`EggIcon${eggData[6]?.ticket}`)}
-          posX={109}
-          posY={-65}
-          onPress={() => console.log("egg 7 clicked")}
-          visible={!eggData[6]}
-        /> */}
-
-        {/* egg 8 */}
-        {/* <NormalEggComponent
-          eggTexture={PIXI.Assets.get(`EggIcon${eggData[7]?.ticket}`)}
-          posX={70}
-          posY={-112}
-          posBtn={[5, 25]}
-          onPress={() => console.log("egg 8 clicked")}
-          visible={!eggData[7]}
-        /> */}
-
-        {/* egg 1 (big) */}
-        {/* <NormalEggComponent
-          eggTexture={PIXI.Assets.get(`BigEggIcon${eggData[0]?.ticket}`)}
-          posX={10}
-          posY={-75}
-          posBtn={[0, 50]}
-          scaleBtn={[1.2, 1.3]}
-          scaleEgg={[0.95, 0.95]}
-          onPress={() => console.log("egg 1 clicked")}
-          visible={!eggData[0]}
-        /> */}
-      </Container>
-    );
-  };
+  //   return (
+  //   );
+  // };
 
   return (
     <>
@@ -991,8 +844,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 text={
                   jFundBalance !== ""
                     ? parseFloat(
-                        ethers.utils.formatUnits(jFundBalance, 18)
-                      ).toFixed(2)
+                      ethers.utils.formatUnits(jFundBalance, 18)
+                    ).toFixed(2)
                     : "0"
                 }
                 // text={`w=${getHomeContainerBounds.width.toFixed()} h=${getHomeContainerBounds.height}`}
@@ -1013,7 +866,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
               <Container
                 position={[
                   (DinoFundBgBounds?.width / 2) *
-                    (app.screen?.width > 450 ? 1.05 : 1),
+                  (app.screen?.width > 450 ? 1.05 : 1),
                   DinoFundBgBounds?.height / 2 - 7,
                 ]}
               >
@@ -1080,7 +933,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 // position={[app.screen.width / 2 - (lfSideBounds.width / 2), 0]}
                 position={[isNotMobile ? 110 : 90, 10]}
                 anchor={[0.5, 0.5]}
-                // width={app.screen.width > 450 ? 450 : app.screen.width}
+              // width={app.screen.width > 450 ? 450 : app.screen.width}
               >
                 <DetailsComponent
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
@@ -1217,14 +1070,83 @@ const Home = ({ onProfileClick, scene }: Props) => {
 
             {/* Egg Panel */}
             {/* {EggPlateComponent(dummyEggLists)} */}
-            {EggPlateComponent(eggPendingListData)}
+            {/* {EggPlateComponent(eggPendingListData)} */}
+            <Container
+              ref={eggPlateContainerRef}
+              x={-5}
+              scale={[0.9, 0.9]}
+              height={app.screen.height * 0.4}
+            // width={app.screen.width * 0.9}
+            >
+              <Sprite
+                texture={PIXI.Assets.get("EggPlate") || PIXI.Texture.EMPTY}
+                anchor={[0.5, 0.5]}
+              />
+
+              {/* <Graphics draw={draw} ref={pathRef} /> */}
+
+              {eggPendingListData?.map((egg: EggPendingListData, eggIndex: number) => {
+                if (eggIndex === 0) {
+                  return (
+                    <NormalEggComponent
+                      // ref={eggRef}
+                      key={egg?.id}
+                      data={egg}
+                      currentTime={currentTime}
+                      eggTexture={PIXI.Assets.get(
+                        `BigEggIcon${egg?.ticket === 4 ? "3" : egg?.ticket}`
+                      )}
+                      posX={position[eggIndex]?.posX}
+                      posY={position[eggIndex]?.posY}
+                      posBtn={position[eggIndex]?.posBtn}
+                      // posX={position[currentTime % 8]?.posX}
+                      // posY={position[currentTime % 8]?.posY}
+                      // posBtn={position[currentTime % 8]?.posBtn}
+                      scaleBtn={[1.2, 1.3]}
+                      scaleEgg={[0.95, 0.95]}
+                      onPress={() => console.log("egg 1 clicked")}
+                      setTicketCnt={setTicketCnt}
+                      setGatchaAnimationStatus={setGatchaAnimationStatus}
+                    // onDragStart={onDragStart}
+                    // onDragMove={onDragMove}
+                    // onDragEnd={onDragEnd}
+                    // visible={!eggData[0]}
+                    />
+                  );
+                } else
+                  return (
+                    <NormalEggComponent
+                      key={egg?.id}
+                      data={egg}
+                      currentTime={currentTime}
+                      eggTexture={PIXI.Assets.get(
+                        `EggIcon${egg?.ticket === 4 ? "3" : egg?.ticket}`
+                      )}
+                      posX={position[eggIndex]?.posX}
+                      posY={position[eggIndex]?.posY}
+                      posBtn={position[eggIndex]?.posBtn}
+                      // posX={position[currentTime % 8]?.posX}
+                      // posY={position[currentTime % 8]?.posY}
+                      // posBtn={position[currentTime % 8]?.posBtn}
+                      // text={"Pre-List"}
+                      onPress={() => console.log(`egg ${eggIndex} clicked`)}
+                      setTicketCnt={setTicketCnt}
+                      setGatchaAnimationStatus={setGatchaAnimationStatus}
+                    // visible={!eggData[1]}
+                    // onDragStart={onDragStart}
+                    // onDragMove={onDragMove}
+                    // onDragEnd={onDragEnd}
+                    />
+                  );
+              })}
+            </Container>
 
             {/* Lower Button Container */}
             <Container
               ref={lowerSectionContainerRef}
               anchor={[0.5, 0.5]}
               x={0}
-              // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
+            // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
             >
               {/* left side */}
               <LowerButtonComponent
@@ -1453,7 +1375,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[
                       buyTicketPanelBounds?.width * 0.5 -
-                        (isNotMobile ? 50 : 25),
+                      (isNotMobile ? 50 : 25),
                       0,
                     ]}
                     eventMode="static"
@@ -1513,11 +1435,11 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[
                       buyTicketPanelBounds?.width * 0.5 -
-                        (isNotMobile ? 50 : 25),
+                      (isNotMobile ? 50 : 25),
                       0,
                     ]}
                     eventMode="static"
-                    // onpointertap={() => setGoogleAuthVisible(false)}
+                  // onpointertap={() => setGoogleAuthVisible(false)}
                   />
                 </Container>
 

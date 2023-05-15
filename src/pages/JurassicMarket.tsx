@@ -137,7 +137,9 @@ function JurassicMarket({
     });
     console.log("getEggList Result:", data);
     if (data?.status === 200 && data?.data?.result?.lists) {
-      setEggListsData(data?.data?.result);
+      // setEggListsData(data?.data?.result);
+
+      setEggListsData({ remaining: 0, lists: [] });
     }
   };
 
@@ -268,7 +270,7 @@ function JurassicMarket({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eggTransactionState]);
-
+  console.log('current time > 1684152000', Math.floor(currentTime / 1000), Math.floor(currentTime / 1000) > 1684152000)
   useEffect(() => {
     let timeInterval: any;
     // const countdown = () => {
@@ -487,6 +489,11 @@ function JurassicMarket({
             )}
             {selectedPanel === "My Listing" && (
               <>
+                {Math.floor(currentTime / 1000) <= 1684152000 &&
+                  <div className="flex h-full justify-center items-center">
+                    <p className="font-Magra text-white text-lg">Market start at 05/15 12:00 UTC</p>
+                  </div>
+                }
                 <div className="flex w-full justify-start font-Magra font-bold text-white">
                   {unfinishedTransaction && eggTransactionData && (
                     <div className="p-4 w-full border-b-2 border-white">
@@ -605,6 +612,7 @@ function JurassicMarket({
                         egg={egg}
                         index={egg?.id}
                         currentTime={currentTime}
+                        filter={''}
                       />
                     );
                   })}
@@ -653,36 +661,43 @@ function JurassicMarket({
                     );
                   })}
                 </div>
-                <div className="flex flex-row justify-center py-8">
-                  <ReactPaginate
-                    onPageChange={paginate}
-                    pageCount={Math.ceil(
-                      eggListsData?.lists?.length / postsPerPage
-                    )}
-                    marginPagesDisplayed={2}
-                    pageRangeDisplayed={3}
-                    previousLabel={"<<"}
-                    nextLabel={">>"}
-                    containerClassName={
-                      "flex flex-row text-white items-center text-2xl"
-                    }
-                    pageLinkClassName={"font-Magra px-2 "}
-                    previousLinkClassName={`font-Magra text-white px-4 `}
-                    nextLinkClassName={"font-Magra text-white px-4"}
-                    // TODO: create circle button for active page
-                    // activeLinkClassName={
-                    //   "text-[#FFC700] w-8 h-8 rounded-full bg-[#1E1E1E] flex justify-center items-center"
-                    // }
-                    activeLinkClassName={"text-[#FFC700] "}
-                  />
-                  <img
-                    onClick={() => getEggList()}
-                    src="image/BtnRefreshListing.png"
-                    // width={5}
-                    className="mx-1 cursor-pointer"
-                    alt="Refresh"
-                  />
-                </div>
+                {Math.floor(currentTime / 1000) <= 1684152000 &&
+                  <div className="flex h-full justify-center items-center">
+                    <p className="font-Magra text-white text-lg">Market start at 05/15 12:00 UTC</p>
+                  </div>
+                }
+                {currentPosts?.length > 0 &&
+                  <div className="flex flex-row justify-center py-8">
+                    <ReactPaginate
+                      onPageChange={paginate}
+                      pageCount={Math.ceil(
+                        eggListsData?.lists?.length / postsPerPage
+                      )}
+                      marginPagesDisplayed={2}
+                      pageRangeDisplayed={3}
+                      previousLabel={"<<"}
+                      nextLabel={">>"}
+                      containerClassName={
+                        "flex flex-row text-white items-center text-2xl"
+                      }
+                      pageLinkClassName={"font-Magra px-2 "}
+                      previousLinkClassName={`font-Magra text-white px-4 `}
+                      nextLinkClassName={"font-Magra text-white px-4"}
+                      // TODO: create circle button for active page
+                      // activeLinkClassName={
+                      //   "text-[#FFC700] w-8 h-8 rounded-full bg-[#1E1E1E] flex justify-center items-center"
+                      // }
+                      activeLinkClassName={"text-[#FFC700] "}
+                    />
+                    <img
+                      onClick={() => getEggList()}
+                      src="image/BtnRefreshListing.png"
+                      // width={5}
+                      className="mx-1 cursor-pointer"
+                      alt="Refresh"
+                    />
+                  </div>
+                }
               </>
             )}
           </div>

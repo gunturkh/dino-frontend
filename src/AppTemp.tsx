@@ -129,6 +129,8 @@ export const AppTemp = () => {
   const withdrawPanel = useStore((state) => state.withdrawPanel);
   const setWithdrawPanel = useStore((state) => state.setWithdrawPanel);
   const jPassPanel = useStore((state) => state.jPassPanel);
+  console.log('jPassPanel', jPassPanel)
+  jPassPanel?.data?.price > 0 && console.log('jPassPanel price', BigInt(jPassPanel?.data?.price * 1e18))
   const setJPassPanel = useStore((state) => state.setJPassPanel);
   const changePasswordPanel = useStore((state) => state.changePasswordPanel);
   const setChangePasswordPanel = useStore(
@@ -177,6 +179,7 @@ export const AppTemp = () => {
   const [forgotPasswordCaptcha, setForgotPasswordCaptcha] = useState("");
   const [ticketHistories, setTicketHistories] = useState([]);
   const [ticketState, setTicketState] = useState('');
+  const [jPassState, setJPassState] = useState('');
   // const [googleAuthPanel, setGoogleAuthPanel] = useState(false);
   const [googleAuthData, setGoogleAuthData] = useState<{
     qr: string;
@@ -306,9 +309,15 @@ export const AppTemp = () => {
     transactionName: "Ticket Approval",
   });
 
-  // const { state: JPassApprovalState, send: JPassApprovalSend } = useContractFunction(USDTContract, "approve", {
-  //   transactionName: "JPass Approval",
-  // });
+  const { state: JPassApprovalState, send: JPassApprovalSend } = useContractFunction(USDTContract, "approve", {
+    transactionName: "JPass Approval",
+  });
+
+  const {
+    sendTransaction: sendJPassBuy,
+    state: sendJPassBuyState,
+    resetState: resetSendJPassBuyState,
+  } = useSendTransaction({ transactionName: "JPass Buy" });
 
   const { state: eggApprovalState, send: sendEggApproval } =
     useContractFunction(USDTContract, "approve", {
@@ -322,6 +331,10 @@ export const AppTemp = () => {
   useEffect(() => {
     toast(state.errorMessage);
   }, [state.errorMessage]);
+
+  useEffect(() => {
+    toast(JPassApprovalState.errorMessage);
+  }, [JPassApprovalState.errorMessage]);
 
   const changeScene = useStore((state) => state.changeScene);
   const [authMode, setAuthMode] = useState<
@@ -462,6 +475,39 @@ export const AppTemp = () => {
       });
     // axios.post(API_ENDPOINT + '/ticket/validate', { hash: hash }, options)
   };
+
+  const checkJPassValidateTx = (hash: string) => {
+    console.log("checkJPassValidateTx", hash);
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    axiosInstance({
+      url: "/item/validate",
+      method: "POST",
+      headers: options.headers,
+      data: {
+        hash: hash,
+      },
+    })
+      .then((response) => {
+        // console.log(response.data);
+        if (response.data.result === 1) {
+          toast("Buy JPass Confirmed");
+          setJPassState('')
+          setJPassPanel({ show: false, data: null });
+          changeScene('HOME')
+          getUserData();
+        } else {
+          setTimeout(() => checkJPassValidateTx(hash), 5000);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    // axios.post(API_ENDPOINT + '/ticket/validate', { hash: hash }, options)
+  };
   const getPendingListingEgg = async () => {
     let options = {
       headers: {
@@ -494,6 +540,21 @@ export const AppTemp = () => {
     if (sendTicketBuyState.status === "Exception")
       toast(sendTicketBuyState.errorMessage);
   }, [sendTicketBuyState]);
+
+  useEffect(() => {
+    if (
+      sendJPassBuyState &&
+      sendJPassBuyState.transaction &&
+      sendJPassBuyState.status === "Success" &&
+      ticketAllowance
+    ) {
+      // checkValidateTx(sendJPassBuyState.transaction.hash);
+      resetSendJPassBuyState();
+    }
+    // console.log("sendJPassBuyState", sendJPassBuyState);
+    if (sendJPassBuyState.status === "Exception")
+      toast(sendJPassBuyState.errorMessage);
+  }, [sendJPassBuyState]);
 
   const checkValidation = async (id: string) => {
     let options = {
@@ -1143,9 +1204,8 @@ export const AppTemp = () => {
     return (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className={`${
-          id === open ? "rotate-180" : ""
-        } h-5 w-5 transition-transform`}
+        className={`${id === open ? "rotate-180" : ""
+          } h-5 w-5 transition-transform`}
         fill="none"
         viewBox="0 0 24 24"
         stroke="white"
@@ -1438,9 +1498,8 @@ export const AppTemp = () => {
                     type={"image"}
                     src={"image/BtnConfirm.png"}
                     onClick={loginForm.submitForm}
-                    className={`${
-                      captcha?.length === 0 ? "opacity-50" : ""
-                    } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${captcha?.length === 0 ? "opacity-50" : ""
+                      } mt-12 px-3.5 py-2.5 text-sm`}
                     disabled={captcha?.length === 0}
                   />
                 </>
@@ -1648,9 +1707,8 @@ export const AppTemp = () => {
                     src={"image/BtnConfirmRegister.png"}
                     disabled={!registerCheckbox}
                     onClick={registerForm.submitForm}
-                    className={`${
-                      !registerCheckbox ? "opacity-50" : ""
-                    } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${!registerCheckbox ? "opacity-50" : ""
+                      } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -1729,9 +1787,8 @@ export const AppTemp = () => {
                     src={"image/BtnSubmit.png"}
                     onClick={registerHandler}
                     disabled={registerCaptcha?.length === 0}
-                    className={`${
-                      registerCaptcha?.length === 0 ? "opacity-50" : ""
-                    } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${registerCaptcha?.length === 0 ? "opacity-50" : ""
+                      } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -1766,11 +1823,10 @@ export const AppTemp = () => {
                     type={"image"}
                     src={"image/BtnSubmit.png"}
                     onClick={loginWalletForm.submitForm}
-                    className={`${
-                      loginWalletForm.values.walletAddress.length === 0
-                        ? "opacity-50"
-                        : ""
-                    } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${loginWalletForm.values.walletAddress.length === 0
+                      ? "opacity-50"
+                      : ""
+                      } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -1810,9 +1866,8 @@ export const AppTemp = () => {
                     src={"image/BtnSubmit.png"}
                     onClick={forgotPasswordForm.submitForm}
                     disabled={forgotPasswordCaptcha?.length === 0}
-                    className={`${
-                      forgotPasswordCaptcha?.length === 0 ? "opacity-50" : ""
-                    } mt-12 px-3.5 py-2.5 text-sm`}
+                    className={`${forgotPasswordCaptcha?.length === 0 ? "opacity-50" : ""
+                      } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
               )}
@@ -1997,9 +2052,8 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "BUY" })
                   }
-                  className={`${
-                    ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
-                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
+                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   Buy
                 </button>
@@ -2009,11 +2063,10 @@ export const AppTemp = () => {
                     onClick={() =>
                       setTicketPanel({ ...ticketPanel, mode: "TRANSFER" })
                     }
-                    className={`${
-                      ticketPanel.mode === "TRANSFER"
-                        ? "text-blue-500"
-                        : "text-white"
-                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                    className={`${ticketPanel.mode === "TRANSFER"
+                      ? "text-blue-500"
+                      : "text-white"
+                      } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                   >
                     Transfer
                   </button>
@@ -2023,11 +2076,10 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
                   }
-                  className={`${
-                    ticketPanel.mode === "HISTORY"
-                      ? "text-blue-500"
-                      : "text-white"
-                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${ticketPanel.mode === "HISTORY"
+                    ? "text-blue-500"
+                    : "text-white"
+                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   History
                 </button>
@@ -2078,8 +2130,8 @@ export const AppTemp = () => {
                             console.log("buy with bonus", e);
                             setBuyWithBonus(!buyWithBonus);
                           }}
-                          // onBlur={loginForm.handleBlur}
-                          // value={usd}
+                        // onBlur={loginForm.handleBlur}
+                        // value={usd}
                         />
                         <p className="font-Magra text-md text-white ml-3">
                           Buy with Bonus
@@ -2338,16 +2390,14 @@ export const AppTemp = () => {
                         <tr className="text-white text-center">
                           <td>{formattedTime}</td>
                           <td
-                            className={`${
-                              t.amount < 0 ? "text-red-500" : "text-green-500"
-                            }`}
+                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
+                              }`}
                           >
                             {t.amount < 0 ? "OUT" : "IN"}
                           </td>
                           <td
-                            className={`${
-                              t.amount < 0 ? "text-red-500" : "text-green-500"
-                            }`}
+                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
+                              }`}
                           >
                             {t.amount}
                           </td>
@@ -2391,11 +2441,10 @@ export const AppTemp = () => {
                   onClick={() =>
                     setWithdrawPanel({ ...withdrawPanel, mode: "WITHDRAW" })
                   }
-                  className={`${
-                    withdrawPanel.mode === "WITHDRAW"
-                      ? "text-blue-500"
-                      : "text-white"
-                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${withdrawPanel.mode === "WITHDRAW"
+                    ? "text-blue-500"
+                    : "text-white"
+                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   Withdraw
                 </button>
@@ -2405,11 +2454,10 @@ export const AppTemp = () => {
                     // setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
                     setWithdrawPanel({ ...withdrawPanel, mode: "HISTORY" })
                   }
-                  className={`${
-                    withdrawPanel.mode === "HISTORY"
-                      ? "text-blue-500"
-                      : "text-white"
-                  } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  className={`${withdrawPanel.mode === "HISTORY"
+                    ? "text-blue-500"
+                    : "text-white"
+                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   History
                 </button>
@@ -2545,14 +2593,13 @@ export const AppTemp = () => {
                         }
                       }
                     }}
-                    className={`${
-                      buyWithBonus
-                        ? "bg-green-500"
-                        : ticketAllowance &&
-                          ticketAllowance.toBigInt() < BigInt(usd * 1e18)
+                    className={`${buyWithBonus
+                      ? "bg-green-500"
+                      : ticketAllowance &&
+                        ticketAllowance.toBigInt() < BigInt(usd * 1e18)
                         ? "bg-red-500"
                         : "bg-green-500"
-                    } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                      } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                     disabled={
                       (buyWithBonus &&
                         GAValue.length < 6 &&
@@ -2564,8 +2611,8 @@ export const AppTemp = () => {
                       ? "Buy with Bonus"
                       : ticketAllowance &&
                         ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                      ? "Approval"
-                      : "Transfer"}
+                        ? "Approval"
+                        : "Transfer"}
                   </button>
                   {/* {sendTicketBuyState.status !== "None" && (
                     <p className="text-white/50 font-Magra">
@@ -2611,9 +2658,8 @@ export const AppTemp = () => {
                           <td>{formattedTime}</td>
                           <td className={"text-white text-base"}>{t.txtype}</td>
                           <td
-                            className={`${
-                              t.amount < 0 ? "text-red-500" : "text-green-500"
-                            } pl-4`}
+                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
+                              } pl-4`}
                           >
                             {`$ ${parseFloat(formatUnits(t.amount, 18)).toFixed(
                               2
@@ -2637,7 +2683,7 @@ export const AppTemp = () => {
                 src="image/logoutBtn.png"
                 width={30}
                 height={30}
-                alt="Close Ticket"
+                alt="Close JPass"
                 onClick={() => setJPassPanel({ show: false, data: [] })}
               />
             </div>
@@ -2671,8 +2717,8 @@ export const AppTemp = () => {
                         console.log("buy with bonus", e);
                         setBuyWithBonus(!buyWithBonus);
                       }}
-                      // onBlur={loginForm.handleBlur}
-                      // value={usd}
+                    // onBlur={loginForm.handleBlur}
+                    // value={usd}
                     />
                     <p className="w-64 font-Magra text-md text-white ml-3">
                       Buy with Bonus
@@ -2699,97 +2745,102 @@ export const AppTemp = () => {
                     />
                   )}
                 </form>
-                <button
-                  type={"submit"}
-                  // disabled={}
-                  onClick={async () => {
-                    console.log("usd amount approval", usd);
-                    if (buyWithBonus) {
-                      console.log("Buy with bonus clicked", {
-                        qty: parseInt(qty as string),
-                        facode: GAValue.toString(),
-                      });
-                      let options = {
-                        headers: {
-                          "my-auth-key": token,
-                        },
-                      };
-                      const response = await axiosInstance({
-                        url: "/ticket/buyWithBonuses",
-                        method: "POST",
-                        headers: options.headers,
-                        data: {
-                          qty: parseInt(qty as string),
+                {jPassState !== 'LOADING' &&
+                  <button
+                    type={"submit"}
+                    // disabled={}
+                    onClick={async () => {
+                      console.log("JPass amount approval", jPassPanel?.data?.price);
+                      setJPassState('LOADING')
+                      if (buyWithBonus) {
+                        console.log("Buy with bonus clicked", {
+                          code: jPassPanel?.data?.purchaseCode,
                           facode: GAValue.toString(),
-                        },
-                      });
-                      if (response.data.success) {
-                        toast("Buy Ticket Confirmed");
-                        getUserData();
-                      } else alert(response.data.message);
-                    } else if (!buyWithBonus) {
-                      if (
-                        ticketAllowance &&
-                        ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                      ) {
-                        // const txReq = { value: BigInt(usd * 1e18) }
-                        const txSend = await send(
-                          TICKET_ADDR,
-                          BigInt(usd * 1e18)
-                        );
-                        console.log("txSend ticketApproval", txSend);
-                      } else {
+                        });
                         let options = {
                           headers: {
                             "my-auth-key": token,
                           },
                         };
                         const response = await axiosInstance({
-                          url: "/ticket/createRawBuyTickets",
+                          url: "/item/buyWithBonuses",
                           method: "POST",
                           headers: options.headers,
                           data: {
-                            qty: qty,
+                            code: jPassPanel?.data?.purchaseCode,
+                            facode: GAValue.toString(),
                           },
                         });
-                        console.log(response.data);
                         if (response.data.success) {
-                          const txReq = {
-                            data: response.data.result,
-                            to: TICKET_ADDR,
-                            from: walletAddress,
+                          setJPassState('')
+                          toast("Buy JPass Confirmed");
+                          getUserData();
+                        } else alert(response.data.message);
+                      } else if (!buyWithBonus) {
+                        if (
+                          ticketAllowance &&
+                          ticketAllowance.toBigInt() < BigInt(jPassPanel?.data?.price * 1e18)
+                        ) {
+                          // const txReq = { value: BigInt(usd * 1e18) }
+                          const txSend = await JPassApprovalSend(
+                            TICKET_ADDR,
+                            BigInt(jPassPanel?.data?.price * 1e18)
+                          );
+                          setJPassState('')
+                          console.log("txSend JPassApproval", txSend);
+                        } else {
+                          let options = {
+                            headers: {
+                              "my-auth-key": token,
+                            },
                           };
-                          const txSend = await sendTicketBuy(txReq);
-                          console.log("txSend buy ticket", txSend);
-                          if (txSend && txSend.transactionHash)
-                            checkValidateTx(txSend.transactionHash);
+                          const response = await axiosInstance({
+                            url: "/item/createRawBuyItems",
+                            method: "POST",
+                            headers: options.headers,
+                            data: {
+                              code: jPassPanel?.data?.purchaseCode,
+                            },
+                          });
+                          console.log('JPass buy', response.data);
+                          if (response.data.success) {
+                            const txReq = {
+                              data: response.data.result,
+                              to: TICKET_ADDR,
+                              from: walletAddress,
+                            };
+                            console.log('txReq JPass', txReq)
+                            const txSend = await sendJPassBuy(txReq);
+                            console.log("txSend buy JPass", txSend);
+                            if (txSend && txSend.transactionHash)
+                              checkJPassValidateTx(txSend.transactionHash);
+                          }
                         }
                       }
-                    }
-                  }}
-                  className={`${
-                    buyWithBonus
+                    }}
+                    className={`${buyWithBonus
                       ? "bg-green-500"
                       : ticketAllowance &&
-                        ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                      ? "bg-red-500"
-                      : "bg-green-500"
-                  } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
-                  disabled={
-                    (buyWithBonus && GAValue.length < 6 && !userData?.ga_key) ||
-                    sendTicketBuyState.status !== "None"
-                  }
-                >
-                  {buyWithBonus
-                    ? "Buy with Bonus"
-                    : ticketAllowance &&
-                      ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                    ? "Approval"
-                    : "Buy Subscription"}
-                </button>
-                {sendTicketBuyState.status !== "None" && (
+                        ticketAllowance.toBigInt() < BigInt(jPassPanel?.data?.price * 1e18)
+                        ? "bg-red-500"
+                        : "bg-green-500"
+                      } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                    disabled={
+                      (buyWithBonus && GAValue.length < 6 && !userData?.ga_key) ||
+                      sendJPassBuyState.status !== "None"
+                    }
+                  >
+                    {buyWithBonus
+                      ? "Buy with Bonus"
+                      : ticketAllowance &&
+                        ticketAllowance.toBigInt() < BigInt(jPassPanel?.data?.price * 1e18)
+                        ? "Approval"
+                        : "Buy Subscription"}
+                  </button>
+                }
+                {jPassState === "LOADING" && (
                   <p className="text-white/50 font-Magra">
-                    {sendTicketBuyState.status}
+                    Waiting...
                   </p>
                 )}
               </>
@@ -3578,7 +3629,7 @@ export const AppTemp = () => {
           onAnimationIteration={() => {
             console.log("animation iteration");
           }}
-          // onMount={(_app) => setApp(_app)}
+        // onMount={(_app) => setApp(_app)}
         >
           {/* @ts-ignore */}
 

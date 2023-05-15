@@ -54,7 +54,7 @@ const NormalEggComponent = ({
     //     setExpiryTime(data?.openat)
     // }, [data?.openat])
 
-    console.log("expiryTime NormalEgg", currentTime, expiryTime, data.id);
+    console.log("expiryTime NormalEgg", currentTime, expiryTime, data.id, 'openat ', data?.openat, 'listedat ', data?.listedat);
     // console.log('currentTime', currentTime, 'index: ', index)
     const [countdownTime, setCountdownTime] = useState({
         countdownHours: 0,
@@ -62,9 +62,13 @@ const NormalEggComponent = ({
         countdownSeconds: 0,
     });
     useEffect(() => {
-        if (data?.openat > currentTime) setExpiryTime(data?.openat)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [data?.openat])
+        if (data?.openat > 0 && data?.openat > Math.floor(currentTime / 1000)) setExpiryTime(data?.openat)
+        if (data?.openat === 0 && expiryTime === 0) {
+            getPendingListingEgg()
+        }
+        // if (data?.openat !== 0 && expiryTime === 0) setExpiryTime(data?.openat)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [data?.openat, currentTime])
 
 
     const formatText = ({ expired, posted }: { expired: number, posted: number }) => {
@@ -72,8 +76,12 @@ const NormalEggComponent = ({
         console.log('haveJPass', haveJPass)
         console.log('currentTime', currentTime)
         if (haveJPass) {
-            // if (expired === 0 && posted === 0) return "Pre-List";
-            if (expired === 0) return "Gatcha";
+            if (expired === 0 && data?.openat === 0) {
+                return 'Waiting'
+            }
+            if (expired === 0 && data?.openat !== 0 && Math.floor(currentTime /1000) >= data?.openat) {
+                return "Gatcha"
+            }
             else
                 return (
                     `${countdownTime.countdownHours.toString().length === 1
@@ -137,9 +145,12 @@ const NormalEggComponent = ({
 
             if (remainingDayTime < 0) {
                 clearInterval(timeInterval);
-                setExpiryTime(0);
-                // setEggPendingListData([])
+                setExpiryTime(0)
                 getPendingListingEgg()
+                // if (currentTime < data?.openat) {
+                //     setExpiryTime(data?.openat)
+                // }
+                // else setExpiryTime(0);
             } else {
                 setCountdownTime(runningCountdownTime);
             }
@@ -207,7 +218,7 @@ const NormalEggComponent = ({
             method: "GET",
             headers: options.headers,
         });
-        console.log("get pendingListing egg Result:", data);
+        console.log("get pendingListing NormalEgg egg Result:", data);
         if (data?.success) {
             setEggPendingListData(data?.result);
         } else {
