@@ -44,10 +44,34 @@ type Props = {
 //   data: any;
 //   dragging: boolean;
 // }
+const BASE_URL = "https://cdn.jurassicegg.co";
+const useAudio = (url: string) => {
+  const [audio] = useState(new Audio(url));
+  const [playing, setPlaying] = useState(false);
+
+  const toggle = () => setPlaying(!playing);
+
+  useEffect(() => {
+    playing ? audio.play() : audio.pause();
+  },
+    [playing]
+  );
+
+  useEffect(() => {
+    audio.addEventListener('ended', () => setPlaying(false));
+    return () => {
+      audio.removeEventListener('ended', () => setPlaying(false));
+    };
+  }, []);
+
+  return [playing, toggle];
+};
+
 const Home = ({ onProfileClick, scene }: Props) => {
   const app = useApp();
   // const pathRef = useRef(null);
   // const eggRef = useRef(null);
+  const [playing, toggle] = useAudio(`${BASE_URL}/music/music.mpeg`);
   const setEggPendingListData = useStore(
     (state) => state.setEggPendingListData
   );
@@ -90,6 +114,14 @@ const Home = ({ onProfileClick, scene }: Props) => {
     Math.floor(currentTime / 1000),
     Math.floor(currentTime / 1000) % 8
   );
+
+  useEffect(() => {
+    console.log('music playing', playing)
+    // if (playing) {
+    // @ts-ignore
+    toggle()
+    // }
+  }, [toggleBtnAudio])
 
   // const onDragStart = useCallback((event: any) => {
   //   // console.log('eggRef', eggRef)
