@@ -389,7 +389,7 @@ function JurassicMarket({
                       />
                     </div>
                     <img
-                      src="image/RankExpBarBg.png"
+                      src="image/rankExpBarBg.png"
                       className="object-cover z-10"
                       alt="RankExpBarBg"
                     />
