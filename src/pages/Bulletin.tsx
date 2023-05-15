@@ -38,7 +38,7 @@ export function Bulletin() {
       <tr className="table-row">
         <td>{formattedTime}</td>
         {/* <td>$ {parseFloat(formatUnits(data.bought)).toFixed(2)}</td> */}
-        <td>{data.sponsor}</td>
+        <td><div><h1 className="text-[#FFC700]">{data?.title}</h1><div dangerouslySetInnerHTML={{ __html: data?.content }}></div></div></td>
       </tr>
     );
   };
@@ -51,16 +51,16 @@ export function Bulletin() {
         },
       };
       const response = await axiosInstance({
-        url: "/report/egg",
+        url: "/news/latest",
         method: "GET",
         headers: options.headers,
       });
 
-      console.log("response", response);
+      console.log("news response", response);
 
       // comment this to check if there's no data
       // setDatas([]);
-      // setDatas(response.data.result);
+      setDatas(response.data.result);
     };
 
     useEffect(() => {
@@ -78,10 +78,10 @@ export function Bulletin() {
             </tr>
           </thead>
           <tbody>
-            {datas?.data?.length > 0
-              ? datas?.data?.map((elm: any, idx: number) => (
-                  <ShowData key={elm.idx} data={elm} />
-                ))
+            {datas?.length > 0
+              ? datas?.map((elm: any, idx: number) => (
+                <ShowData key={elm.idx} data={elm} />
+              ))
               : null}
           </tbody>
         </table>
@@ -117,11 +117,10 @@ export function Bulletin() {
       pctn.push(
         <li
           key={i}
-          className={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer ${
-            classs === "active"
-              ? "bg-yellow-700 text-white"
-              : "bg-white text-black"
-          }`}
+          className={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer ${classs === "active"
+            ? "bg-yellow-700 text-white"
+            : "bg-white text-black"
+            }`}
           onClick={() => loadBulletinWithPage(i)}
         >
           {i}
@@ -133,6 +132,7 @@ export function Bulletin() {
   };
 
   const BulletinCallback = useCallback(Bulletin, [datas, token]);
+  console.log('datas', datas)
 
   return (
     <div className="absolute w-full h-full flex justify-center items-center">
@@ -159,7 +159,7 @@ export function Bulletin() {
           <div className="bg-transparent">
             <BulletinCallback />
           </div>
-          {!(datas?.data?.length > 0) && (
+          {!(datas?.length > 0) && (
             <div className="flex w-full h-full flex-col justify-center items-center">
               {/* show no data display */}
               <div className="flex flex-row justify-center items-center">
