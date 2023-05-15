@@ -4,7 +4,7 @@ import {
   useEtherBalance,
   useEthers,
   // BSC,
-  BSCTestnet,
+  BSC,
   // useToken,
   useContractFunction,
   useTokenBalance,
@@ -154,13 +154,13 @@ export const AppTemp = () => {
     account
   );
   const etherBalance = useEtherBalance(account, {
-    chainId: BSCTestnet.chainId,
+    chainId: BSC.chainId,
   });
   const mainnetBalance = useEtherBalance(account, {
-    chainId: BSCTestnet.chainId,
+    chainId: BSC.chainId,
   });
   const testnetBalance = useEtherBalance(account, {
-    chainId: BSCTestnet.chainId,
+    chainId: BSC.chainId,
   });
   const allowance = useTokenAllowance(
     USDT_ADDR,
@@ -1006,7 +1006,7 @@ export const AppTemp = () => {
     console.log("account", account);
     if (!!account) {
       setWalletAddress(account);
-      if (chainId !== BSCTestnet.chainId) switchNetwork(BSCTestnet.chainId);
+      if (chainId !== BSC.chainId) switchNetwork(BSC.chainId);
     }
     if (active && !!account && authMode === "OTPEMAIL")
       otpForm.setFieldValue("walletAddress", account);
