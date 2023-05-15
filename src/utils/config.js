@@ -266,7 +266,7 @@ export const USDT_ABI = [
   },
 ];
 // mainnet paygateway, tbd
-export const PAYGATEWAY_ADDR = "0x28e3aC9C3E87B8F3C8fc4B005e7BC17b408E680e";
+export const PAYGATEWAY_ADDR = "0x5640ADE10E545b87218922Adf7b0B3660863f57e";
 export const TICKET_ADDR = "0x5B7064C693F7AE5a9fab5DE66C958F615886Ee84";
 export const RPC_ENDPOINT = "https://data-seed-prebsc-1-s1.binance.org:8545/";
 // export const API_ENDPOINT = 'http://localhost:7878';
