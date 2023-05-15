@@ -21,11 +21,14 @@ import { toast } from "react-toastify";
 import NormalEggComponent from "../NormalEggComponent";
 // import gsap from "gsap";
 import { Spine } from "pixi-spine";
+// import useAudio from "../../utils/hooks/useAudio";
 // import { TICKET_ADDR } from "../../utils/config";
 type Props = {
   onProfileClick: () => void;
   setScene?: (value: string) => void;
   scene: string;
+  toggle: any
+  playing: any
 };
 // temporary commented
 // const rawBuyTickets = async (qty: number) => {
@@ -44,34 +47,36 @@ type Props = {
 //   data: any;
 //   dragging: boolean;
 // }
-const BASE_URL = "https://cdn.jurassicegg.co";
-const useAudio = (url: string) => {
-  const [audio] = useState(new Audio(url));
-  const [playing, setPlaying] = useState(false);
+// const BASE_URL = "https://cdn.jurassicegg.co";
+// const useAudio = (url: string) => {
+//   const [audio] = useState(new Audio(url));
+//   const [playing, setPlaying] = useState(false);
 
-  const toggle = () => setPlaying(!playing);
+//   const toggle = () => setPlaying(!playing);
 
-  useEffect(() => {
-    playing ? audio.play() : audio.pause();
-  },
-    [playing]
-  );
+//   useEffect(() => {
+//     playing ? audio.play() : audio.pause();
+//   },
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
+//     [playing]
+//   );
 
-  useEffect(() => {
-    audio.addEventListener('ended', () => setPlaying(false));
-    return () => {
-      audio.removeEventListener('ended', () => setPlaying(false));
-    };
-  }, []);
+//   useEffect(() => {
+//     audio.addEventListener('ended', () => setPlaying(false));
+//     return () => {
+//       audio.removeEventListener('ended', () => setPlaying(false));
+//     };
+//   // eslint-disable-next-line react-hooks/exhaustive-deps
+//   }, []);
 
-  return [playing, toggle];
-};
+//   return [playing, toggle];
+// };
 
-const Home = ({ onProfileClick, scene }: Props) => {
+const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
   const app = useApp();
   // const pathRef = useRef(null);
   // const eggRef = useRef(null);
-  const [playing, toggle] = useAudio(`${BASE_URL}/music/music.mpeg`);
+  // const [playing, toggle] = useAudio(`${BASE_URL}/music/music.mpeg`);
   const setEggPendingListData = useStore(
     (state) => state.setEggPendingListData
   );
@@ -106,7 +111,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const [buyTicketPanelVisible, setBuyTicketPanelVisible] = useState(false);
-  const [toggleBtnAudio, setToggleBtnAudio] = useState(false);
+  const [toggleBtnAudio, setToggleBtnAudio] = useState(playing);
 
   const [currentTime, setCurrentTime] = useState(new Date().getTime());
   console.log(
@@ -116,11 +121,12 @@ const Home = ({ onProfileClick, scene }: Props) => {
   );
 
   useEffect(() => {
-    console.log('music playing', playing)
+    // console.log('music playing', playing)
     // if (playing) {
     // @ts-ignore
     toggle()
     // }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toggleBtnAudio])
 
   // const onDragStart = useCallback((event: any) => {
