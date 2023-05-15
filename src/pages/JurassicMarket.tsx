@@ -491,7 +491,7 @@ function JurassicMarket({
               <>
                 {Math.floor(currentTime / 1000) <= 1684152000 &&
                   <div className="flex h-full justify-center items-center">
-                    <p className="font-Magra text-white text-lg">Market start at 05/15 12:00 UTC</p>
+                    <p className="font-Magra text-white text-lg">Market start at 05/15 15:00 UTC</p>
                   </div>
                 }
                 <div className="flex w-full justify-start font-Magra font-bold text-white">
@@ -663,7 +663,7 @@ function JurassicMarket({
                 </div>
                 {Math.floor(currentTime / 1000) <= 1684152000 &&
                   <div className="flex h-full justify-center items-center">
-                    <p className="font-Magra text-white text-lg">Market start at 05/15 12:00 UTC</p>
+                    <p className="font-Magra text-white text-lg">Market start at 05/15 15:00 UTC</p>
                   </div>
                 }
                 {currentPosts?.length > 0 &&
