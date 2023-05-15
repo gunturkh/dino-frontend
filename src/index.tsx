@@ -5,7 +5,7 @@ import reportWebVitals from "./reportWebVitals";
 import {
   DAppProvider,
   BSC,
-  BSCTestnet,
+  // BSCTestnet,
   Config,
   MetamaskConnector,
 } from "@usedapp/core";
@@ -18,11 +18,12 @@ const root = ReactDOM.createRoot(
 );
 
 const config: Config = {
-  readOnlyChainId: BSCTestnet.chainId,
+  // readOnlyChainId: BSCTestnet.chainId,
+  readOnlyChainId: BSC.chainId,
   readOnlyUrls: {
     [BSC.chainId]: "https://bsc-dataseed.binance.org",
     // [BSCTestnet.chainId]: "https://data-seed-prebsc-1-s1.binance.org:8545/",
-    [BSCTestnet.chainId]: "https://data-seed-prebsc-2-s1.binance.org:8545",
+    // [BSCTestnet.chainId]: "https://data-seed-prebsc-2-s1.binance.org:8545",
   },
   multicallVersion: 1,
   connectors: {
