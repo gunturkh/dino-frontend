@@ -32,6 +32,7 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
   const [isRarityPanelVisible, setIsRarityPanelVisible] = useState(false);
 
   const [countdownTime, setCountdownTime] = useState({
+    countdownDays: 0,
     countdownHours: 0,
     countdownMinutes: 0,
     countdownSeconds: 0,
@@ -94,14 +95,16 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
   useEffect(() => {
     let timeInterval: any;
     // const countdown = () => {
+    console.log('currentTime jpass', currentTime)
     if (userData?.ability_end > 0 && currentTime) {
       // timeInterval = setInterval(() => {
       const countdownDateTime = userData?.ability_end * 1000;
       // const currentTime = new Date().getTime();
       const remainingDayTime = countdownDateTime - currentTime;
       // console.log(`countdownDateTime ${index}`, countdownDateTime);
-      // console.log(`currentTime ${index}`, currentTime);
-      // console.log(`remainingDayTime ${index}`, remainingDayTime);
+      console.log(`currentTime `, currentTime);
+      console.log(`remainingDayTime `, remainingDayTime);
+      const totalDays = Math.floor(remainingDayTime / (1000 * 60 * 60 * 24));
       const totalHours = Math.floor(
         (remainingDayTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
       );
@@ -111,8 +114,10 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
       const totalSeconds = Math.floor(
         (remainingDayTime % (1000 * 60)) / 1000
       );
+      console.log('totalDays', totalDays)
 
       const runningCountdownTime = {
+        countdownDays: totalDays,
         countdownHours: totalHours,
         countdownMinutes: totalMinutes,
         countdownSeconds: totalSeconds,
@@ -246,9 +251,12 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
             // }
             >
               <Text
-                text={`${countdownTime.countdownHours.toString().length === 1
-                  ? `0${countdownTime.countdownHours}`
-                  : countdownTime.countdownHours
+                text={`${countdownTime.countdownDays.toString().length === 1
+                  ? `0${countdownTime.countdownDays}`
+                  : countdownTime.countdownDays
+                  }:${countdownTime.countdownHours.toString().length === 1
+                    ? `0${countdownTime.countdownHours}`
+                    : countdownTime.countdownHours
                   }:${countdownTime.countdownMinutes.toString().length === 1
                     ? `0${countdownTime.countdownMinutes}`
                     : countdownTime.countdownMinutes
