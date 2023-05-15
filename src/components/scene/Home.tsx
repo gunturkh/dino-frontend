@@ -693,8 +693,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
       });
       console.log("getEggList Result:", data);
       if (data?.status === 200 && data?.data?.result?.lists) {
-        // setEggListsData(data?.data?.result);
-        setEggListsData({remaining: 0, lists: []});
+        setEggListsData(data?.data?.result);
+        // setEggListsData({remaining: 0, lists: []});
       }
     };
 
@@ -957,9 +957,9 @@ const Home = ({ onProfileClick, scene }: Props) => {
                   textXOffest={10}
                   onPress={async () => {
                     console.log("onPress USDTDetails");
-                    setTicketCnt(1);
+                    // setTicketCnt(1);
                     // setGatchaAnimationStatus({ show: true, ticket: 1 });
-                    setGatchaAnimationStatus(true);
+                    // setGatchaAnimationStatus(true);
                   }}
                 />
                 <DetailsComponent

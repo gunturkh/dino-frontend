@@ -938,7 +938,7 @@ export const manifest: ResolverManifest = {
         },
         {
           name: "JPassCardBg",
-          srcs: "image/imgJPassCardBg.png",
+          srcs: "image/ImgJPassCardBg.png",
         },
         {
           name: "JPassItemBg",
@@ -950,15 +950,15 @@ export const manifest: ResolverManifest = {
         },
         {
           name: "JPassCardItem1",
-          srcs: "image/imgJPassCardItem1.png",
+          srcs: "image/imgJpassCardItem1.png",
         },
         {
           name: "JPassCardItem2",
-          srcs: "image/imgJPassCardItem2.png",
+          srcs: "image/imgJpassCardItem2.png",
         },
         {
           name: "JPassCardItem3",
-          srcs: "image/imgJPassCardItem3.png",
+          srcs: "image/imgJpassCardItem3.png",
         },
         {
           name: "JpassPageBg",

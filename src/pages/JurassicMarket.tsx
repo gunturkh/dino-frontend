@@ -137,9 +137,9 @@ function JurassicMarket({
     });
     console.log("getEggList Result:", data);
     if (data?.status === 200 && data?.data?.result?.lists) {
-      // setEggListsData(data?.data?.result);
+      setEggListsData(data?.data?.result);
 
-      setEggListsData({ remaining: 0, lists: [] });
+      // setEggListsData({ remaining: 0, lists: [] });
     }
   };
 

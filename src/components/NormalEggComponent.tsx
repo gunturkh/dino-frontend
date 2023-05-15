@@ -72,14 +72,14 @@ const NormalEggComponent = ({
 
 
     const formatText = ({ expired, posted }: { expired: number, posted: number }) => {
-        const haveJPass = currentTime >= userData?.ability_end
+        const haveJPass = Math.floor(currentTime / 1000) <= userData?.ability_end
         console.log('haveJPass', haveJPass)
         console.log('currentTime', currentTime)
         if (haveJPass) {
             if (expired === 0 && data?.openat === 0) {
                 return 'Waiting'
             }
-            if (expired === 0 && data?.openat !== 0 && Math.floor(currentTime /1000) >= data?.openat) {
+            if (expired === 0 && data?.openat !== 0 && Math.floor(currentTime / 1000) >= data?.openat) {
                 return "Gatcha"
             }
             else
