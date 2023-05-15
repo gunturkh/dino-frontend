@@ -19,7 +19,7 @@ export function Buddies() {
         <td>{data.username}</td>
         <td>{data.sponsor}</td>
         <td className="text-center">{data.level}</td>
-        <td>$ {parseFloat(formatUnits(data.bought)).toFixed(2)}</td>
+        <td>$ {parseFloat(formatUnits(data.bought)).toFixed(0)}</td>
       </tr>
     );
   };
