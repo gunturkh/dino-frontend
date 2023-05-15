@@ -111,7 +111,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const [buyTicketPanelVisible, setBuyTicketPanelVisible] = useState(false);
-  const [toggleBtnAudio, setToggleBtnAudio] = useState(playing);
+  const [toggleBtnAudio, setToggleBtnAudio] = useState(playing ? playing : false);
 
   const [currentTime, setCurrentTime] = useState(new Date().getTime());
   console.log(
@@ -120,14 +120,14 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
     Math.floor(currentTime / 1000) % 8
   );
 
-  useEffect(() => {
-    // console.log('music playing', playing)
-    // if (playing) {
-    // @ts-ignore
-    toggle()
-    // }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [toggleBtnAudio])
+  // useEffect(() => {
+  //   // console.log('music playing', playing)
+  //   // if (playing) {
+  //   // @ts-ignore
+  //   toggle()
+  //   // }
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [toggleBtnAudio])
 
   // const onDragStart = useCallback((event: any) => {
   //   // console.log('eggRef', eggRef)
@@ -953,6 +953,8 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                   eventMode={"static"}
                   onpointertap={() => {
                     // set toggle audio
+                    // @ts-ignore
+                    toggle()
                     setToggleBtnAudio(!toggleBtnAudio);
                   }}
                 />
