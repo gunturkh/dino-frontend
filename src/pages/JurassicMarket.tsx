@@ -489,7 +489,7 @@ function JurassicMarket({
             )}
             {selectedPanel === "My Listing" && (
               <>
-                {Math.floor(currentTime / 1000) <= 1684152000 &&
+                {Math.floor(currentTime / 1000) <= 1684162800 &&
                   <div className="flex h-full justify-center items-center">
                     <p className="font-Magra text-white text-lg">Market start at 05/15 15:00 UTC</p>
                   </div>
@@ -661,7 +661,7 @@ function JurassicMarket({
                     );
                   })}
                 </div>
-                {Math.floor(currentTime / 1000) <= 1684152000 &&
+                {Math.floor(currentTime / 1000) <= 1684162800 &&
                   <div className="flex h-full justify-center items-center">
                     <p className="font-Magra text-white text-lg">Market start at 05/15 15:00 UTC</p>
                   </div>
