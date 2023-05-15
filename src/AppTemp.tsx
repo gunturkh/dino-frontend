@@ -56,7 +56,7 @@ import JurassicMarket from "./pages/JurassicMarket";
 import { Buddies } from "./pages/Buddies";
 import { History } from "./pages/History";
 import { Bulletin } from "./pages/Bulletin";
-// import useAudio from "./utils/hooks/useAudio";
+import useAudio from "./utils/hooks/useAudio";
 // import { BigNumber, BigNumberish, Contract, utils } from "ethers";
 // import { Interface } from "ethers/lib/utils";
 
@@ -94,7 +94,7 @@ declare global {
 
 // const USDT_ADDR = "0x0ed04d340a054382383ee2edff0ced66ead7496c";
 const price = 0.25;
-// const BASE_URL = "https://cdn.jurassicegg.co";
+const BASE_URL = "https://cdn.jurassicegg.co";
 export const AppTemp = () => {
   const {
     account,
@@ -1351,8 +1351,7 @@ export const AppTemp = () => {
   // }
 
   const [toggleBtnAudio, setToggleBtnAudio] = useState(false);
-  // const [playing, toggle] = useAudio(`${BASE_URL}/music/music.mpeg`);
-  const [playing, toggle] = useState(false)
+  const [playing, toggle] = useAudio(`${BASE_URL}/music/music.mpeg`);
 
   // useEffect(() => {
   //   // @ts-ignore
