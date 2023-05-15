@@ -334,7 +334,7 @@ function JurassicMarket({
   return (
     <div className="absolute w-full h-full flex justify-center items-center">
       <div className="flex z-20 h-[100vh] w-[450px] max-[450px]:w-[calc(100vw)] max-w-[450px] justify-center items-center flex-col sm:px-4 shadow-sm rounded-sm ">
-        <div className="flex flex-row w-full justify-between mt-4 mb-1">
+        <div className="flex flex-row w-full justify-between mt-4 mb-1 h-[150px]" style={{ zIndex: 99999 }}>
           <img
             src="image/backBtn.png"
             width={40}
