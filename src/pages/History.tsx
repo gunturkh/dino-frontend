@@ -37,9 +37,9 @@ export function History() {
     return (
       <tr className="table-row">
         <td>{formattedTime}</td>
-        <td className="text-green-400">{shortenString(data?.txhash)}</td>
+        <td className="text-green-400 p-2">{shortenString(data?.txhash)}</td>
         <td>$ {parseFloat(formatUnits(data.total)).toFixed(2)}</td>
-        <td className={`${data.type === 'BUY' ? 'text-green-400' : 'text-red-500'}`}>{data.type}</td>
+        <td className={`${data.type === 'BUY' ? 'text-green-400' : 'text-red-500'} text-right`}>{data.type}</td>
       </tr>
     );
   };
@@ -64,8 +64,8 @@ export function History() {
     return (
       <tr className="table-row">
         <td>{formattedTime}</td>
-        <td className="text-green-400">{shortenString(data?.address)}</td>
-        <td>$ {parseFloat(formatUnits(data.total)).toFixed(2)}</td>
+        <td className="text-green-400 p-2">{shortenString(data?.address)}</td>
+        <td className="text-right">$ {parseFloat(formatUnits(data.total)).toFixed(2)}</td>
       </tr>
     );
   };
@@ -97,9 +97,9 @@ export function History() {
           <thead className="text-xs text-white uppercase border-y ">
             <tr>
               <th className="w-[5rem] py-3">Date</th>
-              <th className="w-[5rem] py-3">TxHash</th>
+              <th className="w-[5rem] py-3 px-2">TxHash</th>
               <th className="w-[7rem] py-3">Amt</th>
-              <th className="w-[8rem] py-3">Description</th>
+              <th className="w-[8rem] py-3 text-right">Description</th>
             </tr>
           </thead>
           <tbody>
@@ -141,8 +141,8 @@ export function History() {
           <thead className="text-xs text-white uppercase border-y ">
             <tr>
               <th className="w-[20rem] py-3">Date</th>
-              <th className="w-[20rem] py-3">Address</th>
-              <th className="w-[10rem] py-3">Amt</th>
+              <th className="w-[20rem] py-3 px-2">Address</th>
+              <th className="w-[10rem] py-3 text-right">Amt</th>
             </tr>
           </thead>
           <tbody>

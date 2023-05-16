@@ -1065,7 +1065,7 @@ export const AppTemp = () => {
       captcha: captcha,
     };
     const result = await axiosInstance({
-      url: "/user/authentication",
+      url: "/user/authentication2",
       method: "POST",
       data: loginRequestData,
     });
