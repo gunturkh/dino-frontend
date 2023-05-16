@@ -621,7 +621,7 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
               <Container
                 position={[0, isNotMobile ? 295 : 240]}
                 ref={upperComponentRef}
-                scale={[1, 1.3]}
+                scale={[1, 1.5]}
               >
                 {menuItem.map((item, i) => (
                   <Container

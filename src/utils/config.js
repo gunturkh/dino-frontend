@@ -273,7 +273,7 @@ export const RPC_ENDPOINT = "https://data-seed-prebsc-1-s1.binance.org:8545/";
 // export const API_ENDPOINT = "https://beta-api.jurassicegg.co";
 export const API_ENDPOINT = "https://api.jurassicegg.co";
 // trunk-ignore(gitleaks/generic-api-key)
-export const CAPTCHA_KEY = "6Lc4jaMlAAAAAGRgfjJ88dQUZ4WT3GA4xQZRobJN";
+export const CAPTCHA_KEY = "459ae6fa-a040-4481-8f71-98a6603d8a3a";
 
 // DEV
 // export const USDT_ADDR = "0x0Ed04d340a054382383eE2eDFf0cEd66eAd7496C";

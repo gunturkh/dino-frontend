@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@hcaptcha/react-hcaptcha": "^1.8.1",
     "@material-tailwind/react": "^1.4.2",
     "@pixi/react": "^7.0.3",
     "@pixi/sound": "^5.1.1",
