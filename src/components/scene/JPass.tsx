@@ -269,7 +269,7 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
                 style={
                   new PIXI.TextStyle({
                     fontFamily: "Magra Bold",
-                    fontSize: isNotMobile ? 24 : 18,
+                    fontSize: isNotMobile ? 30 : 22,
                     fontWeight: "600",
                     strokeThickness: 1,
                     fill: ["yellow"],
