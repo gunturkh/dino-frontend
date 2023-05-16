@@ -42,7 +42,8 @@ import {
   COUNTRIES,
 } from "./utils/config";
 import { Contract } from "ethers";
-import ReCAPTCHA from "react-google-recaptcha";
+// import ReCAPTCHA from "react-google-recaptcha";
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
@@ -1075,7 +1076,7 @@ export const AppTemp = () => {
       if (loginRechaptchaRef?.current) {
         // console.log('loginRechaptchaRef?.current', loginRechaptchaRef?.current)
         // @ts-ignore
-        loginRechaptchaRef?.current?.reset();
+        loginRechaptchaRef?.current?.resetCaptcha();
       }
     }
     if (data && data.result) {
@@ -1084,7 +1085,7 @@ export const AppTemp = () => {
       if (loginRechaptchaRef?.current) {
         // console.log('loginRechaptchaRef?.current', loginRechaptchaRef?.current)
         // @ts-ignore
-        loginRechaptchaRef?.current?.reset();
+        loginRechaptchaRef?.current?.resetCaptcha();
       }
       setAuthMode("LOGINWALLET");
     }
@@ -1117,7 +1118,7 @@ export const AppTemp = () => {
       if (registerRechaptchaRef?.current) {
         // console.log('registerRechaptchaRef?.current', registerRechaptchaRef?.current)
         // @ts-ignore
-        registerRechaptchaRef?.current?.reset();
+        registerRechaptchaRef?.current?.resetCaptcha();
       }
     }
     if (!data.success) {
@@ -1126,7 +1127,7 @@ export const AppTemp = () => {
       if (registerRechaptchaRef?.current) {
         // console.log('registerRechaptchaRef?.current', registerRechaptchaRef?.current)
         // @ts-ignore
-        registerRechaptchaRef?.current?.reset();
+        registerRechaptchaRef?.current?.resetCaptcha();
       }
     }
   };
@@ -1505,10 +1506,10 @@ export const AppTemp = () => {
                       </div>
                     </div>
                   </form>
-                  <ReCAPTCHA
+                  <HCaptcha
                     ref={loginRechaptchaRef}
                     sitekey={CAPTCHA_KEY}
-                    onChange={(e: any) => verifiedCallback(e as string)}
+                    onVerify={(e: any) => verifiedCallback(e as string)}
                   />
                   <input
                     alt="btnLogin"
@@ -1793,10 +1794,10 @@ export const AppTemp = () => {
                       </button>
                     </div>
                   </form>
-                  <ReCAPTCHA
+                  <HCaptcha
                     ref={registerRechaptchaRef}
                     sitekey={CAPTCHA_KEY}
-                    onChange={(e: any) => verifiedRegisterCallback(e as string)}
+                    onVerify={(e: any) => verifiedRegisterCallback(e as string)}
                   />
                   <input
                     alt="Register Submit"
@@ -1870,10 +1871,10 @@ export const AppTemp = () => {
                       </p>
                     </div>
                   </form>
-                  <ReCAPTCHA
+                  <HCaptcha
                     ref={forgotPasswordRechaptchaRef}
                     sitekey={CAPTCHA_KEY}
-                    onChange={(e: any) =>
+                    onVerify={(e: any) =>
                       verifiedForgotPasswordCallback(e as string)
                     }
                   />
