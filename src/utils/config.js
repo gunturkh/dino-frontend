@@ -275,6 +275,10 @@ export const API_ENDPOINT = "https://api.jurassicegg.co";
 // trunk-ignore(gitleaks/generic-api-key)
 export const CAPTCHA_KEY = "459ae6fa-a040-4481-8f71-98a6603d8a3a";
 
+// recaptcha sitekey for local
+// trunk-ignore(gitleaks/generic-api-key)
+// export const CAPTCHA_KEY = "6Lc4jaMlAAAAAGRgfjJ88dQUZ4WT3GA4xQZRobJN";
+
 // DEV
 // export const USDT_ADDR = "0x0Ed04d340a054382383eE2eDFf0cEd66eAd7496C";
 // export const PAYGATEWAY_ADDR = "0x1D243840cf4998f16B39176D74B93f41e3b87acE";

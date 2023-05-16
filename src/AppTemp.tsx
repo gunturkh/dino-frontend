@@ -183,6 +183,8 @@ export const AppTemp = () => {
   const [ticketHistories, setTicketHistories] = useState([]);
   const [ticketState, setTicketState] = useState('');
   const [jPassState, setJPassState] = useState('');
+  const [withdrawAmount, setWithdrawAmount] = useState(0);
+  const [withdrawAddress, setWithdrawAddress] = useState('');
   // const [googleAuthPanel, setGoogleAuthPanel] = useState(false);
   const [googleAuthData, setGoogleAuthData] = useState<{
     qr: string;
@@ -2492,8 +2494,8 @@ export const AppTemp = () => {
                         style={{
                           background: `url(image/InputBox.png) no-repeat `,
                         }}
-                        onChange={changeQuantity}
-                        value={qty}
+                        onChange={(e: any) => setWithdrawAmount(e.target.value)}
+                        value={withdrawAmount}
                       />
                       <p className="text-white font-Magra my-3">Address</p>
                       <input
@@ -2503,43 +2505,31 @@ export const AppTemp = () => {
                         style={{
                           background: `url(image/InputBox.png) no-repeat `,
                         }}
-                        readOnly
+                        // readOnly
                         // onChange={loginForm.handleChange}
                         // onBlur={loginForm.handleBlur}
-                        value={usd}
+                        onChange={(e: any) => setWithdrawAddress(e.target.value)}
+                        value={withdrawAddress}
                       />
                       <p className="text-white font-Magra my-3">F2A Code</p>
                       <input
-                        name="F2A-code"
+                        name="2FA"
                         type="text"
                         className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
                         style={{
                           background: `url(image/InputBox.png) no-repeat `,
                         }}
-                        readOnly
+                        // readOnly
                         // onChange={loginForm.handleChange}
                         // onBlur={loginForm.handleBlur}
-                        value={usd}
+                        onChange={(e: any) => setGAValue(e.target.value)}
+                        value={GAValue}
                       />
 
-                      {!userData?.ga_key && buyWithBonus && (
+                      {!userData?.ga_key && (
                         <p className="font-Magra text-md text-red-500 ml-3">
                           Please configure 2FA on Setting
                         </p>
-                      )}
-
-                      {buyWithBonus && (
-                        <input
-                          name="2FA"
-                          type="number"
-                          placeholder="2FA"
-                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                          style={{
-                            background: `url(image/InputBox.png) no-repeat `,
-                          }}
-                          onChange={(e: any) => setGAValue(e.target.value)}
-                          value={GAValue}
-                        />
                       )}
                     </div>
                   </form>
@@ -2547,90 +2537,36 @@ export const AppTemp = () => {
                     type={"submit"}
                     // disabled={}
                     onClick={async () => {
-                      console.log("usd amount approval", usd);
-                      if (buyWithBonus) {
-                        console.log("Buy with bonus clicked", {
-                          qty: parseInt(qty as string),
+                      console.log("withdraw amount approval", withdrawAmount);
+                      let options = {
+                        headers: {
+                          "my-auth-key": token,
+                        },
+                      };
+                      const response = await axiosInstance({
+                        url: "/bonus/withdraw",
+                        method: "POST",
+                        headers: options.headers,
+                        data: {
+                          amount: withdrawAmount,
+                          to: withdrawAddress,
                           facode: GAValue.toString(),
-                        });
-                        let options = {
-                          headers: {
-                            "my-auth-key": token,
-                          },
-                        };
-                        const response = await axiosInstance({
-                          url: "/ticket/buyWithBonuses",
-                          method: "POST",
-                          headers: options.headers,
-                          data: {
-                            qty: parseInt(qty as string),
-                            facode: GAValue.toString(),
-                          },
-                        });
-                        if (response.data.success) {
-                          toast("Buy Ticket Confirmed");
-                          getUserData();
-                        } else alert(response.data.message);
-                      } else if (!buyWithBonus) {
-                        if (
-                          ticketAllowance &&
-                          ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                        ) {
-                          // const txReq = { value: BigInt(usd * 1e18) }
-                          const txSend = await send(
-                            TICKET_ADDR,
-                            BigInt(usd * 1e18)
-                          );
-                          console.log("txSend ticketApproval", txSend);
-                        } else {
-                          let options = {
-                            headers: {
-                              "my-auth-key": token,
-                            },
-                          };
-                          const response = await axiosInstance({
-                            url: "/ticket/createRawBuyTickets",
-                            method: "POST",
-                            headers: options.headers,
-                            data: {
-                              qty: qty,
-                            },
-                          });
-                          console.log(response.data);
-                          if (response.data.success) {
-                            const txReq = {
-                              data: response.data.result,
-                              to: TICKET_ADDR,
-                              from: walletAddress,
-                            };
-                            const txSend = await sendTicketBuy(txReq);
-                            console.log("txSend buy ticket", txSend);
-                            if (txSend && txSend.transactionHash)
-                              checkValidateTx(txSend.transactionHash);
-                          }
-                        }
-                      }
+                        },
+                      });
+                      if (response.data.success) {
+                        toast("Withdraw Confirmed");
+                        getUserData();
+                        setWithdrawPanel({ show: false, mode: 'WITHDRAW' })
+                      } else alert(response.data.message);
+
                     }}
-                    className={`${buyWithBonus
+                    className={`${userData?.ga_key
                       ? "bg-green-500"
-                      : ticketAllowance &&
-                        ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                        ? "bg-red-500"
-                        : "bg-green-500"
+                      : "bg-red-500"
                       } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
-                    disabled={
-                      (buyWithBonus &&
-                        GAValue.length < 6 &&
-                        !userData?.ga_key) ||
-                      sendTicketBuyState.status !== "None"
-                    }
+                    disabled={(!userData?.ga_key)}
                   >
-                    {buyWithBonus
-                      ? "Buy with Bonus"
-                      : ticketAllowance &&
-                        ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                        ? "Approval"
-                        : "Transfer"}
+                    Withdraw
                   </button>
                   {/* {sendTicketBuyState.status !== "None" && (
                     <p className="text-white/50 font-Magra">
