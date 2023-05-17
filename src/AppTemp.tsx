@@ -2497,6 +2497,7 @@ export const AppTemp = () => {
                         onChange={(e: any) => setWithdrawAmount(e.target.value)}
                         value={withdrawAmount}
                       />
+                      <p className="text-green-400 font-Magra my-3">You will receive $ {withdrawAmount > 0 ? (withdrawAmount - (withdrawAmount * (5 / 100))) : 0}</p>
                       <p className="text-white font-Magra my-3">Address</p>
                       <input
                         name="Address"
