@@ -343,7 +343,7 @@ function JurassicMarket({
             onClick={() => changeScene("HOME")}
           />
           <div className="flex flex-col items-center justify-center text-[1.5rem] text-white font-bold font-magra ">
-            Jurrasic Market
+            Jurassic Market
           </div>
           <div className="w-10 h-10"></div>
           {/* <img
