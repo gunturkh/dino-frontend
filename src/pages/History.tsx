@@ -19,27 +19,40 @@ export function History() {
   const ShowData = (props: any) => {
     const { data } = props;
     var date = new Date(data.created * 1000);
+    // show date in UTC
 
     // Will display time in 10:30:23 format
     var formattedTime =
-      date.getDate() +
+      date.getUTCDate() +
       "/" +
-      (date.getMonth() + 1) +
+      (date.getUTCMonth() + 1) +
       "/" +
-      date.getFullYear() +
+      date.getUTCFullYear() +
       " " +
-      date.getHours() +
+      (date.getUTCHours().toString().length === 1
+        ? `0${date.getUTCHours()}`
+        : date.getUTCHours()) +
       ":" +
-      date.getMinutes() +
+      (date.getUTCMinutes().toString().length === 1
+        ? `0${date.getUTCMinutes()}`
+        : date.getUTCMinutes()) +
       ":" +
-      date.getSeconds();
+      (date.getUTCSeconds().toString().length === 1
+        ? `0${date.getUTCSeconds()}`
+        : date.getUTCSeconds());
 
     return (
       <tr className="table-row">
         <td>{formattedTime}</td>
         <td className="text-green-400 p-2">{shortenString(data?.txhash)}</td>
         <td>$ {parseFloat(formatUnits(data.total)).toFixed(2)}</td>
-        <td className={`${data.type === 'BUY' ? 'text-green-400' : 'text-red-500'} text-right`}>{data.type}</td>
+        <td
+          className={`${
+            data.type === "BUY" ? "text-green-400" : "text-red-500"
+          } text-right`}
+        >
+          {data.type}
+        </td>
       </tr>
     );
   };
@@ -48,6 +61,7 @@ export function History() {
     var date = new Date(data.created * 1000);
 
     // Will display time in 10:30:23 format
+    // TODO: change with function from utils later
     var formattedTime =
       date.getDate() +
       "/" +
@@ -65,7 +79,9 @@ export function History() {
       <tr className="table-row">
         <td>{formattedTime}</td>
         <td className="text-green-400 p-2">{shortenString(data?.address)}</td>
-        <td className="text-right">$ {parseFloat(formatUnits(data.total)).toFixed(2)}</td>
+        <td className="text-right">
+          $ {parseFloat(formatUnits(data.total)).toFixed(2)}
+        </td>
       </tr>
     );
   };
@@ -105,8 +121,8 @@ export function History() {
           <tbody>
             {datas?.data?.length > 0
               ? datas?.data?.map((elm: any, idx: number) => (
-                <ShowData key={idx} data={elm} />
-              ))
+                  <ShowData key={idx} data={elm} />
+                ))
               : null}
           </tbody>
         </table>
@@ -148,8 +164,8 @@ export function History() {
           <tbody>
             {rewardDatas?.data?.length > 0
               ? rewardDatas?.data?.map((elm: any, idx: number) => (
-                <ShowRewardsData key={idx} data={elm} />
-              ))
+                  <ShowRewardsData key={idx} data={elm} />
+                ))
               : null}
           </tbody>
         </table>
@@ -185,10 +201,11 @@ export function History() {
       pctn.push(
         <li
           key={i}
-          className={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer ${classs === "active"
-            ? "bg-yellow-700 text-white"
-            : "bg-white text-black"
-            }`}
+          className={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer ${
+            classs === "active"
+              ? "bg-yellow-700 text-white"
+              : "bg-white text-black"
+          }`}
           onClick={() => loadDownlineWithPage(i)}
         >
           {i}
@@ -227,10 +244,11 @@ export function History() {
       pctn.push(
         <li
           key={i}
-          className={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer ${classs === "active"
-            ? "bg-yellow-700 text-white"
-            : "bg-white text-black"
-            }`}
+          className={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer ${
+            classs === "active"
+              ? "bg-yellow-700 text-white"
+              : "bg-white text-black"
+          }`}
           onClick={() => loadDownlineWithPage(i)}
         >
           {i}
@@ -270,16 +288,18 @@ export function History() {
             <button
               type="button"
               onClick={() => setSelectedPage("Transactions")}
-              className={`${selectedPage === "Transactions" ? "text-blue-500" : "text-white"
-                } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+              className={`${
+                selectedPage === "Transactions" ? "text-blue-500" : "text-white"
+              } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
             >
               Transactions
             </button>
             <button
               type="button"
               onClick={() => setSelectedPage("Rewards")}
-              className={`${selectedPage === "Rewards" ? "text-blue-500" : "text-white"
-                } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+              className={`${
+                selectedPage === "Rewards" ? "text-blue-500" : "text-white"
+              } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
             >
               Rewards
             </button>

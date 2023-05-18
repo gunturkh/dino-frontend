@@ -21,6 +21,7 @@ export function Bulletin() {
     var date = new Date(1683692254 * 1000);
 
     // Will display time in 10:30:23 format
+    // TODO: change with function from utils later
     var formattedTime =
       date.getDate() +
       "/" +
@@ -38,7 +39,12 @@ export function Bulletin() {
       <tr className="table-row">
         <td>{formattedTime}</td>
         {/* <td>$ {parseFloat(formatUnits(data.bought)).toFixed(2)}</td> */}
-        <td><div><h1 className="text-[#FFC700]">{data?.title}</h1><div dangerouslySetInnerHTML={{ __html: data?.content }}></div></div></td>
+        <td>
+          <div>
+            <h1 className="text-[#FFC700]">{data?.title}</h1>
+            <div dangerouslySetInnerHTML={{ __html: data?.content }}></div>
+          </div>
+        </td>
       </tr>
     );
   };
@@ -80,8 +86,8 @@ export function Bulletin() {
           <tbody>
             {datas?.length > 0
               ? datas?.map((elm: any, idx: number) => (
-                <ShowData key={elm.idx} data={elm} />
-              ))
+                  <ShowData key={elm.idx} data={elm} />
+                ))
               : null}
           </tbody>
         </table>
@@ -117,10 +123,11 @@ export function Bulletin() {
       pctn.push(
         <li
           key={i}
-          className={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer ${classs === "active"
-            ? "bg-yellow-700 text-white"
-            : "bg-white text-black"
-            }`}
+          className={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer ${
+            classs === "active"
+              ? "bg-yellow-700 text-white"
+              : "bg-white text-black"
+          }`}
           onClick={() => loadBulletinWithPage(i)}
         >
           {i}
@@ -132,7 +139,7 @@ export function Bulletin() {
   };
 
   const BulletinCallback = useCallback(Bulletin, [datas, token]);
-  console.log('datas', datas)
+  console.log("datas", datas);
 
   return (
     <div className="absolute w-full h-full flex justify-center items-center">
