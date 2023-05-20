@@ -58,6 +58,7 @@ import { Buddies } from "./pages/Buddies";
 import { History } from "./pages/History";
 import { Bulletin } from "./pages/Bulletin";
 import useAudio from "./utils/hooks/useAudio";
+import { formatToUTC } from "./utils/functions";
 // import { BigNumber, BigNumberish, Contract, utils } from "ethers";
 // import { Interface } from "ethers/lib/utils";
 
@@ -1212,8 +1213,7 @@ export const AppTemp = () => {
     return (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className={`${
-          id === open ? "rotate-180" : ""
+        className={`${id === open ? "rotate-180" : ""
         } h-5 w-5 transition-transform`}
         fill="none"
         viewBox="0 0 24 24"
@@ -1521,8 +1521,7 @@ export const AppTemp = () => {
                     type={"image"}
                     src={"image/BtnConfirm.png"}
                     onClick={loginForm.submitForm}
-                    className={`${
-                      captcha?.length === 0 ? "opacity-50" : ""
+                    className={`${captcha?.length === 0 ? "opacity-50" : ""
                     } mt-12 px-3.5 py-2.5 text-sm`}
                     disabled={captcha?.length === 0}
                   />
@@ -1731,8 +1730,7 @@ export const AppTemp = () => {
                     src={"image/BtnConfirmRegister.png"}
                     disabled={!registerCheckbox}
                     onClick={registerForm.submitForm}
-                    className={`${
-                      !registerCheckbox ? "opacity-50" : ""
+                    className={`${!registerCheckbox ? "opacity-50" : ""
                     } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
@@ -1812,8 +1810,7 @@ export const AppTemp = () => {
                     src={"image/BtnSubmit.png"}
                     onClick={registerHandler}
                     disabled={registerCaptcha?.length === 0}
-                    className={`${
-                      registerCaptcha?.length === 0 ? "opacity-50" : ""
+                    className={`${registerCaptcha?.length === 0 ? "opacity-50" : ""
                     } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
@@ -1849,8 +1846,7 @@ export const AppTemp = () => {
                     type={"image"}
                     src={"image/BtnSubmit.png"}
                     onClick={loginWalletForm.submitForm}
-                    className={`${
-                      loginWalletForm.values.walletAddress.length === 0
+                    className={`${loginWalletForm.values.walletAddress.length === 0
                         ? "opacity-50"
                         : ""
                     } mt-12 px-3.5 py-2.5 text-sm`}
@@ -1893,8 +1889,7 @@ export const AppTemp = () => {
                     src={"image/BtnSubmit.png"}
                     onClick={forgotPasswordForm.submitForm}
                     disabled={forgotPasswordCaptcha?.length === 0}
-                    className={`${
-                      forgotPasswordCaptcha?.length === 0 ? "opacity-50" : ""
+                    className={`${forgotPasswordCaptcha?.length === 0 ? "opacity-50" : ""
                     } mt-12 px-3.5 py-2.5 text-sm`}
                   />
                 </>
@@ -2080,8 +2075,7 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "BUY" })
                   }
-                  className={`${
-                    ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
+                  className={`${ticketPanel.mode === "BUY" ? "text-blue-500" : "text-white"
                   } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                 >
                   Buy
@@ -2092,8 +2086,7 @@ export const AppTemp = () => {
                     onClick={() =>
                       setTicketPanel({ ...ticketPanel, mode: "TRANSFER" })
                     }
-                    className={`${
-                      ticketPanel.mode === "TRANSFER"
+                    className={`${ticketPanel.mode === "TRANSFER"
                         ? "text-blue-500"
                         : "text-white"
                     } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
@@ -2106,8 +2099,7 @@ export const AppTemp = () => {
                   onClick={() =>
                     setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
                   }
-                  className={`${
-                    ticketPanel.mode === "HISTORY"
+                  className={`${ticketPanel.mode === "HISTORY"
                       ? "text-blue-500"
                       : "text-white"
                   } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
@@ -2262,8 +2254,7 @@ export const AppTemp = () => {
                           }
                         }
                       }}
-                      className={`${
-                        buyWithBonus
+                      className={`${buyWithBonus
                           ? "bg-green-500"
                           : ticketAllowance &&
                             ticketAllowance.toBigInt() < BigInt(usd * 1e18)
@@ -2421,15 +2412,13 @@ export const AppTemp = () => {
                         <tr className="text-white text-center">
                           <td>{formattedTime}</td>
                           <td
-                            className={`${
-                              t.amount < 0 ? "text-red-500" : "text-green-500"
+                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
                             }`}
                           >
                             {t.amount < 0 ? "OUT" : "IN"}
                           </td>
                           <td
-                            className={`${
-                              t.amount < 0 ? "text-red-500" : "text-green-500"
+                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
                             }`}
                           >
                             {t.amount}
@@ -2474,8 +2463,7 @@ export const AppTemp = () => {
                   onClick={() =>
                     setWithdrawPanel({ ...withdrawPanel, mode: "WITHDRAW" })
                   }
-                  className={`${
-                    withdrawPanel.mode === "WITHDRAW"
+                  className={`${withdrawPanel.mode === "WITHDRAW"
                       ? "text-blue-500"
                       : "text-white"
                   } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
@@ -2488,8 +2476,7 @@ export const AppTemp = () => {
                     // setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
                     setWithdrawPanel({ ...withdrawPanel, mode: "HISTORY" })
                   }
-                  className={`${
-                    withdrawPanel.mode === "HISTORY"
+                  className={`${withdrawPanel.mode === "HISTORY"
                       ? "text-blue-500"
                       : "text-white"
                   } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
@@ -2582,8 +2569,7 @@ export const AppTemp = () => {
                         setWithdrawPanel({ show: false, mode: "WITHDRAW" });
                       } else alert(response.data.message);
                     }}
-                    className={`${
-                      userData?.ga_key ? "bg-green-500" : "bg-red-500"
+                    className={`${userData?.ga_key ? "bg-green-500" : "bg-red-500"
                     } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                     disabled={!userData?.ga_key}
                   >
@@ -2617,25 +2603,13 @@ export const AppTemp = () => {
 
                       // Will display time in 10:30:23 format
                       // TODO: change with function from utils later
-                      var formattedTime =
-                        date.getDate() +
-                        "/" +
-                        (date.getMonth() + 1) +
-                        "/" +
-                        date.getFullYear() +
-                        " " +
-                        date.getHours() +
-                        ":" +
-                        date.getMinutes() +
-                        ":" +
-                        date.getSeconds();
+                      const formattedTime = formatToUTC(date)
                       return (
                         <tr className="text-white text-left">
                           <td>{formattedTime}</td>
                           <td className={"text-white text-base"}>{t.txtype}</td>
                           <td
-                            className={`${
-                              t.amount < 0 ? "text-red-500" : "text-green-500"
+                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
                             } pl-4`}
                           >
                             {`$ ${parseFloat(formatUnits(t.amount, 18)).toFixed(
@@ -2799,8 +2773,7 @@ export const AppTemp = () => {
                         }
                       }
                     }}
-                    className={`${
-                      buyWithBonus
+                    className={`${buyWithBonus
                         ? "bg-green-500"
                         : ticketAllowance &&
                           ticketAllowance.toBigInt() <
@@ -3238,8 +3211,8 @@ export const AppTemp = () => {
                   <p>
                     Hunters will receive additional awards from the [Jurassic]
                     Market in addition to hunting rewards for successfully
-                    capturing Dinosaurus during the hunting procedure. Hunters
-                    who failed to capture any Dinosaurus will also receive
+                    capturing Dinosaur during the hunting procedure. Hunters
+                    who failed to capture any Dinosaur will also receive
                     rewards for their efforts.
                   </p>
                 </AccordionBody>
@@ -3298,15 +3271,15 @@ export const AppTemp = () => {
                   onClick={() => handleOpenGameGuide(4)}
                   className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
                 >
-                  Dinosaurus
+                  Dinosaur
                 </AccordionHeader>
                 <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
-                  <p className="font-bold">Captured Dinosaurus Rewards</p>
+                  <p className="font-bold">Captured Dinosaur Rewards</p>
                   <br />
                   <img src="/image/tableDinosaur.png" alt="table start game" />
                   <br />
                   <p>
-                    Higher rarity Dinosaurus can only be captured using a Epic
+                    Higher rarity Dinosaur can only be captured using a Epic
                     or Glory Egg.
                   </p>
                 </AccordionBody>

@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { axiosInstance } from "../utils/api";
 // import { formatUnits } from "@ethersproject/units";
 import { useAuthStore, useStore } from "../utils/store";
+import { formatToUTC } from "../utils/functions";
 
 export function Bulletin() {
   const token = useAuthStore((state) => state.token);
@@ -22,18 +23,7 @@ export function Bulletin() {
 
     // Will display time in 10:30:23 format
     // TODO: change with function from utils later
-    var formattedTime =
-      date.getDate() +
-      "/" +
-      (date.getMonth() + 1) +
-      "/" +
-      date.getFullYear() +
-      " " +
-      date.getHours() +
-      ":" +
-      date.getMinutes() +
-      ":" +
-      date.getSeconds();
+    const formattedTime = formatToUTC(date)
 
     return (
       <tr className="table-row">
@@ -86,8 +76,8 @@ export function Bulletin() {
           <tbody>
             {datas?.length > 0
               ? datas?.map((elm: any, idx: number) => (
-                  <ShowData key={elm.idx} data={elm} />
-                ))
+                <ShowData key={elm.idx} data={elm} />
+              ))
               : null}
           </tbody>
         </table>
@@ -123,11 +113,10 @@ export function Bulletin() {
       pctn.push(
         <li
           key={i}
-          className={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer ${
-            classs === "active"
+          className={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer ${classs === "active"
               ? "bg-yellow-700 text-white"
               : "bg-white text-black"
-          }`}
+            }`}
           onClick={() => loadBulletinWithPage(i)}
         >
           {i}

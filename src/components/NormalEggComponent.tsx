@@ -296,7 +296,7 @@ const NormalEggComponent = ({
                         });
                         // console.log(result.data);
                         if (result.data.success) {
-                            const p = result.data.result.result;
+                            const p = result.data.result;
                             if (p.reward_name === "")
                                 toast("Oh no! The Dinosaur broke free!");
                             else
