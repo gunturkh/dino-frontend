@@ -215,6 +215,18 @@ export const manifest: ResolverManifest = {
           name: "GatchaAnimation3",
           srcs: BASE_URL + "/animations/cards/testegg3/egg3.json",
         },
+        {
+          name: "GatchaWithCoin1",
+          srcs: BASE_URL + "/animations/cards/coinegg1/coin.json",
+        },
+        {
+          name: "GatchaWithCoin2",
+          srcs: BASE_URL + "/animations/cards/coinegg2/coin.json",
+        },
+        {
+          name: "GatchaWithCoin3",
+          srcs: BASE_URL + "/animations/cards/coinegg3/coin.json",
+        },
       ],
     },
     {

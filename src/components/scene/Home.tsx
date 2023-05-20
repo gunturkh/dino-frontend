@@ -27,8 +27,8 @@ type Props = {
   onProfileClick: () => void;
   setScene?: (value: string) => void;
   scene: string;
-  toggle: any
-  playing: any
+  toggle: any;
+  playing: any;
 };
 // temporary commented
 // const rawBuyTickets = async (qty: number) => {
@@ -111,7 +111,9 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const [buyTicketPanelVisible, setBuyTicketPanelVisible] = useState(false);
-  const [toggleBtnAudio, setToggleBtnAudio] = useState(playing ? playing : false);
+  const [toggleBtnAudio, setToggleBtnAudio] = useState(
+    playing ? playing : false
+  );
 
   const [currentTime, setCurrentTime] = useState(new Date().getTime());
   console.log(
@@ -436,21 +438,11 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
     [app.screen.height, app.screen.width]
   );
 
-  const [gatchaAnimation1, setGatchaAnimation1] = useState<any>(null);
-  const [gatchaAnimation2, setGatchaAnimation2] = useState<any>(null);
-  const [gatchaAnimation3, setGatchaAnimation3] = useState<any>(null);
+  const [gatchaAnimation, setGatchaAnimation] = useState<any>(null);
 
-  const memoizedGatchaAnimation1 = useMemo(
-    () => gatchaAnimation1,
-    [gatchaAnimation1]
-  );
-  const memoizedGatchaAnimation2 = useMemo(
-    () => gatchaAnimation2,
-    [gatchaAnimation2]
-  );
-  const memoizedGatchaAnimation3 = useMemo(
-    () => gatchaAnimation3,
-    [gatchaAnimation3]
+  const memoizedGatchaAnimation = useMemo(
+    () => gatchaAnimation,
+    [gatchaAnimation]
   );
 
   useEffect(() => {
@@ -458,26 +450,27 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
       "GatchaAnimation1",
       "GatchaAnimation2",
       "GatchaAnimation3",
+      "GatchaWithCoin1",
+      "GatchaWithCoin2",
+      "GatchaWithCoin3",
     ])
       .then((resources) => {
         console.log("res gatchaAnimation", resources);
-        // set a matched key to dinoAssets
-        setGatchaAnimation1(resources["GatchaAnimation1"]);
-        setGatchaAnimation2(resources["GatchaAnimation2"]);
-        setGatchaAnimation3(resources["GatchaAnimation3"]);
+        // set all game assets here
+        setGatchaAnimation(resources);
       })
       .catch((err) => {
-        console.log("err flyingDino", err);
+        console.log("err gatcha animation", err);
       });
   }, []);
 
+  console.log("gatchaAnimation", gatchaAnimation);
   const [gatchaAnimationStatus, setGatchaAnimationStatus] = useState(false);
   // gatcha ticket count
   const [ticketCnt, setTicketCnt] = useState(0);
 
   const onGatchaAnimationEnd = useCallback(() => {
     console.log("onGatchaAnimationEnd");
-    // setGatchaAnimationStatus({ show: false, ticket: 0 });
     setGatchaAnimationStatus(false);
     setTicketCnt(0);
   }, []);
@@ -494,68 +487,70 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
       let gatcha2: any = null;
       let gatcha3: any = null;
 
-      // load animation
-      memoizedGatchaAnimation1?.spineData?.animations?.forEach(
-        (animation: any) => {
-          const gatcha = new Spine(memoizedGatchaAnimation1.spineData);
-          gatcha.state.setAnimation(0, animation.name, false);
+      let gatchaWithCoin1: any = null;
+      let gatchaWithCoin2: any = null;
+      let gatchaWithCoin3: any = null;
 
-          gatcha.x = 0;
-          gatcha.y = 0;
-          // gatcha.zIndex = -1;
-          // gatcha.cullable = true;
+      // load all animation inside memoizedGatchaAnimation using loop
+      if (memoizedGatchaAnimation) {
+        Object.keys(memoizedGatchaAnimation).forEach((key) => {
+          memoizedGatchaAnimation[key].spineData.animations.forEach(
+            (animation: any) => {
+              const gatcha = new Spine(memoizedGatchaAnimation[key].spineData);
+              gatcha.state.setAnimation(0, animation.name, false);
+              gatcha.x = 0;
+              gatcha.y = 0;
+              gatcha.scale.set(0.2);
+              if (key === "GatchaAnimation1") {
+                gatcha1 = gatcha;
+              } else if (key === "GatchaAnimation2") {
+                gatcha2 = gatcha;
+              } else if (key === "GatchaAnimation3") {
+                gatcha3 = gatcha;
+              }
 
-          gatcha.scale.set(0.2);
-
-          // node?.addChild(gatcha);
-          gatcha1 = gatcha;
-        }
-      );
-
-      memoizedGatchaAnimation2?.spineData?.animations?.forEach(
-        (animation: any) => {
-          const gatcha = new Spine(memoizedGatchaAnimation2.spineData);
-          gatcha.state.setAnimation(0, animation.name, false);
-
-          gatcha.x = 0;
-          gatcha.y = 0;
-          // gatcha.zIndex = -1;
-          // gatcha.cullable = true;
-
-          gatcha.scale.set(0.2);
-
-          // node?.addChild(gatcha);
-          gatcha2 = gatcha;
-        }
-      );
-
-      memoizedGatchaAnimation3?.spineData?.animations?.forEach(
-        (animation: any) => {
-          const gatcha = new Spine(memoizedGatchaAnimation3.spineData);
-          gatcha.state.setAnimation(0, animation.name, false);
-
-          gatcha.x = 0;
-          gatcha.y = 0;
-          // gatcha.zIndex = -1;
-          // gatcha.cullable = true;
-
-          gatcha.scale.set(0.2);
-
-          // node?.addChild(gatcha);
-          gatcha3 = gatcha;
-        }
-      );
+              if (key === "GatchaWithCoin1") {
+                gatchaWithCoin1 = gatcha;
+              } else if (key === "GatchaWithCoin2") {
+                gatchaWithCoin2 = gatcha;
+              } else if (key === "GatchaWithCoin3") {
+                gatchaWithCoin3 = gatcha;
+              }
+              // add more keys here if needed
+            }
+          );
+        });
+      }
 
       // if (gatchaAnimationStatus.show) {
       if (gatchaAnimationStatus) {
-        console.log("gatchaAnimationStatus on Home", gatchaAnimationStatus);
+        //TODO: gatcha but get something, need to add more logic here
+        // if () {
+        if (gatchaWithCoin1 && ticketCnt === 5) {
+          console.log("gatchaWithCoin1 triggered");
+          gatchaWithCoin1.visible = true;
+          node?.addChild(gatchaWithCoin1);
+        }
+        if (gatchaWithCoin2 && ticketCnt === 6) {
+          gatchaWithCoin2.visible = true;
+          node?.addChild(gatchaWithCoin2);
+        }
+        if (gatchaWithCoin3 && ticketCnt === 7) {
+          gatchaWithCoin3.visible = true;
+          node?.addChild(gatchaWithCoin3);
+        }
+
+        // }
+        // else {run empty animation below}
         if (gatcha1 && ticketCnt === 1) {
           gatcha1.visible = true;
           node?.addChild(gatcha1);
-        } else if (gatcha2 && ticketCnt === 2) {
+        }
+        if (gatcha2 && ticketCnt === 2) {
           gatcha2.visible = true;
           node?.addChild(gatcha2);
-        } else if (gatcha3 && ticketCnt === 4) {
+        }
+        if (gatcha3 && ticketCnt === 4) {
           gatcha3.visible = true;
           node?.addChild(gatcha3);
         }
@@ -591,15 +586,40 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
           },
         });
       }
+
+      if (gatchaWithCoin1) {
+        gatchaWithCoin1.state.addListener({
+          complete: (entry: any) => {
+            gatchaWithCoin1.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+      if (gatchaWithCoin2) {
+        gatchaWithCoin2.state.addListener({
+          complete: (entry: any) => {
+            gatchaWithCoin2.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+      if (gatchaWithCoin3) {
+        gatchaWithCoin3.state.addListener({
+          complete: (entry: any) => {
+            gatchaWithCoin3.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
     },
     [
-      memoizedGatchaAnimation1,
-      memoizedGatchaAnimation2,
-      memoizedGatchaAnimation3,
+      memoizedGatchaAnimation,
       gatchaAnimationStatus,
-      // gatchaAnimationStatus.ticket,
-      ticketCnt,
       app.screen.height,
+      ticketCnt,
       onGatchaAnimationEnd,
     ]
   );
@@ -656,9 +676,9 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
     if (data?.success) {
       setNotification(data?.result);
       if (data?.result?.length > 0) {
-        data?.result?.forEach((item: { id: number, text: string }) => {
-          if (item.text.includes('Egg')) toast(item.text)
-        })
+        data?.result?.forEach((item: { id: number; text: string }) => {
+          if (item.text.includes("Egg")) toast(item.text);
+        });
       }
       setTimeout(getNotification, 300000);
     } else {
@@ -882,8 +902,8 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                 text={
                   jFundBalance !== ""
                     ? parseFloat(
-                      ethers.utils.formatUnits(jFundBalance, 18)
-                    ).toFixed(2)
+                        ethers.utils.formatUnits(jFundBalance, 18)
+                      ).toFixed(2)
                     : "0"
                 }
                 // text={`w=${getHomeContainerBounds.width.toFixed()} h=${getHomeContainerBounds.height}`}
@@ -904,7 +924,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
               <Container
                 position={[
                   (DinoFundBgBounds?.width / 2) *
-                  (app.screen?.width > 450 ? 1.05 : 1),
+                    (app.screen?.width > 450 ? 1.05 : 1),
                   DinoFundBgBounds?.height / 2 - 7,
                 ]}
               >
@@ -954,7 +974,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                   onpointertap={() => {
                     // set toggle audio
                     // @ts-ignore
-                    toggle()
+                    toggle();
                     setToggleBtnAudio(!toggleBtnAudio);
                   }}
                 />
@@ -973,7 +993,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                 // position={[app.screen.width / 2 - (lfSideBounds.width / 2), 0]}
                 position={[isNotMobile ? 110 : 90, 10]}
                 anchor={[0.5, 0.5]}
-              // width={app.screen.width > 450 ? 450 : app.screen.width}
+                // width={app.screen.width > 450 ? 450 : app.screen.width}
               >
                 <DetailsComponent
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
@@ -997,9 +1017,6 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                   textXOffest={10}
                   onPress={async () => {
                     console.log("onPress USDTDetails");
-                    // setTicketCnt(1);
-                    // setGatchaAnimationStatus({ show: true, ticket: 1 });
-                    // setGatchaAnimationStatus(true);
                   }}
                 />
                 <DetailsComponent
@@ -1116,7 +1133,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
               x={-5}
               scale={[0.9, 0.9]}
               height={app.screen.height * 0.4}
-            // width={app.screen.width * 0.9}
+              // width={app.screen.width * 0.9}
             >
               <Sprite
                 texture={PIXI.Assets.get("EggPlate") || PIXI.Texture.EMPTY}
@@ -1125,60 +1142,62 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
 
               {/* <Graphics draw={draw} ref={pathRef} /> */}
 
-              {eggPendingListData?.map((egg: EggPendingListData, eggIndex: number) => {
-                if (eggIndex === 0) {
-                  return (
-                    <NormalEggComponent
-                      // ref={eggRef}
-                      key={egg?.id}
-                      data={egg}
-                      currentTime={currentTime}
-                      eggTexture={PIXI.Assets.get(
-                        `BigEggIcon${egg?.ticket === 4 ? "3" : egg?.ticket}`
-                      )}
-                      posX={position[eggIndex]?.posX}
-                      posY={position[eggIndex]?.posY}
-                      posBtn={position[eggIndex]?.posBtn}
-                      // posX={position[currentTime % 8]?.posX}
-                      // posY={position[currentTime % 8]?.posY}
-                      // posBtn={position[currentTime % 8]?.posBtn}
-                      scaleBtn={[1.2, 1.3]}
-                      scaleEgg={[0.95, 0.95]}
-                      onPress={() => console.log("egg 1 clicked")}
-                      setTicketCnt={setTicketCnt}
-                      setGatchaAnimationStatus={setGatchaAnimationStatus}
-                    // onDragStart={onDragStart}
-                    // onDragMove={onDragMove}
-                    // onDragEnd={onDragEnd}
-                    // visible={!eggData[0]}
-                    />
-                  );
-                } else
-                  return (
-                    <NormalEggComponent
-                      key={egg?.id}
-                      data={egg}
-                      currentTime={currentTime}
-                      eggTexture={PIXI.Assets.get(
-                        `EggIcon${egg?.ticket === 4 ? "3" : egg?.ticket}`
-                      )}
-                      posX={position[eggIndex]?.posX}
-                      posY={position[eggIndex]?.posY}
-                      posBtn={position[eggIndex]?.posBtn}
-                      // posX={position[currentTime % 8]?.posX}
-                      // posY={position[currentTime % 8]?.posY}
-                      // posBtn={position[currentTime % 8]?.posBtn}
-                      // text={"Pre-List"}
-                      onPress={() => console.log(`egg ${eggIndex} clicked`)}
-                      setTicketCnt={setTicketCnt}
-                      setGatchaAnimationStatus={setGatchaAnimationStatus}
-                    // visible={!eggData[1]}
-                    // onDragStart={onDragStart}
-                    // onDragMove={onDragMove}
-                    // onDragEnd={onDragEnd}
-                    />
-                  );
-              })}
+              {eggPendingListData?.map(
+                (egg: EggPendingListData, eggIndex: number) => {
+                  if (eggIndex === 0) {
+                    return (
+                      <NormalEggComponent
+                        // ref={eggRef}
+                        key={egg?.id}
+                        data={egg}
+                        currentTime={currentTime}
+                        eggTexture={PIXI.Assets.get(
+                          `BigEggIcon${egg?.ticket === 4 ? "3" : egg?.ticket}`
+                        )}
+                        posX={position[eggIndex]?.posX}
+                        posY={position[eggIndex]?.posY}
+                        posBtn={position[eggIndex]?.posBtn}
+                        // posX={position[currentTime % 8]?.posX}
+                        // posY={position[currentTime % 8]?.posY}
+                        // posBtn={position[currentTime % 8]?.posBtn}
+                        scaleBtn={[1.2, 1.3]}
+                        scaleEgg={[0.95, 0.95]}
+                        onPress={() => console.log("egg 1 clicked")}
+                        setTicketCnt={setTicketCnt}
+                        setGatchaAnimationStatus={setGatchaAnimationStatus}
+                        // onDragStart={onDragStart}
+                        // onDragMove={onDragMove}
+                        // onDragEnd={onDragEnd}
+                        // visible={!eggData[0]}
+                      />
+                    );
+                  } else
+                    return (
+                      <NormalEggComponent
+                        key={egg?.id}
+                        data={egg}
+                        currentTime={currentTime}
+                        eggTexture={PIXI.Assets.get(
+                          `EggIcon${egg?.ticket === 4 ? "3" : egg?.ticket}`
+                        )}
+                        posX={position[eggIndex]?.posX}
+                        posY={position[eggIndex]?.posY}
+                        posBtn={position[eggIndex]?.posBtn}
+                        // posX={position[currentTime % 8]?.posX}
+                        // posY={position[currentTime % 8]?.posY}
+                        // posBtn={position[currentTime % 8]?.posBtn}
+                        // text={"Pre-List"}
+                        onPress={() => console.log(`egg ${eggIndex} clicked`)}
+                        setTicketCnt={setTicketCnt}
+                        setGatchaAnimationStatus={setGatchaAnimationStatus}
+                        // visible={!eggData[1]}
+                        // onDragStart={onDragStart}
+                        // onDragMove={onDragMove}
+                        // onDragEnd={onDragEnd}
+                      />
+                    );
+                }
+              )}
             </Container>
 
             {/* Lower Button Container */}
@@ -1186,7 +1205,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
               ref={lowerSectionContainerRef}
               anchor={[0.5, 0.5]}
               x={0}
-            // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
+              // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
             >
               {/* left side */}
               <LowerButtonComponent
@@ -1415,7 +1434,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[
                       buyTicketPanelBounds?.width * 0.5 -
-                      (isNotMobile ? 50 : 25),
+                        (isNotMobile ? 50 : 25),
                       0,
                     ]}
                     eventMode="static"
@@ -1475,11 +1494,11 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[
                       buyTicketPanelBounds?.width * 0.5 -
-                      (isNotMobile ? 50 : 25),
+                        (isNotMobile ? 50 : 25),
                       0,
                     ]}
                     eventMode="static"
-                  // onpointertap={() => setGoogleAuthVisible(false)}
+                    // onpointertap={() => setGoogleAuthVisible(false)}
                   />
                 </Container>
 
