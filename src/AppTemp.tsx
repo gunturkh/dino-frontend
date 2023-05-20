@@ -3302,7 +3302,7 @@ export const AppTemp = () => {
                     hunter’s personal rank.
                   </p>
                   <br />
-                  <p className="font-bold">Hunter\'s Rank</p>
+                  <p className="font-bold">Hunter's Rank</p>
                   <img src="/image/tableBuddies.png" alt="table start game" />
                   <br />
                   <p>
