@@ -3296,7 +3296,7 @@ export const AppTemp = () => {
                 </AccordionHeader>
                 <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
                   <p>
-                    Trainers can earn Buddy hunting bonuses by recruiting
+                    Hunters can earn Buddy hunting bonuses by recruiting
                     Buddies; Bonuses will be earned whenever your Buddies
                     purchase Dino Eggs. Tiers receivable are based on the
                     hunter’s personal rank.
@@ -3306,9 +3306,9 @@ export const AppTemp = () => {
                   <img src="/image/tableBuddies.png" alt="table start game" />
                   <br />
                   <p>
-                    *In order to receive Buddy Hunting Bonus, the trainer will
-                    need to exhaust one Purchase Ticket before the day ends,
-                    2359hrs (GMT +8)
+                    *In order to receive Buddy Hunting Bonus, the hunter will
+                    need to exhaust Purchase Egg before the day ends,
+                    11:59 hours (UTC +7)
                   </p>
                 </AccordionBody>
               </Accordion>
