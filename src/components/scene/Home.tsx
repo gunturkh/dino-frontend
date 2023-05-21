@@ -501,7 +501,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
               gatcha.state.setAnimation(0, animation.name, false);
               gatcha.x = 0;
               gatcha.y = 0;
-              gatcha.scale.set(0.2);
+              gatcha.scale.set(3);
               if (key === "GatchaAnimation1") {
                 gatcha1 = gatcha;
               } else if (key === "GatchaAnimation2") {

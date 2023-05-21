@@ -203,30 +203,6 @@ export const manifest: ResolverManifest = {
           name: "EggPlate",
           srcs: "image/eggPlate.png",
         },
-        {
-          name: "GatchaAnimation1",
-          srcs: BASE_URL + "/animations/cards/egg1/skeleton.json",
-        },
-        // {
-        //   name: "GatchaAnimation2",
-        //   srcs: BASE_URL + "/animations/cards/testegg2/egg2.json",
-        // },
-        // {
-        //   name: "GatchaAnimation3",
-        //   srcs: BASE_URL + "/animations/cards/testegg3/egg3.json",
-        // },
-        // {
-        //   name: "GatchaWithCoin1",
-        //   srcs: BASE_URL + "/animations/cards/coinegg1/coin.json",
-        // },
-        // {
-        //   name: "GatchaWithCoin2",
-        //   srcs: BASE_URL + "/animations/cards/coinegg2/coin.json",
-        // },
-        // {
-        //   name: "GatchaWithCoin3",
-        //   srcs: BASE_URL + "/animations/cards/coinegg3/coin.json",
-        // },
       ],
     },
     {
@@ -1004,6 +980,36 @@ export const manifest: ResolverManifest = {
           name: "JPassItemShortenHunting3",
           srcs: "image/iconJpassShortenHunting3.png",
         },
+      ],
+    },
+    {
+      name: "Animations",
+      assets: [
+        {
+          name: "GatchaAnimation1",
+          srcs: BASE_URL + "/animations/cards/egg1/skeleton.json",
+        },
+        // {
+        //   name: "GatchaAnimation2",
+        //   srcs: BASE_URL + "/animations/cards/testegg2/egg2.json",
+        // },
+        // {
+        //   name: "GatchaAnimation3",
+        //   srcs: BASE_URL + "/animations/cards/testegg3/egg3.json",
+        // },
+        // {
+        //   name: "GatchaWithCoin1",
+        //   srcs: BASE_URL + "/animations/cards/coinegg1/coin.json",
+        // },
+        // {
+        //   name: "GatchaWithCoin2",
+        //   srcs: BASE_URL + "/animations/cards/coinegg2/coin.json",
+        // },
+        // {
+        //   name: "GatchaWithCoin3",
+        //   srcs: BASE_URL + "/animations/cards/coinegg3/coin.json",
+        // },
+
       ],
     },
   ],
