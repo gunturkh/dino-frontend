@@ -2594,7 +2594,7 @@ export const AppTemp = () => {
                         Description
                       </th>
                       <th scope="col" className="w-[4rem] py-1">
-                        Amt
+                        Amount
                       </th>
                     </tr>
                   </thead>

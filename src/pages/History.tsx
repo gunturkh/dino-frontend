@@ -105,7 +105,7 @@ export function History() {
             <tr>
               <th className="w-[5rem] py-3">Date</th>
               <th className="w-[5rem] py-3 px-2">TxHash</th>
-              <th className="w-[7rem] py-3 text-center">Amt</th>
+              <th className="w-[7rem] py-3 text-center">Amount</th>
               <th className="w-[8rem] py-3 text-right">Description</th>
             </tr>
           </thead>
@@ -149,7 +149,7 @@ export function History() {
             <tr>
               <th className="w-[20rem] py-3">Date</th>
               <th className="w-[20rem] py-3 px-2">Address</th>
-              <th className="w-[10rem] py-3 text-right">Amt</th>
+              <th className="w-[10rem] py-3 text-right">Amount</th>
             </tr>
           </thead>
           <tbody>
