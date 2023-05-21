@@ -999,7 +999,7 @@ export const AppTemp = () => {
           if (forgotPasswordRechaptchaRef?.current) {
             // console.log('forgotPasswordRechaptchaRef?.current', forgotPasswordRechaptchaRef?.current)
             // @ts-ignore
-            forgotPasswordRechaptchaRef?.current?.resetcaptcha();
+            forgotPasswordRechaptchaRef?.current?.resetCaptcha();
           }
         }
         if (!data.success) {
@@ -1008,7 +1008,7 @@ export const AppTemp = () => {
           if (forgotPasswordRechaptchaRef?.current) {
             // console.log('forgotPasswordRechaptchaRef?.current', forgotPasswordRechaptchaRef?.current)
             // @ts-ignore
-            forgotPasswordRechaptchaRef?.current?.resetcaptcha();
+            forgotPasswordRechaptchaRef?.current?.resetCaptcha();
           }
         }
       };
@@ -1136,7 +1136,7 @@ export const AppTemp = () => {
       if (loginRechaptchaRef?.current) {
         // console.log('loginRechaptchaRef?.current', loginRechaptchaRef?.current)
         // @ts-ignore
-        loginRechaptchaRef?.current?.resetcaptcha();
+        loginRechaptchaRef?.current?.resetCaptcha();
       }
     }
     if (data && data.result) {
@@ -1145,7 +1145,7 @@ export const AppTemp = () => {
       if (loginRechaptchaRef?.current) {
         // console.log('loginRechaptchaRef?.current', loginRechaptchaRef?.current)
         // @ts-ignore
-        loginRechaptchaRef?.current?.resetcaptcha();
+        loginRechaptchaRef?.current?.resetCaptcha();
       }
       setAuthMode("LOGINWALLET");
     }
@@ -1178,7 +1178,7 @@ export const AppTemp = () => {
       if (registerRechaptchaRef?.current) {
         // console.log('registerRechaptchaRef?.current', registerRechaptchaRef?.current)
         // @ts-ignore
-        registerRechaptchaRef?.current?.resetcaptcha();
+        registerRechaptchaRef?.current?.resetCaptcha();
       }
     }
     if (!data.success) {
@@ -1187,7 +1187,7 @@ export const AppTemp = () => {
       if (registerRechaptchaRef?.current) {
         // console.log('registerRechaptchaRef?.current', registerRechaptchaRef?.current)
         // @ts-ignore
-        registerRechaptchaRef?.current?.resetcaptcha();
+        registerRechaptchaRef?.current?.resetCaptcha();
       }
     }
   };

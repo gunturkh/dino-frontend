@@ -998,6 +998,10 @@ export const manifest: ResolverManifest = {
           srcs: BASE_URL + "/animations/cards/coinegg3/skeleton3.json",
         },
         {
+          name: "GatchaWithDino",
+          srcs: BASE_URL + "/animations/cards/dino_egg_1/skeleton.json",
+        },
+        {
           name: "GatchaWithCoin1",
           srcs: BASE_URL + "/animations/cards/coinegg1/coin.json",
         },
