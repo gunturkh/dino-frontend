@@ -253,10 +253,10 @@ export const AppTemp = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    console.log("sponsor", params.get("sponsor"));
-    if (params.get("sponsor")) {
-      setSponsor(params.get("sponsor"));
-      registerForm.setFieldValue("referralCode", params.get("sponsor"));
+    console.log("ref", params.get("ref"));
+    if (params.get("ref")) {
+      setSponsor(params.get("ref"));
+      registerForm.setFieldValue("referralCode", params.get("ref"));
       setAuthMode("REGISTER");
     }
   }, []);
@@ -1715,7 +1715,7 @@ export const AppTemp = () => {
                       <input
                         name="referralCode"
                         type="text"
-                        placeholder="Sponsor"
+                        placeholder="Referral"
                         className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
                         style={{
                           background: `url(image/InputBox.png) no-repeat `,

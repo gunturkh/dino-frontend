@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import { axiosInstance } from '../utils/api';
 import { useAuthStore, useStore } from '../utils/store';
 import { ethers } from "ethers";
+import { formatUnits } from "ethers/lib/utils";
 
 // interface Draggable extends PIXI.DisplayObject {
 //     data: any;
@@ -297,13 +298,16 @@ const NormalEggComponent = ({
                         if (result.data.success) {
                             const p = result.data.result;
                             if (p.reward_value === "0") {
-                                setGatchaReward(false)
+                                setGatchaReward('ZONK')
                                 setTicketCnt(Number(data?.ticket))
                                 setGatchaAnimationStatus(true)
                                 toast("Oh no! The Dinosaur broke free!");
                             }
+                            else if (parseFloat(formatUnits(p.reward_value)) >= 99) {
+
+                            }
                             else if (p.reward_value !== "0") {
-                                setGatchaReward(true)
+                                setGatchaReward('NORMAL')
                                 setTicketCnt(Number(data?.ticket))
                                 setGatchaAnimationStatus(true)
                                 toast(

@@ -537,7 +537,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
   }, []);
 
   console.log("gatchaAnimation", gatchaAnimation);
-  const [gatchaGetReward, setGatchaReward] = useState(false);
+  const [gatchaGetReward, setGatchaReward] = useState<'ZONK' | 'CARD' | 'NORMAL'>('ZONK');
   const [gatchaAnimationStatus, setGatchaAnimationStatus] = useState(false);
   // gatcha ticket count
   const [ticketCnt, setTicketCnt] = useState(0);
@@ -630,7 +630,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
       console.log('gatchaAnimationStatus', gatchaAnimationStatus)
       if (gatchaAnimationStatus) {
         //TODO: gatcha but get something, need to add more logic here
-        if (gatchaGetReward) {
+        if (gatchaGetReward === 'NORMAL') {
 
           if (gatchaWithCoin1 && ticketCnt === 1) {
             console.log("gatchaWithCoin1 triggered");
@@ -665,7 +665,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
 
 
         // }
-        else {
+        else if (gatchaGetReward === 'ZONK') {
           if (gatcha1 && ticketCnt === 1) {
             gatcha1.visible = true;
             node?.addChild(gatcha1);
@@ -679,6 +679,21 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
             node?.addChild(gatcha3);
           }
         }
+
+        // else if (gatchaGetReward === 'CARD') {
+        //   if (gatcha1 && ticketCnt === 1) {
+        //     gatcha1.visible = true;
+        //     node?.addChild(gatcha1);
+        //   }
+        //   if (gatcha2 && ticketCnt === 2) {
+        //     gatcha2.visible = true;
+        //     node?.addChild(gatcha2);
+        //   }
+        //   if (gatcha3 && ticketCnt === 4) {
+        //     gatcha3.visible = true;
+        //     node?.addChild(gatcha3);
+        //   }
+        // }
       }
 
       if (gatcha1) {
@@ -1100,7 +1115,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                   onpointertap={() => {
                     console.log("BtnLngHome clicked");
                     // uncomment to test gatcha animation
-                    setGatchaReward(true)
+                    setGatchaReward('NORMAL')
                     setTicketCnt(1)
                     setGatchaAnimationStatus(true)
                   }}
