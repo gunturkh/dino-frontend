@@ -87,7 +87,7 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
           onpointertap={(e) => {
             if (navigator && navigator.clipboard) {
               var textarea = document.createElement("textarea");
-              textarea.textContent = `${window.location.origin}?sponsor=${userData.username}`;
+              textarea.textContent = `${window.location.origin}?ref=${userData.username}`;
               textarea.style.position = "fixed"; // Prevent scrolling to bottom of page in MS Edge.
               document.body.appendChild(textarea);
               textarea.select();

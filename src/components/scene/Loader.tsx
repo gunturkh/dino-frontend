@@ -25,12 +25,14 @@ const Loader = ({ onFinishLoading, visible = true }: LoaderProps) => {
     // filter out bundle that too big to load
     const bundleIds = manifest.bundles
       .filter((bundle) => {
-        return !["CollectionScene"].includes(bundle.name);
+        return !["CollectionScene", "Animations"].includes(bundle.name);
       })
       .map((bundle) => {
         // console.log("bundle name", bundle.name);
         return bundle.name;
       });
+
+      console.log('bundleIds loader', bundleIds)
 
     await PIXI.Assets.loadBundle(bundleIds, updateLoaderBar);
   }

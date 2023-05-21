@@ -13,6 +13,7 @@ import {
   useTransactions,
   useNotifications,
 } from "@usedapp/core";
+import * as PIXI from "pixi.js";
 import { Stage } from "@pixi/react";
 import { useState, useEffect, useCallback, useRef } from "react";
 import Marquee from "react-fast-marquee";
@@ -43,7 +44,7 @@ import {
 } from "./utils/config";
 import { Contract } from "ethers";
 // import ReCAPTCHA from "react-google-recaptcha";
-import HCaptcha from '@hcaptcha/react-hcaptcha';
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
@@ -58,6 +59,8 @@ import { Buddies } from "./pages/Buddies";
 import { History } from "./pages/History";
 import { Bulletin } from "./pages/Bulletin";
 import useAudio from "./utils/hooks/useAudio";
+import { formatToUTC } from "./utils/functions";
+import { manifest } from "./assets";
 // import { BigNumber, BigNumberish, Contract, utils } from "ethers";
 // import { Interface } from "ethers/lib/utils";
 
@@ -115,15 +118,14 @@ export const AppTemp = () => {
   const scene = useStore((state) => state.scene);
   const walletAddress = useStore((state) => state.walletAddress);
   const setWalletAddress = useStore((state) => state.setWalletAddress);
+  const walletBalance = useStore((state) => state.walletBalance);
   const setWalletBalance = useStore((state) => state.setWalletBalance);
   // const approved = useStore((state) => state.approved);
   const setApproved = useStore((state) => state.setApproved);
   const setEggPendingListData = useStore(
     (state) => state.setEggPendingListData
   );
-  const eggTransactionState = useStore(
-    (state) => state.eggTransactionState
-  );
+  const eggTransactionState = useStore((state) => state.eggTransactionState);
   const setEggTransactionState = useStore(
     (state) => state.setEggTransactionState
   );
@@ -132,8 +134,9 @@ export const AppTemp = () => {
   const withdrawPanel = useStore((state) => state.withdrawPanel);
   const setWithdrawPanel = useStore((state) => state.setWithdrawPanel);
   const jPassPanel = useStore((state) => state.jPassPanel);
-  console.log('jPassPanel', jPassPanel)
-  jPassPanel?.data?.price > 0 && console.log('jPassPanel price', BigInt(jPassPanel?.data?.price * 1e18))
+  console.log("jPassPanel", jPassPanel);
+  jPassPanel?.data?.price > 0 &&
+    console.log("jPassPanel price", BigInt(jPassPanel?.data?.price * 1e18));
   const setJPassPanel = useStore((state) => state.setJPassPanel);
   const changePasswordPanel = useStore((state) => state.changePasswordPanel);
   const setChangePasswordPanel = useStore(
@@ -144,7 +147,10 @@ export const AppTemp = () => {
   const withdrawalHistory = useStore((state) => state.withdrawalHistory);
   const notification = useStore((state) => state.notification);
   const setNotification = useStore((state) => state.setNotification);
-  console.log('notification text', notification.map((i: any) => (i.text)).join(' '))
+  console.log(
+    "notification text",
+    notification.map((i: any) => i.text).join(" ")
+  );
   // const cardDetails = useStore((state) => state.cardDetails);
   // const eggListsData = useStore((state) => state.eggListsData);
   // console.log("googleAuthPanel", googleAuthPanel);
@@ -181,10 +187,10 @@ export const AppTemp = () => {
   const [registerCaptcha, setRegisterCaptcha] = useState("");
   const [forgotPasswordCaptcha, setForgotPasswordCaptcha] = useState("");
   const [ticketHistories, setTicketHistories] = useState([]);
-  const [ticketState, setTicketState] = useState('');
-  const [jPassState, setJPassState] = useState('');
+  const [ticketState, setTicketState] = useState("");
+  const [jPassState, setJPassState] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState(0);
-  const [withdrawAddress, setWithdrawAddress] = useState('');
+  const [withdrawAddress, setWithdrawAddress] = useState("");
   // const [googleAuthPanel, setGoogleAuthPanel] = useState(false);
   const [googleAuthData, setGoogleAuthData] = useState<{
     qr: string;
@@ -214,22 +220,43 @@ export const AppTemp = () => {
   const transactionList = useTransactions();
   const { notifications } = useNotifications();
 
+  async function loadAnimationAssets() {
+    await PIXI.Assets.init({ manifest: manifest });
+    // initialize assets that have big size
+    const bundleIds = manifest.bundles
+      .filter((bundle) => {
+        return ["Animations"].includes(bundle.name);
+      })
+      .map((bundle) => bundle.name);
+
+    // load asset in background
+    const loadBgBundle = await PIXI.Assets.backgroundLoadBundle(bundleIds);
+    const loadBundle = await PIXI.Assets.loadBundle(bundleIds);
+    console.log('loadBgBundle', loadBgBundle)
+    console.log('loadBundle', loadBundle)
+  }
+
+  useEffect(() => {
+    if (authMode === 'LOGIN') loadAnimationAssets()
+  }, [])
+
+
   useEffect(() => {
     if (sendTransactionPayState.status === "Success") {
-      console.log('sendTransactionPayState', sendTransactionPayState)
-      setEggTransactionState({ mode: 'DONE', state: '' });
+      console.log("sendTransactionPayState", sendTransactionPayState);
+      setEggTransactionState({ mode: "DONE", state: "" });
     }
-    if (sendTransactionPayState.status === 'Exception') {
-      setEggTransactionState({ ...eggTransactionState, state: '' });
+    if (sendTransactionPayState.status === "Exception") {
+      setEggTransactionState({ ...eggTransactionState, state: "" });
     }
-  }, [sendTransactionPayState])
+  }, [sendTransactionPayState]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    console.log("sponsor", params.get("sponsor"));
-    if (params.get("sponsor")) {
-      setSponsor(params.get("sponsor"));
-      registerForm.setFieldValue("referralCode", params.get("sponsor"));
+    console.log("ref", params.get("ref"));
+    if (params.get("ref")) {
+      setSponsor(params.get("ref"));
+      registerForm.setFieldValue("referralCode", params.get("ref"));
       setAuthMode("REGISTER");
     }
   }, []);
@@ -270,6 +297,28 @@ export const AppTemp = () => {
   const verifiedForgotPasswordCallback = (token: string) => {
     // console.log(token);
     setForgotPasswordCaptcha(token);
+  };
+
+  const getUnfinishedEggTransaction = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const { data }: any = await axiosInstance({
+      url: "/egg/unfinished",
+      method: "GET",
+      headers: options.headers,
+    });
+    console.log("get unfinished egg transaction Result:", data);
+    if (data?.success) {
+      // processTransaction(id, ticket);
+      // setUnfinishedTransaction(data?.result);
+      if (data?.result) toast("You still have unfinished transaction on your listing")
+
+    } else {
+      toast(data.message);
+    }
   };
 
   const getUserData = async () => {
@@ -314,9 +363,10 @@ export const AppTemp = () => {
     transactionName: "Ticket Approval",
   });
 
-  const { state: JPassApprovalState, send: JPassApprovalSend } = useContractFunction(USDTContract, "approve", {
-    transactionName: "JPass Approval",
-  });
+  const { state: JPassApprovalState, send: JPassApprovalSend } =
+    useContractFunction(USDTContract, "approve", {
+      transactionName: "JPass Approval",
+    });
 
   const {
     sendTransaction: sendJPassBuy,
@@ -424,15 +474,15 @@ export const AppTemp = () => {
   }, [googleAuthPanel.show]);
 
   useEffect(() => {
-    console.log('sendTransactionState', sendTransactionState)
+    console.log("sendTransactionState", sendTransactionState);
     if (sendTransactionState.status === "Success" && allowance) {
       console.log("allowance appTemp", allowance);
-      setApproved((allowance.toString()));
-      setEggTransactionState({ mode: 'PURCHASE', state: '' });
+      setApproved(allowance.toString());
+      setEggTransactionState({ mode: "PURCHASE", state: "" });
       resetSendTransactionState();
     }
-    if (sendTransactionState.status === 'Exception') {
-      setEggTransactionState({ ...eggTransactionState, state: '' });
+    if (sendTransactionState.status === "Exception") {
+      setEggTransactionState({ ...eggTransactionState, state: "" });
     }
   }, [sendTransactionState, allowance]);
 
@@ -468,7 +518,7 @@ export const AppTemp = () => {
         // console.log(response.data);
         if (response.data.result === 1) {
           toast("Buy Ticket Confirmed");
-          setTicketState('')
+          setTicketState("");
           setTicketPanel({ show: false, mode: "BUY" });
           getUserData();
         } else {
@@ -500,9 +550,9 @@ export const AppTemp = () => {
         // console.log(response.data);
         if (response.data.result === 1) {
           toast("Buy JPass Confirmed");
-          setJPassState('')
+          setJPassState("");
           setJPassPanel({ show: false, data: null });
-          changeScene('HOME')
+          changeScene("HOME");
           getUserData();
         } else {
           setTimeout(() => checkJPassValidateTx(hash), 5000);
@@ -542,8 +592,11 @@ export const AppTemp = () => {
       resetSendTicketBuyState();
     }
     // console.log("sendTicketBuyState", sendTicketBuyState);
-    if (sendTicketBuyState.status === "Exception")
+    if (sendTicketBuyState.status === "Exception") {
       toast(sendTicketBuyState.errorMessage);
+      resetSendTicketBuyState();
+      setTicketState('')
+    }
   }, [sendTicketBuyState]);
 
   useEffect(() => {
@@ -576,7 +629,7 @@ export const AppTemp = () => {
     // console.log(result.data);
     if (result.data.result === 1) {
       toast("Egg Transaction Confirmed");
-      setEggTransactionState({ mode: 'DONE', state: '' });
+      setEggTransactionState({ mode: "DONE", state: "" });
       getPendingListingEgg();
       getUserData();
       changeScene("HOME");
@@ -946,7 +999,7 @@ export const AppTemp = () => {
           if (forgotPasswordRechaptchaRef?.current) {
             // console.log('forgotPasswordRechaptchaRef?.current', forgotPasswordRechaptchaRef?.current)
             // @ts-ignore
-            forgotPasswordRechaptchaRef?.current?.reset();
+            forgotPasswordRechaptchaRef?.current?.resetCaptcha();
           }
         }
         if (!data.success) {
@@ -955,7 +1008,7 @@ export const AppTemp = () => {
           if (forgotPasswordRechaptchaRef?.current) {
             // console.log('forgotPasswordRechaptchaRef?.current', forgotPasswordRechaptchaRef?.current)
             // @ts-ignore
-            forgotPasswordRechaptchaRef?.current?.reset();
+            forgotPasswordRechaptchaRef?.current?.resetCaptcha();
           }
         }
       };
@@ -1032,6 +1085,11 @@ export const AppTemp = () => {
   useEffect(() => {
     getPendingListingEgg();
   }, [token]);
+
+  useEffect(() => {
+    if (scene === 'HOME') getUnfinishedEggTransaction()
+  }, [scene])
+
 
   const options = {
     backgroundColor: 0x1099bb,
@@ -1354,13 +1412,12 @@ export const AppTemp = () => {
   // }
 
   const [toggleBtnAudio, setToggleBtnAudio] = useState(false);
-  const [playing, toggle] = useAudio(`${BASE_URL}/music/music.mpeg`);
+  const [playing, toggle] = useAudio(`${BASE_URL}/music/dinomusic.ogg`);
 
   // useEffect(() => {
   //   // @ts-ignore
   //   toggle()
   // }, [toggleBtnAudio])
-
 
   return (
     <div className="relative flex justify-center items-center">
@@ -1375,14 +1432,14 @@ export const AppTemp = () => {
                 alt="Language"
               />
               <img
-                src={`image/BtnAudio${toggleBtnAudio ? 'On' : 'Off'}.png`}
+                src={`image/BtnAudio${toggleBtnAudio ? "On" : "Off"}.png`}
                 width={60}
                 height={60}
                 alt="Audio"
                 onClick={() => {
                   // @ts-ignore
-                  toggle()
-                  setToggleBtnAudio(!toggleBtnAudio)
+                  toggle();
+                  setToggleBtnAudio(!toggleBtnAudio);
                 }}
               />
             </div>
@@ -1685,7 +1742,7 @@ export const AppTemp = () => {
                       <input
                         name="referralCode"
                         type="text"
-                        placeholder="Sponsor"
+                        placeholder="Referral"
                         className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
                         style={{
                           background: `url(image/InputBox.png) no-repeat `,
@@ -2179,13 +2236,13 @@ export const AppTemp = () => {
                       )}
                     </div>
                   </form>
-                  {ticketState !== 'LOADING' &&
+                  {ticketState !== "LOADING" && (
                     <button
                       type={"submit"}
                       // disabled={}
                       onClick={async () => {
                         console.log("usd amount approval", usd);
-                        setTicketState('LOADING')
+                        setTicketState("LOADING");
                         if (buyWithBonus) {
                           console.log("Buy with bonus clicked", {
                             qty: parseInt(qty as string),
@@ -2206,48 +2263,54 @@ export const AppTemp = () => {
                             },
                           });
                           if (response.data.success) {
-                            setTicketState('')
+                            setTicketState("");
                             toast("Buy Ticket Confirmed");
                             getUserData();
                           } else alert(response.data.message);
                         } else if (!buyWithBonus) {
-                          if (
-                            ticketAllowance &&
-                            ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                          ) {
-                            // const txReq = { value: BigInt(usd * 1e18) }
-                            const txSend = await send(
-                              TICKET_ADDR,
-                              BigInt(usd * 1e18)
-                            );
-                            setTicketState('')
-                            console.log("txSend ticketApproval", txSend);
-                          } else {
-                            let options = {
-                              headers: {
-                                "my-auth-key": token,
-                              },
-                            };
-                            const response = await axiosInstance({
-                              url: "/ticket/createRawBuyTickets",
-                              method: "POST",
-                              headers: options.headers,
-                              data: {
-                                qty: qty,
-                              },
-                            });
-                            console.log(response.data);
-                            if (response.data.success) {
-                              const txReq = {
-                                data: response.data.result,
-                                to: TICKET_ADDR,
-                                from: walletAddress,
+                          if (parseFloat(walletBalance) >= usd) {
+                            if (
+                              ticketAllowance &&
+                              ticketAllowance.toBigInt() < BigInt(usd * 1e18)
+                            ) {
+                              // const txReq = { value: BigInt(usd * 1e18) }
+                              const txSend = await send(
+                                TICKET_ADDR,
+                                BigInt(usd * 1e18)
+                              );
+                              setTicketState("");
+                              console.log("txSend ticketApproval", txSend);
+                            } else {
+                              let options = {
+                                headers: {
+                                  "my-auth-key": token,
+                                },
                               };
-                              const txSend = await sendTicketBuy(txReq);
-                              console.log("txSend buy ticket", txSend);
-                              if (txSend && txSend.transactionHash)
-                                checkValidateTx(txSend.transactionHash);
+                              const response = await axiosInstance({
+                                url: "/ticket/createRawBuyTickets",
+                                method: "POST",
+                                headers: options.headers,
+                                data: {
+                                  qty: qty,
+                                },
+                              });
+                              console.log(response.data);
+                              if (response.data.success) {
+                                const txReq = {
+                                  data: response.data.result,
+                                  to: TICKET_ADDR,
+                                  from: walletAddress,
+                                };
+                                const txSend = await sendTicketBuy(txReq);
+                                console.log("txSend buy ticket", txSend);
+                                if (txSend && txSend.transactionHash)
+                                  checkValidateTx(txSend.transactionHash);
+                              }
                             }
+                          }
+                          else {
+                            setTicketState('')
+                            toast("Your balance is not enough to buy ticket!")
                           }
                         }
                       }}
@@ -2272,11 +2335,9 @@ export const AppTemp = () => {
                           ? "Approval"
                           : "Buy Ticket"}
                     </button>
-                  }
+                  )}
                   {ticketState === "LOADING" && (
-                    <p className="text-white/50 font-Magra">
-                      Waiting...
-                    </p>
+                    <p className="text-white/50 font-Magra">Waiting...</p>
                   )}
                   {/* {sendTicketBuyState.status !== "None" && (
                     <p className="text-white/50 font-Magra">
@@ -2394,6 +2455,7 @@ export const AppTemp = () => {
                       var date = new Date(t.timestamp * 1000);
 
                       // Will display time in 10:30:23 format
+                      // TODO: change with function from utils later
                       var formattedTime =
                         date.getDate() +
                         "/" +
@@ -2497,7 +2559,12 @@ export const AppTemp = () => {
                         onChange={(e: any) => setWithdrawAmount(e.target.value)}
                         value={withdrawAmount}
                       />
-                      <p className="text-green-400 font-Magra my-3">You will receive $ {withdrawAmount > 0 ? (withdrawAmount - (withdrawAmount * (5 / 100))) : 0}</p>
+                      <p className="text-green-400 font-Magra my-3">
+                        You will receive ${" "}
+                        {withdrawAmount > 0
+                          ? withdrawAmount - withdrawAmount * (5 / 100)
+                          : 0}
+                      </p>
                       <p className="text-white font-Magra my-3">Address</p>
                       <input
                         name="Address"
@@ -2509,7 +2576,9 @@ export const AppTemp = () => {
                         // readOnly
                         // onChange={loginForm.handleChange}
                         // onBlur={loginForm.handleBlur}
-                        onChange={(e: any) => setWithdrawAddress(e.target.value)}
+                        onChange={(e: any) =>
+                          setWithdrawAddress(e.target.value)
+                        }
                         value={withdrawAddress}
                       />
                       <p className="text-white font-Magra my-3">F2A Code</p>
@@ -2557,15 +2626,12 @@ export const AppTemp = () => {
                       if (response.data.success) {
                         toast("Withdraw Confirmed");
                         getUserData();
-                        setWithdrawPanel({ show: false, mode: 'WITHDRAW' })
+                        setWithdrawPanel({ show: false, mode: "WITHDRAW" });
                       } else alert(response.data.message);
-
                     }}
-                    className={`${userData?.ga_key
-                      ? "bg-green-500"
-                      : "bg-red-500"
+                    className={`${userData?.ga_key ? "bg-green-500" : "bg-red-500"
                       } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
-                    disabled={(!userData?.ga_key)}
+                    disabled={!userData?.ga_key}
                   >
                     Withdraw
                   </button>
@@ -2587,7 +2653,7 @@ export const AppTemp = () => {
                         Description
                       </th>
                       <th scope="col" className="w-[4rem] py-1">
-                        Amt
+                        Amount
                       </th>
                     </tr>
                   </thead>
@@ -2596,18 +2662,8 @@ export const AppTemp = () => {
                       var date = new Date(t.recdate * 1000);
 
                       // Will display time in 10:30:23 format
-                      var formattedTime =
-                        date.getDate() +
-                        "/" +
-                        (date.getMonth() + 1) +
-                        "/" +
-                        date.getFullYear() +
-                        " " +
-                        date.getHours() +
-                        ":" +
-                        date.getMinutes() +
-                        ":" +
-                        date.getSeconds();
+                      // TODO: change with function from utils later
+                      const formattedTime = formatToUTC(date)
                       return (
                         <tr className="text-white text-left">
                           <td>{formattedTime}</td>
@@ -2700,13 +2756,16 @@ export const AppTemp = () => {
                     />
                   )}
                 </form>
-                {jPassState !== 'LOADING' &&
+                {jPassState !== "LOADING" && (
                   <button
                     type={"submit"}
                     // disabled={}
                     onClick={async () => {
-                      console.log("JPass amount approval", jPassPanel?.data?.price);
-                      setJPassState('LOADING')
+                      console.log(
+                        "JPass amount approval",
+                        jPassPanel?.data?.price
+                      );
+                      setJPassState("LOADING");
                       if (buyWithBonus) {
                         console.log("Buy with bonus clicked", {
                           code: jPassPanel?.data?.purchaseCode,
@@ -2727,21 +2786,22 @@ export const AppTemp = () => {
                           },
                         });
                         if (response.data.success) {
-                          setJPassState('')
+                          setJPassState("");
                           toast("Buy JPass Confirmed");
                           getUserData();
                         } else alert(response.data.message);
                       } else if (!buyWithBonus) {
                         if (
                           ticketAllowance &&
-                          ticketAllowance.toBigInt() < BigInt(jPassPanel?.data?.price * 1e18)
+                          ticketAllowance.toBigInt() <
+                          BigInt(jPassPanel?.data?.price * 1e18)
                         ) {
                           // const txReq = { value: BigInt(usd * 1e18) }
                           const txSend = await JPassApprovalSend(
                             TICKET_ADDR,
                             BigInt(jPassPanel?.data?.price * 1e18)
                           );
-                          setJPassState('')
+                          setJPassState("");
                           console.log("txSend JPassApproval", txSend);
                         } else {
                           let options = {
@@ -2757,14 +2817,14 @@ export const AppTemp = () => {
                               code: jPassPanel?.data?.purchaseCode,
                             },
                           });
-                          console.log('JPass buy', response.data);
+                          console.log("JPass buy", response.data);
                           if (response.data.success) {
                             const txReq = {
                               data: response.data.result,
                               to: TICKET_ADDR,
                               from: walletAddress,
                             };
-                            console.log('txReq JPass', txReq)
+                            console.log("txReq JPass", txReq);
                             const txSend = await sendJPassBuy(txReq);
                             console.log("txSend buy JPass", txSend);
                             if (txSend && txSend.transactionHash)
@@ -2776,27 +2836,29 @@ export const AppTemp = () => {
                     className={`${buyWithBonus
                       ? "bg-green-500"
                       : ticketAllowance &&
-                        ticketAllowance.toBigInt() < BigInt(jPassPanel?.data?.price * 1e18)
+                        ticketAllowance.toBigInt() <
+                        BigInt(jPassPanel?.data?.price * 1e18)
                         ? "bg-red-500"
                         : "bg-green-500"
                       } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                     disabled={
-                      (buyWithBonus && GAValue.length < 6 && !userData?.ga_key) ||
+                      (buyWithBonus &&
+                        GAValue.length < 6 &&
+                        !userData?.ga_key) ||
                       sendJPassBuyState.status !== "None"
                     }
                   >
                     {buyWithBonus
                       ? "Buy with Bonus"
                       : ticketAllowance &&
-                        ticketAllowance.toBigInt() < BigInt(jPassPanel?.data?.price * 1e18)
+                        ticketAllowance.toBigInt() <
+                        BigInt(jPassPanel?.data?.price * 1e18)
                         ? "Approval"
                         : "Buy Subscription"}
                   </button>
-                }
+                )}
                 {jPassState === "LOADING" && (
-                  <p className="text-white/50 font-Magra">
-                    Waiting...
-                  </p>
+                  <p className="text-white/50 font-Magra">Waiting...</p>
                 )}
               </>
             </div>
@@ -3209,8 +3271,8 @@ export const AppTemp = () => {
                   <p>
                     Hunters will receive additional awards from the [Jurassic]
                     Market in addition to hunting rewards for successfully
-                    capturing Dinosaurus during the hunting procedure. Hunters
-                    who failed to capture any Dinosaurus will also receive
+                    capturing Dinosaur during the hunting procedure. Hunters
+                    who failed to capture any Dinosaur will also receive
                     rewards for their efforts.
                   </p>
                 </AccordionBody>
@@ -3269,15 +3331,15 @@ export const AppTemp = () => {
                   onClick={() => handleOpenGameGuide(4)}
                   className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
                 >
-                  Dinosaurus
+                  Dinosaur
                 </AccordionHeader>
                 <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
-                  <p className="font-bold">Captured Dinosaurus Rewards</p>
+                  <p className="font-bold">Captured Dinosaur Rewards</p>
                   <br />
                   <img src="/image/tableDinosaur.png" alt="table start game" />
                   <br />
                   <p>
-                    Higher rarity Dinosaurus can only be captured using a Epic
+                    Higher rarity Dinosaur can only be captured using a Epic
                     or Glory Egg.
                   </p>
                 </AccordionBody>
@@ -3294,19 +3356,19 @@ export const AppTemp = () => {
                 </AccordionHeader>
                 <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
                   <p>
-                    Trainers can earn Buddy hunting bonuses by recruiting
+                    Hunters can earn Buddy hunting bonuses by recruiting
                     Buddies; Bonuses will be earned whenever your Buddies
                     purchase Dino Eggs. Tiers receivable are based on the
                     hunter’s personal rank.
                   </p>
                   <br />
-                  <p className="font-bold">Hunter\'s Rank</p>
+                  <p className="font-bold">Hunter's Rank</p>
                   <img src="/image/tableBuddies.png" alt="table start game" />
                   <br />
                   <p>
-                    *In order to receive Buddy Hunting Bonus, the trainer will
-                    need to exhaust one Purchase Ticket before the day ends,
-                    2359hrs (GMT +8)
+                    *In order to receive Buddy Hunting Bonus, the hunter will
+                    need to exhaust Purchase Egg before the day ends,
+                    11:59 hours (UTC +7)
                   </p>
                 </AccordionBody>
               </Accordion>
@@ -3569,7 +3631,10 @@ export const AppTemp = () => {
             loop={1}
             onFinish={() => setNotification([])}
             speed={50}
-            className="font-Magra text-[#FFC700]">{notification.map((i: any) => (i.text)).join('  |  ')}</Marquee>
+            className="font-Magra text-[#FFC700]"
+          >
+            {notification.map((i: any) => i.text).join("  |  ")}
+          </Marquee>
         </div>
       )}
       <div>

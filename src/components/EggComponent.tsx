@@ -150,7 +150,7 @@ function EggComponent({
       <div>
         <img
           src={`${eggType(egg?.ticket)}`}
-          className={`w-14 -mt-[4.6rem] [@media(max-width:400px)]:w-[2.6rem] [@media(max-height:700px)]:w-[2.6rem] [@media(max-width:400px)]:-mt-[3.9rem] [@media(max-height:700px)]:-mt-[3.9rem]`}
+          className={`w-[3.5rem] -mt-[4.6rem] [@media(max-width:400px)]:w-[2.6rem] [@media(max-height:700px)]:w-[2.6rem] [@media(max-width:400px)]:-mt-[3.9rem] [@media(max-height:700px)]:-mt-[3.9rem]`}
           alt="imgJurassicEggIcon"
         />
       </div>

@@ -107,3 +107,27 @@ export const eggType = (ticket: number) => {
             return "image/imgJurassicEggIcon.png"
     }
 }
+
+export const formatToUTC = (date: Date) => {
+
+    const formattedTime =
+        date.getUTCDate() +
+        "/" +
+        (date.getUTCMonth() + 1) +
+        "/" +
+        date.getUTCFullYear() +
+        " " +
+        (date.getUTCHours().toString().length === 1
+            ? `0${date.getUTCHours()}`
+            : date.getUTCHours()) +
+        ":" +
+        (date.getUTCMinutes().toString().length === 1
+            ? `0${date.getUTCMinutes()}`
+            : date.getUTCMinutes()) +
+        ":" +
+        (date.getUTCSeconds().toString().length === 1
+            ? `0${date.getUTCSeconds()}`
+            : date.getUTCSeconds());
+
+    return formattedTime
+}

@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import { axiosInstance } from '../utils/api';
 import { useAuthStore, useStore } from '../utils/store';
 import { ethers } from "ethers";
+import { formatUnits } from "ethers/lib/utils";
 
 // interface Draggable extends PIXI.DisplayObject {
 //     data: any;
@@ -34,6 +35,7 @@ const NormalEggComponent = ({
     onDragEnd,
     setTicketCnt,
     setGatchaAnimationStatus,
+    setGatchaReward
 }: any) => {
 
     // console.log('eggRef', eggRef)
@@ -280,8 +282,6 @@ const NormalEggComponent = ({
                     }
                     if (formatText({ expired: expiryTime, posted: data?.posted }) === "Gatcha") {
                         // setGatchaAnimationStatus({ show: true, ticket: data?.ticket })
-                        setTicketCnt(Number(data?.ticket))
-                        setGatchaAnimationStatus(true)
                         console.log('gatcha', { show: true, ticket: data?.ticket })
                         let options = {
                             headers: {
@@ -296,15 +296,33 @@ const NormalEggComponent = ({
                         });
                         // console.log(result.data);
                         if (result.data.success) {
-                            const p = result.data.result.result;
-                            if (p.reward_name === "")
+                            const p = result.data.result;
+                            if (p.reward_value === "0") {
+                                setGatchaReward('ZONK')
+                                setTicketCnt(Number(data?.ticket))
+                                setGatchaAnimationStatus(true)
                                 toast("Oh no! The Dinosaur broke free!");
-                            else
+                            }
+                            else if (parseFloat(formatUnits(p.reward_value)) >= 99) {
+                                setGatchaReward('CARD')
+                                setTicketCnt(Number(data?.ticket))
+                                setGatchaAnimationStatus(true)
                                 toast(
                                     `Horray, you get ${p.reward_name} valued $ ` +
                                     ethers.utils.formatEther(p.reward_value)
                                     // ethers.utils.formatEther(p.reward_value) || 0
                                 );
+                            }
+                            else if (p.reward_value !== "0") {
+                                setGatchaReward('NORMAL')
+                                setTicketCnt(Number(data?.ticket))
+                                setGatchaAnimationStatus(true)
+                                toast(
+                                    `Horray, you get ${p.reward_name} valued $ ` +
+                                    ethers.utils.formatEther(p.reward_value)
+                                    // ethers.utils.formatEther(p.reward_value) || 0
+                                );
+                            }
                             await getPendingListingEgg();
                             // window.location.reload()
                         } else {

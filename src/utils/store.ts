@@ -39,6 +39,8 @@ export type Egg = {
 type EggListResponse = {
   remaining: number;
   lists: Egg[];
+  page: number;
+  totalpage: number;
 };
 export type EggPendingListData = {
   id: string;
@@ -192,7 +194,7 @@ export const useStore = create<Store>((set, get) => ({
   setEggPendingListData: (data) => set(() => ({ eggPendingListData: data })),
   myListingEggData: [],
   setMyListingEggData: (data) => set(() => ({ myListingEggData: data })),
-  eggListsData: { remaining: 0, lists: [] },
+  eggListsData: { remaining: 0, lists: [], page: 1, totalpage: 1 },
   setEggListsData: (data) => set(() => ({ eggListsData: data })),
   eggTransactionData: {
     id: "",
