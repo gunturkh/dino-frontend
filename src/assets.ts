@@ -997,9 +997,38 @@ export const manifest: ResolverManifest = {
         //   name: "GatchaAnimation3",
         //   srcs: BASE_URL + "/animations/cards/testegg3/egg3.json",
         // },
+        {
+          name: "GatchaWithCoin1",
+          srcs: BASE_URL + "/animations/cards/coinegg1/coin.json",
+        },
+        {
+          name: "GatchaEggWithCoin1",
+          srcs: BASE_URL + "/animations/cards/coinegg1/egg1.json",
+        },
         // {
-        //   name: "GatchaWithCoin1",
+        //   name: "GatchaShowerWithCoin1",
+        //   srcs: BASE_URL + "/animations/cards/coinegg1/shower.json",
+        // },
+        // {
+        //   name: "GatchaShineWithCoin1",
+        //   srcs: BASE_URL + "/animations/cards/coinegg1/shine.json",
+        // },
+
+        // {
+        //   name: "GatchaWithCoin2",
         //   srcs: BASE_URL + "/animations/cards/coinegg1/coin.json",
+        // },
+        // {
+        //   name: "GatchaEggWithCoin2",
+        //   srcs: BASE_URL + "/animations/cards/coinegg1/egg1.json",
+        // },
+        // {
+        //   name: "GatchaShowerWithCoin2",
+        //   srcs: BASE_URL + "/animations/cards/coinegg1/shower.json",
+        // },
+        // {
+        //   name: "GatchaShineWithCoin2",
+        //   srcs: BASE_URL + "/animations/cards/coinegg1/shine.json",
         // },
         // {
         //   name: "GatchaWithCoin2",

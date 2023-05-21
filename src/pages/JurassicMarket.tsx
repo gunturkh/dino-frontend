@@ -22,7 +22,10 @@ function JurassicMarket({
   sendPayTransaction,
 }: any) {
   const { activateBrowserWallet } = useEthers();
+
   const token = useAuthStore((state) => state.token);
+  const walletBalance = useStore((state) => state.walletBalance);
+  console.log('walletBalance JurassicMarket', walletBalance)
   const walletAddress = useStore((state) => state.walletAddress);
   const eggTransactionData = useStore((state) => state.eggTransactionData);
   const setEggTransactionData = useStore(
@@ -164,24 +167,29 @@ function JurassicMarket({
     }
   };
 
-  const handleKeep = async (id: string, ticket: number) => {
-    let options = {
-      headers: {
-        "my-auth-key": token,
-      },
-    };
-    const { data }: any = await axiosInstance({
-      url: "/egg/keep",
-      method: "POST",
-      headers: options.headers,
-      data: { id },
-    });
-    console.log("handleKeep Result:", data);
-    if (data?.success) {
-      processTransaction(id, ticket);
-    } else {
-      toast(data.message);
-    }
+  const handleKeep = async (id: string, ticket: number, total: string) => {
+    // if (parseFloat(walletBalance) >= parseFloat(formatUnits(total, 18))) {
+    console.log('handleKeep enough balance', parseFloat(walletBalance), parseInt(formatUnits(total, 18)), parseFloat(walletBalance) >= parseFloat(formatUnits(total, 18))) 
+    if (parseFloat(walletBalance) >= parseFloat(formatUnits(total, 18))) {
+      let options = {
+        headers: {
+          "my-auth-key": token,
+        },
+      };
+      const { data }: any = await axiosInstance({
+        url: "/egg/keep",
+        method: "POST",
+        headers: options.headers,
+        data: { id },
+      });
+      console.log("handleKeep Result:", data);
+      if (data?.success) {
+        processTransaction(id, ticket);
+      } else {
+        toast(data.message);
+      }
+    } 
+    else toast("Your balance is not enough to keep egg!")
   };
 
   const paginate = ({ selected }: { selected: number }) => {
@@ -633,8 +641,8 @@ function JurassicMarket({
                         // customTimer={1683430121 + (1050 * index)}
                         onBtnKeepPress={() => {
                           // TODO: action button for keep, using idx from props as a differentiator
-                          console.log("onBtnKeepPress", egg.id);
-                          handleKeep(egg.id, egg.ticket);
+                          console.log("onBtnKeepPress", egg);
+                          handleKeep(egg.id, egg.ticket, egg.total);
                         }}
                       // onBtnPurchasePress={async () => {
                       //     // console.log("allowance ", allowance);

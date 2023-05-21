@@ -34,6 +34,7 @@ const NormalEggComponent = ({
     onDragEnd,
     setTicketCnt,
     setGatchaAnimationStatus,
+    setGatchaReward
 }: any) => {
 
     // console.log('eggRef', eggRef)
@@ -280,8 +281,6 @@ const NormalEggComponent = ({
                     }
                     if (formatText({ expired: expiryTime, posted: data?.posted }) === "Gatcha") {
                         // setGatchaAnimationStatus({ show: true, ticket: data?.ticket })
-                        setTicketCnt(Number(data?.ticket))
-                        setGatchaAnimationStatus(true)
                         console.log('gatcha', { show: true, ticket: data?.ticket })
                         let options = {
                             headers: {
@@ -297,14 +296,22 @@ const NormalEggComponent = ({
                         // console.log(result.data);
                         if (result.data.success) {
                             const p = result.data.result;
-                            if (p.reward_name === "")
+                            if (p.reward_value === "0") {
+                                setGatchaReward(false)
+                                setTicketCnt(Number(data?.ticket))
+                                setGatchaAnimationStatus(true)
                                 toast("Oh no! The Dinosaur broke free!");
-                            else
+                            }
+                            else if (p.reward_value !== "0") {
+                                setGatchaReward(true)
+                                setTicketCnt(Number(data?.ticket))
+                                setGatchaAnimationStatus(true)
                                 toast(
                                     `Horray, you get ${p.reward_name} valued $ ` +
                                     ethers.utils.formatEther(p.reward_value)
                                     // ethers.utils.formatEther(p.reward_value) || 0
                                 );
+                            }
                             await getPendingListingEgg();
                             // window.location.reload()
                         } else {

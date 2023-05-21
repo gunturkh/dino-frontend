@@ -519,7 +519,10 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
       "GatchaAnimation1",
       // "GatchaAnimation2",
       // "GatchaAnimation3",
-      // "GatchaWithCoin1",
+      "GatchaWithCoin1",
+      "GatchaEggWithCoin1",
+      // "GatchaShineWithCoin1",
+      // "GatchaShowerWithCoin1",
       // "GatchaWithCoin2",
       // "GatchaWithCoin3",
     ])
@@ -534,6 +537,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
   }, []);
 
   console.log("gatchaAnimation", gatchaAnimation);
+  const [gatchaGetReward, setGatchaReward] = useState(false);
   const [gatchaAnimationStatus, setGatchaAnimationStatus] = useState(false);
   // gatcha ticket count
   const [ticketCnt, setTicketCnt] = useState(0);
@@ -557,19 +561,31 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
       let gatcha3: any = null;
 
       let gatchaWithCoin1: any = null;
+      let gatchaEggWithCoin1: any = null;
+      // let gatchaShineWithCoin1: any = null;
+      // let gatchaShowerWithCoin1: any = null;
+
       let gatchaWithCoin2: any = null;
+      // let gatchaEggWithCoin2: any = null;
+      // let gatchaShineWithCoin2: any = null;
+      // let gatchaShowerWithCoin2: any = null;
+
       let gatchaWithCoin3: any = null;
+      // let gatchaEggWithCoin3: any = null;
+      // let gatchaShineWithCoin3: any = null;
+      // let gatchaShowerWithCoin3: any = null;
 
       // load all animation inside memoizedGatchaAnimation using loop
       if (memoizedGatchaAnimation) {
+        console.log('memoizedGatchaAnimation', memoizedGatchaAnimation)
         Object.keys(memoizedGatchaAnimation).forEach((key) => {
           memoizedGatchaAnimation[key].spineData.animations.forEach(
             (animation: any) => {
               const gatcha = new Spine(memoizedGatchaAnimation[key].spineData);
               gatcha.state.setAnimation(0, animation.name, false);
-              gatcha.x = -20;
+              gatcha.x = 0;
               gatcha.y = 0;
-              gatcha.scale.set(7);
+              gatcha.scale.set(0.8);
               if (key === "GatchaAnimation1") {
                 gatcha1 = gatcha;
               } else if (key === "GatchaAnimation2") {
@@ -579,12 +595,31 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
               }
 
               if (key === "GatchaWithCoin1") {
+                gatcha.scale.set(1.2);
                 gatchaWithCoin1 = gatcha;
               } else if (key === "GatchaWithCoin2") {
                 gatchaWithCoin2 = gatcha;
               } else if (key === "GatchaWithCoin3") {
                 gatchaWithCoin3 = gatcha;
               }
+
+              if (key === "GatchaEggWithCoin1") {
+                gatcha.scale.set(1.2);
+                gatchaEggWithCoin1 = gatcha;
+              }
+              // if (key === "GatchaShineWithCoin1") {
+              //   gatcha.scale.set(0.2);
+              //   gatchaShineWithCoin1 = gatcha;
+              // }
+              // if (key === "GatchaShowerWithCoin1") {
+              //   gatcha.scale.set(0.2);
+              //   gatchaShowerWithCoin1 = gatcha;
+              // }
+              // else if (key === "GatchaEggWithCoin2") {
+              //   gatchaEggWithCoin2 = gatcha;
+              // } else if (key === "GatchaEggWithCoin3") {
+              //   gatchaEggWithCoin3 = gatcha;
+              // }
               // add more keys here if needed
             }
           );
@@ -592,36 +627,57 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
       }
 
       // if (gatchaAnimationStatus.show) {
+      console.log('gatchaAnimationStatus', gatchaAnimationStatus)
       if (gatchaAnimationStatus) {
         //TODO: gatcha but get something, need to add more logic here
-        // if () {
-        if (gatchaWithCoin1 && ticketCnt === 5) {
-          console.log("gatchaWithCoin1 triggered");
-          gatchaWithCoin1.visible = true;
-          node?.addChild(gatchaWithCoin1);
-        }
-        if (gatchaWithCoin2 && ticketCnt === 6) {
-          gatchaWithCoin2.visible = true;
-          node?.addChild(gatchaWithCoin2);
-        }
-        if (gatchaWithCoin3 && ticketCnt === 7) {
-          gatchaWithCoin3.visible = true;
-          node?.addChild(gatchaWithCoin3);
+        if (gatchaGetReward) {
+
+          if (gatchaWithCoin1 && ticketCnt === 1) {
+            console.log("gatchaWithCoin1 triggered");
+            gatchaWithCoin1.visible = true;
+            node?.addChild(gatchaWithCoin1);
+          }
+          if (gatchaEggWithCoin1 && ticketCnt === 1) {
+            console.log("gatchaEggWithCoin1 triggered");
+            gatchaEggWithCoin1.visible = true;
+            node?.addChild(gatchaEggWithCoin1);
+          }
+          // if (gatchaShineWithCoin1 && ticketCnt === 1) {
+          //   console.log("gatchaShineWithCoin1 triggered");
+          //   gatchaShineWithCoin1.visible = true;
+          //   node?.addChild(gatchaShineWithCoin1);
+          // }
+          // if (gatchaShowerWithCoin1 && ticketCnt === 1) {
+          //   console.log("gatchaShowerWithCoin1 triggered");
+          //   gatchaShowerWithCoin1.visible = true;
+          //   node?.addChild(gatchaShowerWithCoin1);
+          // }
+
+          if (gatchaWithCoin2 && ticketCnt === 2) {
+            gatchaWithCoin2.visible = true;
+            node?.addChild(gatchaWithCoin2);
+          }
+          if (gatchaWithCoin3 && ticketCnt === 2) {
+            gatchaWithCoin3.visible = true;
+            node?.addChild(gatchaWithCoin3);
+          }
         }
 
+
         // }
-        // else {run empty animation below}
-        if (gatcha1 && ticketCnt === 1) {
-          gatcha1.visible = true;
-          node?.addChild(gatcha1);
-        }
-        if (gatcha2 && ticketCnt === 2) {
-          gatcha2.visible = true;
-          node?.addChild(gatcha2);
-        }
-        if (gatcha3 && ticketCnt === 4) {
-          gatcha3.visible = true;
-          node?.addChild(gatcha3);
+        else {
+          if (gatcha1 && ticketCnt === 1) {
+            gatcha1.visible = true;
+            node?.addChild(gatcha1);
+          }
+          if (gatcha2 && ticketCnt === 2) {
+            gatcha2.visible = true;
+            node?.addChild(gatcha2);
+          }
+          if (gatcha3 && ticketCnt === 4) {
+            gatcha3.visible = true;
+            node?.addChild(gatcha3);
+          }
         }
       }
 
@@ -665,6 +721,33 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
           },
         });
       }
+      if (gatchaEggWithCoin1) {
+        gatchaEggWithCoin1.state.addListener({
+          complete: (entry: any) => {
+            gatchaEggWithCoin1.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+      // if (gatchaShineWithCoin1) {
+      //   gatchaShineWithCoin1.state.addListener({
+      //     complete: (entry: any) => {
+      //       gatchaShineWithCoin1.visible = false;
+      //       onGatchaAnimationEnd();
+      //       // node?.removeChildren();
+      //     },
+      //   });
+      // }
+      // if (gatchaShowerWithCoin1) {
+      //   gatchaShowerWithCoin1.state.addListener({
+      //     complete: (entry: any) => {
+      //       gatchaShowerWithCoin1.visible = false;
+      //       onGatchaAnimationEnd();
+      //       // node?.removeChildren();
+      //     },
+      //   });
+      // }
       if (gatchaWithCoin2) {
         gatchaWithCoin2.state.addListener({
           complete: (entry: any) => {
@@ -684,6 +767,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
         });
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       memoizedGatchaAnimation,
       gatchaAnimationStatus,
@@ -1016,8 +1100,9 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                   onpointertap={() => {
                     console.log("BtnLngHome clicked");
                     // uncomment to test gatcha animation
-                    // setTicketCnt(1)
-                    // setGatchaAnimationStatus(true)
+                    setGatchaReward(true)
+                    setTicketCnt(1)
+                    setGatchaAnimationStatus(true)
                   }}
                 />
                 {/* Button Share */}
@@ -1243,6 +1328,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                         onPress={() => console.log("egg 1 clicked")}
                         setTicketCnt={setTicketCnt}
                         setGatchaAnimationStatus={setGatchaAnimationStatus}
+                        setGatchaReward={setGatchaReward}
                       // onDragStart={onDragStart}
                       // onDragMove={onDragMove}
                       // onDragEnd={onDragEnd}

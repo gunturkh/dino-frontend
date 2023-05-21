@@ -118,6 +118,7 @@ export const AppTemp = () => {
   const scene = useStore((state) => state.scene);
   const walletAddress = useStore((state) => state.walletAddress);
   const setWalletAddress = useStore((state) => state.setWalletAddress);
+  const walletBalance = useStore((state) => state.walletBalance);
   const setWalletBalance = useStore((state) => state.setWalletBalance);
   // const approved = useStore((state) => state.approved);
   const setApproved = useStore((state) => state.setApproved);
@@ -569,8 +570,11 @@ export const AppTemp = () => {
       resetSendTicketBuyState();
     }
     // console.log("sendTicketBuyState", sendTicketBuyState);
-    if (sendTicketBuyState.status === "Exception")
+    if (sendTicketBuyState.status === "Exception") {
       toast(sendTicketBuyState.errorMessage);
+      resetSendTicketBuyState();
+      setTicketState('')
+    }
   }, [sendTicketBuyState]);
 
   useEffect(() => {
@@ -2237,43 +2241,49 @@ export const AppTemp = () => {
                             getUserData();
                           } else alert(response.data.message);
                         } else if (!buyWithBonus) {
-                          if (
-                            ticketAllowance &&
-                            ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                          ) {
-                            // const txReq = { value: BigInt(usd * 1e18) }
-                            const txSend = await send(
-                              TICKET_ADDR,
-                              BigInt(usd * 1e18)
-                            );
-                            setTicketState("");
-                            console.log("txSend ticketApproval", txSend);
-                          } else {
-                            let options = {
-                              headers: {
-                                "my-auth-key": token,
-                              },
-                            };
-                            const response = await axiosInstance({
-                              url: "/ticket/createRawBuyTickets",
-                              method: "POST",
-                              headers: options.headers,
-                              data: {
-                                qty: qty,
-                              },
-                            });
-                            console.log(response.data);
-                            if (response.data.success) {
-                              const txReq = {
-                                data: response.data.result,
-                                to: TICKET_ADDR,
-                                from: walletAddress,
+                          if (parseFloat(walletBalance) >= usd) {
+                            if (
+                              ticketAllowance &&
+                              ticketAllowance.toBigInt() < BigInt(usd * 1e18)
+                            ) {
+                              // const txReq = { value: BigInt(usd * 1e18) }
+                              const txSend = await send(
+                                TICKET_ADDR,
+                                BigInt(usd * 1e18)
+                              );
+                              setTicketState("");
+                              console.log("txSend ticketApproval", txSend);
+                            } else {
+                              let options = {
+                                headers: {
+                                  "my-auth-key": token,
+                                },
                               };
-                              const txSend = await sendTicketBuy(txReq);
-                              console.log("txSend buy ticket", txSend);
-                              if (txSend && txSend.transactionHash)
-                                checkValidateTx(txSend.transactionHash);
+                              const response = await axiosInstance({
+                                url: "/ticket/createRawBuyTickets",
+                                method: "POST",
+                                headers: options.headers,
+                                data: {
+                                  qty: qty,
+                                },
+                              });
+                              console.log(response.data);
+                              if (response.data.success) {
+                                const txReq = {
+                                  data: response.data.result,
+                                  to: TICKET_ADDR,
+                                  from: walletAddress,
+                                };
+                                const txSend = await sendTicketBuy(txReq);
+                                console.log("txSend buy ticket", txSend);
+                                if (txSend && txSend.transactionHash)
+                                  checkValidateTx(txSend.transactionHash);
+                              }
                             }
+                          }
+                          else {
+                            setTicketState('')
+                            toast("Your balance is not enough to buy ticket!")
                           }
                         }
                       }}
@@ -3634,8 +3644,8 @@ export const AppTemp = () => {
               <Home
                 onProfileClick={() => changeScene("PROFILE")}
                 scene={scene}
-              toggle={toggle}
-              playing={playing as boolean}
+                toggle={toggle}
+                playing={playing as boolean}
               />
             </>
           )}
