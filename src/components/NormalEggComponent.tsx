@@ -304,7 +304,14 @@ const NormalEggComponent = ({
                                 toast("Oh no! The Dinosaur broke free!");
                             }
                             else if (parseFloat(formatUnits(p.reward_value)) >= 99) {
-
+                                setGatchaReward('CARD')
+                                setTicketCnt(Number(data?.ticket))
+                                setGatchaAnimationStatus(true)
+                                toast(
+                                    `Horray, you get ${p.reward_name} valued $ ` +
+                                    ethers.utils.formatEther(p.reward_value)
+                                    // ethers.utils.formatEther(p.reward_value) || 0
+                                );
                             }
                             else if (p.reward_value !== "0") {
                                 setGatchaReward('NORMAL')
