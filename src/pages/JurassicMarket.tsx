@@ -43,14 +43,14 @@ function JurassicMarket({
   const setMyListingEggData = useStore((state) => state.setMyListingEggData);
 
   // const [transactionState, setTransactionState] = useState<'APPROVAL' | 'PURCHASE'>('APPROVAL')
-  const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage] = useState(12);
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = eggListsData?.lists.slice(
-    indexOfFirstPost,
-    indexOfLastPost
-  );
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const [postsPerPage] = useState(12);
+  // const indexOfLastPost = currentPage * postsPerPage;
+  // const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  // const currentPosts = eggListsData?.lists.slice(
+  //   indexOfFirstPost,
+  //   indexOfLastPost
+  // );
 
   const changeScene = useStore((state) => state.changeScene);
   const period = formatUnits(userData?.bought.period, 18);
@@ -193,7 +193,25 @@ function JurassicMarket({
   };
 
   const paginate = ({ selected }: { selected: number }) => {
-    setCurrentPage(selected + 1);
+    const loadEggListWithPage = async (props: any) => {
+      let options = {
+        headers: {
+          "my-auth-key": token,
+        },
+      };
+      const response = await axiosInstance({
+        url: "/egg/lists",
+        params: {
+          page: props,
+        },
+        method: "GET",
+        headers: options.headers,
+      });
+      console.log("page response", response);
+      console.log("page props", props.current);
+      setEggListsData(response.data.result);
+    };
+    loadEggListWithPage(selected + 1)
   };
 
   // create a function for filtering from frontend, when click price and time filter
@@ -630,7 +648,7 @@ function JurassicMarket({
             {selectedPanel === "Listing" && (
               <>
                 <div className="grid grid-cols-4">
-                  {currentPosts.map((egg, index) => {
+                  {eggListsData?.lists?.map((egg, index) => {
                     return (
                       <EggComponent
                         key={egg.id}
@@ -674,13 +692,11 @@ function JurassicMarket({
                     <p className="font-Magra text-white text-lg">Market start at 05/15 12:00 UTC</p>
                   </div>
                 }
-                {currentPosts?.length > 0 &&
+                {eggListsData?.lists?.length > 0 &&
                   <div className="flex flex-row justify-center py-8">
                     <ReactPaginate
                       onPageChange={paginate}
-                      pageCount={Math.ceil(
-                        eggListsData?.lists?.length / postsPerPage
-                      )}
+                      pageCount={eggListsData?.totalpage}
                       marginPagesDisplayed={2}
                       pageRangeDisplayed={3}
                       previousLabel={"<<"}
