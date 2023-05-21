@@ -920,10 +920,10 @@ export const manifest: ResolverManifest = {
     {
       name: "JPassScene",
       assets: [
-        {
-          name: "JPassBackground",
-          srcs: "image/JPassBackground.png",
-        },
+        // {
+        //   name: "JPassBackground",
+        //   srcs: "image/JPassBackground.png",
+        // },
         {
           name: "JPassCardBg",
           srcs: "image/ImgJPassCardBg.png",

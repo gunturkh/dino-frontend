@@ -173,7 +173,7 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
       {isLoaded && (
         <Container visible={visible}>
           <Sprite
-            texture={PIXI.Assets.get("JPassBackground")}
+            texture={PIXI.Assets.get("ProfileBackground")}
             width={isNotMobile ? app.screen.width : app.screen.width * 1.1}
             height={app.screen.height}
             anchor={[0.5, 0.5]}

@@ -58,7 +58,7 @@ import JurassicMarket from "./pages/JurassicMarket";
 import { Buddies } from "./pages/Buddies";
 import { History } from "./pages/History";
 import { Bulletin } from "./pages/Bulletin";
-// import useAudio from "./utils/hooks/useAudio";
+import useAudio from "./utils/hooks/useAudio";
 import { formatToUTC } from "./utils/functions";
 import { manifest } from "./assets";
 // import { BigNumber, BigNumberish, Contract, utils } from "ethers";
@@ -98,7 +98,7 @@ declare global {
 
 // const USDT_ADDR = "0x0ed04d340a054382383ee2edff0ced66ead7496c";
 const price = 0.25;
-// const BASE_URL = "https://cdn.jurassicegg.co";
+const BASE_URL = "https://cdn.jurassicegg.co";
 export const AppTemp = () => {
   const {
     account,
@@ -229,8 +229,10 @@ export const AppTemp = () => {
       .map((bundle) => bundle.name);
 
     // load asset in background
-    await PIXI.Assets.backgroundLoadBundle(bundleIds);
-    await PIXI.Assets.loadBundle(bundleIds);
+    const loadBgBundle = await PIXI.Assets.backgroundLoadBundle(bundleIds);
+    const loadBundle = await PIXI.Assets.loadBundle(bundleIds);
+    console.log('loadBgBundle', loadBgBundle)
+    console.log('loadBundle', loadBundle)
   }
 
   useEffect(() => {
@@ -1379,8 +1381,7 @@ export const AppTemp = () => {
   // }
 
   const [toggleBtnAudio, setToggleBtnAudio] = useState(false);
-  // const [playing, toggle] = useAudio(`${BASE_URL}/music/music.mpeg`);
-  // const [playing, toggle] = useAudio();
+  const [playing, toggle] = useAudio(`${BASE_URL}/music/newmusic.mpg`);
 
   // useEffect(() => {
   //   // @ts-ignore
@@ -1406,7 +1407,7 @@ export const AppTemp = () => {
                 alt="Audio"
                 onClick={() => {
                   // @ts-ignore
-                  // toggle();
+                  toggle();
                   setToggleBtnAudio(!toggleBtnAudio);
                 }}
               />
@@ -3633,8 +3634,8 @@ export const AppTemp = () => {
               <Home
                 onProfileClick={() => changeScene("PROFILE")}
                 scene={scene}
-              // toggle={toggle}
-              // playing={playing as boolean}
+              toggle={toggle}
+              playing={playing as boolean}
               />
             </>
           )}
