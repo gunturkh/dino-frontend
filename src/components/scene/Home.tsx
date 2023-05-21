@@ -1355,6 +1355,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                         onPress={() => console.log(`egg ${eggIndex} clicked`)}
                         setTicketCnt={setTicketCnt}
                         setGatchaAnimationStatus={setGatchaAnimationStatus}
+                        setGatchaReward={setGatchaReward}
                       // visible={!eggData[1]}
                       // onDragStart={onDragStart}
                       // onDragMove={onDragMove}
