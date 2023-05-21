@@ -1015,8 +1015,9 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                   eventMode={"static"}
                   onpointertap={() => {
                     console.log("BtnLngHome clicked");
-                    setTicketCnt(1)
-                    setGatchaAnimationStatus(true)
+                    // uncomment to test gatcha animation
+                    // setTicketCnt(1)
+                    // setGatchaAnimationStatus(true)
                   }}
                 />
                 {/* Button Share */}

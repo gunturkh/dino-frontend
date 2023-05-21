@@ -1381,7 +1381,7 @@ export const AppTemp = () => {
   // }
 
   const [toggleBtnAudio, setToggleBtnAudio] = useState(false);
-  const [playing, toggle] = useAudio(`${BASE_URL}/music/newmusic.mpg`);
+  const [playing, toggle] = useAudio(`${BASE_URL}/music/dinomusic.ogg`);
 
   // useEffect(() => {
   //   // @ts-ignore
