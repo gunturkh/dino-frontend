@@ -439,31 +439,31 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
     [app.screen.height, app.screen.width]
   );
 
-  const [gatchaAnimation, setGatchaAnimation] = useState<any>(null);
+  const [gatchaAnimation] = useState<any>(null);
 
   const memoizedGatchaAnimation = useMemo(
     () => gatchaAnimation,
     [gatchaAnimation]
   );
 
-  useEffect(() => {
-    PIXI.Assets.load([
-      "GatchaAnimation1",
-      "GatchaAnimation2",
-      "GatchaAnimation3",
-      "GatchaWithCoin1",
-      "GatchaWithCoin2",
-      "GatchaWithCoin3",
-    ])
-      .then((resources) => {
-        console.log("res gatchaAnimation", resources);
-        // set all game assets here
-        setGatchaAnimation(resources);
-      })
-      .catch((err) => {
-        console.log("err gatcha animation", err);
-      });
-  }, []);
+  // useEffect(() => {
+  //   PIXI.Assets.load([
+  //     "GatchaAnimation1",
+  //     "GatchaAnimation2",
+  //     "GatchaAnimation3",
+  //     "GatchaWithCoin1",
+  //     "GatchaWithCoin2",
+  //     "GatchaWithCoin3",
+  //   ])
+  //     .then((resources) => {
+  //       console.log("res gatchaAnimation", resources);
+  //       // set all game assets here
+  //       setGatchaAnimation(resources);
+  //     })
+  //     .catch((err) => {
+  //       console.log("err gatcha animation", err);
+  //     });
+  // }, []);
 
   console.log("gatchaAnimation", gatchaAnimation);
   const [gatchaAnimationStatus, setGatchaAnimationStatus] = useState(false);
