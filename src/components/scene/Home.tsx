@@ -517,10 +517,14 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
   useEffect(() => {
     PIXI.Assets.load([
       "GatchaAnimation1",
-      // "GatchaAnimation2",
-      // "GatchaAnimation3",
+      "GatchaAnimation2",
+      "GatchaAnimation3",
       "GatchaWithCoin1",
       "GatchaEggWithCoin1",
+      "GatchaWithCoin2",
+      "GatchaEggWithCoin2",
+      "GatchaWithCoin3",
+      "GatchaEggWithCoin3",
       // "GatchaShineWithCoin1",
       // "GatchaShowerWithCoin1",
       // "GatchaWithCoin2",
@@ -566,11 +570,12 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
       // let gatchaShowerWithCoin1: any = null;
 
       let gatchaWithCoin2: any = null;
-      // let gatchaEggWithCoin2: any = null;
+      let gatchaEggWithCoin2: any = null;
       // let gatchaShineWithCoin2: any = null;
       // let gatchaShowerWithCoin2: any = null;
 
       let gatchaWithCoin3: any = null;
+      let gatchaEggWithCoin3: any = null;
       // let gatchaEggWithCoin3: any = null;
       // let gatchaShineWithCoin3: any = null;
       // let gatchaShowerWithCoin3: any = null;
@@ -589,8 +594,10 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
               if (key === "GatchaAnimation1") {
                 gatcha1 = gatcha;
               } else if (key === "GatchaAnimation2") {
+                gatcha.scale.set(1.2);
                 gatcha2 = gatcha;
               } else if (key === "GatchaAnimation3") {
+                gatcha.scale.set(1.2);
                 gatcha3 = gatcha;
               }
 
@@ -598,14 +605,24 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                 gatcha.scale.set(1.2);
                 gatchaWithCoin1 = gatcha;
               } else if (key === "GatchaWithCoin2") {
+                gatcha.scale.set(1.2);
                 gatchaWithCoin2 = gatcha;
               } else if (key === "GatchaWithCoin3") {
+                gatcha.scale.set(1.2);
                 gatchaWithCoin3 = gatcha;
               }
 
               if (key === "GatchaEggWithCoin1") {
                 gatcha.scale.set(1.2);
                 gatchaEggWithCoin1 = gatcha;
+              }
+              if (key === "GatchaEggWithCoin2") {
+                gatcha.scale.set(1.2);
+                gatchaEggWithCoin2 = gatcha;
+              }
+              if (key === "GatchaEggWithCoin3") {
+                gatcha.scale.set(1.2);
+                gatchaEggWithCoin3 = gatcha;
               }
               // if (key === "GatchaShineWithCoin1") {
               //   gatcha.scale.set(0.2);
@@ -657,9 +674,19 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
             gatchaWithCoin2.visible = true;
             node?.addChild(gatchaWithCoin2);
           }
-          if (gatchaWithCoin3 && ticketCnt === 2) {
+          if (gatchaEggWithCoin2 && ticketCnt === 2) {
+            console.log("gatchaEggWithCoin2 triggered");
+            gatchaEggWithCoin2.visible = true;
+            node?.addChild(gatchaEggWithCoin2);
+          }
+          if (gatchaWithCoin3 && ticketCnt === 4) {
             gatchaWithCoin3.visible = true;
             node?.addChild(gatchaWithCoin3);
+          }
+          if (gatchaEggWithCoin3 && ticketCnt === 4) {
+            console.log("gatchaEggWithCoin3 triggered");
+            gatchaEggWithCoin3.visible = true;
+            node?.addChild(gatchaEggWithCoin3);
           }
         }
 
@@ -772,10 +799,28 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
           },
         });
       }
+      if (gatchaEggWithCoin2) {
+        gatchaEggWithCoin2.state.addListener({
+          complete: (entry: any) => {
+            gatchaEggWithCoin2.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
       if (gatchaWithCoin3) {
         gatchaWithCoin3.state.addListener({
           complete: (entry: any) => {
             gatchaWithCoin3.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+      if (gatchaEggWithCoin3) {
+        gatchaEggWithCoin3.state.addListener({
+          complete: (entry: any) => {
+            gatchaEggWithCoin3.visible = false;
             onGatchaAnimationEnd();
             // node?.removeChildren();
           },
@@ -1115,9 +1160,9 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                   onpointertap={() => {
                     console.log("BtnLngHome clicked");
                     // uncomment to test gatcha animation
-                    setGatchaReward('NORMAL')
-                    setTicketCnt(1)
-                    setGatchaAnimationStatus(true)
+                    // setGatchaReward('ZONK')
+                    // setTicketCnt(4)
+                    // setGatchaAnimationStatus(true)
                   }}
                 />
                 {/* Button Share */}

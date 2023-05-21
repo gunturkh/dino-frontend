@@ -43,8 +43,8 @@ import {
   COUNTRIES,
 } from "./utils/config";
 import { Contract } from "ethers";
-import ReCAPTCHA from "react-google-recaptcha";
-// import HCaptcha from "@hcaptcha/react-hcaptcha";
+// import ReCAPTCHA from "react-google-recaptcha";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
@@ -297,6 +297,28 @@ export const AppTemp = () => {
   const verifiedForgotPasswordCallback = (token: string) => {
     // console.log(token);
     setForgotPasswordCaptcha(token);
+  };
+
+  const getUnfinishedEggTransaction = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const { data }: any = await axiosInstance({
+      url: "/egg/unfinished",
+      method: "GET",
+      headers: options.headers,
+    });
+    console.log("get unfinished egg transaction Result:", data);
+    if (data?.success) {
+      // processTransaction(id, ticket);
+      // setUnfinishedTransaction(data?.result);
+      if (data?.result) toast("You still have unfinished transaction on your listing")
+
+    } else {
+      toast(data.message);
+    }
   };
 
   const getUserData = async () => {
@@ -977,7 +999,7 @@ export const AppTemp = () => {
           if (forgotPasswordRechaptchaRef?.current) {
             // console.log('forgotPasswordRechaptchaRef?.current', forgotPasswordRechaptchaRef?.current)
             // @ts-ignore
-            forgotPasswordRechaptchaRef?.current?.reset();
+            forgotPasswordRechaptchaRef?.current?.resetcaptcha();
           }
         }
         if (!data.success) {
@@ -986,7 +1008,7 @@ export const AppTemp = () => {
           if (forgotPasswordRechaptchaRef?.current) {
             // console.log('forgotPasswordRechaptchaRef?.current', forgotPasswordRechaptchaRef?.current)
             // @ts-ignore
-            forgotPasswordRechaptchaRef?.current?.reset();
+            forgotPasswordRechaptchaRef?.current?.resetcaptcha();
           }
         }
       };
@@ -1064,6 +1086,11 @@ export const AppTemp = () => {
     getPendingListingEgg();
   }, [token]);
 
+  useEffect(() => {
+    if (scene === 'HOME') getUnfinishedEggTransaction()
+  }, [scene])
+
+
   const options = {
     backgroundColor: 0x1099bb,
     antialias: true,
@@ -1098,7 +1125,7 @@ export const AppTemp = () => {
       captcha: captcha,
     };
     const result = await axiosInstance({
-      url: "/user/authentication",
+      url: "/user/authentication2",
       method: "POST",
       data: loginRequestData,
     });
@@ -1109,7 +1136,7 @@ export const AppTemp = () => {
       if (loginRechaptchaRef?.current) {
         // console.log('loginRechaptchaRef?.current', loginRechaptchaRef?.current)
         // @ts-ignore
-        loginRechaptchaRef?.current?.reset();
+        loginRechaptchaRef?.current?.resetcaptcha();
       }
     }
     if (data && data.result) {
@@ -1118,7 +1145,7 @@ export const AppTemp = () => {
       if (loginRechaptchaRef?.current) {
         // console.log('loginRechaptchaRef?.current', loginRechaptchaRef?.current)
         // @ts-ignore
-        loginRechaptchaRef?.current?.reset();
+        loginRechaptchaRef?.current?.resetcaptcha();
       }
       setAuthMode("LOGINWALLET");
     }
@@ -1151,7 +1178,7 @@ export const AppTemp = () => {
       if (registerRechaptchaRef?.current) {
         // console.log('registerRechaptchaRef?.current', registerRechaptchaRef?.current)
         // @ts-ignore
-        registerRechaptchaRef?.current?.reset();
+        registerRechaptchaRef?.current?.resetcaptcha();
       }
     }
     if (!data.success) {
@@ -1160,7 +1187,7 @@ export const AppTemp = () => {
       if (registerRechaptchaRef?.current) {
         // console.log('registerRechaptchaRef?.current', registerRechaptchaRef?.current)
         // @ts-ignore
-        registerRechaptchaRef?.current?.reset();
+        registerRechaptchaRef?.current?.resetcaptcha();
       }
     }
   };
@@ -1538,10 +1565,10 @@ export const AppTemp = () => {
                       </div>
                     </div>
                   </form>
-                  <ReCAPTCHA
+                  <HCaptcha
                     ref={loginRechaptchaRef}
                     sitekey={CAPTCHA_KEY}
-                    onChange={(e: any) => verifiedCallback(e as string)}
+                    onVerify={(e: any) => verifiedCallback(e as string)}
                   />
                   <input
                     alt="btnLogin"
@@ -1826,10 +1853,10 @@ export const AppTemp = () => {
                       </button>
                     </div>
                   </form>
-                  <ReCAPTCHA
+                  <HCaptcha
                     ref={registerRechaptchaRef}
                     sitekey={CAPTCHA_KEY}
-                    onChange={(e: any) => verifiedRegisterCallback(e as string)}
+                    onVerify={(e: any) => verifiedRegisterCallback(e as string)}
                   />
                   <input
                     alt="Register Submit"
@@ -1903,10 +1930,10 @@ export const AppTemp = () => {
                       </p>
                     </div>
                   </form>
-                  <ReCAPTCHA
+                  <HCaptcha
                     ref={forgotPasswordRechaptchaRef}
                     sitekey={CAPTCHA_KEY}
-                    onChange={(e: any) =>
+                    onVerify={(e: any) =>
                       verifiedForgotPasswordCallback(e as string)
                     }
                   />
