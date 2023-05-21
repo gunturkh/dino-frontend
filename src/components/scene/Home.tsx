@@ -27,8 +27,8 @@ type Props = {
   onProfileClick: () => void;
   setScene?: (value: string) => void;
   scene: string;
-  toggle: any;
-  playing: any;
+  toggle?: any;
+  playing?: any;
 };
 // temporary commented
 // const rawBuyTickets = async (qty: number) => {
@@ -112,7 +112,8 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
 
   const [buyTicketPanelVisible, setBuyTicketPanelVisible] = useState(false);
   const [toggleBtnAudio, setToggleBtnAudio] = useState(
-    playing ? playing : false
+    // playing ? playing : false
+    false
   );
 
   const [currentTime, setCurrentTime] = useState(new Date().getTime());
@@ -974,7 +975,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                   onpointertap={() => {
                     // set toggle audio
                     // @ts-ignore
-                    toggle();
+                    // toggle();
                     setToggleBtnAudio(!toggleBtnAudio);
                   }}
                 />
