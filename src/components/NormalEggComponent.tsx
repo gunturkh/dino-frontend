@@ -10,12 +10,13 @@ import { toast } from 'react-toastify';
 import { axiosInstance } from '../utils/api';
 import { useAuthStore, useStore } from '../utils/store';
 import { ethers } from "ethers";
-import { formatUnits } from "ethers/lib/utils";
+// import { formatUnits } from "ethers/lib/utils";
 
 // interface Draggable extends PIXI.DisplayObject {
 //     data: any;
 //     dragging: boolean;
 // }
+const rewardCards = ['herald', 'elite', 'ancient', 'mythical', 'immortal']
 const NormalEggComponent = ({
     key,
     data,
@@ -297,13 +298,13 @@ const NormalEggComponent = ({
                         // console.log(result.data);
                         if (result.data.success) {
                             const p = result.data.result;
-                            if (p.reward_value === "0") {
+                            if (p.reward_type === "none") {
                                 setGatchaReward('ZONK')
                                 setTicketCnt(Number(data?.ticket))
                                 setGatchaAnimationStatus(true)
                                 toast("Oh no! The Dinosaur broke free!");
                             }
-                            else if (parseFloat(formatUnits(p.reward_value)) >= 99) {
+                            else if (rewardCards.includes(p.reward_type)) {
                                 setGatchaReward('CARD')
                                 setTicketCnt(Number(data?.ticket))
                                 setGatchaAnimationStatus(true)
@@ -313,7 +314,17 @@ const NormalEggComponent = ({
                                     // ethers.utils.formatEther(p.reward_value) || 0
                                 );
                             }
-                            else if (p.reward_value !== "0") {
+                            else if (p.reward_type === "money") {
+                                setGatchaReward('NORMAL')
+                                setTicketCnt(Number(data?.ticket))
+                                setGatchaAnimationStatus(true)
+                                toast(
+                                    `Horray, you get ${p.reward_name} valued $ ` +
+                                    ethers.utils.formatEther(p.reward_value)
+                                    // ethers.utils.formatEther(p.reward_value) || 0
+                                );
+                            }
+                            else {
                                 setGatchaReward('NORMAL')
                                 setTicketCnt(Number(data?.ticket))
                                 setGatchaAnimationStatus(true)
