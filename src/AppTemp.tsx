@@ -2456,18 +2456,7 @@ export const AppTemp = () => {
 
                       // Will display time in 10:30:23 format
                       // TODO: change with function from utils later
-                      var formattedTime =
-                        date.getDate() +
-                        "/" +
-                        (date.getMonth() + 1) +
-                        "/" +
-                        date.getFullYear() +
-                        " " +
-                        date.getHours() +
-                        ":" +
-                        date.getMinutes() +
-                        ":" +
-                        date.getSeconds();
+                      const formattedTime = formatToUTC(date)
                       return (
                         <tr className="text-white text-center">
                           <td>{formattedTime}</td>
