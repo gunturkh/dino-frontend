@@ -324,6 +324,14 @@ const NormalEggComponent = ({
                                     // ethers.utils.formatEther(p.reward_value) || 0
                                 );
                             }
+                            else if (p.reward_type === "egg" || p.reward_type === "ticket") {
+                                setGatchaReward('NORMAL')
+                                setTicketCnt(Number(data?.ticket))
+                                setGatchaAnimationStatus(true)
+                                toast(
+                                    `Horray, you get ${p.reward_name} valued ${p.reward_value}`
+                                );
+                            }
                             else {
                                 setGatchaReward('NORMAL')
                                 setTicketCnt(Number(data?.ticket))
