@@ -3198,7 +3198,7 @@ export const AppTemp = () => {
                   onClick={() => handleOpenGameGuide(1)}
                   className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4 rounded-t-xl"
                 >
-                  Jurrasic World
+                  Jurassic World
                 </AccordionHeader>
                 <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
                   <p>
@@ -3274,7 +3274,7 @@ export const AppTemp = () => {
                   onClick={() => handleOpenGameGuide(3)}
                   className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
                 >
-                  Jurrasic Market
+                  Jurassic Market
                 </AccordionHeader>
                 <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
                   <p>
@@ -3404,7 +3404,7 @@ export const AppTemp = () => {
         //         onClick={() => changeScene("HOME")}
         //       />
         //       <div className="flex flex-col items-center justify-center text-[1.5rem] text-white font-bold font-magra ">
-        //         Jurrasic Market
+        //         Jurassic Market
         //       </div>
         //       <img
         //         src="image/logoutBtn.png"
