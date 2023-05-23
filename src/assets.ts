@@ -1025,6 +1025,54 @@ export const manifest: ResolverManifest = {
           name: "GatchaEggWithCoin3",
           srcs: BASE_URL + "/animations/cards/coinegg3/skeleton3.json",
         },
+        {
+          name: "GatchaTicket1",
+          srcs: BASE_URL + "/animations/cards/tiketegg1/2x.json",
+        },
+        {
+          name: "GatchaEggTicket1",
+          srcs: BASE_URL + "/animations/cards/tiketegg1/skeleton2.json",
+        },
+        {
+          name: "GatchaTicket2",
+          srcs: BASE_URL + "/animations/cards/tiketegg2/2x.json",
+        },
+        {
+          name: "GatchaEggTicket2",
+          srcs: BASE_URL + "/animations/cards/tiketegg2/skeleton.json",
+        },
+        {
+          name: "GatchaTicket3",
+          srcs: BASE_URL + "/animations/cards/tiketegg3/2x.json",
+        },
+        {
+          name: "GatchaEggTicket3",
+          srcs: BASE_URL + "/animations/cards/tiketegg3/skeleton2.json",
+        },
+        {
+          name: "GatchaBonusEgg",
+          srcs: BASE_URL + "/animations/cards/bonus2xegg1/2x.json",
+        },
+        {
+          name: "GatchaEggBonusEgg",
+          srcs: BASE_URL + "/animations/cards/bonus2xegg1/skeleton2.json",
+        },
+        {
+          name: "GatchaBonusEgg2",
+          srcs: BASE_URL + "/animations/cards/bonus2xegg2/2x.json",
+        },
+        {
+          name: "GatchaEggBonusEgg2",
+          srcs: BASE_URL + "/animations/cards/bonus2xegg2/skeleton.json",
+        },
+        {
+          name: "GatchaBonusEgg3",
+          srcs: BASE_URL + "/animations/cards/bonus2xegg3/skeleton.json",
+        },
+        {
+          name: "GatchaEggBonusEgg3",
+          srcs: BASE_URL + "/animations/cards/bonus2xegg3/skeleton3.json",
+        },
         // {
         //   name: "GatchaShowerWithCoin2",
         //   srcs: BASE_URL + "/animations/cards/coinegg1/shower.json",
