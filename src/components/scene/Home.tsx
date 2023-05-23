@@ -526,10 +526,18 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
       "GatchaWithCoin3",
       "GatchaEggWithCoin3",
       "GatchaWithDino",
-      // "GatchaShineWithCoin1",
-      // "GatchaShowerWithCoin1",
-      // "GatchaWithCoin2",
-      // "GatchaWithCoin3",
+      "GatchaTicket1",
+      "GatchaEggTicket1",
+      "GatchaTicket2",
+      "GatchaEggTicket2",
+      "GatchaTicket3",
+      "GatchaEggTicket3",
+      "GatchaBonusEgg",
+      "GatchaEggBonusEgg",
+      "GatchaBonusEgg2",
+      "GatchaEggBonusEgg2",
+      "GatchaBonusEgg3",
+      "GatchaEggBonusEgg3",
     ])
       .then((resources) => {
         console.log("res gatchaAnimation", resources);
@@ -542,7 +550,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
   }, []);
 
   console.log("gatchaAnimation", gatchaAnimation);
-  const [gatchaGetReward, setGatchaReward] = useState<'ZONK' | 'CARD' | 'NORMAL'>('ZONK');
+  const [gatchaGetReward, setGatchaReward] = useState<'ZONK' | 'CARD' | 'NORMAL' | 'EGG' | 'TICKET'>('ZONK');
   const [gatchaAnimationStatus, setGatchaAnimationStatus] = useState(false);
   // gatcha ticket count
   const [ticketCnt, setTicketCnt] = useState(0);
@@ -569,19 +577,25 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
 
       let gatchaWithCoin1: any = null;
       let gatchaEggWithCoin1: any = null;
-      // let gatchaShineWithCoin1: any = null;
-      // let gatchaShowerWithCoin1: any = null;
 
       let gatchaWithCoin2: any = null;
       let gatchaEggWithCoin2: any = null;
-      // let gatchaShineWithCoin2: any = null;
-      // let gatchaShowerWithCoin2: any = null;
 
       let gatchaWithCoin3: any = null;
       let gatchaEggWithCoin3: any = null;
-      // let gatchaEggWithCoin3: any = null;
-      // let gatchaShineWithCoin3: any = null;
-      // let gatchaShowerWithCoin3: any = null;
+
+      let gatchaTicket1: any = null;
+      let gatchaEggTicket1: any = null;
+      let gatchaTicket2: any = null;
+      let gatchaEggTicket2: any = null;
+      let gatchaTicket3: any = null;
+      let gatchaEggTicket3: any = null;
+      let gatchaBonusEgg: any = null;
+      let gatchaEggBonusEgg: any = null;
+      let gatchaBonusEgg2: any = null;
+      let gatchaEggBonusEgg2: any = null;
+      let gatchaBonusEgg3: any = null;
+      let gatchaEggBonusEgg3: any = null;
 
       // load all animation inside memoizedGatchaAnimation using loop
       if (memoizedGatchaAnimation) {
@@ -607,7 +621,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
               if (key === "GatchaWithDino") {
                 gatcha.scale.set(0.3);
                 gatchaWithDino = gatcha;
-              } 
+              }
 
               if (key === "GatchaWithCoin1") {
                 gatcha.scale.set(1.2);
@@ -631,6 +645,60 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
               if (key === "GatchaEggWithCoin3") {
                 gatcha.scale.set(1.2);
                 gatchaEggWithCoin3 = gatcha;
+              }
+
+              if (key === "GatchaTicket1") {
+                gatcha.scale.set(0.5);
+                gatchaTicket1 = gatcha;
+              }
+              if (key === "GatchaEggTicket1") {
+                gatcha.scale.set(0.5);
+                gatchaEggTicket1 = gatcha;
+              }
+
+              if (key === "GatchaTicket2") {
+                gatcha.scale.set(0.5);
+                gatchaTicket2 = gatcha;
+              }
+              if (key === "GatchaEggTicket2") {
+                gatcha.scale.set(0.5);
+                gatchaEggTicket2 = gatcha;
+              }
+
+              if (key === "GatchaTicket3") {
+                gatcha.scale.set(0.5);
+                gatchaTicket3 = gatcha;
+              }
+              if (key === "GatchaEggTicket3") {
+                gatcha.scale.set(0.5);
+                gatchaEggTicket3 = gatcha;
+              }
+
+              if (key === "GatchaBonusEgg") {
+                gatcha.scale.set(0.5);
+                gatchaBonusEgg = gatcha;
+              }
+              if (key === "GatchaEggBonusEgg") {
+                gatcha.scale.set(0.5);
+                gatchaEggBonusEgg = gatcha;
+              }
+
+              if (key === "GatchaBonusEgg2") {
+                gatcha.scale.set(0.5);
+                gatchaBonusEgg2 = gatcha;
+              }
+              if (key === "GatchaEggBonusEgg2") {
+                gatcha.scale.set(0.5);
+                gatchaEggBonusEgg2 = gatcha;
+              }
+
+              if (key === "GatchaBonusEgg3") {
+                gatcha.scale.set(0.5);
+                gatchaBonusEgg3 = gatcha;
+              }
+              if (key === "GatchaEggBonusEgg3") {
+                gatcha.scale.set(0.5);
+                gatchaEggBonusEgg3 = gatcha;
               }
               // if (key === "GatchaShineWithCoin1") {
               //   gatcha.scale.set(0.2);
@@ -737,6 +805,95 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
             node?.addChild(gatchaWithDino);
           }
         }
+
+        else if (gatchaGetReward === 'EGG') {
+          console.log('gatcha reward egg', { ticketCnt, gatchaGetReward, gatchaAnimation })
+          if (gatchaBonusEgg && ticketCnt === 1) {
+            console.log("gatchaBonusEgg triggered");
+            gatchaBonusEgg.visible = true;
+            node?.addChild(gatchaBonusEgg);
+          }
+          if (gatchaEggBonusEgg && ticketCnt === 1) {
+            console.log("gatchaEggBonusEgg triggered");
+            gatchaEggBonusEgg.visible = true;
+            node?.addChild(gatchaEggBonusEgg);
+          }
+
+          if (gatchaBonusEgg2 && ticketCnt === 2) {
+            console.log("gatchaBonusEgg2 triggered");
+            gatchaBonusEgg2.visible = true;
+            node?.addChild(gatchaBonusEgg2);
+          }
+          if (gatchaEggBonusEgg2 && ticketCnt === 2) {
+            console.log("gatchaEggBonusEgg2 triggered");
+            gatchaEggBonusEgg2.visible = true;
+            node?.addChild(gatchaEggBonusEgg2);
+          }
+
+          if (gatchaBonusEgg3 && ticketCnt === 4) {
+            console.log("gatchaBonusEgg3 triggered");
+            gatchaBonusEgg3.visible = true;
+            node?.addChild(gatchaBonusEgg3);
+          }
+          if (gatchaEggBonusEgg3 && ticketCnt === 4) {
+            console.log("gatchaEggBonusEgg3 triggered");
+            gatchaEggBonusEgg3.visible = true;
+            node?.addChild(gatchaEggBonusEgg3);
+          }
+        }
+
+        else if (gatchaGetReward === 'TICKET') {
+          if (gatchaTicket1 && ticketCnt === 1) {
+            console.log("gatchaTicket1 triggered");
+            gatchaTicket1.visible = true;
+            node?.addChild(gatchaTicket1);
+          }
+
+          if (gatchaEggTicket1 && ticketCnt === 1) {
+            console.log("gatchaEggTicket1 triggered");
+            gatchaEggTicket1.visible = true;
+            node?.addChild(gatchaEggTicket1);
+          }
+
+          if (gatchaTicket2 && ticketCnt === 2) {
+            console.log("gatchaTicket2 triggered");
+            gatchaTicket2.visible = true;
+            node?.addChild(gatchaTicket2);
+          }
+
+          if (gatchaEggTicket2 && ticketCnt === 2) {
+            console.log("gatchaEggTicket2 triggered");
+            gatchaEggTicket2.visible = true;
+            node?.addChild(gatchaEggTicket2);
+          }
+
+          if (gatchaTicket3 && ticketCnt === 4) {
+            console.log("gatchaTicket3 triggered");
+            gatchaTicket3.visible = true;
+            node?.addChild(gatchaTicket3);
+          }
+
+          if (gatchaEggTicket3 && ticketCnt === 4) {
+            console.log("gatchaEggTicket3 triggered");
+            gatchaEggTicket3.visible = true;
+            node?.addChild(gatchaEggTicket3);
+          }
+          // if (gatchaEggWithCoin1 && ticketCnt === 1) {
+          //   console.log("gatchaEggWithCoin1 triggered");
+          //   gatchaEggWithCoin1.visible = true;
+          //   node?.addChild(gatchaEggWithCoin1);
+          // }
+          // if (gatchaEggWithCoin2 && ticketCnt === 2) {
+          //   console.log("gatchaEggWithCoin2 triggered");
+          //   gatchaEggWithCoin2.visible = true;
+          //   node?.addChild(gatchaEggWithCoin2);
+          // }
+          // if (gatchaEggWithCoin3 && ticketCnt === 4) {
+          //   console.log("gatchaEggWithCoin3 triggered");
+          //   gatchaEggWithCoin3.visible = true;
+          //   node?.addChild(gatchaEggWithCoin3);
+          // }
+        }
       }
 
       if (gatcha1) {
@@ -774,6 +931,144 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
         gatchaWithDino.state.addListener({
           complete: (entry: any) => {
             gatchaWithDino.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaTicket1) {
+        gatchaTicket1.state.addListener({
+          complete: (entry: any) => {
+            setTimeout(() => {
+              gatchaTicket1.visible = false;
+              onGatchaAnimationEnd();
+            }, 2000);
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaEggTicket1) {
+        gatchaEggTicket1.state.addListener({
+          complete: (entry: any) => {
+            setTimeout(() => {
+              gatchaEggTicket1.visible = false;
+              onGatchaAnimationEnd();
+            }, 2000);
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaTicket2) {
+        gatchaTicket2.state.addListener({
+          complete: (entry: any) => {
+            setTimeout(() => {
+              gatchaTicket2.visible = false;
+              onGatchaAnimationEnd();
+            }, 2000);
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaEggTicket2) {
+        gatchaEggTicket2.state.addListener({
+          complete: (entry: any) => {
+            setTimeout(() => {
+              gatchaEggTicket2.visible = false;
+              onGatchaAnimationEnd();
+            }, 2000);
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaTicket3) {
+        gatchaTicket3.state.addListener({
+          complete: (entry: any) => {
+            setTimeout(() => {
+              gatchaTicket3.visible = false;
+              onGatchaAnimationEnd();
+            }, 2000);
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaEggTicket3) {
+        gatchaEggTicket3.state.addListener({
+          complete: (entry: any) => {
+            setTimeout(() => {
+              gatchaEggTicket3.visible = false;
+              onGatchaAnimationEnd();
+            }, 2000);
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaBonusEgg) {
+        gatchaBonusEgg.state.addListener({
+          complete: (entry: any) => {
+            setTimeout(() => {
+              gatchaBonusEgg.visible = false;
+              onGatchaAnimationEnd();
+            }, 2000);
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaEggBonusEgg) {
+        gatchaEggBonusEgg.state.addListener({
+          complete: (entry: any) => {
+            gatchaEggBonusEgg.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaBonusEgg2) {
+        gatchaBonusEgg2.state.addListener({
+          complete: (entry: any) => {
+            setTimeout(() => {
+              gatchaBonusEgg2.visible = false;
+              onGatchaAnimationEnd();
+            }, 2000);
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaEggBonusEgg2) {
+        gatchaEggBonusEgg2.state.addListener({
+          complete: (entry: any) => {
+            gatchaEggBonusEgg2.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaBonusEgg3) {
+        gatchaBonusEgg3.state.addListener({
+          complete: (entry: any) => {
+            setTimeout(() => {
+              gatchaBonusEgg3.visible = false;
+              onGatchaAnimationEnd();
+            }, 2000);
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaEggBonusEgg3) {
+        gatchaEggBonusEgg3.state.addListener({
+          complete: (entry: any) => {
+            gatchaEggBonusEgg3.visible = false;
             onGatchaAnimationEnd();
             // node?.removeChildren();
           },
@@ -1186,8 +1481,8 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                   onpointertap={() => {
                     console.log("BtnLngHome clicked");
                     // uncomment to test gatcha animation
-                    // setGatchaReward('CARD')
-                    // setTicketCnt(4)
+                    // setGatchaReward('TICKET')
+                    // setTicketCnt(1)
                     // setGatchaAnimationStatus(true)
                   }}
                 />
@@ -1222,7 +1517,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                   onpointertap={() => {
                     // set toggle audio
                     // @ts-ignore
-                    toggle();
+                    // toggle();
                     setToggleBtnAudio(!toggleBtnAudio);
                   }}
                 />

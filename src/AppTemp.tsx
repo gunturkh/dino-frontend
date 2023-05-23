@@ -58,7 +58,7 @@ import JurassicMarket from "./pages/JurassicMarket";
 import { Buddies } from "./pages/Buddies";
 import { History } from "./pages/History";
 import { Bulletin } from "./pages/Bulletin";
-import useAudio from "./utils/hooks/useAudio";
+// import useAudio from "./utils/hooks/useAudio";
 import { formatToUTC } from "./utils/functions";
 import { manifest } from "./assets";
 // import { BigNumber, BigNumberish, Contract, utils } from "ethers";
@@ -98,7 +98,7 @@ declare global {
 
 // const USDT_ADDR = "0x0ed04d340a054382383ee2edff0ced66ead7496c";
 const price = 0.25;
-const BASE_URL = "https://cdn.jurassicegg.co";
+// const BASE_URL = "https://cdn.jurassicegg.co";
 export const AppTemp = () => {
   const {
     account,
@@ -180,6 +180,8 @@ export const AppTemp = () => {
     walletAddress,
     TICKET_ADDR
   );
+  const [otpIntervalId, setOtpIntervalId] = useState<any>(60);
+  const [otpInterval, setOtpInterval] = useState(5);
   const [isOldPasswordVisible, setIsOldPasswordVisible] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isRetypePasswordVisible, setIsRetypePasswordVisible] = useState(false);
@@ -237,7 +239,7 @@ export const AppTemp = () => {
   }
 
   useEffect(() => {
-    if (authMode === 'LOGIN') loadAnimationAssets()
+    if (authMode === 'LOGIN' || scene === 'HOME') loadAnimationAssets()
   }, [])
 
 
@@ -742,12 +744,12 @@ export const AppTemp = () => {
       errors.username = "Invalid username, min 5 chars & max 20 chars";
     }
     if (!values.password) errors.password = "Required";
-    // else if (
-    //   !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,20}$/i.test(values.password)
-    // ) {
-    //   errors.password =
-    //     "Password must contain 1 uppercase, 1 lowercase, 1 number, min 8 chars & max 20 chars, no symbol";
-    // }
+    else if (
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,20}$/i.test(values.password)
+    ) {
+      errors.password =
+        "Password must contain 1 uppercase, 1 lowercase, 1 number, min 8 chars & max 20 chars, no symbol";
+    }
     console.log("errors", errors);
     return errors;
   };
@@ -915,9 +917,21 @@ export const AppTemp = () => {
     onSubmit: (values, { setSubmitting }) => {
       // alert(JSON.stringify(values, null, 2));
       otpHandler(values.email);
-      setSubmitting(false);
+      setOtpIntervalId(setInterval(() => {
+        setOtpInterval(prev => prev - 1)
+      }, 1000))
     },
   });
+  useEffect(() => {
+    console.log('otpIntervalId', otpIntervalId)
+    if (otpInterval <= 0) {
+      console.log('clearInterval', otpIntervalId)
+      clearInterval(otpIntervalId)
+      setOtpInterval(60)
+      otpForm.setSubmitting(false)
+    }
+  }, [otpInterval, otpIntervalId])
+
   const googleAuthenticationForm = useFormik({
     initialValues: {
       validation: "",
@@ -999,7 +1013,7 @@ export const AppTemp = () => {
           if (forgotPasswordRechaptchaRef?.current) {
             // console.log('forgotPasswordRechaptchaRef?.current', forgotPasswordRechaptchaRef?.current)
             // @ts-ignore
-            forgotPasswordRechaptchaRef?.current?.resetCaptcha();
+            forgotPasswordRechaptchaRef?.current?.reset();
           }
         }
         if (!data.success) {
@@ -1008,7 +1022,7 @@ export const AppTemp = () => {
           if (forgotPasswordRechaptchaRef?.current) {
             // console.log('forgotPasswordRechaptchaRef?.current', forgotPasswordRechaptchaRef?.current)
             // @ts-ignore
-            forgotPasswordRechaptchaRef?.current?.resetCaptcha();
+            forgotPasswordRechaptchaRef?.current?.reset();
           }
         }
       };
@@ -1412,7 +1426,7 @@ export const AppTemp = () => {
   // }
 
   const [toggleBtnAudio, setToggleBtnAudio] = useState(false);
-  const [playing, toggle] = useAudio(`${BASE_URL}/music/dinomusic.ogg`);
+  // const [playing, toggle] = useAudio(`${BASE_URL}/music/dinomusic.ogg`);
 
   // useEffect(() => {
   //   // @ts-ignore
@@ -1549,7 +1563,7 @@ export const AppTemp = () => {
                           )}
                         </button>
                       </div>
-                      <p className="text-red-500 font-bold font-magra max-w-[350px]">
+                      <p className="text-red-500 ml-2 font-bold font-magra max-w-[350px]">
                         {loginForm.errors.password &&
                           loginForm.touched.password &&
                           loginForm.errors.password}
@@ -1844,12 +1858,12 @@ export const AppTemp = () => {
                         onChange={(e) => setOtp(e.target.value)}
                       />
                       <button
-                        className="absolute right-[20px] top-[15px] font-Magra font-bold text-[#00C2FF] hover:cursor-pointer"
+                        className={`absolute right-[20px] top-[15px] font-Magra font-bold ${otpForm?.isSubmitting ? 'text-[#00C2FF]/50' : 'text-[#00C2FF]'} hover:cursor-pointer`}
                         type="button"
                         disabled={otpForm.isSubmitting}
                         onClick={otpForm.submitForm}
                       >
-                        Request OTP
+                        Request OTP {`${otpForm.isSubmitting ? `: ${otpInterval}S` : ''}`}
                       </button>
                     </div>
                   </form>
@@ -3660,8 +3674,8 @@ export const AppTemp = () => {
               <Home
                 onProfileClick={() => changeScene("PROFILE")}
                 scene={scene}
-                toggle={toggle}
-                playing={playing as boolean}
+              // toggle={toggle}
+              // playing={playing as boolean}
               />
             </>
           )}
