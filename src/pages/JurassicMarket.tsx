@@ -59,6 +59,8 @@ function JurassicMarket({
   // const total = formatUnits(userData.bought.total, 18);
   // console.log('progress JurassicMarket', progress)
   const approved = useStore((state) => state.approved);
+  const eggListFilter = useStore((state) => state.eggListFilter);
+  const setEggListFilter = useStore((state) => state.setEggListFilter);
   console.log('eggTransactionData', eggTransactionData)
   // if (parseFloat(approved as string) >= parseFloat(eggTransactionData.total))  setTransactionState('PURCHASE')
   console.log('approved JurassicMarket', (approved))
@@ -76,7 +78,7 @@ function JurassicMarket({
   const [currentTime, setCurrentTime] = useState(new Date().getTime());
   // const [myListingEgg, setMyListingEgg] = useState<any>([]);
   const rank_dateend = new Date(userData?.rank_end * 1000).toLocaleString();
-  const [marketFilter, setMarketFilter] = useState<any>("Price");
+  // const [marketFilter, setMarketFilter] = useState<any>("Price");
 
   const processTransaction = async (id: string, ticket: number) => {
     let options = {
@@ -134,14 +136,13 @@ function JurassicMarket({
       },
     };
     const data: any = await axiosInstance({
-      url: "/egg/lists",
+      url: `/egg/lists?page=${eggListFilter?.page}&sort=${eggListFilter?.sortby}&order=${eggListFilter?.orderby}`,
       method: "GET",
       headers: options.headers,
     });
     console.log("getEggList Result:", data);
     if (data?.status === 200 && data?.data?.result?.lists) {
       setEggListsData(data?.data?.result);
-
       // setEggListsData({ remaining: 0, lists: [] });
     }
   };
@@ -169,7 +170,7 @@ function JurassicMarket({
 
   const handleKeep = async (id: string, ticket: number, total: string) => {
     // if (parseFloat(walletBalance) >= parseFloat(formatUnits(total, 18))) {
-    console.log('handleKeep enough balance', parseFloat(walletBalance), parseInt(formatUnits(total, 18)), parseFloat(walletBalance) >= parseFloat(formatUnits(total, 18))) 
+    console.log('handleKeep enough balance', parseFloat(walletBalance), parseInt(formatUnits(total, 18)), parseFloat(walletBalance) >= parseFloat(formatUnits(total, 18)))
     if (parseFloat(walletBalance) >= parseFloat(formatUnits(total, 18))) {
       let options = {
         headers: {
@@ -188,7 +189,7 @@ function JurassicMarket({
       } else {
         toast(data.message);
       }
-    } 
+    }
     else toast("Your balance is not enough to keep egg!")
   };
 
@@ -212,26 +213,25 @@ function JurassicMarket({
       setEggListsData(response.data.result);
     };
     loadEggListWithPage(selected + 1)
+    setEggListFilter({ ...eggListFilter, page: selected + 1 })
   };
 
   // create a function for filtering from frontend, when click price and time filter
   // TODO: need to check the logic and where to look for the data
   const filterEggList = (filter: string) => {
-    if (filter === "Price") {
-      const sortedList = eggListsData?.lists.sort((a: any, b: any) => {
-        return a.total - b.total;
-      });
-      setEggListsData({ ...eggListsData, lists: sortedList });
-      setMarketFilter("Price");
-    } else if (filter === "Time") {
-      const sortedList = eggListsData?.lists.sort((a: any, b: any) => {
-        return a.openat - b.openat;
-      });
-      setEggListsData({ ...eggListsData, lists: sortedList });
-      setMarketFilter("Time");
+    if (filter === "price") {
+      if (eggListFilter?.sortby === 'asc') setEggListFilter({ ...eggListFilter, orderby: 'price', sortby: 'desc' })
+      if (eggListFilter?.sortby === 'desc') setEggListFilter({ ...eggListFilter, orderby: 'price', sortby: 'asc' })
+    } else if (filter === "time") {
+      if (eggListFilter?.sortby === 'asc') setEggListFilter({ ...eggListFilter, orderby: 'time', sortby: 'desc' })
+      if (eggListFilter?.sortby === 'desc') setEggListFilter({ ...eggListFilter, orderby: 'time', sortby: 'asc' })
     }
   };
 
+  useEffect(() => {
+    getEggList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eggListFilter.sortby, eggListFilter.orderby, eggListFilter.page,])
   // TODO: handle unfinished egg and continue the transaction
   useEffect(() => {
     getUnfinishedEggTransaction();
@@ -476,27 +476,27 @@ function JurassicMarket({
               <div className="flex w-full text-white font-Magra font-bold text-base [@media(max-width:400px)]:text-sm">
                 <div className="flex w-full items-end justify-end">
                   <div
-                    onClick={() => filterEggList("Price")}
+                    onClick={() => filterEggList("price")}
                     className="flex flex-row items-center px-2"
                   >
                     <span>Price</span>
                     <img
                       src="image/btnFilterIcon.png"
                       width={5}
-                      className={`w-[0.7rem] ml-2 ${marketFilter === "Price" ? "rotate-180" : ""
+                      className={`w-[0.7rem] ml-2 ${eggListFilter?.orderby === "price" && eggListFilter?.sortby === 'asc' ? "rotate-180" : ""
                         }`}
                       alt="priceFilterIcon"
                     />
                   </div>
                   <div
-                    onClick={() => filterEggList("Time")}
+                    onClick={() => filterEggList("time")}
                     className="flex flex-row items-center px-4"
                   >
                     <span>Time</span>
                     <img
                       src="image/btnFilterIcon.png"
                       width={5}
-                      className={`w-[0.7rem] ml-2 ${marketFilter === "Time" ? "rotate-180" : ""
+                      className={`w-[0.7rem] ml-2 ${eggListFilter?.orderby === "time" && eggListFilter?.sortby === 'asc' ? "rotate-180" : ""
                         }`}
                       alt="priceFilterIcon"
                     />
@@ -654,7 +654,7 @@ function JurassicMarket({
                         key={egg.id}
                         egg={egg}
                         index={egg?.id}
-                        filter={marketFilter}
+                        // filter={marketFilter}
                         currentTime={currentTime}
                         // customTimer={1683430121 + (1050 * index)}
                         onBtnKeepPress={() => {

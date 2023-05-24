@@ -11,6 +11,7 @@ import {
 } from "@usedapp/core";
 
 import { ThemeProvider } from "@material-tailwind/react";
+import { SocketProvider } from "./utils/wsProvider";
 // import { WalletConnectConnector } from '@usedapp/wallet-connect-connector'
 
 const root = ReactDOM.createRoot(
@@ -36,9 +37,11 @@ root.render(
   // <React.StrictMode>
   // <MetaMaskProvider>
   <DAppProvider config={config}>
-    <ThemeProvider>
-      <AppTemp />
-    </ThemeProvider>
+    <SocketProvider>
+      <ThemeProvider>
+        <AppTemp />
+      </ThemeProvider>
+    </SocketProvider>
   </DAppProvider>
   // </MetaMaskProvider>
   // {/* <AppCanvas /> */}
