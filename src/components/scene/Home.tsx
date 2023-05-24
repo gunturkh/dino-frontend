@@ -1440,9 +1440,9 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                 // text="0"
                 text={
                   jFundBalance !== ""
-                    ? parseFloat(
+                    ? Number(
                       ethers.utils.formatUnits(jFundBalance, 18)
-                    ).toFixed(2).toLocaleString()
+                    ).toLocaleString('en-US', { maximumFractionDigits: 2 })
                     : "0"
                 }
                 // text={`w=${getHomeContainerBounds.width.toFixed()} h=${getHomeContainerBounds.height}`}
