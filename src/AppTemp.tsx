@@ -287,6 +287,8 @@ export const AppTemp = () => {
     if (wsresp.event === 'notification') {
       toast(`💌 ${wsresp.data.message}`);
       setNotification(wsresp?.data?.message)
+      getUserData()
+      getEggList()
     }
 
     console.log('wsresp egg', wsresp)
