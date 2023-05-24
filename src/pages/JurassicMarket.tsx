@@ -121,6 +121,7 @@ function JurassicMarket({
       });
       console.log("processTransaction Result:", response);
       if (response?.data?.success) {
+        setSelectedPanel('My Listing')
         setEggTransactionData({ ...response?.data?.result });
         // if (selectedPanel === 'My Listing') setSelectedPanel("Finish");
       }
@@ -227,38 +228,20 @@ function JurassicMarket({
       if (eggListFilter?.sortby === 'desc') setEggListFilter({ ...eggListFilter, orderby: 'time', sortby: 'asc' })
     }
   };
-
+  useEffect(() => {
+    return (() => setEggListFilter({ orderby: 'time', sortby: 'asc', page: 1 })
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   useEffect(() => {
     getEggList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eggListFilter.sortby, eggListFilter.orderby, eggListFilter.page,])
+
   // TODO: handle unfinished egg and continue the transaction
   useEffect(() => {
     getUnfinishedEggTransaction();
     getMyListingEgg();
-
-    // const unlockWallet = async () => {
-    //     console.log('walletAddress', walletAddress)
-    //     // console.log("allowance ", allowance);
-    //     // console.log("account approve", walletAddress);
-    //     if (walletAddress?.length === 0) activateBrowserWallet({ type: 'metamask' })
-    //     else {
-    //         try {
-    //             const txReq = {
-    //                 to: USDT_ADDR,
-    //                 from: walletAddress,
-    //                 data: eggTransactionData.TxRawApproval,
-    //             };
-    //             console.log("txReq", txReq);
-    //             const txSend = await sendTransaction(txReq);
-    //             console.log("txSend", txSend);
-    //         } catch (error) {
-    //             // @ts-ignore
-    //             toast(error)
-    //         }
-    //     }
-    // }
-    // unlockWallet()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedPanel]);
 

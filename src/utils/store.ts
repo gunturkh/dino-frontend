@@ -235,7 +235,7 @@ export const useStore = create<Store>((set, get) => ({
   gatchaAnimationStatus: { show: false, ticket: 0 },
   setGatchaAnimationStatus: (data) =>
     set(() => ({ gatchaAnimationStatus: data })),
-  eggListFilter: { page: 1, orderby: 'price', sortby: 'asc' },
+  eggListFilter: { page: 1, orderby: 'time', sortby: 'asc' },
   setEggListFilter: (data) => set(() => ({ eggListFilter: data })),
 }));
 
