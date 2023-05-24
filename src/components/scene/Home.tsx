@@ -940,10 +940,8 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
       if (gatchaTicket1) {
         gatchaTicket1.state.addListener({
           complete: (entry: any) => {
-            setTimeout(() => {
-              gatchaTicket1.visible = false;
-              onGatchaAnimationEnd();
-            }, 2000);
+            gatchaTicket1.visible = false;
+            onGatchaAnimationEnd();
             // node?.removeChildren();
           },
         });
@@ -952,10 +950,8 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
       if (gatchaEggTicket1) {
         gatchaEggTicket1.state.addListener({
           complete: (entry: any) => {
-            setTimeout(() => {
-              gatchaEggTicket1.visible = false;
-              onGatchaAnimationEnd();
-            }, 2000);
+            gatchaEggTicket1.visible = false;
+            onGatchaAnimationEnd();
             // node?.removeChildren();
           },
         });
@@ -964,10 +960,8 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
       if (gatchaTicket2) {
         gatchaTicket2.state.addListener({
           complete: (entry: any) => {
-            setTimeout(() => {
-              gatchaTicket2.visible = false;
-              onGatchaAnimationEnd();
-            }, 2000);
+            gatchaTicket2.visible = false;
+            onGatchaAnimationEnd();
             // node?.removeChildren();
           },
         });
@@ -976,10 +970,8 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
       if (gatchaEggTicket2) {
         gatchaEggTicket2.state.addListener({
           complete: (entry: any) => {
-            setTimeout(() => {
-              gatchaEggTicket2.visible = false;
-              onGatchaAnimationEnd();
-            }, 2000);
+            gatchaEggTicket2.visible = false;
+            onGatchaAnimationEnd();
             // node?.removeChildren();
           },
         });
@@ -988,10 +980,8 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
       if (gatchaTicket3) {
         gatchaTicket3.state.addListener({
           complete: (entry: any) => {
-            setTimeout(() => {
-              gatchaTicket3.visible = false;
-              onGatchaAnimationEnd();
-            }, 2000);
+            gatchaTicket3.visible = false;
+            onGatchaAnimationEnd();
             // node?.removeChildren();
           },
         });
@@ -1000,10 +990,8 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
       if (gatchaEggTicket3) {
         gatchaEggTicket3.state.addListener({
           complete: (entry: any) => {
-            setTimeout(() => {
-              gatchaEggTicket3.visible = false;
-              onGatchaAnimationEnd();
-            }, 2000);
+            gatchaEggTicket3.visible = false;
+            onGatchaAnimationEnd();
             // node?.removeChildren();
           },
         });
@@ -1012,10 +1000,8 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
       if (gatchaBonusEgg) {
         gatchaBonusEgg.state.addListener({
           complete: (entry: any) => {
-            setTimeout(() => {
-              gatchaBonusEgg.visible = false;
-              onGatchaAnimationEnd();
-            }, 2000);
+            gatchaBonusEgg.visible = false;
+            onGatchaAnimationEnd();
             // node?.removeChildren();
           },
         });
@@ -1034,10 +1020,8 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
       if (gatchaBonusEgg2) {
         gatchaBonusEgg2.state.addListener({
           complete: (entry: any) => {
-            setTimeout(() => {
-              gatchaBonusEgg2.visible = false;
-              onGatchaAnimationEnd();
-            }, 2000);
+            gatchaBonusEgg2.visible = false;
+            onGatchaAnimationEnd();
             // node?.removeChildren();
           },
         });
@@ -1056,10 +1040,8 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
       if (gatchaBonusEgg3) {
         gatchaBonusEgg3.state.addListener({
           complete: (entry: any) => {
-            setTimeout(() => {
-              gatchaBonusEgg3.visible = false;
-              onGatchaAnimationEnd();
-            }, 2000);
+            gatchaBonusEgg3.visible = false;
+            onGatchaAnimationEnd();
             // node?.removeChildren();
           },
         });
@@ -1481,8 +1463,8 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                   onpointertap={() => {
                     console.log("BtnLngHome clicked");
                     // uncomment to test gatcha animation
-                    // setGatchaReward('TICKET')
-                    // setTicketCnt(1)
+                    // setGatchaReward('EGG')
+                    // setTicketCnt(4)
                     // setGatchaAnimationStatus(true)
                   }}
                 />

@@ -136,14 +136,16 @@ type Store = {
   setWithdrawPanel: (data: WithdrawPanelData) => void;
   jPassPanel: JPassPanelData;
   setJPassPanel: (data: JPassPanelData) => void;
-  notification: string[];
-  setNotification: (data: string[]) => void;
+  notification: string;
+  setNotification: (data: string) => void;
   jFundBalance: string;
   setJFundBalance: (data: string) => void;
   setWithdrawalHistory: (data: any) => void;
   withdrawalHistory: string[];
   gatchaAnimationStatus: GatchaAnimationStatus;
   setGatchaAnimationStatus: (data: GatchaAnimationStatus) => void;
+  eggListFilter: { page: number, orderby: 'price' | 'time', sortby: 'asc' | 'desc' }
+  setEggListFilter: (data: { page: number, orderby: 'price' | 'time', sortby: 'asc' | 'desc' }) => void;
 };
 type AuthStore = {
   token: string | null;
@@ -224,7 +226,7 @@ export const useStore = create<Store>((set, get) => ({
   setWithdrawPanel: (data) => set(() => ({ withdrawPanel: data })),
   jPassPanel: { show: false, data: [] },
   setJPassPanel: (data) => set(() => ({ jPassPanel: data })),
-  notification: [],
+  notification: '',
   setNotification: (data) => set(() => ({ notification: data })),
   jFundBalance: "",
   setJFundBalance: (data) => set(() => ({ jFundBalance: data })),
@@ -233,6 +235,8 @@ export const useStore = create<Store>((set, get) => ({
   gatchaAnimationStatus: { show: false, ticket: 0 },
   setGatchaAnimationStatus: (data) =>
     set(() => ({ gatchaAnimationStatus: data })),
+  eggListFilter: { page: 1, orderby: 'price', sortby: 'asc' },
+  setEggListFilter: (data) => set(() => ({ eggListFilter: data })),
 }));
 
 export const useAuthStore = create(

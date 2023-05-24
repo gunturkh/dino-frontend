@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { eggType } from "../utils/functions";
 import { formatUnits } from "ethers/lib/utils";
-import { Egg, useAuthStore, useStore } from "../utils/store";
-import { axiosInstance } from "../utils/api";
+import { Egg, useStore } from "../utils/store";
+// import { axiosInstance } from "../utils/api";
 
 type EggComponentProps = {
   key?: string;
@@ -21,18 +21,18 @@ function EggComponent({
   customTimer,
   egg,
   index,
-  filter,
+  // filter,
   onBtnKeepPress,
   onBtnPayPress,
   onBtnPurchasePress,
 }: EggComponentProps) {
-  const token = useAuthStore((state) => state.token);
+  // const token = useAuthStore((state) => state.token);
   const approved = useStore((state) => state.approved);
   const eggTransactionData = useStore((state) => state.eggTransactionData);
-  const setEggListsData = useStore((state) => state.setEggListsData);
-  const setEggPendingListData = useStore(
-    (state) => state.setEggPendingListData
-  );
+  // const setEggListsData = useStore((state) => state.setEggListsData);
+  // const setEggPendingListData = useStore(
+  //   (state) => state.setEggPendingListData
+  // );
   const [expiryTime, setExpiryTime] = useState(
     // customTimer ? customTimer : egg?.openat
     egg?.listat ? egg?.listat : egg?.openat
@@ -45,40 +45,40 @@ function EggComponent({
     countdownSeconds: 0,
   });
 
-  const getEggList = async () => {
-    let options = {
-      headers: {
-        "my-auth-key": token,
-      },
-    };
-    const data: any = await axiosInstance({
-      url: "/egg/lists",
-      method: "GET",
-      headers: options.headers,
-    });
-    console.log("getEggList Result:", data);
-    if (data?.status === 200 && data?.data?.result?.lists) {
-      setEggListsData(data?.data?.result);
-      // setEggListsData({ remaining: 0, lists: [] });
-    }
-  };
+  // const getEggList = async () => {
+  //   let options = {
+  //     headers: {
+  //       "my-auth-key": token,
+  //     },
+  //   };
+  //   const data: any = await axiosInstance({
+  //     url: "/egg/lists",
+  //     method: "GET",
+  //     headers: options.headers,
+  //   });
+  //   console.log("getEggList Result:", data);
+  //   if (data?.status === 200 && data?.data?.result?.lists) {
+  //     setEggListsData(data?.data?.result);
+  //     // setEggListsData({ remaining: 0, lists: [] });
+  //   }
+  // };
 
-  const getPendingListingEgg = async () => {
-    let options = {
-      headers: {
-        "my-auth-key": token,
-      },
-    };
-    const { data }: any = await axiosInstance({
-      url: "/egg/pendingListing",
-      method: "GET",
-      headers: options.headers,
-    });
-    console.log("get pendingListing egg Result:", data);
-    if (data?.success) {
-      setEggPendingListData(data?.result);
-    }
-  };
+  // const getPendingListingEgg = async () => {
+  //   let options = {
+  //     headers: {
+  //       "my-auth-key": token,
+  //     },
+  //   };
+  //   const { data }: any = await axiosInstance({
+  //     url: "/egg/pendingListing",
+  //     method: "GET",
+  //     headers: options.headers,
+  //   });
+  //   console.log("get pendingListing egg Result:", data);
+  //   if (data?.success) {
+  //     setEggPendingListData(data?.result);
+  //   }
+  // };
   useEffect(() => {
     let timeInterval: any;
     // const countdown = () => {
@@ -107,10 +107,10 @@ function EggComponent({
       if (remainingDayTime < 0) {
         clearInterval(timeInterval);
         setExpiryTime(0);
-        if (filter === '') {
-          getPendingListingEgg()
-          getEggList()
-        }
+        // if (filter === '') {
+        //   getPendingListingEgg()
+        //   getEggList()
+        // }
       } else {
         setCountdownTime(runningCountdownTime);
       }

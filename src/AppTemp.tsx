@@ -23,6 +23,7 @@ import { axiosInstance } from "./utils/api";
 // @ts-ignore
 // import WalletConnectProvider from '@walletconnect/web3-provider/dist/umd/index.min.js'
 import { formatEther, formatUnits } from "@ethersproject/units";
+import { Lightbox } from "react-modal-image";
 import Home from "./components/scene/Home";
 import Register from "./components/scene/Register";
 import Loading from "./components/scene/Loader";
@@ -61,6 +62,7 @@ import { Bulletin } from "./pages/Bulletin";
 // import useAudio from "./utils/hooks/useAudio";
 import { formatToUTC } from "./utils/functions";
 import { manifest } from "./assets";
+import { useSocket } from "./utils/hooks/useWebSocket";
 // import { BigNumber, BigNumberish, Contract, utils } from "ethers";
 // import { Interface } from "ethers/lib/utils";
 
@@ -100,6 +102,8 @@ declare global {
 const price = 0.25;
 // const BASE_URL = "https://cdn.jurassicegg.co";
 export const AppTemp = () => {
+  const socket = useSocket();
+
   const {
     account,
     active,
@@ -147,9 +151,11 @@ export const AppTemp = () => {
   const withdrawalHistory = useStore((state) => state.withdrawalHistory);
   const notification = useStore((state) => state.notification);
   const setNotification = useStore((state) => state.setNotification);
+  const setEggListsData = useStore((state) => state.setEggListsData);
+  const eggListFilter = useStore((state) => state.eggListFilter);
   console.log(
     "notification text",
-    notification.map((i: any) => i.text).join(" ")
+    notification
   );
   // const cardDetails = useStore((state) => state.cardDetails);
   // const eggListsData = useStore((state) => state.eggListsData);
@@ -202,6 +208,8 @@ export const AppTemp = () => {
   // const [buddiesHistories, setBuddiesyHistories] = useState<{ username: string, data: { username: string, bought: string, dl_bought: string, regdate: number }[] }[]>([])
   // const [buddiesHistories, setBuddiesyHistories] = useState<string[]>([])
   // console.log('buddiesHistories', buddiesHistories)
+  const [banner, setBanner] = useState<string | null>("");
+  console.log('banner', banner)
   const [sponsor, setSponsor] = useState<string | null | undefined>("");
   const {
     sendTransaction,
@@ -237,6 +245,88 @@ export const AppTemp = () => {
     console.log('loadBgBundle', loadBgBundle)
     console.log('loadBundle', loadBundle)
   }
+
+  const getEggList = async () => {
+    let options = {
+      headers: {
+        'my-auth-key': token
+      }
+    }
+    const data: any = await axiosInstance({
+      url: `/egg/lists?page=${eggListFilter?.page}&sort=${eggListFilter?.sortby}&order=${eggListFilter?.orderby}`,
+      method: "GET",
+      headers: options.headers,
+    });
+    console.log("getEggList Result:", data);
+    if (data?.status === 200 && data?.data?.result?.lists) {
+      setEggListsData(data?.data?.result);
+    }
+  };
+  const onMessage = useCallback((message: any) => {
+    const pingWebSocket = async () => {
+      var x = setInterval(() => {
+        socket.send(JSON.stringify({
+          "event": "ping"
+        }));
+        clearInterval(x);
+        pingWebSocket();
+      }, 30000);
+    }
+
+    const wsresp = JSON.parse(message?.data);
+    console.log(wsresp);
+    if (wsresp.event === 'connection_established') {
+      if (token) {
+        socket.send(JSON.stringify({
+          "event": "subscribe",
+          "token": token
+        }));
+      }
+      pingWebSocket();
+    }
+    if (wsresp.event === 'notification') {
+      toast(`💌 ${wsresp.data.message}`);
+      setNotification(wsresp?.data?.message)
+    }
+
+    console.log('wsresp egg', wsresp)
+    if (wsresp.event === 'egg_sold') {
+      console.log('egg_sold')
+      getEggList();
+    }
+  }, [socket, getEggList]);
+
+  const initialize = async () => {
+    if (token) {
+      try {
+        let options = {
+          headers: {
+            'my-auth-key': token
+          }
+        }
+        // console.log(options);
+        // const response = await axios.get(API_ENDPOINT + '/user/getUserData', options);
+        const response: any = await axiosInstance({
+          url: "/user/getUserData",
+          method: "GET",
+          headers: options.headers,
+        });
+        console.log(response.data);
+        setUserData(response.data.result);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (!userData) initialize();
+    // if(!notification) notificate();
+    socket.addEventListener("message", onMessage);
+    return () => {
+      socket.removeEventListener("message", onMessage);
+    };
+  });
 
   useEffect(() => {
     if (authMode === 'LOGIN' || scene === 'HOME') loadAnimationAssets()
@@ -332,9 +422,40 @@ export const AppTemp = () => {
     console.log("getUserData Result:", result);
     if (result && result.data && result.data.result) {
       setUserData(result.data.result);
+      const banner = await axiosInstance({
+        url: "/news/announcement",
+        method: "GET",
+        headers: getUserDataOptions.headers,
+      });
+      console.log('result banner ', banner.data.result);
+      if (banner.data.result) {
+        setBanner(banner.data.result);
+      }
     }
   };
 
+  const ShowBanner = (props: any) => {
+    const default_open = sessionStorage.getItem('banner_open') ? (sessionStorage.getItem('banner_open') === 'true') : true;
+    const [open, setOpen] = useState(default_open);
+    console.log('state ', default_open);
+    const closeLightbox = () => {
+      setOpen(false);
+      sessionStorage.setItem("banner_open", 'false');
+    };
+
+    return (
+      (open) ? (
+        <Lightbox
+          medium={props.image.image}
+          hideDownload={true}
+          hideZoom={true}
+          showRotate={false}
+          // @ts-ignore
+          onClose={closeLightbox}
+        />
+      ) : null
+    )
+  }
   const getTicketHistories = async () => {
     const result = await axiosInstance({
       url: "/ticket/history",
@@ -890,6 +1011,7 @@ export const AppTemp = () => {
       setSubmitting(false);
       // setAuthMode("LOGINWALLET");
       changeScene("HOME");
+      sessionStorage.setItem("banner_open", 'true');
     },
   });
   const registerForm = useFormik({
@@ -1013,7 +1135,7 @@ export const AppTemp = () => {
           if (forgotPasswordRechaptchaRef?.current) {
             // console.log('forgotPasswordRechaptchaRef?.current', forgotPasswordRechaptchaRef?.current)
             // @ts-ignore
-            forgotPasswordRechaptchaRef?.current?.reset();
+            forgotPasswordRechaptchaRef?.current?.resetCaptcha();
           }
         }
         if (!data.success) {
@@ -1022,7 +1144,7 @@ export const AppTemp = () => {
           if (forgotPasswordRechaptchaRef?.current) {
             // console.log('forgotPasswordRechaptchaRef?.current', forgotPasswordRechaptchaRef?.current)
             // @ts-ignore
-            forgotPasswordRechaptchaRef?.current?.reset();
+            forgotPasswordRechaptchaRef?.current?.resetCaptcha();
           }
         }
       };
@@ -1098,6 +1220,7 @@ export const AppTemp = () => {
 
   useEffect(() => {
     getPendingListingEgg();
+    getUserData()
   }, [token]);
 
   useEffect(() => {
@@ -1192,7 +1315,7 @@ export const AppTemp = () => {
       if (registerRechaptchaRef?.current) {
         // console.log('registerRechaptchaRef?.current', registerRechaptchaRef?.current)
         // @ts-ignore
-        registerRechaptchaRef?.current?.resetCaptcha();
+        registerRechaptchaRef?.current?.reset();
       }
     }
     if (!data.success) {
@@ -1201,7 +1324,7 @@ export const AppTemp = () => {
       if (registerRechaptchaRef?.current) {
         // console.log('registerRechaptchaRef?.current', registerRechaptchaRef?.current)
         // @ts-ignore
-        registerRechaptchaRef?.current?.resetCaptcha();
+        registerRechaptchaRef?.current?.reset();
       }
     }
   };
@@ -3632,11 +3755,11 @@ export const AppTemp = () => {
         <div className="absolute top-[87px] flex flex-col">
           <Marquee
             loop={1}
-            onFinish={() => setNotification([])}
-            speed={50}
+            onFinish={() => setNotification('')}
+            speed={30}
             className="font-Magra text-[#FFC700]"
           >
-            {notification.map((i: any) => i.text).join("  |  ")}
+            {notification}
           </Marquee>
         </div>
       )}
@@ -3722,6 +3845,7 @@ export const AppTemp = () => {
           )}
         </Stage>
       </div>
+      {(banner) ? (<ShowBanner image={banner} />) : ('')}
       <ToastContainer />
     </div>
   );
