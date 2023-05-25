@@ -430,7 +430,7 @@ export const AppTemp = () => {
         headers: getUserDataOptions.headers,
       });
       console.log('result banner ', banner.data.result);
-      if (banner.data.result) {
+      if (banner.data.result && banner.data.result.image) {
         setBanner(banner.data.result);
       }
     }
