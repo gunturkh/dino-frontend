@@ -1,7 +1,7 @@
 import type { ResolverManifest } from "pixi.js";
 
 // const BASE_URL = "https://ik.imagekit.io/cq9mywjfr";
-const BASE_URL = "https://cdn2.jurassicegg.co";
+const BASE_URL = "https://cdn.jurassicegg.co";
 
 export const manifest: ResolverManifest = {
   bundles: [

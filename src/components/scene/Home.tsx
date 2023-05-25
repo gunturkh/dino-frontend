@@ -47,7 +47,7 @@ type Props = {
 //   data: any;
 //   dragging: boolean;
 // }
-// const BASE_URL = "https://cdn2.jurassicegg.co";
+// const BASE_URL = "https://cdn.jurassicegg.co";
 // const useAudio = (url: string) => {
 //   const [audio] = useState(new Audio(url));
 //   const [playing, setPlaying] = useState(false);
