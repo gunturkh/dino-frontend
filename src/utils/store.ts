@@ -136,8 +136,8 @@ type Store = {
   setWithdrawPanel: (data: WithdrawPanelData) => void;
   jPassPanel: JPassPanelData;
   setJPassPanel: (data: JPassPanelData) => void;
-  notification: string;
-  setNotification: (data: string) => void;
+  notification: string | null;
+  setNotification: (data: string | null) => void;
   jFundBalance: string;
   setJFundBalance: (data: string) => void;
   setWithdrawalHistory: (data: any) => void;
@@ -226,7 +226,7 @@ export const useStore = create<Store>((set, get) => ({
   setWithdrawPanel: (data) => set(() => ({ withdrawPanel: data })),
   jPassPanel: { show: false, data: [] },
   setJPassPanel: (data) => set(() => ({ jPassPanel: data })),
-  notification: '',
+  notification: null,
   setNotification: (data) => set(() => ({ notification: data })),
   jFundBalance: "",
   setJFundBalance: (data) => set(() => ({ jFundBalance: data })),
