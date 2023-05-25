@@ -279,7 +279,8 @@ export const CAPTCHA_KEY = "459ae6fa-a040-4481-8f71-98a6603d8a3a";
 // trunk-ignore(gitleaks/generic-api-key)
 // export const CAPTCHA_KEY = "6Lc4jaMlAAAAAGRgfjJ88dQUZ4WT3GA4xQZRobJN";
 
-export const WEBSOCKET = "wss://wsbeta.jurassicegg.co";
+// export const WEBSOCKET = "wss://wsbeta.jurassicegg.co";
+export const WEBSOCKET = "wss://wss.jurassicegg.co";
 
 // DEV
 // export const USDT_ADDR = "0x0Ed04d340a054382383eE2eDFf0cEd66eAd7496C";
