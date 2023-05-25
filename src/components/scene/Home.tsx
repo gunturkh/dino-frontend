@@ -634,14 +634,17 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                 gatchaWithCoin3 = gatcha;
               }
 
+              // trunk-ignore(gitleaks/generic-api-key)
               if (key === "GatchaEggWithCoin1") {
                 gatcha.scale.set(1.2);
                 gatchaEggWithCoin1 = gatcha;
               }
+              // trunk-ignore(gitleaks/generic-api-key)
               if (key === "GatchaEggWithCoin2") {
                 gatcha.scale.set(1.2);
                 gatchaEggWithCoin2 = gatcha;
               }
+              // trunk-ignore(gitleaks/generic-api-key)
               if (key === "GatchaEggWithCoin3") {
                 gatcha.scale.set(1.2);
                 gatchaEggWithCoin3 = gatcha;
@@ -683,19 +686,23 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                 gatchaEggBonusEgg = gatcha;
               }
 
+              // trunk-ignore(gitleaks/generic-api-key)
               if (key === "GatchaBonusEgg2") {
                 gatcha.scale.set(0.5);
                 gatchaBonusEgg2 = gatcha;
               }
+              // trunk-ignore(gitleaks/generic-api-key)
               if (key === "GatchaEggBonusEgg2") {
                 gatcha.scale.set(0.5);
                 gatchaEggBonusEgg2 = gatcha;
               }
 
+              // trunk-ignore(gitleaks/generic-api-key)
               if (key === "GatchaBonusEgg3") {
                 gatcha.scale.set(0.5);
                 gatchaBonusEgg3 = gatcha;
               }
+              // trunk-ignore(gitleaks/generic-api-key)
               if (key === "GatchaEggBonusEgg3") {
                 gatcha.scale.set(0.5);
                 gatchaEggBonusEgg3 = gatcha;
@@ -708,8 +715,10 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
               //   gatcha.scale.set(0.2);
               //   gatchaShowerWithCoin1 = gatcha;
               // }
+              // trunk-ignore(gitleaks/generic-api-key)
               // else if (key === "GatchaEggWithCoin2") {
               //   gatchaEggWithCoin2 = gatcha;
+              // trunk-ignore(gitleaks/generic-api-key)
               // } else if (key === "GatchaEggWithCoin3") {
               //   gatchaEggWithCoin3 = gatcha;
               // }
@@ -1177,30 +1186,30 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
     }
   };
 
-  const getNotification = async () => {
-    let options = {
-      headers: {
-        "my-auth-key": token,
-      },
-    };
-    const { data }: any = await axiosInstance({
-      url: "/notification",
-      method: "GET",
-      headers: options.headers,
-    });
-    console.log("get notification gacha egg Result:", data);
-    if (data?.success) {
-      setNotification(data?.result);
-      if (data?.result?.length > 0) {
-        data?.result?.forEach((item: { id: number; text: string }) => {
-          if (item.text.includes("Egg")) toast(item.text);
-        });
-      }
-      setTimeout(getNotification, 300000);
-    } else {
-      toast(data.message);
-    }
-  };
+  // const getNotification = async () => {
+  //   let options = {
+  //     headers: {
+  //       "my-auth-key": token,
+  //     },
+  //   };
+  //   const { data }: any = await axiosInstance({
+  //     url: "/notification",
+  //     method: "GET",
+  //     headers: options.headers,
+  //   });
+  //   console.log("get notification gacha egg Result:", data);
+  //   if (data?.success) {
+  //     setNotification(data?.result);
+  //     if (data?.result?.length > 0) {
+  //       data?.result?.forEach((item: { id: number; text: string }) => {
+  //         if (item.text.includes("Egg")) toast(item.text);
+  //       });
+  //     }
+  //     setTimeout(getNotification, 300000);
+  //   } else {
+  //     toast(data.message);
+  //   }
+  // };
 
   const getPendingListingEgg = async () => {
     let options = {
@@ -1276,7 +1285,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
       getUserData();
       getEggList();
       getPendingListingEgg();
-      getNotification();
+      // getNotification();
       getJFundBalance();
       getWithdrawHistory();
     }
