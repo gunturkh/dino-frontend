@@ -91,7 +91,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
   const setTicketPanel = useStore((state) => state.setTicketPanel);
   const setWithdrawPanel = useStore((state) => state.setWithdrawPanel);
   // const notification = useStore((state) => state.notification);
-  const setNotification = useStore((state) => state.setNotification);
+  // const setNotification = useStore((state) => state.setNotification);
   const jFundBalance = useStore((state) => state.jFundBalance);
   const setJFundBalance = useStore((state) => state.setJFundBalance);
   const setWithdrawalHistory = useStore((state) => state.setWithdrawalHistory);
