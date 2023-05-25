@@ -323,13 +323,14 @@ export const AppTemp = () => {
   }
 
   useEffect(() => {
+    console.log('TOKEN CHANGED', token)
     if (!userData) initialize();
     // if(!notification) notificate();
     socket.addEventListener("message", onMessage);
     return () => {
       socket.removeEventListener("message", onMessage);
     };
-  }, [token]);
+  });
 
   useEffect(() => {
     if (authMode === 'LOGIN' || scene === 'HOME') loadAnimationAssets()
@@ -1015,6 +1016,13 @@ export const AppTemp = () => {
       // setAuthMode("LOGINWALLET");
       changeScene("HOME");
       sessionStorage.setItem("banner_open", 'true');
+      if (token) {
+        socket.send(JSON.stringify({
+          "event": "subscribe",
+          "token": token
+        }));
+      }
+      // window.location.reload()
     },
   });
   const registerForm = useFormik({
@@ -1138,7 +1146,7 @@ export const AppTemp = () => {
           if (forgotPasswordRechaptchaRef?.current) {
             // console.log('forgotPasswordRechaptchaRef?.current', forgotPasswordRechaptchaRef?.current)
             // @ts-ignore
-            forgotPasswordRechaptchaRef?.current?.resetCaptcha();
+            forgotPasswordRechaptchaRef?.current?.reset();
           }
         }
         if (!data.success) {
@@ -1147,7 +1155,7 @@ export const AppTemp = () => {
           if (forgotPasswordRechaptchaRef?.current) {
             // console.log('forgotPasswordRechaptchaRef?.current', forgotPasswordRechaptchaRef?.current)
             // @ts-ignore
-            forgotPasswordRechaptchaRef?.current?.resetCaptcha();
+            forgotPasswordRechaptchaRef?.current?.reset();
           }
         }
       };
@@ -1281,6 +1289,7 @@ export const AppTemp = () => {
     }
     if (data && data.result) {
       saveToken(data.result?.jwt);
+      localStorage.setItem('token_key', data?.result?.jwt)
       setCaptcha("");
       if (loginRechaptchaRef?.current) {
         // console.log('loginRechaptchaRef?.current', loginRechaptchaRef?.current)
@@ -1318,7 +1327,7 @@ export const AppTemp = () => {
       if (registerRechaptchaRef?.current) {
         // console.log('registerRechaptchaRef?.current', registerRechaptchaRef?.current)
         // @ts-ignore
-        registerRechaptchaRef?.current?.reset();
+        registerRechaptchaRef?.current?.resetCaptcha();
       }
     }
     if (!data.success) {
@@ -1327,7 +1336,7 @@ export const AppTemp = () => {
       if (registerRechaptchaRef?.current) {
         // console.log('registerRechaptchaRef?.current', registerRechaptchaRef?.current)
         // @ts-ignore
-        registerRechaptchaRef?.current?.reset();
+        registerRechaptchaRef?.current?.resetCaptcha();
       }
     }
   };
