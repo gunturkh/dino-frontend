@@ -100,7 +100,7 @@ declare global {
 
 // const USDT_ADDR = "0x0ed04d340a054382383ee2edff0ced66ead7496c";
 const price = 0.25;
-// const BASE_URL = "https://cdn.jurassicegg.co";
+// const BASE_URL = "https://cdn2.jurassicegg.co";
 export const AppTemp = () => {
   const socket = useSocket();
 
