@@ -47,7 +47,7 @@ type Props = {
 //   data: any;
 //   dragging: boolean;
 // }
-// const BASE_URL = "https://cdn.jurassicegg.co";
+// const BASE_URL = "https://cdn2.jurassicegg.co";
 // const useAudio = (url: string) => {
 //   const [audio] = useState(new Audio(url));
 //   const [playing, setPlaying] = useState(false);
@@ -91,7 +91,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
   const setTicketPanel = useStore((state) => state.setTicketPanel);
   const setWithdrawPanel = useStore((state) => state.setWithdrawPanel);
   // const notification = useStore((state) => state.notification);
-  const setNotification = useStore((state) => state.setNotification);
+  // const setNotification = useStore((state) => state.setNotification);
   const jFundBalance = useStore((state) => state.jFundBalance);
   const setJFundBalance = useStore((state) => state.setJFundBalance);
   const setWithdrawalHistory = useStore((state) => state.setWithdrawalHistory);
