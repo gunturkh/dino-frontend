@@ -276,12 +276,13 @@ export const AppTemp = () => {
     const wsresp = JSON.parse(message?.data);
     console.log(wsresp);
     if (wsresp.event === 'connection_established') {
-      if (token) {
-        socket.send(JSON.stringify({
-          "event": "subscribe",
-          "token": token
-        }));
-      }
+      console.log('connection_established', token);
+      // if (token) {
+      socket.send(JSON.stringify({
+        "event": "subscribe",
+        "token": token
+      }));
+      // }
       pingWebSocket();
     }
     if (wsresp.event === 'notification') {
