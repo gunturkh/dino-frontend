@@ -296,7 +296,7 @@ export const AppTemp = () => {
       console.log('egg_sold')
       getEggList();
     }
-  }, [socket, getEggList]);
+  }, [socket, getEggList, token]);
 
   const initialize = async () => {
     if (token) {
@@ -328,7 +328,7 @@ export const AppTemp = () => {
     return () => {
       socket.removeEventListener("message", onMessage);
     };
-  });
+  }, [token]);
 
   useEffect(() => {
     if (authMode === 'LOGIN' || scene === 'HOME') loadAnimationAssets()
