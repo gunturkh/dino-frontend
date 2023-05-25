@@ -3753,11 +3753,11 @@ export const AppTemp = () => {
           }}
         />
       )}
-      {scene === "HOME" && (
-        <div className="absolute top-[85px] flex flex-col">
+      {scene === "HOME" && notification && (
+        <div className="absolute top-[87px] flex flex-col">
           <Marquee
             loop={1}
-            onFinish={() => setNotification('')}
+            onFinish={() => setNotification(null)}
             speed={30}
             className="font-Magra text-[#FFC700]"
           >
