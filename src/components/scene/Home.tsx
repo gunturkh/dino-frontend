@@ -21,6 +21,7 @@ import { toast } from "react-toastify";
 import NormalEggComponent from "../NormalEggComponent";
 // import gsap from "gsap";
 import { Spine } from "pixi-spine";
+import RainforestAnimation from "../RainforestAnimation";
 // import useAudio from "../../utils/hooks/useAudio";
 // import { TICKET_ADDR } from "../../utils/config";
 type Props = {
@@ -47,7 +48,7 @@ type Props = {
 //   data: any;
 //   dragging: boolean;
 // }
-// const BASE_URL = "https://cdn2.jurassicegg.co";
+// const BASE_URL = "https://cdn.jurassicegg.co";
 // const useAudio = (url: string) => {
 //   const [audio] = useState(new Audio(url));
 //   const [playing, setPlaying] = useState(false);
@@ -1380,6 +1381,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
             position={[app.screen.width / 2, app.screen.height / 2]}
           />
           {/* <FlyingAnimations /> */}
+          <RainforestAnimation />
           <Container ref={homecontainerRef}>
             {/* Upper  Container */}
 

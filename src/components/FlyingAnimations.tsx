@@ -3,7 +3,7 @@ import * as PIXI from "pixi.js";
 import { useApp, Container } from "@pixi/react";
 import { Spine } from "pixi-spine";
 
-const BASE_URL = "https://cdn2.jurassicegg.co";
+const BASE_URL = "https://cdn.jurassicegg.co";
 
 function FlyingAnimations() {
   const app = useApp();
