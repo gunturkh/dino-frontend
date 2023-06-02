@@ -136,8 +136,10 @@ function FlyingAnimations() {
 
       tickerOutside.add((delta) => {
         // increase containerRef x position by 10 * delta * scalePoint * direction
-        // @ts-ignore
-        containerRef.current.x += delta * (app.screen.width / duration);
+        if (containerRef.current?.x) {
+          // @ts-ignore
+          containerRef.current.x += delta * (app.screen.width / duration);
+        }
 
         // if containerRef x position is greater than the screen width + flyingDino1 width * 1.2
         if (
@@ -167,8 +169,10 @@ function FlyingAnimations() {
       containerRef.current.scale.set(-1 * scalePoint, scalePoint);
 
       tickerOutside.add((delta) => {
-        // @ts-ignore
-        containerRef.current.x -= delta * (app.screen.width / duration);
+        if (containerRef.current?.x) {
+          // @ts-ignore
+          containerRef.current.x -= delta * (app.screen.width / duration);
+        }
         // console.log("speed flyingDino", delta * (app.screen.width / duration));
 
         if (
@@ -195,8 +199,10 @@ function FlyingAnimations() {
 
       tickerOutside.add((delta) => {
         // increase containerRef x position by 10 * delta * scalePoint * direction
-        // @ts-ignore
-        containerRef.current.x += delta * (app.screen.width / duration);
+        if (containerRef.current?.x) {
+          // @ts-ignore
+          containerRef.current.x += delta * (app.screen.width / duration);
+        }
 
         // if containerRef x position is greater than the screen width + flyingDino1 width * 1.2
         if (
