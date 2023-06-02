@@ -196,13 +196,14 @@ export function Buddies() {
           <ReactPaginate
             onPageChange={paginate}
             pageCount={datas?.totalpage > 0 ? datas?.totalpage : 1}
-            marginPagesDisplayed={2}
+            marginPagesDisplayed={1}
             pageRangeDisplayed={3}
             previousLabel={"<<"}
             nextLabel={">>"}
             containerClassName={
               "flex flex-row text-black items-center text-2xl justify-center"
             }
+            breakClassName={"font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white"}
             pageLinkClassName={"font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white"}
             previousLinkClassName={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white`}
             nextLinkClassName={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white`}
