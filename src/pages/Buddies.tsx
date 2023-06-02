@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { axiosInstance } from "../utils/api";
 import { formatUnits } from "@ethersproject/units";
 import { useAuthStore, useStore } from "../utils/store";
+import ReactPaginate from "react-paginate";
 
 export function Buddies() {
   const token = useAuthStore((state) => state.token);
@@ -75,13 +76,14 @@ export function Buddies() {
               <tbody>
                 {datas?.data?.length > 0
                   ? datas?.data?.map((elm: any) => (
-                      <ShowUsers key={elm.username} data={elm} />
-                    ))
+                    <ShowUsers key={elm.username} data={elm} />
+                  ))
                   : null}
               </tbody>
             </table>
             <div className="flex flex-col justify-end h-auto pt-3">
-              <Paginate total={datas?.totalpage} current={datas?.pagenow} />
+              {/* <Paginate total={datas?.totalpage} current={datas?.pagenow} /> */}
+
             </div>
           </>
         ) : (
@@ -92,8 +94,7 @@ export function Buddies() {
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const Paginate = (props: any) => {
-    var pctn = [];
+  const paginate = ({ selected }: { selected: number }) => {
     const loadDownlineWithPage = async (props: any) => {
       let options = {
         headers: {
@@ -108,39 +109,56 @@ export function Buddies() {
         method: "GET",
         headers: options.headers,
       });
-
       console.log("page response", response);
       console.log("page props", props.current);
       setDatas(response.data.result);
     };
-
-    for (let i = 1; i <= props.total; i++) {
-      let classs = "";
-      if (parseInt(props.current) === i) classs = "active";
-      pctn.push(
-        <li
-          key={i}
-          className={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer ${
-            classs === "active"
-              ? "bg-yellow-700 text-white"
-              : "bg-white text-black"
-          }`}
-          onClick={() => loadDownlineWithPage(i)}
-        >
-          {i}
-        </li>
-      );
-    }
-
-    return <ul className="flex flex-row space-x-2">{pctn}</ul>;
+    loadDownlineWithPage(selected + 1)
   };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // const Paginate = (props: any) => {
+  //   var pctn = [];
+  //   const loadDownlineWithPage = async (props: any) => {
+  //     let options = {
+  //       headers: {
+  //         "my-auth-key": token,
+  //       },
+  //     };
+  //     const response = await axiosInstance({
+  //       url: "/user/downline",
+  //       params: {
+  //         page: props,
+  //       },
+  //       method: "GET",
+  //       headers: options.headers,
+  //     });
 
-  const DownlineCallback = useCallback(Downline, [
-    Paginate,
-    datas,
-    token,
-    userData.username,
-  ]);
+  //     console.log("page response", response);
+  //     console.log("page props", props.current);
+  //     setDatas(response.data.result);
+  //   };
+
+  //   for (let i = 1; i <= props.total; i++) {
+  //     let classs = "";
+  //     if (parseInt(props.current) === i) classs = "active";
+  //     pctn.push(
+  //       <li
+  //         key={i}
+  //         className={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer ${classs === "active"
+  //           ? "bg-yellow-700 text-white"
+  //           : "bg-white text-black"
+  //           }`}
+  //         onClick={() => loadDownlineWithPage(i)}
+  //       >
+  //         {i}
+  //       </li>
+  //     );
+  //   }
+
+  //   return <ul className="flex flex-row space-x-2">{pctn}</ul>;
+  // };
+
+  const DownlineCallback = useCallback(Downline, [datas, token, userData.username]);
 
   return (
     <div className="absolute w-full h-full flex justify-center items-center">
@@ -172,9 +190,24 @@ export function Buddies() {
           /> */}
         </div>
         <div className="flex flex-col h-full w-full px-4 pt-6 pb-6 bg-gray-800/30 backdrop-blur-sm overflow-y-visible overflow-auto">
-          <div className="bg-transparent">
+          <div className="bg-transparent h-full">
             <DownlineCallback />
           </div>
+          <ReactPaginate
+            onPageChange={paginate}
+            pageCount={datas?.totalpage > 0 ? datas?.totalpage : 1}
+            marginPagesDisplayed={2}
+            pageRangeDisplayed={3}
+            previousLabel={"<<"}
+            nextLabel={">>"}
+            containerClassName={
+              "flex flex-row text-black items-center text-2xl justify-center"
+            }
+            pageLinkClassName={"font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white"}
+            previousLinkClassName={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white`}
+            nextLinkClassName={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white`}
+            activeLinkClassName={"font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white text-[#FFC700]"}
+          />
         </div>
       </div>
     </div>
