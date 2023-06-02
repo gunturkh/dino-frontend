@@ -555,6 +555,30 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
   const [gatchaAnimationStatus, setGatchaAnimationStatus] = useState(false);
   // gatcha ticket count
   const [ticketCnt, setTicketCnt] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [eggsPerPage] = useState(8);
+  const indexOfLastEgg = currentPage * eggsPerPage;
+  const indexOfFirstEgg = indexOfLastEgg - eggsPerPage;
+  const currentEggs = eggPendingListData?.slice(
+    indexOfFirstEgg,
+    indexOfLastEgg
+  );
+  const disabledNext =
+    currentPage === Math.ceil(eggPendingListData?.length / eggsPerPage);
+
+  const disabledPrev = currentPage === 1;
+
+  const nextPage = () => {
+    if (currentPage !== Math.ceil(eggPendingListData?.length / eggsPerPage)) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const previousPage = () => {
+    if (currentPage !== 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   const onGatchaAnimationEnd = useCallback(() => {
     console.log("onGatchaAnimationEnd");
@@ -1679,7 +1703,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
               {/* <Graphics draw={draw} ref={pathRef} /> */}
 
               {/* {dummyEggLists?.map( */}
-              {eggPendingListData?.map(
+              {currentEggs?.map(
                 (egg: EggPendingListData, eggIndex: number) => {
                   if (eggIndex === 0) {
                     return (
@@ -1738,7 +1762,56 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                     );
                 }
               )}
+              <Sprite
+                texture={
+                  PIXI.Assets.get(
+                    disabledPrev
+                      ? "AlbumNextPageBtnDisabled"
+                      : "AlbumNextPageBtn"
+                  ) || PIXI.Texture.EMPTY
+                }
+                width={app.screen?.width > 450 ? 35 : 30}
+                height={app.screen?.width > 450 ? 35 : 30}
+                anchor={[0.5, 0.5]}
+                x={-180}
+                y={0}
+                rotation={3.1}
+                eventMode={"static"}
+                onpointertap={() => previousPage()}
+              />
+              <Sprite
+                texture={
+                  PIXI.Assets.get(
+                    disabledNext
+                      ? "AlbumNextPageBtnDisabled"
+                      : "AlbumNextPageBtn"
+                  ) || PIXI.Texture.EMPTY
+                }
+                width={app.screen?.width > 450 ? 35 : 30}
+                height={app.screen?.width > 450 ? 35 : 30}
+                anchor={[0.5, 0.5]}
+                x={180}
+                y={0}
+                eventMode={"static"}
+                onpointertap={() => nextPage()}
+              />
             </Container>
+            {/* <Container position={[0, 250]}> */}
+            <Text
+              text={`${currentPage}/${Math.ceil(eggPendingListData?.length / eggsPerPage)}`}
+              position={[0, app.screen.height * 0.85]}
+              anchor={[0.5, 0.5]}
+              style={
+                new PIXI.TextStyle({
+                  fontFamily: "Magra Bold",
+                  fontSize: isNotMobile ? 24 : 20,
+                  fontWeight: "600",
+                  strokeThickness: 1,
+                  fill: ["white"],
+                })
+              }
+            />
+            {/* </Container> */}
 
             {/* Lower Button Container */}
             <Container
