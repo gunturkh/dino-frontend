@@ -1073,10 +1073,10 @@ export const manifest: ResolverManifest = {
           name: "GatchaEggBonusEgg3",
           srcs: BASE_URL + "/animations/cards/egg/3/skeleton3.json",
         },
-        // {
-        //   name: "GatchaShowerWithCoin2",
-        //   srcs: BASE_URL + "/animations/cards/coinegg1/shower.json",
-        // },
+        {
+          name: "Rainforest",
+          srcs: BASE_URL + "/animations/rainforest/skeleton.json",
+        },
         // {
         //   name: "GatchaShineWithCoin2",
         //   srcs: BASE_URL + "/animations/cards/coinegg1/shine.json",
