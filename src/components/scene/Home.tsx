@@ -564,7 +564,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
     indexOfLastEgg
   );
   const disabledNext =
-    currentPage === Math.ceil(eggPendingListData?.length / eggsPerPage);
+    currentPage === Math.ceil(eggPendingListData?.length / eggsPerPage) || (Math.ceil(eggPendingListData?.length / eggsPerPage) === 0);
 
   const disabledPrev = currentPage === 1;
 
@@ -1762,55 +1762,61 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                     );
                 }
               )}
-              <Sprite
-                texture={
-                  PIXI.Assets.get(
-                    disabledPrev
-                      ? "AlbumNextPageBtnDisabled"
-                      : "AlbumNextPageBtn"
-                  ) || PIXI.Texture.EMPTY
-                }
-                width={app.screen?.width > 450 ? 35 : 30}
-                height={app.screen?.width > 450 ? 35 : 30}
-                anchor={[0.5, 0.5]}
-                x={-180}
-                y={0}
-                rotation={3.1}
-                eventMode={"static"}
-                onpointertap={() => previousPage()}
-              />
-              <Sprite
-                texture={
-                  PIXI.Assets.get(
-                    disabledNext
-                      ? "AlbumNextPageBtnDisabled"
-                      : "AlbumNextPageBtn"
-                  ) || PIXI.Texture.EMPTY
-                }
-                width={app.screen?.width > 450 ? 35 : 30}
-                height={app.screen?.width > 450 ? 35 : 30}
-                anchor={[0.5, 0.5]}
-                x={180}
-                y={0}
-                eventMode={"static"}
-                onpointertap={() => nextPage()}
-              />
+              {!disabledPrev &&
+                <Sprite
+                  texture={
+                    PIXI.Assets.get(
+                      disabledPrev
+                        ? "AlbumNextPageBtnDisabled"
+                        : "AlbumNextPageBtn"
+                    ) || PIXI.Texture.EMPTY
+                  }
+                  width={app.screen?.width > 450 ? 35 : 30}
+                  height={app.screen?.width > 450 ? 35 : 30}
+                  anchor={[0.5, 0.5]}
+                  x={-180}
+                  y={0}
+                  rotation={3.1}
+                  eventMode={"static"}
+                  onpointertap={() => previousPage()}
+                />
+              }
+              {!disabledNext &&
+                <Sprite
+                  texture={
+                    PIXI.Assets.get(
+                      disabledNext
+                        ? "AlbumNextPageBtnDisabled"
+                        : "AlbumNextPageBtn"
+                    ) || PIXI.Texture.EMPTY
+                  }
+                  width={app.screen?.width > 450 ? 35 : 30}
+                  height={app.screen?.width > 450 ? 35 : 30}
+                  anchor={[0.5, 0.5]}
+                  x={180}
+                  y={0}
+                  eventMode={"static"}
+                  onpointertap={() => nextPage()}
+                />
+              }
             </Container>
             {/* <Container position={[0, 250]}> */}
-            <Text
-              text={`${currentPage}/${Math.ceil(eggPendingListData?.length / eggsPerPage)}`}
-              position={[0, app.screen.height * 0.85]}
-              anchor={[0.5, 0.5]}
-              style={
-                new PIXI.TextStyle({
-                  fontFamily: "Magra Bold",
-                  fontSize: isNotMobile ? 24 : 20,
-                  fontWeight: "600",
-                  strokeThickness: 1,
-                  fill: ["white"],
-                })
-              }
-            />
+            {Math.ceil(eggPendingListData?.length / eggsPerPage) !== 0 &&
+              <Text
+                text={`${currentPage}/${Math.ceil(eggPendingListData?.length / eggsPerPage)}`}
+                position={[0, app.screen.height * 0.85]}
+                anchor={[0.5, 0.5]}
+                style={
+                  new PIXI.TextStyle({
+                    fontFamily: "Magra Bold",
+                    fontSize: isNotMobile ? 24 : 20,
+                    fontWeight: "600",
+                    strokeThickness: 1,
+                    fill: ["white"],
+                  })
+                }
+              />
+            }
             {/* </Container> */}
 
             {/* Lower Button Container */}
