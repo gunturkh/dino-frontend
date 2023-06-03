@@ -21,7 +21,7 @@ import { toast } from "react-toastify";
 import NormalEggComponent from "../NormalEggComponent";
 // import gsap from "gsap";
 import { Spine } from "pixi-spine";
-import RainforestAnimation from "../RainforestAnimation";
+// import RainforestAnimation from "../RainforestAnimation";
 // import useAudio from "../../utils/hooks/useAudio";
 // import { TICKET_ADDR } from "../../utils/config";
 type Props = {
@@ -1404,7 +1404,9 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
             anchor={[0.5, 0.5]}
             position={[app.screen.width / 2, app.screen.height / 2]}
           />
+{/*
           <RainforestAnimation />
+*/}
           <FlyingAnimations />
           <Container ref={homecontainerRef}>
             {/* Upper  Container */}
