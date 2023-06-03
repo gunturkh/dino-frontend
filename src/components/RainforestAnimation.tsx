@@ -38,14 +38,15 @@ function RainforestAnimation() {
   const containerRef = useRef<PIXI.Container>(null);
   // this will scale the animation to the screen size
   // const scalePoint = app.screen.height / 1440;
-  const scalePoint = 1;
+  // const scalePoint = 1;
 
   // load
 
   useEffect(() => {
     let rainforest: any = null;
 
-    // const duration = 300; // duration of the animation, set lower to make it faster
+    // const duration = 300; 
+    // duration of the animation, set lower to make it faster
 
     // use waitDuration to wait for a few second before loading the next animation
     // const waitDuration = 5000;
