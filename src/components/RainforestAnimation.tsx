@@ -116,31 +116,31 @@ function RainforestAnimation() {
     // scalePoint,
   ]);
 
-  useEffect(() => {
-    if (containerRef.current && memoizedRainforestAsset) {
-      // set scale with respect to screen size
-      // containerRef.current.scale.set(scalePoint);
+  // useEffect(() => {
+  //   if (containerRef.current && memoizedRainforestAsset) {
+  //     // set scale with respect to screen size
+  //     // containerRef.current.scale.set(scalePoint);
 
-      if (app.screen.height >= 800) {
-        containerRef.current.y = app.screen.height * 0.35;
-      }
-      if (app.screen.height >= 700 && app.screen.height < 800) {
-        containerRef.current.y = app.screen.height * 0.34;
-      }
-      if (app.screen.height >= 600 && app.screen.height < 700) {
-        containerRef.current.y = app.screen.height * 0.35;
-      }
-      if (app.screen.height >= 500 && app.screen.height < 600) {
-        containerRef.current.y = app.screen.height * 0.35;
-      }
-      if (app.screen.height >= 400 && app.screen.height < 500) {
-        containerRef.current.y = app.screen.height * 0.37;
-      }
-      if (app.screen.height < 400) {
-        containerRef.current.y = app.screen.height * 0.39;
-      }
-    }
-  }, [app.screen.height, app.screen.width, memoizedRainforestAsset]);
+  //     if (app.screen.height >= 800) {
+  //       containerRef.current.y = app.screen.height * 0.35;
+  //     }
+  //     if (app.screen.height >= 700 && app.screen.height < 800) {
+  //       containerRef.current.y = app.screen.height * 0.34;
+  //     }
+  //     if (app.screen.height >= 600 && app.screen.height < 700) {
+  //       containerRef.current.y = app.screen.height * 0.35;
+  //     }
+  //     if (app.screen.height >= 500 && app.screen.height < 600) {
+  //       containerRef.current.y = app.screen.height * 0.35;
+  //     }
+  //     if (app.screen.height >= 400 && app.screen.height < 500) {
+  //       containerRef.current.y = app.screen.height * 0.37;
+  //     }
+  //     if (app.screen.height < 400) {
+  //       containerRef.current.y = app.screen.height * 0.39;
+  //     }
+  //   }
+  // }, [app.screen.height, app.screen.width, memoizedRainforestAsset]);
 
   return (
     <Container
