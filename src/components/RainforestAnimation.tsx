@@ -113,13 +113,13 @@ function RainforestAnimation() {
     animationCounter,
     app.screen.width,
     memoizedRainforestAsset,
-    scalePoint,
+    // scalePoint,
   ]);
 
   useEffect(() => {
     if (containerRef.current && memoizedRainforestAsset) {
       // set scale with respect to screen size
-      containerRef.current.scale.set(scalePoint);
+      // containerRef.current.scale.set(scalePoint);
 
       if (app.screen.height >= 800) {
         containerRef.current.y = app.screen.height * 0.35;
@@ -140,7 +140,7 @@ function RainforestAnimation() {
         containerRef.current.y = app.screen.height * 0.39;
       }
     }
-  }, [app.screen.height, app.screen.width, memoizedRainforestAsset, scalePoint]);
+  }, [app.screen.height, app.screen.width, memoizedRainforestAsset]);
 
   return (
     <Container
