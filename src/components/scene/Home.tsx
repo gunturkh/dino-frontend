@@ -16,7 +16,7 @@ import { EggPendingListData, useAuthStore, useStore } from "../../utils/store";
 import { axiosInstance } from "../../utils/api";
 import { ethers } from "ethers";
 import { manifest } from "../../assets";
-import FlyingAnimations from "../FlyingAnimations";
+// import FlyingAnimations from "../FlyingAnimations";
 import { toast } from "react-toastify";
 import NormalEggComponent from "../NormalEggComponent";
 // import gsap from "gsap";
@@ -1405,7 +1405,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
             position={[app.screen.width / 2, app.screen.height / 2]}
           />
           <RainforestAnimation />
-          <FlyingAnimations />
+          {/* <FlyingAnimations /> */}
           <Container ref={homecontainerRef}>
             {/* Upper  Container */}
 
