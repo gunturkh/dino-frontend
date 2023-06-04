@@ -60,7 +60,7 @@ function RainforestAnimation() {
       rainForestAnimation.zIndex = -1;
       rainForestAnimation.cullable = true;
 
-      rainForestAnimation.scale.set(3);
+      // rainForestAnimation.scale.set(3);
 
       rainforest = rainForestAnimation;
     });
