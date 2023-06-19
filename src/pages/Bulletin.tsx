@@ -19,7 +19,7 @@ export function Bulletin() {
     // const [downline, setDownline] = useState<any>();
 
     // TODO: need to change this static date
-    var date = new Date(1683692254 * 1000);
+    var date = new Date(data?.date * 1000);
 
     // Will display time in 10:30:23 format
     // TODO: change with function from utils later
