@@ -38,14 +38,15 @@ function RainforestAnimation() {
   const containerRef = useRef<PIXI.Container>(null);
   // this will scale the animation to the screen size
   // const scalePoint = app.screen.height / 1440;
-  const scalePoint = 1;
+  // const scalePoint = 1;
 
   // load
 
   useEffect(() => {
     let rainforest: any = null;
 
-    // const duration = 300; // duration of the animation, set lower to make it faster
+    // const duration = 300; 
+    // duration of the animation, set lower to make it faster
 
     // use waitDuration to wait for a few second before loading the next animation
     // const waitDuration = 5000;
@@ -112,34 +113,34 @@ function RainforestAnimation() {
     animationCounter,
     app.screen.width,
     memoizedRainforestAsset,
-    scalePoint,
+    // scalePoint,
   ]);
 
-  useEffect(() => {
-    if (containerRef.current && memoizedRainforestAsset) {
-      // set scale with respect to screen size
-      containerRef.current.scale.set(scalePoint);
+  // useEffect(() => {
+  //   if (containerRef.current && memoizedRainforestAsset) {
+  //     // set scale with respect to screen size
+  //     // containerRef.current.scale.set(scalePoint);
 
-      if (app.screen.height >= 800) {
-        containerRef.current.y = app.screen.height * 0.35;
-      }
-      if (app.screen.height >= 700 && app.screen.height < 800) {
-        containerRef.current.y = app.screen.height * 0.34;
-      }
-      if (app.screen.height >= 600 && app.screen.height < 700) {
-        containerRef.current.y = app.screen.height * 0.35;
-      }
-      if (app.screen.height >= 500 && app.screen.height < 600) {
-        containerRef.current.y = app.screen.height * 0.35;
-      }
-      if (app.screen.height >= 400 && app.screen.height < 500) {
-        containerRef.current.y = app.screen.height * 0.37;
-      }
-      if (app.screen.height < 400) {
-        containerRef.current.y = app.screen.height * 0.39;
-      }
-    }
-  }, [app.screen.height, app.screen.width, memoizedRainforestAsset, scalePoint]);
+  //     if (app.screen.height >= 800) {
+  //       containerRef.current.y = app.screen.height * 0.35;
+  //     }
+  //     if (app.screen.height >= 700 && app.screen.height < 800) {
+  //       containerRef.current.y = app.screen.height * 0.34;
+  //     }
+  //     if (app.screen.height >= 600 && app.screen.height < 700) {
+  //       containerRef.current.y = app.screen.height * 0.35;
+  //     }
+  //     if (app.screen.height >= 500 && app.screen.height < 600) {
+  //       containerRef.current.y = app.screen.height * 0.35;
+  //     }
+  //     if (app.screen.height >= 400 && app.screen.height < 500) {
+  //       containerRef.current.y = app.screen.height * 0.37;
+  //     }
+  //     if (app.screen.height < 400) {
+  //       containerRef.current.y = app.screen.height * 0.39;
+  //     }
+  //   }
+  // }, [app.screen.height, app.screen.width, memoizedRainforestAsset]);
 
   return (
     <Container

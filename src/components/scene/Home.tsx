@@ -16,12 +16,12 @@ import { EggPendingListData, useAuthStore, useStore } from "../../utils/store";
 import { axiosInstance } from "../../utils/api";
 import { ethers } from "ethers";
 import { manifest } from "../../assets";
-import FlyingAnimations from "../FlyingAnimations";
+// import FlyingAnimations from "../FlyingAnimations";
 import { toast } from "react-toastify";
 import NormalEggComponent from "../NormalEggComponent";
 // import gsap from "gsap";
 import { Spine } from "pixi-spine";
-import RainforestAnimation from "../RainforestAnimation";
+// import RainforestAnimation from "../RainforestAnimation";
 // import useAudio from "../../utils/hooks/useAudio";
 // import { TICKET_ADDR } from "../../utils/config";
 type Props = {
@@ -90,6 +90,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
   const eggListsData = useStore((state) => state.eggListsData);
   const setEggListsData = useStore((state) => state.setEggListsData);
   const setTicketPanel = useStore((state) => state.setTicketPanel);
+  const setSwapPanel = useStore((state) => state.setSwapPanel);
   const setWithdrawPanel = useStore((state) => state.setWithdrawPanel);
   // const notification = useStore((state) => state.notification);
   // const setNotification = useStore((state) => state.setNotification);
@@ -1404,8 +1405,8 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
             anchor={[0.5, 0.5]}
             position={[app.screen.width / 2, app.screen.height / 2]}
           />
-          <RainforestAnimation />
-          <FlyingAnimations />
+          {/* <RainforestAnimation /> */}
+          {/* <FlyingAnimations /> */}
           <Container ref={homecontainerRef}>
             {/* Upper  Container */}
 
@@ -1864,6 +1865,9 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                     fill: ["0xFFC700"],
                   })
                 }
+                onPress={async () => {
+                  setSwapPanel({ show: true });
+                }}
               />
               <LowerButtonComponent
                 spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}
