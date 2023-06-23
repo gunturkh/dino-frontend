@@ -2731,6 +2731,13 @@ export const AppTemp = () => {
               }}
             >
               <>
+                <div className="flex gap-2 justify-center py-2 w-full">
+                  <div
+                    className={`text-white font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  >
+                    Private Sale
+                  </div>
+                </div>
                 <form onSubmit={loginForm.handleSubmit}>
                   <div className="flex flex-col">
                     <p className="text-white font-Magra mb-3">
