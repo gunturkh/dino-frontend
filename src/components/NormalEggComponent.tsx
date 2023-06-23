@@ -129,10 +129,8 @@ const NormalEggComponent = ({
             const remainingDayTime = countdownDateTime - currentTime;
             // console.log(`countdownDateTime ${index}`, countdownDateTime);
             // console.log(`currentTime ${index}`, currentTime);
-            // console.log(`remainingDayTime ${index}`, remainingDayTime);
             const totalHours = Math.floor(
-                (remainingDayTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-            );
+                (remainingDayTime) / (1000 * 60 * 60))
             const totalMinutes = Math.floor(
                 (remainingDayTime % (1000 * 60 * 60)) / (1000 * 60)
             );
@@ -324,7 +322,7 @@ const NormalEggComponent = ({
                                     // ethers.utils.formatEther(p.reward_value) || 0
                                 );
                             }
-                            else if (p.reward_type === "egg" ) {
+                            else if (p.reward_type === "egg") {
                                 setGatchaReward('EGG')
                                 setTicketCnt(Number(data?.ticket))
                                 setGatchaAnimationStatus(true)
