@@ -35,15 +35,19 @@ import DinoCenter from "./components/scene/DinoCenter";
 
 import { useAuthStore, useStore } from "./utils/store";
 import {
-  USDT_ADDR,
+  TOKEN_ADDR,
   PAYGATEWAY_ADDR,
   TICKET_ADDR,
-  USDT_ABI,
+  TOKEN_ABI,
   CAPTCHA_KEY,
   COUNTRIESLABEL,
   COUNTRIES,
+  USDT_ADDR,
+  EXCHANGE_ADDR,
+  USDT_ABI,
+  EXCHANGE_ABI,
 } from "./utils/config";
-import { Contract } from "ethers";
+import { BigNumberish, Contract, ethers } from "ethers";
 // import ReCAPTCHA from "react-google-recaptcha";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { ToastContainer, toast } from "react-toastify";
@@ -98,9 +102,9 @@ declare global {
   }
 }
 
-// const USDT_ADDR = "0x0ed04d340a054382383ee2edff0ced66ead7496c";
 const price = 0.25;
-// const BASE_URL = "https://cdn2.jurassicegg.co";
+const dnfPrice = 1;
+// const BASE_URL = "https://cdn.jurassicegg.co";
 export const AppTemp = () => {
   const socket = useSocket();
 
@@ -123,6 +127,7 @@ export const AppTemp = () => {
   const walletAddress = useStore((state) => state.walletAddress);
   const setWalletAddress = useStore((state) => state.setWalletAddress);
   const walletBalance = useStore((state) => state.walletBalance);
+  console.log('walletBalance', walletBalance)
   const setWalletBalance = useStore((state) => state.setWalletBalance);
   // const approved = useStore((state) => state.approved);
   const setApproved = useStore((state) => state.setApproved);
@@ -135,6 +140,10 @@ export const AppTemp = () => {
   );
   const ticketPanel = useStore((state) => state.ticketPanel);
   const setTicketPanel = useStore((state) => state.setTicketPanel);
+  const swapPanel = useStore((state) => state.swapPanel);
+  const setSwapPanel = useStore((state) => state.setSwapPanel);
+  // const swapTxHash = useStore((state) => state.swapTxHash);
+  // const setSwapTxHash = useStore((state) => state.setSwapTxHash);
   const withdrawPanel = useStore((state) => state.withdrawPanel);
   const setWithdrawPanel = useStore((state) => state.setWithdrawPanel);
   const jPassPanel = useStore((state) => state.jPassPanel);
@@ -160,8 +169,9 @@ export const AppTemp = () => {
   // const cardDetails = useStore((state) => state.cardDetails);
   // const eggListsData = useStore((state) => state.eggListsData);
   // console.log("googleAuthPanel", googleAuthPanel);
-  // const usdtInfo = useToken(USDT_ADDR);
+  // const usdtInfo = useToken(TOKEN_ADDR);
   const usdtBalance = useTokenBalance(USDT_ADDR, account);
+  const dnfBalance = useTokenBalance(TOKEN_ADDR, account);
   const tokenBalance = useTokenBalance(
     "0x1D2F0da169ceB9fC7B3144628dB156f3F6c60dBE",
     account
@@ -176,16 +186,24 @@ export const AppTemp = () => {
     chainId: BSCTestnet.chainId,
   });
   const allowance = useTokenAllowance(
-    USDT_ADDR,
+    TOKEN_ADDR,
     walletAddress,
     PAYGATEWAY_ADDR
   );
   console.log("egg allowance", allowance);
   const ticketAllowance = useTokenAllowance(
-    USDT_ADDR,
+    TOKEN_ADDR,
     walletAddress,
     TICKET_ADDR
   );
+  const swapAllowance = useTokenAllowance(
+    USDT_ADDR,
+    walletAddress,
+    EXCHANGE_ADDR
+  );
+  console.log(
+    'swapAllowance', swapAllowance && BigInt(swapAllowance.toString()),
+  )
   const [otpIntervalId, setOtpIntervalId] = useState<any>(60);
   const [otpInterval, setOtpInterval] = useState(5);
   const [isOldPasswordVisible, setIsOldPasswordVisible] = useState(false);
@@ -196,6 +214,7 @@ export const AppTemp = () => {
   const [forgotPasswordCaptcha, setForgotPasswordCaptcha] = useState("");
   const [ticketHistories, setTicketHistories] = useState([]);
   const [ticketState, setTicketState] = useState("");
+  const [swapState, setSwapState] = useState("");
   const [jPassState, setJPassState] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState(0);
   const [withdrawAddress, setWithdrawAddress] = useState("");
@@ -366,6 +385,7 @@ export const AppTemp = () => {
 
   console.log("transactionList", transactionList);
   const USDTContract = new Contract(USDT_ADDR, USDT_ABI);
+  const SwapContract = new Contract(TOKEN_ADDR, TOKEN_ABI);
 
   let getUserDataOptions = {
     headers: {
@@ -486,14 +506,26 @@ export const AppTemp = () => {
     resetState: resetSendTicketBuyState,
   } = useSendTransaction({ transactionName: "Ticket Buy" });
 
-  const { state, send } = useContractFunction(USDTContract, "approve", {
+  const {
+    sendTransaction: sendSwapBuy,
+    state: sendSwapBuyState,
+    resetState: resetSendSwapBuyState,
+  } = useSendTransaction({ transactionName: "Swap Buy" });
+  console.log('sendSwapBuyState', sendSwapBuyState)
+
+  const { state, send } = useContractFunction(SwapContract, "approve", {
     transactionName: "Ticket Approval",
   });
 
   const { state: JPassApprovalState, send: JPassApprovalSend } =
-    useContractFunction(USDTContract, "approve", {
+    useContractFunction(SwapContract, "approve", {
       transactionName: "JPass Approval",
     });
+
+  const { state: SwapApprovalState, send: swapApprovalSend } = useContractFunction(USDTContract, "approve", {
+    transactionName: "Swap Approval",
+  });
+  console.log('SwapApprovalState', SwapApprovalState)
 
   const {
     sendTransaction: sendJPassBuy,
@@ -502,7 +534,7 @@ export const AppTemp = () => {
   } = useSendTransaction({ transactionName: "JPass Buy" });
 
   const { state: eggApprovalState, send: sendEggApproval } =
-    useContractFunction(USDTContract, "approve", {
+    useContractFunction(SwapContract, "approve", {
       transactionName: "Egg Approval",
     });
 
@@ -518,6 +550,10 @@ export const AppTemp = () => {
     toast(JPassApprovalState.errorMessage);
   }, [JPassApprovalState.errorMessage]);
 
+  useEffect(() => {
+    toast(SwapApprovalState.errorMessage);
+  }, [SwapApprovalState.errorMessage]);
+
   const changeScene = useStore((state) => state.changeScene);
   const [authMode, setAuthMode] = useState<
     | "LOGIN"
@@ -531,6 +567,8 @@ export const AppTemp = () => {
   // const [activateError, setActivateError] = useState('')
   const [registerCheckbox, setRegisterCheckbox] = useState(false);
   const [usd, setUsd] = useState(price);
+  const [dnf, setDnf] = useState(dnfPrice);
+  const [dnfQty, setDnfQty] = useState<number | string>(1);
   const [qty, setQty] = useState<number | string>(1);
   const [transferUsername, setTransferUsername] = useState("");
   const [transferQty, setTransferQty] = useState(1);
@@ -544,6 +582,12 @@ export const AppTemp = () => {
     "ticketAllowance",
     ticketAllowance && BigInt(ticketAllowance.toString())
   );
+  console.log(
+    "usd",
+    usd && BigInt(usd * 1e18),
+    "dnf",
+    dnf && BigInt(dnf * 1e18),
+  )
   const checkUsername = async (e: any) => {
     setTransferUsername(e.target.value);
     const cusr = e.target.value;
@@ -564,6 +608,17 @@ export const AppTemp = () => {
     if (psx < 0) psx = 0;
     let total_usd = psx * price;
     setUsd(total_usd);
+  };
+
+  const changeSwapQuantity = (e: any) => {
+    let psx = e.target.value;
+    if (psx > 10000) psx = 10000;
+    console.log("dnf psx", psx);
+    setDnfQty(psx);
+    if (psx < 0) psx = 0;
+    let total_dnf = psx * dnfPrice;
+    setDnf(total_dnf);
+    // setUsd(total_dnf);
   };
 
   // console.log('usdtBalance', usdtBalance)
@@ -725,6 +780,25 @@ export const AppTemp = () => {
       setTicketState('')
     }
   }, [sendTicketBuyState]);
+
+  useEffect(() => {
+    if (
+      sendSwapBuyState &&
+      sendSwapBuyState.transaction &&
+      sendSwapBuyState.status === "Success" &&
+      swapAllowance
+    ) {
+      // checkValidateTx(sendSwapBuyState.transaction.hash);
+      resetSendSwapBuyState();
+      setSwapPanel({ show: false })
+    }
+    // console.log("sendSwapBuyState", sendSwapBuyState);
+    if (sendSwapBuyState.status === "Exception") {
+      toast(sendSwapBuyState.errorMessage);
+      resetSendSwapBuyState();
+      setSwapState('')
+    }
+  }, [sendSwapBuyState]);
 
   useEffect(() => {
     if (
@@ -1146,7 +1220,7 @@ export const AppTemp = () => {
           if (forgotPasswordRechaptchaRef?.current) {
             // console.log('forgotPasswordRechaptchaRef?.current', forgotPasswordRechaptchaRef?.current)
             // @ts-ignore
-            forgotPasswordRechaptchaRef?.current?.reset();
+            forgotPasswordRechaptchaRef?.current?.resetCaptcha();
           }
         }
         if (!data.success) {
@@ -1155,7 +1229,7 @@ export const AppTemp = () => {
           if (forgotPasswordRechaptchaRef?.current) {
             // console.log('forgotPasswordRechaptchaRef?.current', forgotPasswordRechaptchaRef?.current)
             // @ts-ignore
-            forgotPasswordRechaptchaRef?.current?.reset();
+            forgotPasswordRechaptchaRef?.current?.resetCaptcha();
           }
         }
       };
@@ -1222,12 +1296,16 @@ export const AppTemp = () => {
   }, [active, account, authMode, chainId]);
 
   useEffect(() => {
-    if (usdtBalance) {
-      const balance = formatUnits(usdtBalance, 18);
-      console.log("usdtBalance", balance);
+    if (dnfBalance) {
+      const balance = formatUnits(dnfBalance, 18);
+      console.log("dnfBalance", balance);
       setWalletBalance(balance);
     }
-  }, [setWalletBalance, usdtBalance]);
+    if (usdtBalance) {
+      const usdt = formatUnits(usdtBalance, 18);
+      console.log("usdtBalance", usdt);
+    }
+  }, [setWalletBalance, dnfBalance, usdtBalance]);
 
   useEffect(() => {
     getPendingListingEgg();
@@ -1449,7 +1527,7 @@ export const AppTemp = () => {
   // const TicketBuyBtn = (props: any) => {
   //   const amount = BigInt(props.total * 1e18);
   //   // const { address } = getAccount();
-  //   const ticketAllowance = useTokenAllowance(USDT_ADDR, walletAddress, TICKET_ADDR)
+  //   const ticketAllowance = useTokenAllowance(TOKEN_ADDR, walletAddress, TICKET_ADDR)
   //   const [btnApproved, setBtnApproved] = useState<any>();
   //   const [disabled, setDisabled] = useState(false);
   //   const {
@@ -1462,8 +1540,8 @@ export const AppTemp = () => {
   //     setDisabled(true);
   //     // const txReq = { to: TICKET_ADDR, from: walletAddress, data: d.TxRawApproval }
   //     // const config = await prepareWriteContract({
-  //     //   abi: USDT_ABI,
-  //     //   address: USDT_ADDR,
+  //     //   abi: TOKEN_ABI,
+  //     //   address: TOKEN_ADDR,
   //     //   chainId: NETWORK_CHAIN,
   //     //   functionName: 'approve',
   //     //   args: [TICKET_ADDR, amount]
@@ -2328,7 +2406,7 @@ export const AppTemp = () => {
                         onChange={changeQuantity}
                         value={qty}
                       />
-                      <p className="text-white font-Magra my-3">Total USDT</p>
+                      <p className="text-white font-Magra my-3">Total DNF</p>
                       <input
                         name="totalPrice"
                         type="text"
@@ -2632,8 +2710,7 @@ export const AppTemp = () => {
           </div>
         </div>
       )}
-      {/* withdraw panel */}
-      {withdrawPanel.show && scene === "HOME" && (
+      {swapPanel.show && scene === "HOME" && (
         <div className="absolute h-[80vh] flex">
           <div className=" my-5 flex backdrop-blur-sm  justify-center items-center flex-col bg-white/10 px-3.5 py-2.5 shadow-sm rounded-sm ">
             <div className="flex w-full justify-end">
@@ -2641,10 +2718,8 @@ export const AppTemp = () => {
                 src="image/logoutBtn.png"
                 width={30}
                 height={30}
-                alt="Close Withdraw"
-                onClick={() =>
-                  setWithdrawPanel({ show: false, mode: "WITHDRAW" })
-                }
+                alt="Close "
+                onClick={() => setSwapPanel({ show: false })}
               />
             </div>
             <div
@@ -2655,327 +2730,109 @@ export const AppTemp = () => {
                 overflow: "auto",
               }}
             >
-              <div className="flex gap-2 justify-start py-2 w-full">
-                <button
-                  type="button"
-                  onClick={() =>
-                    setWithdrawPanel({ ...withdrawPanel, mode: "WITHDRAW" })
-                  }
-                  className={`${withdrawPanel.mode === "WITHDRAW"
-                    ? "text-blue-500"
-                    : "text-white"
-                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
-                >
-                  Withdraw
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    // setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
-                    setWithdrawPanel({ ...withdrawPanel, mode: "HISTORY" })
-                  }
-                  className={`${withdrawPanel.mode === "HISTORY"
-                    ? "text-blue-500"
-                    : "text-white"
-                    } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
-                >
-                  History
-                </button>
-              </div>
-              {withdrawPanel.mode === "WITHDRAW" && (
-                <>
-                  <form onSubmit={loginForm.handleSubmit}>
-                    <div className="flex flex-col">
-                      <p className="text-white font-Magra mb-3">Amount</p>
-                      <input
-                        name="amount"
-                        type="number"
-                        className="py-1 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                        style={{
-                          background: `url(image/InputBox.png) no-repeat `,
-                        }}
-                        onChange={(e: any) => setWithdrawAmount(e.target.value)}
-                        value={withdrawAmount}
-                      />
-                      <p className="text-green-400 font-Magra my-3">
-                        You will receive ${" "}
-                        {withdrawAmount > 0
-                          ? withdrawAmount - withdrawAmount * (5 / 100)
-                          : 0}
-                      </p>
-                      <p className="text-white font-Magra my-3">Address</p>
-                      <input
-                        name="Address"
-                        type="text"
-                        className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                        style={{
-                          background: `url(image/InputBox.png) no-repeat `,
-                        }}
-                        // readOnly
-                        // onChange={loginForm.handleChange}
-                        // onBlur={loginForm.handleBlur}
-                        onChange={(e: any) =>
-                          setWithdrawAddress(e.target.value)
-                        }
-                        value={withdrawAddress}
-                      />
-                      <p className="text-white font-Magra my-3">F2A Code</p>
-                      <input
-                        name="2FA"
-                        type="text"
-                        className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                        style={{
-                          background: `url(image/InputBox.png) no-repeat `,
-                        }}
-                        // readOnly
-                        // onChange={loginForm.handleChange}
-                        // onBlur={loginForm.handleBlur}
-                        onChange={(e: any) => setGAValue(e.target.value)}
-                        value={GAValue}
-                      />
-
-                      {!userData?.ga_key && (
-                        <p className="font-Magra text-md text-red-500 ml-3">
-                          Please configure 2FA on Setting
-                        </p>
-                      )}
-                    </div>
-                  </form>
-                  <button
-                    type={"submit"}
-                    // disabled={}
-                    onClick={async () => {
-                      console.log("withdraw amount approval", withdrawAmount);
-                      let options = {
-                        headers: {
-                          "my-auth-key": token,
-                        },
-                      };
-                      const response = await axiosInstance({
-                        url: "/bonus/withdraw",
-                        method: "POST",
-                        headers: options.headers,
-                        data: {
-                          amount: withdrawAmount,
-                          to: withdrawAddress,
-                          facode: GAValue.toString(),
-                        },
-                      });
-                      if (response.data.success) {
-                        toast("Withdraw Confirmed");
-                        getUserData();
-                        setWithdrawPanel({ show: false, mode: "WITHDRAW" });
-                      } else alert(response.data.message);
-                    }}
-                    className={`${userData?.ga_key ? "bg-green-500" : "bg-red-500"
-                      } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
-                    disabled={!userData?.ga_key}
-                  >
-                    Withdraw
-                  </button>
-                  {/* {sendTicketBuyState.status !== "None" && (
-                    <p className="text-white/50 font-Magra">
-                      {sendTicketBuyState.status}
-                    </p>
-                  )} */}
-                </>
-              )}
-              {withdrawPanel.mode === "HISTORY" && (
-                <table className="w-full text-base">
-                  <thead className=" uppercase border-y ">
-                    <tr className="text-yellow-500 font-Magra">
-                      <th scope="col" className="w-[6rem]">
-                        Date
-                      </th>
-                      <th scope="col" className="w-[7rem] pr-1">
-                        Description
-                      </th>
-                      <th scope="col" className="w-[4rem] py-1">
-                        Amount
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {withdrawalHistory.map((t: any) => {
-                      var date = new Date(t.recdate * 1000);
-
-                      // Will display time in 10:30:23 format
-                      // TODO: change with function from utils later
-                      const formattedTime = formatToUTC(date)
-                      return (
-                        <tr className="text-white text-left">
-                          <td>{formattedTime}</td>
-                          <td className={"text-white text-base"}>{t.txtype}</td>
-                          <td
-                            className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
-                              } pl-4`}
-                          >
-                            {`$ ${parseFloat(formatUnits(t.amount, 18)).toFixed(
-                              2
-                            )}`}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-      {jPassPanel.show && scene === "JPASS" && (
-        <div className="absolute h-[80vh] flex">
-          <div className=" my-5 flex backdrop-blur-sm  justify-center items-center flex-col bg-white/10 px-3.5 py-2.5 shadow-sm rounded-sm ">
-            <div className="flex w-full justify-end">
-              <img
-                src="image/logoutBtn.png"
-                width={30}
-                height={30}
-                alt="Close JPass"
-                onClick={() => setJPassPanel({ show: false, data: [] })}
-              />
-            </div>
-            <div
-              className="flex justify-start items-center flex-col gap-4 bg-white/50 px-3.5 py-6 shadow-sm rounded-xl "
-              style={{
-                background: `url(image/formBackground.png) no-repeat `,
-                backgroundSize: "cover",
-                overflow: "auto",
-              }}
-            >
-              <div className="flex gap-2 justify-center py-5 w-full text-white font-Magra text-xl font-bold">
-                Buy Subscription
-              </div>
-              <div className="flex gap-2 justify-center py-1 w-full text-white font-Magra text-lg font-bold">
-                {jPassPanel.data?.header}
-              </div>
               <>
                 <form onSubmit={loginForm.handleSubmit}>
-                  <div className="flex flex-row py-3">
-                    <input
-                      name="buyWithBonus"
-                      type="checkbox"
-                      // placeholder="Password"
-                      // className="py-3"
-                      // style={{
-                      //   background: `url(image/InputBox.png) no-repeat `,
-                      // }}
-                      checked={buyWithBonus}
-                      onChange={(e: any) => {
-                        console.log("buy with bonus", e);
-                        setBuyWithBonus(!buyWithBonus);
-                      }}
-                    // onBlur={loginForm.handleBlur}
-                    // value={usd}
-                    />
-                    <p className="w-64 font-Magra text-md text-white ml-3">
-                      Buy with Bonus
+                  <div className="flex flex-col">
+                    <p className="text-white font-Magra mb-3">
+                      Total USDT
                     </p>
-                  </div>
-
-                  {!userData?.ga_key && buyWithBonus && (
-                    <p className="font-Magra text-md text-red-500 ml-3">
-                      Please configure 2FA on Setting
-                    </p>
-                  )}
-
-                  {buyWithBonus && (
                     <input
-                      name="2FA"
+                      name="quantity"
                       type="number"
-                      placeholder="2FA"
+                      placeholder="Total USDT"
                       className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
                       style={{
                         background: `url(image/InputBox.png) no-repeat `,
                       }}
-                      onChange={(e: any) => setGAValue(e.target.value)}
-                      value={GAValue}
+                      onChange={changeSwapQuantity}
+                      value={dnfQty}
                     />
-                  )}
+                    <p className="text-white font-Magra my-3">Total DNF</p>
+                    <input
+                      name="totalPrice"
+                      type="text"
+                      // placeholder="Password"
+                      className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                      style={{
+                        background: `url(image/InputBox.png) no-repeat `,
+                      }}
+                      readOnly
+                      // onChange={loginForm.handleChange}
+                      // onBlur={loginForm.handleBlur}
+                      value={dnfQty}
+                    />
+
+                    {!userData?.ga_key && (
+                      <p className="font-Magra text-md text-red-500 ml-3">
+                        Please configure 2FA on Setting
+                      </p>
+                    )}
+                  </div>
                 </form>
-                {jPassState !== "LOADING" && (
+                {swapState !== "LOADING" && (
                   <button
                     type={"submit"}
                     // disabled={}
                     onClick={async () => {
-                      console.log(
-                        "JPass amount approval",
-                        jPassPanel?.data?.price
-                      );
-                      setJPassState("LOADING");
-                      if (buyWithBonus) {
-                        console.log("Buy with bonus clicked", {
-                          code: jPassPanel?.data?.purchaseCode,
-                          facode: GAValue.toString(),
-                        });
-                        let options = {
-                          headers: {
-                            "my-auth-key": token,
-                          },
-                        };
-                        const response = await axiosInstance({
-                          url: "/item/buyWithBonuses",
-                          method: "POST",
-                          headers: options.headers,
-                          data: {
-                            code: jPassPanel?.data?.purchaseCode,
-                            facode: GAValue.toString(),
-                          },
-                        });
-                        if (response.data.success) {
-                          setJPassState("");
-                          toast("Buy JPass Confirmed");
-                          getUserData();
-                        } else alert(response.data.message);
-                      } else if (!buyWithBonus) {
+                      console.log("usd amount approval", dnf);
+                      setSwapState("LOADING");
+                      const usdt = formatUnits(usdtBalance as BigNumberish, 18);
+                      console.log('usdt >= dnf', parseFloat(usdt) >= dnf, 'usdt: ', parseFloat(usdt), 'dnf: ', dnf)
+                      if (parseFloat(usdt) >= dnf) {
                         if (
-                          ticketAllowance &&
-                          ticketAllowance.toBigInt() <
-                          BigInt(jPassPanel?.data?.price * 1e18)
+                          swapAllowance &&
+                          swapAllowance.toBigInt() < BigInt(dnf * 1e18)
                         ) {
                           // const txReq = { value: BigInt(usd * 1e18) }
-                          const txSend = await JPassApprovalSend(
-                            TICKET_ADDR,
-                            BigInt(jPassPanel?.data?.price * 1e18)
+                          const txSend = await swapApprovalSend(
+                            EXCHANGE_ADDR,
+                            BigInt(dnf * 1e18)
                           );
-                          setJPassState("");
-                          console.log("txSend JPassApproval", txSend);
+                          setSwapState("");
+                          console.log("txSend swapApproval", txSend);
+                          // setSwapTxHash(txSend?.transactionHash)
                         } else {
-                          let options = {
-                            headers: {
-                              "my-auth-key": token,
-                            },
+                          // let options = {
+                          //   headers: {
+                          //     "my-auth-key": token,
+                          //   },
+                          // };
+                          // const response = await axiosInstance({
+                          //   url: "/ticket/createRawBuyTickets",
+                          //   method: "POST",
+                          //   headers: options.headers,
+                          //   data: {
+                          //     qty: qty,
+                          //   },
+                          // });
+                          // console.log(response.data);
+                          // if (response.data.success) {
+                          const ethContract = new ethers.Contract(EXCHANGE_ADDR, EXCHANGE_ABI);
+                          const encoded = await ethContract.interface.encodeFunctionData('exchange', [BigInt(dnf * 1e18).toString()]);
+                          console.log('encoded', encoded)
+                          const txReq = {
+                            data: encoded,
+                            to: EXCHANGE_ADDR,
+                            from: walletAddress,
                           };
-                          const response = await axiosInstance({
-                            url: "/item/createRawBuyItems",
-                            method: "POST",
-                            headers: options.headers,
-                            data: {
-                              code: jPassPanel?.data?.purchaseCode,
-                            },
-                          });
-                          console.log("JPass buy", response.data);
-                          if (response.data.success) {
-                            const txReq = {
-                              data: response.data.result,
-                              to: TICKET_ADDR,
-                              from: walletAddress,
-                            };
-                            console.log("txReq JPass", txReq);
-                            const txSend = await sendJPassBuy(txReq);
-                            console.log("txSend buy JPass", txSend);
-                            if (txSend && txSend.transactionHash)
-                              checkJPassValidateTx(txSend.transactionHash);
+                          const txSend = await sendSwapBuy(txReq);
+                          console.log("txSend buy ticket", txSend);
+                          if (txSend && txSend.transactionHash) {
+                            setSwapState('')
                           }
+                          // checkValidateTx(txSend.transactionHash);
+                          // }
                         }
+                      }
+                      else {
+                        setSwapState('')
+                        toast("Your balance is not enough to swap token!")
                       }
                     }}
                     className={`${buyWithBonus
                       ? "bg-green-500"
-                      : ticketAllowance &&
-                        ticketAllowance.toBigInt() <
-                        BigInt(jPassPanel?.data?.price * 1e18)
+                      : swapAllowance &&
+                        swapAllowance.toBigInt() < BigInt(dnf * 1e18)
                         ? "bg-red-500"
                         : "bg-green-500"
                       } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
@@ -2983,26 +2840,404 @@ export const AppTemp = () => {
                       (buyWithBonus &&
                         GAValue.length < 6 &&
                         !userData?.ga_key) ||
-                      sendJPassBuyState.status !== "None"
+                      sendSwapBuyState.status !== "None"
                     }
                   >
-                    {buyWithBonus
-                      ? "Buy with Bonus"
-                      : ticketAllowance &&
-                        ticketAllowance.toBigInt() <
-                        BigInt(jPassPanel?.data?.price * 1e18)
-                        ? "Approval"
-                        : "Buy Subscription"}
+                    {swapAllowance &&
+                      swapAllowance.toBigInt() < BigInt(dnf * 1e18)
+                      ? "Approval"
+                      : "Swap"}
                   </button>
                 )}
-                {jPassState === "LOADING" && (
+                {swapState === "LOADING" && (
                   <p className="text-white/50 font-Magra">Waiting...</p>
                 )}
+                {/* {sendSwapBuyState.status !== "None" && (
+                    <p className="text-white/50 font-Magra">
+                      {sendSwapBuyState.status}
+                    </p>
+                  )} */}
               </>
             </div>
           </div>
         </div>
-      )}
+      )
+      }
+      {/* withdraw panel */}
+      {
+        withdrawPanel.show && scene === "HOME" && (
+          <div className="absolute h-[80vh] flex">
+            <div className=" my-5 flex backdrop-blur-sm  justify-center items-center flex-col bg-white/10 px-3.5 py-2.5 shadow-sm rounded-sm ">
+              <div className="flex w-full justify-end">
+                <img
+                  src="image/logoutBtn.png"
+                  width={30}
+                  height={30}
+                  alt="Close Withdraw"
+                  onClick={() =>
+                    setWithdrawPanel({ show: false, mode: "WITHDRAW" })
+                  }
+                />
+              </div>
+              <div
+                className="flex justify-start items-center flex-col gap-4 bg-white/50 px-3.5 py-6 shadow-sm rounded-xl "
+                style={{
+                  background: `url(image/formBackground.png) no-repeat `,
+                  backgroundSize: "cover",
+                  overflow: "auto",
+                }}
+              >
+                <div className="flex gap-2 justify-start py-2 w-full">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setWithdrawPanel({ ...withdrawPanel, mode: "WITHDRAW" })
+                    }
+                    className={`${withdrawPanel.mode === "WITHDRAW"
+                      ? "text-blue-500"
+                      : "text-white"
+                      } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  >
+                    Withdraw
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      // setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
+                      setWithdrawPanel({ ...withdrawPanel, mode: "HISTORY" })
+                    }
+                    className={`${withdrawPanel.mode === "HISTORY"
+                      ? "text-blue-500"
+                      : "text-white"
+                      } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  >
+                    History
+                  </button>
+                </div>
+                {withdrawPanel.mode === "WITHDRAW" && (
+                  <>
+                    <form onSubmit={loginForm.handleSubmit}>
+                      <div className="flex flex-col">
+                        <p className="text-white font-Magra mb-3">Amount</p>
+                        <input
+                          name="amount"
+                          type="number"
+                          className="py-1 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          onChange={(e: any) => setWithdrawAmount(e.target.value)}
+                          value={withdrawAmount}
+                        />
+                        <p className="text-green-400 font-Magra my-3">
+                          You will receive ${" "}
+                          {withdrawAmount > 0
+                            ? withdrawAmount - withdrawAmount * (5 / 100)
+                            : 0}
+                        </p>
+                        <p className="text-white font-Magra my-3">Address</p>
+                        <input
+                          name="Address"
+                          type="text"
+                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          // readOnly
+                          // onChange={loginForm.handleChange}
+                          // onBlur={loginForm.handleBlur}
+                          onChange={(e: any) =>
+                            setWithdrawAddress(e.target.value)
+                          }
+                          value={withdrawAddress}
+                        />
+                        <p className="text-white font-Magra my-3">F2A Code</p>
+                        <input
+                          name="2FA"
+                          type="text"
+                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          // readOnly
+                          // onChange={loginForm.handleChange}
+                          // onBlur={loginForm.handleBlur}
+                          onChange={(e: any) => setGAValue(e.target.value)}
+                          value={GAValue}
+                        />
+
+                        {!userData?.ga_key && (
+                          <p className="font-Magra text-md text-red-500 ml-3">
+                            Please configure 2FA on Setting
+                          </p>
+                        )}
+                      </div>
+                    </form>
+                    <button
+                      type={"submit"}
+                      // disabled={}
+                      onClick={async () => {
+                        console.log("withdraw amount approval", withdrawAmount);
+                        let options = {
+                          headers: {
+                            "my-auth-key": token,
+                          },
+                        };
+                        const response = await axiosInstance({
+                          url: "/bonus/withdraw",
+                          method: "POST",
+                          headers: options.headers,
+                          data: {
+                            amount: withdrawAmount,
+                            to: withdrawAddress,
+                            facode: GAValue.toString(),
+                          },
+                        });
+                        if (response.data.success) {
+                          toast("Withdraw Confirmed");
+                          getUserData();
+                          setWithdrawPanel({ show: false, mode: "WITHDRAW" });
+                        } else alert(response.data.message);
+                      }}
+                      className={`${userData?.ga_key ? "bg-green-500" : "bg-red-500"
+                        } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                      disabled={!userData?.ga_key}
+                    >
+                      Withdraw
+                    </button>
+                    {/* {sendTicketBuyState.status !== "None" && (
+                    <p className="text-white/50 font-Magra">
+                      {sendTicketBuyState.status}
+                    </p>
+                  )} */}
+                  </>
+                )}
+                {withdrawPanel.mode === "HISTORY" && (
+                  <table className="w-full text-base">
+                    <thead className=" uppercase border-y ">
+                      <tr className="text-yellow-500 font-Magra">
+                        <th scope="col" className="w-[6rem]">
+                          Date
+                        </th>
+                        <th scope="col" className="w-[7rem] pr-1">
+                          Description
+                        </th>
+                        <th scope="col" className="w-[4rem] py-1">
+                          Amount
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {withdrawalHistory.map((t: any) => {
+                        var date = new Date(t.recdate * 1000);
+
+                        // Will display time in 10:30:23 format
+                        // TODO: change with function from utils later
+                        const formattedTime = formatToUTC(date)
+                        return (
+                          <tr className="text-white text-left">
+                            <td>{formattedTime}</td>
+                            <td className={"text-white text-base"}>{t.txtype}</td>
+                            <td
+                              className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
+                                } pl-4`}
+                            >
+                              {`$ ${parseFloat(formatUnits(t.amount, 18)).toFixed(
+                                2
+                              )}`}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            </div>
+          </div>
+        )
+      }
+      {
+        jPassPanel.show && scene === "JPASS" && (
+          <div className="absolute h-[80vh] flex">
+            <div className=" my-5 flex backdrop-blur-sm  justify-center items-center flex-col bg-white/10 px-3.5 py-2.5 shadow-sm rounded-sm ">
+              <div className="flex w-full justify-end">
+                <img
+                  src="image/logoutBtn.png"
+                  width={30}
+                  height={30}
+                  alt="Close JPass"
+                  onClick={() => setJPassPanel({ show: false, data: [] })}
+                />
+              </div>
+              <div
+                className="flex justify-start items-center flex-col gap-4 bg-white/50 px-3.5 py-6 shadow-sm rounded-xl "
+                style={{
+                  background: `url(image/formBackground.png) no-repeat `,
+                  backgroundSize: "cover",
+                  overflow: "auto",
+                }}
+              >
+                <div className="flex gap-2 justify-center py-5 w-full text-white font-Magra text-xl font-bold">
+                  Buy Subscription
+                </div>
+                <div className="flex gap-2 justify-center py-1 w-full text-white font-Magra text-lg font-bold">
+                  {jPassPanel.data?.header}
+                </div>
+                <>
+                  <form onSubmit={loginForm.handleSubmit}>
+                    <div className="flex flex-row py-3">
+                      <input
+                        name="buyWithBonus"
+                        type="checkbox"
+                        // placeholder="Password"
+                        // className="py-3"
+                        // style={{
+                        //   background: `url(image/InputBox.png) no-repeat `,
+                        // }}
+                        checked={buyWithBonus}
+                        onChange={(e: any) => {
+                          console.log("buy with bonus", e);
+                          setBuyWithBonus(!buyWithBonus);
+                        }}
+                      // onBlur={loginForm.handleBlur}
+                      // value={usd}
+                      />
+                      <p className="w-64 font-Magra text-md text-white ml-3">
+                        Buy with Bonus
+                      </p>
+                    </div>
+
+                    {!userData?.ga_key && buyWithBonus && (
+                      <p className="font-Magra text-md text-red-500 ml-3">
+                        Please configure 2FA on Setting
+                      </p>
+                    )}
+
+                    {buyWithBonus && (
+                      <input
+                        name="2FA"
+                        type="number"
+                        placeholder="2FA"
+                        className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                        style={{
+                          background: `url(image/InputBox.png) no-repeat `,
+                        }}
+                        onChange={(e: any) => setGAValue(e.target.value)}
+                        value={GAValue}
+                      />
+                    )}
+                  </form>
+                  {jPassState !== "LOADING" && (
+                    <button
+                      type={"submit"}
+                      // disabled={}
+                      onClick={async () => {
+                        console.log(
+                          "JPass amount approval",
+                          jPassPanel?.data?.price
+                        );
+                        setJPassState("LOADING");
+                        if (buyWithBonus) {
+                          console.log("Buy with bonus clicked", {
+                            code: jPassPanel?.data?.purchaseCode,
+                            facode: GAValue.toString(),
+                          });
+                          let options = {
+                            headers: {
+                              "my-auth-key": token,
+                            },
+                          };
+                          const response = await axiosInstance({
+                            url: "/item/buyWithBonuses",
+                            method: "POST",
+                            headers: options.headers,
+                            data: {
+                              code: jPassPanel?.data?.purchaseCode,
+                              facode: GAValue.toString(),
+                            },
+                          });
+                          if (response.data.success) {
+                            setJPassState("");
+                            toast("Buy JPass Confirmed");
+                            getUserData();
+                          } else alert(response.data.message);
+                        } else if (!buyWithBonus) {
+                          if (
+                            ticketAllowance &&
+                            ticketAllowance.toBigInt() <
+                            BigInt(jPassPanel?.data?.price * 1e18)
+                          ) {
+                            // const txReq = { value: BigInt(usd * 1e18) }
+                            const txSend = await JPassApprovalSend(
+                              TICKET_ADDR,
+                              BigInt(jPassPanel?.data?.price * 1e18)
+                            );
+                            setJPassState("");
+                            console.log("txSend JPassApproval", txSend);
+                          } else {
+                            let options = {
+                              headers: {
+                                "my-auth-key": token,
+                              },
+                            };
+                            const response = await axiosInstance({
+                              url: "/item/createRawBuyItems",
+                              method: "POST",
+                              headers: options.headers,
+                              data: {
+                                code: jPassPanel?.data?.purchaseCode,
+                              },
+                            });
+                            console.log("JPass buy", response.data);
+                            if (response.data.success) {
+                              const txReq = {
+                                data: response.data.result,
+                                to: TICKET_ADDR,
+                                from: walletAddress,
+                              };
+                              console.log("txReq JPass", txReq);
+                              const txSend = await sendJPassBuy(txReq);
+                              console.log("txSend buy JPass", txSend);
+                              if (txSend && txSend.transactionHash)
+                                checkJPassValidateTx(txSend.transactionHash);
+                            }
+                          }
+                        }
+                      }}
+                      className={`${buyWithBonus
+                        ? "bg-green-500"
+                        : ticketAllowance &&
+                          ticketAllowance.toBigInt() <
+                          BigInt(jPassPanel?.data?.price * 1e18)
+                          ? "bg-red-500"
+                          : "bg-green-500"
+                        } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                      disabled={
+                        (buyWithBonus &&
+                          GAValue.length < 6 &&
+                          !userData?.ga_key) ||
+                        sendJPassBuyState.status !== "None"
+                      }
+                    >
+                      {buyWithBonus
+                        ? "Buy with Bonus"
+                        : ticketAllowance &&
+                          ticketAllowance.toBigInt() <
+                          BigInt(jPassPanel?.data?.price * 1e18)
+                          ? "Approval"
+                          : "Buy Subscription"}
+                    </button>
+                  )}
+                  {jPassState === "LOADING" && (
+                    <p className="text-white/50 font-Magra">Waiting...</p>
+                  )}
+                </>
+              </div>
+            </div>
+          </div>
+        )
+      }
 
       {/* {sponsorLinkPanel.show && scene === "PROFILE" && (
         <div className="absolute h-[80vh] flex">
@@ -3099,682 +3334,690 @@ export const AppTemp = () => {
           </div>
         </div>
       )} */}
-      {changePasswordPanel && scene === "PROFILE" && (
-        <div className="absolute h-[80vh] flex">
-          <div className=" my-5 flex backdrop-blur-sm  justify-center items-center flex-col bg-white/10 px-3.5 py-2.5 shadow-sm rounded-sm ">
-            <div className="flex w-full justify-end">
-              <img
-                src="image/logoutBtn.png"
-                width={30}
-                height={30}
-                alt="Close Change Password Panel"
-                onClick={() => setChangePasswordPanel(false)}
-              />
-            </div>
-            <div
-              className="flex justify-start items-center flex-col gap-4 bg-white/50 px-3.5 py-6 shadow-sm rounded-xl "
-              style={{
-                background: `url(image/formBackground.png) no-repeat `,
-                backgroundSize: "cover",
-                overflow: "auto",
-              }}
-            >
-              <>
-                <form onSubmit={changePasswordForm.handleSubmit}>
-                  <div className="flex flex-col">
-                    <div className="relative flex flex-row items-center justify-between">
-                      <input
-                        name="oldPassword"
-                        type={isOldPasswordVisible ? "text" : "password"}
-                        placeholder="Old Password"
-                        className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                        style={{
-                          background: `url(image/InputBox.png) no-repeat `,
-                        }}
-                        onChange={changePasswordForm.handleChange}
-                        onBlur={changePasswordForm.handleBlur}
-                        value={changePasswordForm.values.oldPassword}
-                      />
-                      <button
-                        type="button"
-                        className="absolute flex top-[42%] right-1 items-center px-4 text-gray-600"
-                        onClick={toggleOldPasswordVisibility}
-                      >
-                        {isOldPasswordVisible ? (
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="w-5 h-5"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
-                            />
-                          </svg>
-                        ) : (
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="w-5 h-5"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
-                            />
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                            />
-                          </svg>
-                        )}
-                      </button>
-                    </div>
-                    <p className="text-red-500 font-bold font-magra max-w-[350px]">
-                      {changePasswordForm.errors.oldPassword &&
-                        changePasswordForm.touched.oldPassword &&
-                        changePasswordForm.errors.oldPassword}
-                    </p>
-                    <div className="relative flex flex-row items-center justify-between">
-                      <input
-                        name="password"
-                        type={isPasswordVisible ? "text" : "password"}
-                        placeholder="New Password"
-                        className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                        style={{
-                          background: `url(image/InputBox.png) no-repeat `,
-                        }}
-                        onChange={changePasswordForm.handleChange}
-                        onBlur={changePasswordForm.handleBlur}
-                        value={changePasswordForm.values.password}
-                      />
-                      <button
-                        type="button"
-                        className="absolute flex top-[42%] right-1 items-center px-4 text-gray-600"
-                        onClick={togglePasswordVisibility}
-                      >
-                        {isPasswordVisible ? (
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="w-5 h-5"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
-                            />
-                          </svg>
-                        ) : (
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="w-5 h-5"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
-                            />
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                            />
-                          </svg>
-                        )}
-                      </button>
-                    </div>
-                    <p className="text-red-500 font-bold font-magra max-w-[350px]">
-                      {changePasswordForm.errors.password &&
-                        changePasswordForm.touched.password &&
-                        changePasswordForm.errors.password}
-                    </p>
-
-                    <div className="relative flex flex-row items-center justify-between">
-                      <input
-                        name="retypePassword"
-                        type={isRetypePasswordVisible ? "text" : "password"}
-                        placeholder="Re-enter your password"
-                        className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                        style={{
-                          background: `url(image/InputBox.png) no-repeat `,
-                        }}
-                        onChange={changePasswordForm.handleChange}
-                        onBlur={changePasswordForm.handleBlur}
-                        value={changePasswordForm.values.retypePassword}
-                      />
-                      <button
-                        type="button"
-                        className="absolute flex top-[42%] right-1 items-center px-4 text-gray-600"
-                        onClick={toggleRetypePasswordVisibility}
-                      >
-                        {isRetypePasswordVisible ? (
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="w-5 h-5"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
-                            />
-                          </svg>
-                        ) : (
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="w-5 h-5"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
-                            />
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                            />
-                          </svg>
-                        )}
-                      </button>
-                    </div>
-                    <div className="my-2">
+      {
+        changePasswordPanel && scene === "PROFILE" && (
+          <div className="absolute h-[80vh] flex">
+            <div className=" my-5 flex backdrop-blur-sm  justify-center items-center flex-col bg-white/10 px-3.5 py-2.5 shadow-sm rounded-sm ">
+              <div className="flex w-full justify-end">
+                <img
+                  src="image/logoutBtn.png"
+                  width={30}
+                  height={30}
+                  alt="Close Change Password Panel"
+                  onClick={() => setChangePasswordPanel(false)}
+                />
+              </div>
+              <div
+                className="flex justify-start items-center flex-col gap-4 bg-white/50 px-3.5 py-6 shadow-sm rounded-xl "
+                style={{
+                  background: `url(image/formBackground.png) no-repeat `,
+                  backgroundSize: "cover",
+                  overflow: "auto",
+                }}
+              >
+                <>
+                  <form onSubmit={changePasswordForm.handleSubmit}>
+                    <div className="flex flex-col">
+                      <div className="relative flex flex-row items-center justify-between">
+                        <input
+                          name="oldPassword"
+                          type={isOldPasswordVisible ? "text" : "password"}
+                          placeholder="Old Password"
+                          className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          onChange={changePasswordForm.handleChange}
+                          onBlur={changePasswordForm.handleBlur}
+                          value={changePasswordForm.values.oldPassword}
+                        />
+                        <button
+                          type="button"
+                          className="absolute flex top-[42%] right-1 items-center px-4 text-gray-600"
+                          onClick={toggleOldPasswordVisibility}
+                        >
+                          {isOldPasswordVisible ? (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-5 h-5"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
+                              />
+                            </svg>
+                          ) : (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-5 h-5"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
                       <p className="text-red-500 font-bold font-magra max-w-[350px]">
-                        {changePasswordForm.errors.retypePassword &&
-                          changePasswordForm.touched.retypePassword &&
-                          changePasswordForm.errors.retypePassword}
+                        {changePasswordForm.errors.oldPassword &&
+                          changePasswordForm.touched.oldPassword &&
+                          changePasswordForm.errors.oldPassword}
                       </p>
+                      <div className="relative flex flex-row items-center justify-between">
+                        <input
+                          name="password"
+                          type={isPasswordVisible ? "text" : "password"}
+                          placeholder="New Password"
+                          className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          onChange={changePasswordForm.handleChange}
+                          onBlur={changePasswordForm.handleBlur}
+                          value={changePasswordForm.values.password}
+                        />
+                        <button
+                          type="button"
+                          className="absolute flex top-[42%] right-1 items-center px-4 text-gray-600"
+                          onClick={togglePasswordVisibility}
+                        >
+                          {isPasswordVisible ? (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-5 h-5"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
+                              />
+                            </svg>
+                          ) : (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-5 h-5"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
+                      <p className="text-red-500 font-bold font-magra max-w-[350px]">
+                        {changePasswordForm.errors.password &&
+                          changePasswordForm.touched.password &&
+                          changePasswordForm.errors.password}
+                      </p>
+
+                      <div className="relative flex flex-row items-center justify-between">
+                        <input
+                          name="retypePassword"
+                          type={isRetypePasswordVisible ? "text" : "password"}
+                          placeholder="Re-enter your password"
+                          className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          onChange={changePasswordForm.handleChange}
+                          onBlur={changePasswordForm.handleBlur}
+                          value={changePasswordForm.values.retypePassword}
+                        />
+                        <button
+                          type="button"
+                          className="absolute flex top-[42%] right-1 items-center px-4 text-gray-600"
+                          onClick={toggleRetypePasswordVisibility}
+                        >
+                          {isRetypePasswordVisible ? (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-5 h-5"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
+                              />
+                            </svg>
+                          ) : (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-5 h-5"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
+                      <div className="my-2">
+                        <p className="text-red-500 font-bold font-magra max-w-[350px]">
+                          {changePasswordForm.errors.retypePassword &&
+                            changePasswordForm.touched.retypePassword &&
+                            changePasswordForm.errors.retypePassword}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </form>
-                <button
-                  onClick={changePasswordForm.submitForm}
-                  className={`bg-green-500 text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
-                >
-                  Change Password
-                </button>
-              </>
+                  </form>
+                  <button
+                    onClick={changePasswordForm.submitForm}
+                    className={`bg-green-500 text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                  >
+                    Change Password
+                  </button>
+                </>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-      {scene === "GAMEGUIDE" && (
-        <div className="absolute w-full h-full flex justify-center items-center">
-          <img
-            src="image/profileBackground.png"
-            className="absolute w-full h-full object-cover "
-            alt="background"
-          />
-          <div className="flex z-20 h-[80vh] w-[450px] max-[450px]:w-[calc(100vw)] max-w-[450px] justify-center items-center flex-col sm:px-4 shadow-sm rounded-sm ">
-            <div className="flex w-full justify-start">
-              <img
-                src="image/backBtn.png"
-                width={30}
-                height={30}
-                alt="Back"
-                onClick={() => changeScene("PROFILE")}
-              />
-            </div>
-            <div className="flex flex-col h-full w-full px-4 pt-6 pb-6 bg-white/20 backdrop-blur-sm overflow-y-visible overflow-auto">
-              <Accordion
-                open={openGameGuide === 1}
-                icon={<IconGameGuide id={1} open={openGameGuide} />}
-              >
-                <AccordionHeader
-                  onClick={() => handleOpenGameGuide(1)}
-                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4 rounded-t-xl"
+        )
+      }
+      {
+        scene === "GAMEGUIDE" && (
+          <div className="absolute w-full h-full flex justify-center items-center">
+            <img
+              src="image/profileBackground.png"
+              className="absolute w-full h-full object-cover "
+              alt="background"
+            />
+            <div className="flex z-20 h-[80vh] w-[450px] max-[450px]:w-[calc(100vw)] max-w-[450px] justify-center items-center flex-col sm:px-4 shadow-sm rounded-sm ">
+              <div className="flex w-full justify-start">
+                <img
+                  src="image/backBtn.png"
+                  width={30}
+                  height={30}
+                  alt="Back"
+                  onClick={() => changeScene("PROFILE")}
+                />
+              </div>
+              <div className="flex flex-col h-full w-full px-4 pt-6 pb-6 bg-white/20 backdrop-blur-sm overflow-y-visible overflow-auto">
+                <Accordion
+                  open={openGameGuide === 1}
+                  icon={<IconGameGuide id={1} open={openGameGuide} />}
                 >
-                  Jurassic World
-                </AccordionHeader>
-                <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
-                  <p>
-                    When the first dinosaur bone was described in Jurassic
-                    World, it was thought to come from an elephant or perhaps a
-                    giant.Over a century later, scientists realised such fossils
-                    came from a creature they named Megalosaurus. Then, in
-                    leading anatomist recognised Megalosaurus as part of a whole
-                    new group of animals, which named Dinosaur. Since then,
-                    around 600 different dinosaur species have been described in
-                    Jurassic World and there is more dinosaur that haven’t
-                    described
-                  </p>
-                  <br />
-                  <p>
-                    In a meantime, people and dinosaur will meet eventually and
-                    we encourage for all of you around the world to participate
-                    inside Jurassic World, become a Hunter and train your
-                    Dinosaur to defeat and capture Dinosaur Eggs. Only highly
-                    dedicated Hunters who able to defeat Immortal Dinosaur. Let
-                    us lead the future of Jurassic World to a more promising
-                    path.
-                  </p>
-                  <br />
-                  <p>
-                    Hunters need to go to the [Jurassic] Market to buy Dino Eggs
-                    before starting the hunting journey. When the Dino Eggs is
-                    successfully purchased, the Hunter will also accumulate its
-                    own hunting value. With the increase of the hunting value,
-                    the hunter can also advance to a higher level and enjoy more
-                    benefits (the hunting value of the first-level relationship
-                    buddies of the hunter, can also contribute to the hunter's
-                    hunting value, and assist the hunter to advance).
-                  </p>
-                </AccordionBody>
-              </Accordion>
-              <Accordion
-                open={openGameGuide === 2}
-                icon={<IconGameGuide id={2} open={openGameGuide} />}
-              >
-                <AccordionHeader
-                  onClick={() => handleOpenGameGuide(2)}
-                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
-                >
-                  Start Game
-                </AccordionHeader>
-                <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
-                  <p>
-                    Before beginning the hunting expedition, hunters must
-                    purchase Dino Eggs at the [Jurassic] Market. Following the
-                    purchase of Dino Eggs, the hunter will also raise their
-                    hunting value, climb the rank ladder, and earn more rewards.
-                    (The hunting value of the hunter's first-degree buddies will
-                    also help the hunter rise in rank.)
-                  </p>
-                  <br />
-                  <img src="/image/tableStartGame.png" alt="table start game" />
-                  <br />
-                  <p>
-                    Hunters will receive additional awards from the [Jurassic]
-                    Market in addition to hunting rewards for successfully
-                    capturing Dinosaur during the hunting procedure. Hunters
-                    who failed to capture any Dinosaur will also receive
-                    rewards for their efforts.
-                  </p>
-                </AccordionBody>
-              </Accordion>
-              <Accordion
-                open={openGameGuide === 3}
-                icon={<IconGameGuide id={3} open={openGameGuide} />}
-              >
-                <AccordionHeader
-                  onClick={() => handleOpenGameGuide(3)}
-                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
-                >
-                  Jurassic Market
-                </AccordionHeader>
-                <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
-                  <p>
-                    A place where all hunters gather.
+                  <AccordionHeader
+                    onClick={() => handleOpenGameGuide(1)}
+                    className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4 rounded-t-xl"
+                  >
+                    Jurassic World
+                  </AccordionHeader>
+                  <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                    <p>
+                      When the first dinosaur bone was described in Jurassic
+                      World, it was thought to come from an elephant or perhaps a
+                      giant.Over a century later, scientists realised such fossils
+                      came from a creature they named Megalosaurus. Then, in
+                      leading anatomist recognised Megalosaurus as part of a whole
+                      new group of animals, which named Dinosaur. Since then,
+                      around 600 different dinosaur species have been described in
+                      Jurassic World and there is more dinosaur that haven’t
+                      described
+                    </p>
                     <br />
+                    <p>
+                      In a meantime, people and dinosaur will meet eventually and
+                      we encourage for all of you around the world to participate
+                      inside Jurassic World, become a Hunter and train your
+                      Dinosaur to defeat and capture Dinosaur Eggs. Only highly
+                      dedicated Hunters who able to defeat Immortal Dinosaur. Let
+                      us lead the future of Jurassic World to a more promising
+                      path.
+                    </p>
                     <br />
-                    Hunters who intend to purchase Dino Eggs here are required
-                    to have purchase eggs, tickets and USDT in their account.
-                    <br />
-                    <br />
-                    One hour prior to the end of the hunt, hunters who are
-                    hunting can pre-list their Dino Eggs at the [Jurassic]
-                    market. The Dino eggs will be listed immediately at the
-                    [Jurassic] market for other Hunters to purchase from after
-                    the hunting session has ended.
-                    <br />
-                    <br />
-                    All Dino Eggs listed in the Jurassic Market are only
-                    available for 24 hours. After 24 hours, any remaining
-                    Jurassic Eggs will trigger the Dino Fund's buy- back policy.
-                  </p>
-                </AccordionBody>
-              </Accordion>
-              <Accordion
-                open={openGameGuide === 5}
-                icon={<IconGameGuide id={5} open={openGameGuide} />}
-              >
-                <AccordionHeader
-                  onClick={() => handleOpenGameGuide(5)}
-                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
+                    <p>
+                      Hunters need to go to the [Jurassic] Market to buy Dino Eggs
+                      before starting the hunting journey. When the Dino Eggs is
+                      successfully purchased, the Hunter will also accumulate its
+                      own hunting value. With the increase of the hunting value,
+                      the hunter can also advance to a higher level and enjoy more
+                      benefits (the hunting value of the first-level relationship
+                      buddies of the hunter, can also contribute to the hunter's
+                      hunting value, and assist the hunter to advance).
+                    </p>
+                  </AccordionBody>
+                </Accordion>
+                <Accordion
+                  open={openGameGuide === 2}
+                  icon={<IconGameGuide id={2} open={openGameGuide} />}
                 >
-                  Dino Egg
-                </AccordionHeader>
-                <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
-                  <img src="/image/tableDinoEgg.png" alt="table start game" />
-                </AccordionBody>
-              </Accordion>
-              <Accordion
-                open={openGameGuide === 4}
-                icon={<IconGameGuide id={4} open={openGameGuide} />}
-              >
-                <AccordionHeader
-                  onClick={() => handleOpenGameGuide(4)}
-                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
+                  <AccordionHeader
+                    onClick={() => handleOpenGameGuide(2)}
+                    className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
+                  >
+                    Start Game
+                  </AccordionHeader>
+                  <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                    <p>
+                      Before beginning the hunting expedition, hunters must
+                      purchase Dino Eggs at the [Jurassic] Market. Following the
+                      purchase of Dino Eggs, the hunter will also raise their
+                      hunting value, climb the rank ladder, and earn more rewards.
+                      (The hunting value of the hunter's first-degree buddies will
+                      also help the hunter rise in rank.)
+                    </p>
+                    <br />
+                    <img src="/image/tableStartGame.png" alt="table start game" />
+                    <br />
+                    <p>
+                      Hunters will receive additional awards from the [Jurassic]
+                      Market in addition to hunting rewards for successfully
+                      capturing Dinosaur during the hunting procedure. Hunters
+                      who failed to capture any Dinosaur will also receive
+                      rewards for their efforts.
+                    </p>
+                  </AccordionBody>
+                </Accordion>
+                <Accordion
+                  open={openGameGuide === 3}
+                  icon={<IconGameGuide id={3} open={openGameGuide} />}
                 >
-                  Dinosaur
-                </AccordionHeader>
-                <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
-                  <p className="font-bold">Captured Dinosaur Rewards</p>
-                  <br />
-                  <img src="/image/tableDinosaur.png" alt="table start game" />
-                  <br />
-                  <p>
-                    Higher rarity Dinosaur can only be captured using a Epic
-                    or Glory Egg.
-                  </p>
-                </AccordionBody>
-              </Accordion>
-              <Accordion
-                open={openGameGuide === 6}
-                icon={<IconGameGuide id={6} open={openGameGuide} />}
-              >
-                <AccordionHeader
-                  onClick={() => handleOpenGameGuide(6)}
-                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
+                  <AccordionHeader
+                    onClick={() => handleOpenGameGuide(3)}
+                    className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
+                  >
+                    Jurassic Market
+                  </AccordionHeader>
+                  <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                    <p>
+                      A place where all hunters gather.
+                      <br />
+                      <br />
+                      Hunters who intend to purchase Dino Eggs here are required
+                      to have purchase eggs, tickets and USDT in their account.
+                      <br />
+                      <br />
+                      One hour prior to the end of the hunt, hunters who are
+                      hunting can pre-list their Dino Eggs at the [Jurassic]
+                      market. The Dino eggs will be listed immediately at the
+                      [Jurassic] market for other Hunters to purchase from after
+                      the hunting session has ended.
+                      <br />
+                      <br />
+                      All Dino Eggs listed in the Jurassic Market are only
+                      available for 24 hours. After 24 hours, any remaining
+                      Jurassic Eggs will trigger the Dino Fund's buy- back policy.
+                    </p>
+                  </AccordionBody>
+                </Accordion>
+                <Accordion
+                  open={openGameGuide === 5}
+                  icon={<IconGameGuide id={5} open={openGameGuide} />}
                 >
-                  Buddies
-                </AccordionHeader>
-                <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
-                  <p>
-                    Hunters can earn Buddy hunting bonuses by recruiting
-                    Buddies; Bonuses will be earned whenever your Buddies
-                    purchase Dino Eggs. Tiers receivable are based on the
-                    hunter’s personal rank.
-                  </p>
-                  <br />
-                  <p className="font-bold">Hunter's Rank</p>
-                  <img src="/image/tableBuddies.png" alt="table start game" />
-                  <br />
-                  <p>
-                    *In order to receive Buddy Hunting Bonus, the hunter will
-                    need to exhaust Purchase Egg before the day ends,
-                    11:59 hours (UTC +7)
-                  </p>
-                </AccordionBody>
-              </Accordion>
-              <Accordion
-                open={openGameGuide === 7}
-                icon={<IconGameGuide id={7} open={openGameGuide} />}
-              >
-                <AccordionHeader
-                  onClick={() => handleOpenGameGuide(7)}
-                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4 rounded-b-xl"
+                  <AccordionHeader
+                    onClick={() => handleOpenGameGuide(5)}
+                    className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
+                  >
+                    Dino Egg
+                  </AccordionHeader>
+                  <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                    <img src="/image/tableDinoEgg.png" alt="table start game" />
+                  </AccordionBody>
+                </Accordion>
+                <Accordion
+                  open={openGameGuide === 4}
+                  icon={<IconGameGuide id={4} open={openGameGuide} />}
                 >
-                  Rank Requalification
-                </AccordionHeader>
-                <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
-                  <p>
-                    Hunter are required to maintain their rank in order to enjoy
-                    their current benefits. 1 week following a promotion to a
-                    rank, a minimum amount of personal hunting value is required
-                    for requalification.
-                  </p>
-                  <br />
-                  <img
-                    src="/image/tableRankRequalification.png"
-                    alt="table start game"
-                  />
-                </AccordionBody>
-              </Accordion>
+                  <AccordionHeader
+                    onClick={() => handleOpenGameGuide(4)}
+                    className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
+                  >
+                    Dinosaur
+                  </AccordionHeader>
+                  <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                    <p className="font-bold">Captured Dinosaur Rewards</p>
+                    <br />
+                    <img src="/image/tableDinosaur.png" alt="table start game" />
+                    <br />
+                    <p>
+                      Higher rarity Dinosaur can only be captured using a Epic
+                      or Glory Egg.
+                    </p>
+                  </AccordionBody>
+                </Accordion>
+                <Accordion
+                  open={openGameGuide === 6}
+                  icon={<IconGameGuide id={6} open={openGameGuide} />}
+                >
+                  <AccordionHeader
+                    onClick={() => handleOpenGameGuide(6)}
+                    className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
+                  >
+                    Buddies
+                  </AccordionHeader>
+                  <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                    <p>
+                      Hunters can earn Buddy hunting bonuses by recruiting
+                      Buddies; Bonuses will be earned whenever your Buddies
+                      purchase Dino Eggs. Tiers receivable are based on the
+                      hunter’s personal rank.
+                    </p>
+                    <br />
+                    <p className="font-bold">Hunter's Rank</p>
+                    <img src="/image/tableBuddies.png" alt="table start game" />
+                    <br />
+                    <p>
+                      *In order to receive Buddy Hunting Bonus, the hunter will
+                      need to exhaust Purchase Egg before the day ends,
+                      11:59 hours (UTC +7)
+                    </p>
+                  </AccordionBody>
+                </Accordion>
+                <Accordion
+                  open={openGameGuide === 7}
+                  icon={<IconGameGuide id={7} open={openGameGuide} />}
+                >
+                  <AccordionHeader
+                    onClick={() => handleOpenGameGuide(7)}
+                    className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4 rounded-b-xl"
+                  >
+                    Rank Requalification
+                  </AccordionHeader>
+                  <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                    <p>
+                      Hunter are required to maintain their rank in order to enjoy
+                      their current benefits. 1 week following a promotion to a
+                      rank, a minimum amount of personal hunting value is required
+                      for requalification.
+                    </p>
+                    <br />
+                    <img
+                      src="/image/tableRankRequalification.png"
+                      alt="table start game"
+                    />
+                  </AccordionBody>
+                </Accordion>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
       {scene === "BUDDIES" && <Buddies />}
       {scene === "HISTORY" && <History />}
       {scene === "BULLETIN" && <Bulletin />}
-      {scene === "DINOCENTER" && (
-        // <div className="absolute w-full h-full flex justify-center items-center">
-        //   <div className="flex z-20 h-[100vh] w-[450px] max-[450px]:w-[calc(100vw)] max-w-[450px] justify-center items-center flex-col sm:px-4 shadow-sm rounded-sm ">
-        //     <div className="flex flex-row w-full justify-between mt-4 mb-1">
-        //       <img
-        //         src="image/backBtn.png"
-        //         width={40}
-        //         height={40}
-        //         alt="Back"
-        //         onClick={() => changeScene("HOME")}
-        //       />
-        //       <div className="flex flex-col items-center justify-center text-[1.5rem] text-white font-bold font-magra ">
-        //         Jurassic Market
-        //       </div>
-        //       <img
-        //         src="image/logoutBtn.png"
-        //         width={40}
-        //         height={40}
-        //         alt="Back"
-        //       // onClick={() => changeScene("HOME")}
-        //       />
-        //     </div>
-        //     <div className="flex flex-col h-full w-full px-4 pb-6 backdrop-blur-sm overflow-y-visible overflow-auto">
-        //       {/* Hunter Details */}
-        //       <div className="absolute left-0 top-0 w-full">
-        //         <>
-        //           <img
-        //             src="image/pnlJurassicMarketBackground.png"
-        //             className="w-full object-cover"
-        //             alt="pnlJurassicMarketBackground"
-        //           />
-        //           <div className="absolute top-4 w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
-        //             <div className="flex flex-row justify-center font-bold font-Magra text-white text-lg [@media(max-width:400px)]:text-base">
-        //               Hunter's Rank
-        //             </div>
-        //           </div>
-        //           <div className="absolute top-8 w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
-        //             <div className="flex flex-row justify-between px-1 font-bold font-Magra text-white text-base [@media(max-width:400px)]:text-sm">
-        //               <span>Requalification</span>
-        //               <span>Current Rank</span>
-        //             </div>
-        //           </div>
-        //           {/* progress bar with image */}
-        //           {/* TODO: need to update styling to accept dynamic progress bar fill */}
-        //           <div className="absolute inline-block top-12 w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
-        //             <div className="flex flex-col items-center justify-center font-bold font-Magra text-white text-lg">
-        //               <img
-        //                 src="image/RankExpBarBg.png"
-        //                 className="object-cover z-10"
-        //                 alt="RankExpBarBg"
-        //               />
-        //               {/* progress fill */}
-        //               <div className="absolute top-0 w-auto z-0">
-        //                 <img
-        //                   src="image/imgRankExpBarFill.png"
-        //                   className=" object-covef"
-        //                   alt="imgRankExpBarFill"
-        //                 />
-        //               </div>
-        //               <div className="absolute top-[-5px] text-[0.8rem]">
-        //                 {`${parseInt(total)}/${parseInt(period)}`}
-        //               </div>
-        //             </div>
-        //           </div>
-        //           <div className="absolute top-12 w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
-        //             <div className="flex flex-row justify-between px-1 font-bold font-Magra text-white [@media(max-width:400px)]:text-sm">
-        //               <span>{parseInt(period)}</span>
-        //               <span>{rankRequalification(userData?.title)}</span>
-        //             </div>
-        //           </div>
-        //           <div className="absolute top-[4.4rem] w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
-        //             <div className="flex flex-row justify-between px-20 font-bold font-Magra text-white text-sm">
-        //               <span className="text-red-500">{rankLoaderBarProgress(userData?.title)?.[0]}</span>
-        //               <span>{rankLoaderBarProgress(userData?.title)?.[1]}</span>
-        //             </div>
-        //           </div>
-        //         </>
-        //       </div>
+      {
+        scene === "DINOCENTER" && (
+          // <div className="absolute w-full h-full flex justify-center items-center">
+          //   <div className="flex z-20 h-[100vh] w-[450px] max-[450px]:w-[calc(100vw)] max-w-[450px] justify-center items-center flex-col sm:px-4 shadow-sm rounded-sm ">
+          //     <div className="flex flex-row w-full justify-between mt-4 mb-1">
+          //       <img
+          //         src="image/backBtn.png"
+          //         width={40}
+          //         height={40}
+          //         alt="Back"
+          //         onClick={() => changeScene("HOME")}
+          //       />
+          //       <div className="flex flex-col items-center justify-center text-[1.5rem] text-white font-bold font-magra ">
+          //         Jurassic Market
+          //       </div>
+          //       <img
+          //         src="image/logoutBtn.png"
+          //         width={40}
+          //         height={40}
+          //         alt="Back"
+          //       // onClick={() => changeScene("HOME")}
+          //       />
+          //     </div>
+          //     <div className="flex flex-col h-full w-full px-4 pb-6 backdrop-blur-sm overflow-y-visible overflow-auto">
+          //       {/* Hunter Details */}
+          //       <div className="absolute left-0 top-0 w-full">
+          //         <>
+          //           <img
+          //             src="image/pnlJurassicMarketBackground.png"
+          //             className="w-full object-cover"
+          //             alt="pnlJurassicMarketBackground"
+          //           />
+          //           <div className="absolute top-4 w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
+          //             <div className="flex flex-row justify-center font-bold font-Magra text-white text-lg [@media(max-width:400px)]:text-base">
+          //               Hunter's Rank
+          //             </div>
+          //           </div>
+          //           <div className="absolute top-8 w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
+          //             <div className="flex flex-row justify-between px-1 font-bold font-Magra text-white text-base [@media(max-width:400px)]:text-sm">
+          //               <span>Requalification</span>
+          //               <span>Current Rank</span>
+          //             </div>
+          //           </div>
+          //           {/* progress bar with image */}
+          //           {/* TODO: need to update styling to accept dynamic progress bar fill */}
+          //           <div className="absolute inline-block top-12 w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
+          //             <div className="flex flex-col items-center justify-center font-bold font-Magra text-white text-lg">
+          //               <img
+          //                 src="image/RankExpBarBg.png"
+          //                 className="object-cover z-10"
+          //                 alt="RankExpBarBg"
+          //               />
+          //               {/* progress fill */}
+          //               <div className="absolute top-0 w-auto z-0">
+          //                 <img
+          //                   src="image/imgRankExpBarFill.png"
+          //                   className=" object-covef"
+          //                   alt="imgRankExpBarFill"
+          //                 />
+          //               </div>
+          //               <div className="absolute top-[-5px] text-[0.8rem]">
+          //                 {`${parseInt(total)}/${parseInt(period)}`}
+          //               </div>
+          //             </div>
+          //           </div>
+          //           <div className="absolute top-12 w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
+          //             <div className="flex flex-row justify-between px-1 font-bold font-Magra text-white [@media(max-width:400px)]:text-sm">
+          //               <span>{parseInt(period)}</span>
+          //               <span>{rankRequalification(userData?.title)}</span>
+          //             </div>
+          //           </div>
+          //           <div className="absolute top-[4.4rem] w-full max-[450px]:w-[calc(100vw)] max-w-[450px]">
+          //             <div className="flex flex-row justify-between px-20 font-bold font-Magra text-white text-sm">
+          //               <span className="text-red-500">{rankLoaderBarProgress(userData?.title)?.[0]}</span>
+          //               <span>{rankLoaderBarProgress(userData?.title)?.[1]}</span>
+          //             </div>
+          //           </div>
+          //         </>
+          //       </div>
 
-        //       {/* DinoCenter Pages & filters */}
-        //       <div className="absolute left-0 top-[6rem] w-full">
-        //         <div className="flex flex-row w-full justify-between">
-        //           {/* Pages */}
-        //           <div className="flex w-full justify-start text-white font-Magra font-bold text-base [@media(max-width:400px)]:text-sm">
-        //             <div className="px-4 text-[#FFC700]">Listings</div>
-        //             <div>/</div>
-        //             <div className="px-2">My Listings</div>
-        //           </div>
-        //           {/* Filters */}
-        //           <div className="flex w-full text-white font-Magra font-bold text-base [@media(max-width:400px)]:text-sm">
-        //             <div className="flex w-full items-end justify-end">
-        //               <div className="flex flex-row items-center px-2">
-        //                 <span>Price</span>
-        //                 <img
-        //                   src="image/btnFilterIcon.png"
-        //                   width={5}
-        //                   className="w-5 h-2.5 mx-1 rotate-180"
-        //                   alt="priceFilterIcon"
-        //                 />
-        //               </div>
-        //               <div className="flex flex-row items-center px-4">
-        //                 <span>Time</span>
-        //                 <img
-        //                   src="image/btnFilterIcon.png"
-        //                   width={5}
-        //                   className="w-5 h-2.5 mx-1"
-        //                   alt="priceFilterIcon"
-        //                 />
-        //               </div>
-        //             </div>
-        //           </div>
-        //         </div>
-        //       </div>
+          //       {/* DinoCenter Pages & filters */}
+          //       <div className="absolute left-0 top-[6rem] w-full">
+          //         <div className="flex flex-row w-full justify-between">
+          //           {/* Pages */}
+          //           <div className="flex w-full justify-start text-white font-Magra font-bold text-base [@media(max-width:400px)]:text-sm">
+          //             <div className="px-4 text-[#FFC700]">Listings</div>
+          //             <div>/</div>
+          //             <div className="px-2">My Listings</div>
+          //           </div>
+          //           {/* Filters */}
+          //           <div className="flex w-full text-white font-Magra font-bold text-base [@media(max-width:400px)]:text-sm">
+          //             <div className="flex w-full items-end justify-end">
+          //               <div className="flex flex-row items-center px-2">
+          //                 <span>Price</span>
+          //                 <img
+          //                   src="image/btnFilterIcon.png"
+          //                   width={5}
+          //                   className="w-5 h-2.5 mx-1 rotate-180"
+          //                   alt="priceFilterIcon"
+          //                 />
+          //               </div>
+          //               <div className="flex flex-row items-center px-4">
+          //                 <span>Time</span>
+          //                 <img
+          //                   src="image/btnFilterIcon.png"
+          //                   width={5}
+          //                   className="w-5 h-2.5 mx-1"
+          //                   alt="priceFilterIcon"
+          //                 />
+          //               </div>
+          //             </div>
+          //           </div>
+          //         </div>
+          //       </div>
 
-        //       {/* Market */}
-        //       <div className="absolute left-0 top-[9rem] w-full h-[55vh]">
-        //         {false ? (
-        //           <div className="flex w-full h-full justify-center items-center font-Magra font-bold text-white">
-        //             Coming Soon
-        //           </div>
-        //         ) : (
-        //           <div className="grid grid-cols-4">
-        //             {eggListsData?.lists.map((egg, index) => {
-        //               return (
-        //                 <EggComponent egg={egg} index={index} customTimer={1683355142 + (1000 * index)} />
-        //                 // <div
-        //                 //   key={index}
-        //                 //   className="flex flex-col items-center content-center "
-        //                 // >
-        //                 //   <img
-        //                 //     src="image/jurassicEggBg.png"
-        //                 //     className="w-24 [@media(max-width:400px)]:w-[4.5rem] [@media(max-height:700px)]:w-[4.5rem]"
-        //                 //     alt="jurassicEggBg"
-        //                 //   />
-        //                 //   <div>
-        //                 //     <img
-        //                 //       src={`${eggType(egg?.ticket)}`}
-        //                 //       className={`w-14 -mt-[5.1rem] [@media(max-width:400px)]:w-[2.6rem] [@media(max-height:700px)]:w-[2.6rem] [@media(max-width:400px)]:-mt-[3.9rem] [@media(max-height:700px)]:-mt-[3.9rem]`}
-        //                 //       alt="imgJurassicEggIcon"
-        //                 //     />
-        //                 //   </div>
+          //       {/* Market */}
+          //       <div className="absolute left-0 top-[9rem] w-full h-[55vh]">
+          //         {false ? (
+          //           <div className="flex w-full h-full justify-center items-center font-Magra font-bold text-white">
+          //             Coming Soon
+          //           </div>
+          //         ) : (
+          //           <div className="grid grid-cols-4">
+          //             {eggListsData?.lists.map((egg, index) => {
+          //               return (
+          //                 <EggComponent egg={egg} index={index} customTimer={1683355142 + (1000 * index)} />
+          //                 // <div
+          //                 //   key={index}
+          //                 //   className="flex flex-col items-center content-center "
+          //                 // >
+          //                 //   <img
+          //                 //     src="image/jurassicEggBg.png"
+          //                 //     className="w-24 [@media(max-width:400px)]:w-[4.5rem] [@media(max-height:700px)]:w-[4.5rem]"
+          //                 //     alt="jurassicEggBg"
+          //                 //   />
+          //                 //   <div>
+          //                 //     <img
+          //                 //       src={`${eggType(egg?.ticket)}`}
+          //                 //       className={`w-14 -mt-[5.1rem] [@media(max-width:400px)]:w-[2.6rem] [@media(max-height:700px)]:w-[2.6rem] [@media(max-width:400px)]:-mt-[3.9rem] [@media(max-height:700px)]:-mt-[3.9rem]`}
+          //                 //       alt="imgJurassicEggIcon"
+          //                 //     />
+          //                 //   </div>
 
-        //                 //   {/* price */}
-        //                 //   <div className="font magra font-bold decoration-from-font">
-        //                 //     <span className="text-[#FFC700] [@media(max-width:400px)]:text-sm">
-        //                 //       {formatUnits(egg?.total, 18)} USDT
-        //                 //     </span>
-        //                 //   </div>
+          //                 //   {/* price */}
+          //                 //   <div className="font magra font-bold decoration-from-font">
+          //                 //     <span className="text-[#FFC700] [@media(max-width:400px)]:text-sm">
+          //                 //       {formatUnits(egg?.total, 18)} USDT
+          //                 //     </span>
+          //                 //   </div>
 
-        //                 //   {/* action button */}
-        //                 //   {true ? (
-        //                 //     <div>
-        //                 //       <img
-        //                 //         src="image/BtnPurchaseCountdown.png"
-        //                 //         className="w-20 "
-        //                 //         alt="BtnPurchaseCountdown"
-        //                 //       />
-        //                 //       <div className="flex w-full justify-center font magra font-bold decoration-from-font">
-        //                 //         <span className="text-white -mt-[1.8rem]">
-        //                 //           00:00:00
-        //                 //         </span>
-        //                 //       </div>
-        //                 //     </div>
-        //                 //   ) : (
-        //                 //     <div>
-        //                 //       <img
-        //                 //         src="image/BtnPurchaseActive.png"
-        //                 //         className="w-20 "
-        //                 //         alt="BtnPurchaseActive"
-        //                 //       />
-        //                 //       <div className="flex w-full justify-center font magra font-bold decoration-from-font">
-        //                 //         <span className="text-white -mt-[1.8rem]">
-        //                 //           Keep
-        //                 //         </span>
-        //                 //       </div>
-        //                 //     </div>
-        //                 //   )}
-        //                 // </div>
-        //               );
-        //             })}
-        //           </div>
-        //         )}
-        //       </div>
-        //     </div>
-        //   </div>
-        // </div>
-        <JurassicMarket
-          sendEggApproval={sendEggApproval}
-          sendTransaction={async (data: any) => {
-            console.log("sendTransaction triggered from appTemp", data);
-            const txSend = await sendTransaction(data);
-            console.log("txSend from appTemp", txSend);
-          }}
-          sendPayTransaction={async (req: any, transactionData: any) => {
-            const txSend = await sendTransactionPay(req);
-            console.log("sendPayTransaction from appTemp", txSend);
-            if (txSend) {
-              let options = {
-                headers: {
-                  "my-auth-key": token,
-                },
-              };
-              const result = await axiosInstance({
-                url: "/egg/finished",
-                method: "POST",
-                headers: options.headers,
-                data: {
-                  id: transactionData.id,
-                  hash: txSend.transactionHash,
-                },
-              });
-              const { data } = result;
-              console.log("payment finished", data);
-              if (data.success) {
-                // setApproved(allowance);
-                // setEggTransactionState("");
+          //                 //   {/* action button */}
+          //                 //   {true ? (
+          //                 //     <div>
+          //                 //       <img
+          //                 //         src="image/BtnPurchaseCountdown.png"
+          //                 //         className="w-20 "
+          //                 //         alt="BtnPurchaseCountdown"
+          //                 //       />
+          //                 //       <div className="flex w-full justify-center font magra font-bold decoration-from-font">
+          //                 //         <span className="text-white -mt-[1.8rem]">
+          //                 //           00:00:00
+          //                 //         </span>
+          //                 //       </div>
+          //                 //     </div>
+          //                 //   ) : (
+          //                 //     <div>
+          //                 //       <img
+          //                 //         src="image/BtnPurchaseActive.png"
+          //                 //         className="w-20 "
+          //                 //         alt="BtnPurchaseActive"
+          //                 //       />
+          //                 //       <div className="flex w-full justify-center font magra font-bold decoration-from-font">
+          //                 //         <span className="text-white -mt-[1.8rem]">
+          //                 //           Keep
+          //                 //         </span>
+          //                 //       </div>
+          //                 //     </div>
+          //                 //   )}
+          //                 // </div>
+          //               );
+          //             })}
+          //           </div>
+          //         )}
+          //       </div>
+          //     </div>
+          //   </div>
+          // </div>
+          <JurassicMarket
+            sendEggApproval={sendEggApproval}
+            sendTransaction={async (data: any) => {
+              console.log("sendTransaction triggered from appTemp", data);
+              const txSend = await sendTransaction(data);
+              console.log("txSend from appTemp", txSend);
+            }}
+            sendPayTransaction={async (req: any, transactionData: any) => {
+              const txSend = await sendTransactionPay(req);
+              console.log("sendPayTransaction from appTemp", txSend);
+              if (txSend) {
+                let options = {
+                  headers: {
+                    "my-auth-key": token,
+                  },
+                };
+                const result = await axiosInstance({
+                  url: "/egg/finished",
+                  method: "POST",
+                  headers: options.headers,
+                  data: {
+                    id: transactionData.id,
+                    hash: txSend.transactionHash,
+                  },
+                });
+                const { data } = result;
+                console.log("payment finished", data);
+                if (data.success) {
+                  // setApproved(allowance);
+                  // setEggTransactionState("");
+                }
+                setTimeout(() => checkValidation(transactionData.id), 3000);
               }
-              setTimeout(() => checkValidation(transactionData.id), 3000);
-            }
-          }}
-        />
-      )}
-      {scene === "HOME" && notification && (
-        <div className="absolute top-[87px] flex flex-col">
-          <Marquee
-            loop={1}
-            onFinish={() => setNotification(null)}
-            speed={30}
-            className="font-Magra text-[#FFC700]"
-          >
-            {notification}
-          </Marquee>
-        </div>
-      )}
+            }}
+          />
+        )
+      }
+      {
+        scene === "HOME" && notification && (
+          <div className="absolute top-[87px] flex flex-col">
+            <Marquee
+              loop={1}
+              onFinish={() => setNotification(null)}
+              speed={30}
+              className="font-Magra text-[#FFC700]"
+            >
+              {notification}
+            </Marquee>
+          </div>
+        )
+      }
       <div>
         <Stage
           ref={stageRef}
@@ -3859,6 +4102,6 @@ export const AppTemp = () => {
       </div>
       {(banner) ? (<ShowBanner image={banner} />) : ('')}
       <ToastContainer />
-    </div>
+    </div >
   );
 };

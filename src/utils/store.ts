@@ -65,6 +65,10 @@ export type TicketPanelData = {
   mode: "BUY" | "TRANSFER" | "HISTORY";
 };
 
+export type SwapPanelData = {
+  show: boolean
+};
+
 export type WithdrawPanelData = {
   show: boolean;
   mode: "WITHDRAW" | "HISTORY";
@@ -124,6 +128,10 @@ type Store = {
   setApproved: (data: BigNumber | string | null) => void;
   ticketPanel: TicketPanelData;
   setTicketPanel: (data: TicketPanelData) => void;
+  swapPanel: SwapPanelData;
+  setSwapPanel: (data: SwapPanelData) => void;
+  swapTxHash: string | undefined,
+  setSwapTxHash: (data: string | undefined) => void,
   sponsorLinkPanel: SponsorLinkPanelData;
   setSponsorLinkPanel: (data: SponsorLinkPanelData) => void;
   changePasswordPanel: boolean;
@@ -214,6 +222,11 @@ export const useStore = create<Store>((set, get) => ({
   ticketPanel: { show: false, mode: "BUY" },
   setTicketPanel: ({ show, mode }) =>
     set(() => ({ ticketPanel: { show, mode } })),
+  swapPanel: { show: false },
+  setSwapPanel: ({ show }) =>
+    set(() => ({ swapPanel: { show } })),
+  swapTxHash: '',
+  setSwapTxHash: (data) => set(() => ({ swapTxHash: data })),
   sponsorLinkPanel: { show: false, link: "" },
   setSponsorLinkPanel: (data) => set(() => ({ sponsorLinkPanel: data })),
   changePasswordPanel: false,

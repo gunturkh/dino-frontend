@@ -161,7 +161,7 @@ function EggComponent({
           {parseFloat(
             parseFloat(formatUnits(egg?.total, 18)).toFixed(2)
           ).toString()}{" "}
-          USDT
+          DNF
         </span>
       </div>
 

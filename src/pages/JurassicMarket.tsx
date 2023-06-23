@@ -10,7 +10,7 @@ import {
 } from "../utils/functions";
 import { formatUnits } from "ethers/lib/utils";
 import { axiosInstance } from "../utils/api";
-import { PAYGATEWAY_ADDR, USDT_ADDR } from "../utils/config";
+import { PAYGATEWAY_ADDR, TOKEN_ADDR } from "../utils/config";
 import { toast } from "react-toastify";
 import ReactPaginate from "react-paginate";
 import { useEthers } from "@usedapp/core";
@@ -527,7 +527,7 @@ function JurassicMarket({
                               formatUnits(eggTransactionData?.total, 18)
                             ).toFixed(2)
                           ).toString()}{" "}
-                          USDT
+                          DNF
                         </p>
                         <p className="p-1 bg-gray-700 rounded-sm mb-2">{`${countdownTime.countdownHours.toString().length === 1
                           ? `0${countdownTime.countdownHours}`
@@ -587,7 +587,7 @@ function JurassicMarket({
                               else {
                                 try {
                                   const txReq = {
-                                    to: USDT_ADDR,
+                                    to: TOKEN_ADDR,
                                     from: walletAddress,
                                     data: eggTransactionData.TxRawApproval,
                                   };

@@ -90,6 +90,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
   const eggListsData = useStore((state) => state.eggListsData);
   const setEggListsData = useStore((state) => state.setEggListsData);
   const setTicketPanel = useStore((state) => state.setTicketPanel);
+  const setSwapPanel = useStore((state) => state.setSwapPanel);
   const setWithdrawPanel = useStore((state) => state.setWithdrawPanel);
   // const notification = useStore((state) => state.notification);
   // const setNotification = useStore((state) => state.setNotification);
@@ -1864,6 +1865,9 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                     fill: ["0xFFC700"],
                   })
                 }
+                onPress={async () => {
+                  setSwapPanel({ show: true });
+                }}
               />
               <LowerButtonComponent
                 spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}
