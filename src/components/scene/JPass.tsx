@@ -144,7 +144,7 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
   const jPassCardInfo = [
     {
       id: 1,
-      header: "7-Day Ultimate Pass",
+      header: "28-Day Ultimate Pass",
       // get texture from PIXI.Assets
       image: PIXI.Assets.get("JPassCardItem1"),
       price: 8.9,
@@ -152,14 +152,14 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
     },
     {
       id: 2,
-      header: "14-Day Ultimate Pass",
+      header: "56-Day Ultimate Pass",
       image: PIXI.Assets.get("JPassCardItem2"),
       price: 15.9,
       purchaseCode: "special2",
     },
     {
       id: 3,
-      header: "30-Day Ultimate Pass",
+      header: "120-Day Ultimate Pass",
       image: PIXI.Assets.get("JPassCardItem3"),
       price: 27.9,
       purchaseCode: "special3",
