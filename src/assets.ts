@@ -152,6 +152,10 @@ export const manifest: ResolverManifest = {
           srcs: "image/imgUSDTIcon.png",
         },
         {
+          name: "DNFIcon",
+          srcs: "image/dnf.png",
+        },
+        {
           name: "ImgDetailsBg",
           srcs: "image/imgDetailsBg.png",
         },

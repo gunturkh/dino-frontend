@@ -1558,7 +1558,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
               >
                 <DetailsComponent
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
-                  IconTexture={PIXI?.Assets?.get("USDTIcon")}
+                  IconTexture={PIXI?.Assets?.get("DNFIcon")}
                   text={parseFloat(
                     parseFloat(walletBalance).toFixed(4)
                   ).toString()}
