@@ -105,7 +105,7 @@ declare global {
 
 const price = 0.25;
 const dnfPrice = 1;
-// const BASE_URL = "https://cdn.jurassicegg.co";
+const BASE_URL = "https://cdn.jurassicegg.co";
 export const AppTemp = () => {
   const socket = useSocket();
 
