@@ -112,6 +112,7 @@ function RainforestAnimation() {
   }, [
     animationCounter,
     app.screen.width,
+    app.screen.height,
     memoizedRainforestAsset,
     scalePoint,
   ]);
