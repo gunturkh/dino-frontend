@@ -1007,7 +1007,7 @@ export const manifest: ResolverManifest = {
         },
         {
           name: "GatchaWithCoin1",
-          srcs: BASE_URL + "/animations/cards/coinegg1/coin.json",
+          srcs: BASE_URL + "/animations/cards/coin/coin.json",
         },
         {
           name: "GatchaEggWithCoin1",
@@ -1015,7 +1015,7 @@ export const manifest: ResolverManifest = {
         },
         {
           name: "GatchaWithCoin2",
-          srcs: BASE_URL + "/animations/cards/coinegg2/coin.json",
+          srcs: BASE_URL + "/animations/cards/coin/coin.json",
         },
         {
           name: "GatchaEggWithCoin2",
@@ -1023,7 +1023,7 @@ export const manifest: ResolverManifest = {
         },
         {
           name: "GatchaWithCoin3",
-          srcs: BASE_URL + "/animations/cards/coinegg3/coin.json",
+          srcs: BASE_URL + "/animations/cards/coin/coin.json",
         },
         {
           name: "GatchaEggWithCoin3",

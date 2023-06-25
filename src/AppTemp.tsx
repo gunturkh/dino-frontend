@@ -99,6 +99,7 @@ declare global {
   interface Window {
     // ⚠️ notice that "Window" is capitalized here
     clipboardData: { setData: any };
+    ethereum: any
   }
 }
 
@@ -2777,6 +2778,39 @@ export const AppTemp = () => {
                   </div>
                 </form>
                 {swapState !== "LOADING" && (
+                  <div className="flex flex-row justify-around w-full">
+                    <button onClick={ async () => {
+                      // window.alert('add DNF')
+                      try {
+                        console.log('window.ethereum', window)
+                        if (window && window.ethereum) {
+                          // wasAdded is a boolean. Like any RPC method, an error can be thrown.
+                          const wasAdded = await window.ethereum.request({
+                            method: 'wallet_watchAsset',
+                            params: {
+                              type: 'ERC20', // Initially only supports ERC-20 tokens, but eventually more!
+                              options: {
+                                address: TOKEN_ADDR, // The address of the token.
+                                symbol: 'DNF', // A ticker symbol or shorthand, up to 5 characters.
+                                decimals: 18, // The number of decimals in the token.
+                                image: `${BASE_URL}/dnf.png`, // A string URL of the token logo.
+                              },
+                            },
+                          });
+
+                          if (wasAdded) {
+                            toast('DNF Token was added!');
+                          } else {
+                            toast('There is some problem. Please contact our ');
+                          }
+                        }
+                      } catch (error) {
+                        console.log(error);
+                      }
+                    }}
+
+                      className={`bg-green-500 text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                    >Add DNF</button>
                   <button
                     type={"submit"}
                     // disabled={}
@@ -2855,6 +2889,7 @@ export const AppTemp = () => {
                       ? "Approval"
                       : "Swap"}
                   </button>
+                  </div>
                 )}
                 {swapState === "LOADING" && (
                   <p className="text-white/50 font-Magra">Waiting...</p>
