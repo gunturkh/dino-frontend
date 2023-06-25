@@ -38,7 +38,7 @@ function RainforestAnimation() {
   const containerRef = useRef<PIXI.Container>(null);
   // this will scale the animation to the screen size
   // const scalePoint = app.screen.height / 1440;
-  // const scalePoint = 1;
+  const scalePoint = 1;
 
   // load
 
@@ -56,11 +56,11 @@ function RainforestAnimation() {
       const rainForestAnimation = new Spine(memoizedRainforestAsset.spineData);
       rainForestAnimation.state.setAnimation(0, animation.name, true);
       rainForestAnimation.x = app.screen.width / 2;
-      rainForestAnimation.y = 0;
+      rainForestAnimation.y = app.screen.height / 2;
       rainForestAnimation.zIndex = -1;
       rainForestAnimation.cullable = true;
 
-      rainForestAnimation.scale.set(3);
+      rainForestAnimation.scale.set(2.7);
 
       rainforest = rainForestAnimation;
     });
@@ -85,7 +85,7 @@ function RainforestAnimation() {
       // add timer to wait for a few second before loading the next animation
       containerRef.current?.addChild(rainforest);
       // containerRef.current.x = -rainforest.width * 1.05;
-      // containerRef.current.scale.set(scalePoint);
+      containerRef.current.scale.set(scalePoint);
 
       // tickerOutside.add((delta) => {
       //   // increase containerRef x position by 10 * delta * scalePoint * direction
@@ -112,8 +112,9 @@ function RainforestAnimation() {
   }, [
     animationCounter,
     app.screen.width,
+    app.screen.height,
     memoizedRainforestAsset,
-    // scalePoint,
+    scalePoint,
   ]);
 
   // useEffect(() => {
