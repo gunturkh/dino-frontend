@@ -2972,10 +2972,10 @@ export const AppTemp = () => {
                           value={withdrawAmount}
                         />
                         <p className="text-green-400 font-Magra my-3">
-                          You will receive {" "} DNF
+                          You will receive {" "}
                           {withdrawAmount > 0
                             ? withdrawAmount - withdrawAmount * (5 / 100)
-                            : 0}
+                            : 0} DNF
                         </p>
                         <p className="text-white font-Magra my-3">Address</p>
                         <input
