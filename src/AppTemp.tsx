@@ -2972,7 +2972,7 @@ export const AppTemp = () => {
                           value={withdrawAmount}
                         />
                         <p className="text-green-400 font-Magra my-3">
-                          You will receive ${" "}
+                          You will receive {" "} DNF
                           {withdrawAmount > 0
                             ? withdrawAmount - withdrawAmount * (5 / 100)
                             : 0}
@@ -3084,9 +3084,9 @@ export const AppTemp = () => {
                               className={`${t.amount < 0 ? "text-red-500" : "text-green-500"
                                 } pl-4`}
                             >
-                              {`$ ${parseFloat(formatUnits(t.amount, 18)).toFixed(
+                              {`${parseFloat(formatUnits(t.amount, 18)).toFixed(
                                 2
-                              )}`}
+                              )} DNF`}
                             </td>
                           </tr>
                         );
