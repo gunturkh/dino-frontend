@@ -71,7 +71,7 @@ export function History() {
         <td>{formattedTime}</td>
         <td className="text-green-400 p-2">{shortenString(data?.address)}</td>
         <td className="text-right">
-          $ {parseFloat(formatUnits(data.total)).toFixed(2)}
+          {parseFloat(formatUnits(data.total)).toFixed(2)} DNF
         </td>
       </tr>
     );
