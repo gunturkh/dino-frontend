@@ -20,7 +20,7 @@ export function Buddies() {
         <td>{data.username}</td>
         <td>{data.sponsor}</td>
         <td className="text-center">{data.level}</td>
-        <td>$ {parseFloat(formatUnits(data.bought)).toFixed(0)}</td>
+        <td className="text-right">{parseFloat(formatUnits(data.bought)).toFixed(0)} DNF</td>
       </tr>
     );
   };
@@ -68,7 +68,7 @@ export function Buddies() {
                   <th scope="col" className="py-3">
                     Level
                   </th>
-                  <th scope="col" className="py-3">
+                  <th scope="col" className="py-3 text-center">
                     Sales
                   </th>
                 </tr>
