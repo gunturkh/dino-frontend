@@ -352,7 +352,7 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
                 position={[0, 0]}
               />
               <Text
-                text={`$ ${jPassCardInfo[selectedJpass - 1].price}`}
+                text={`${jPassCardInfo[selectedJpass - 1].price} DNF`}
                 position={[0, 125]}
                 anchor={[0.5, 0.5]}
                 style={
