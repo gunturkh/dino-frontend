@@ -37,7 +37,7 @@ export function History() {
       <tr className="table-row">
         <td>{formattedTime}</td>
         <td className="text-green-400 p-2">{shortenString(data?.txhash)}</td>
-        <td className="text-center">$ {parseFloat(formatUnits(data.total)).toFixed(2)}</td>
+        <td className="text-center">{parseFloat(formatUnits(data.total)).toFixed(2)} DNF</td>
         <td
           className={`${data.type === "BUY" ? "text-green-400" : "text-red-500"
             } text-right`}
@@ -105,7 +105,7 @@ export function History() {
             <tr>
               <th className="w-[5rem] py-3">Date</th>
               <th className="w-[5rem] py-3 px-2">TxHash</th>
-              <th className="w-[7rem] py-3 text-center">Amount</th>
+              <th className="w-[9rem] py-3 text-center">Amount</th>
               <th className="w-[8rem] py-3 text-right">Description</th>
             </tr>
           </thead>

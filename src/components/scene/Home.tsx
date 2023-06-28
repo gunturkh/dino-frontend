@@ -1583,7 +1583,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                 <DetailsComponent
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
                   IconTexture={PIXI?.Assets?.get("BonusIcon")}
-                  text={ethers.utils.formatUnits(userData?.bonuses, 18)}
+                  text={parseFloat(ethers.utils.formatUnits(userData?.bonuses, 18)).toFixed(4).toString()}
                   posX={0}
                   posY={35}
                   scaleX={isNotMobile ? 1 : 0.8}

@@ -470,7 +470,7 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
 
           <Container
             position={[app.screen.width / 2, 0]}
-            height={app.screen.height * 0.8}
+            // height={app.screen.height * 0.8}
           >
             {/* Upper Button */}
             <Container
@@ -536,9 +536,8 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
             </Container>
 
             {/* Profile */}
-            <Container x={0} y={0} height={app.screen.height * 0.85}>
+            <Container x={0} y={50} height={app.screen.height * 0.9}>
               <Sprite
-                // ref={profileBgRef}
                 texture={bgTexture}
                 alpha={0.85}
                 width={isNotMobile ? 450 : app.screen.width * 0.9}
@@ -621,7 +620,7 @@ const ProfileTemp = ({ onBackBtnClick, deactivate, setAuthMode }: Props) => {
               <Container
                 position={[0, isNotMobile ? 295 : 240]}
                 ref={upperComponentRef}
-                scale={[1, 1.5]}
+                scale={[1, isNotMobile ? 1 : 0.8]}
               >
                 {menuItem.map((item, i) => (
                   <Container
