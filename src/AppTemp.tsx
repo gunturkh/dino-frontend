@@ -2779,7 +2779,7 @@ export const AppTemp = () => {
                 </form>
                 {swapState !== "LOADING" && (
                   <div className="flex flex-row justify-around w-full">
-                    <button onClick={ async () => {
+                    <button onClick={async () => {
                       // window.alert('add DNF')
                       try {
                         console.log('window.ethereum', window)
@@ -3633,7 +3633,7 @@ export const AppTemp = () => {
                     <p>
                       When the first dinosaur bone was described in Jurassic
                       World, it was thought to come from an elephant or perhaps a
-                      giant.Over a century later, scientists realised such fossils
+                      giant. Over a century later, scientists realised such fossils
                       came from a creature they named Megalosaurus. Then, in
                       leading anatomist recognised Megalosaurus as part of a whole
                       new group of animals, which named Dinosaur. Since then,
@@ -3653,14 +3653,12 @@ export const AppTemp = () => {
                     </p>
                     <br />
                     <p>
-                      Hunters need to go to the [Jurassic] Market to buy Dino Eggs
-                      before starting the hunting journey. When the Dino Eggs is
-                      successfully purchased, the Hunter will also accumulate its
-                      own hunting value. With the increase of the hunting value,
-                      the hunter can also advance to a higher level and enjoy more
-                      benefits (the hunting value of the first-level relationship
-                      buddies of the hunter, can also contribute to the hunter's
-                      hunting value, and assist the hunter to advance).
+                      Decentralized Concept, fair and comfortable in buying and selling
+                      Jurassic Eggs. Jurassic Egg understands that this kind of concept
+                      is an interesting concept to develop, so Jurassic Egg tries to study
+                      it and find a fairer and more comfortable game method and the balance
+                      in each personal Wallet, your balance is only used when buying an Egg.
+                      And the balance goes directly to your respective Wallet when you sell it..
                     </p>
                   </AccordionBody>
                 </Accordion>
@@ -3672,26 +3670,20 @@ export const AppTemp = () => {
                     onClick={() => handleOpenGameGuide(2)}
                     className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
                   >
-                    Start Game
+                    Game Introduction
                   </AccordionHeader>
                   <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
                     <p>
-                      Before beginning the hunting expedition, hunters must
-                      purchase Dino Eggs at the [Jurassic] Market. Following the
-                      purchase of Dino Eggs, the hunter will also raise their
-                      hunting value, climb the rank ladder, and earn more rewards.
-                      (The hunting value of the hunter's first-degree buddies will
-                      also help the hunter rise in rank.)
-                    </p>
+                      Every Hunters going to start with getting Dino Egg
                     <br />
-                    <img src="/image/tableStartGame.png" alt="table start game" />
                     <br />
-                    <p>
-                      Hunters will receive additional awards from the [Jurassic]
-                      Market in addition to hunting rewards for successfully
-                      capturing Dinosaur during the hunting procedure. Hunters
-                      who failed to capture any Dinosaur will also receive
-                      rewards for their efforts.
+                      Your Dino Egg will start hunting for you in the Jurassic World for 33-48 hours after a successful purchase. After the hunt, the Dino Egg are returned to the Jurassic Egg Market for sale. As more hunts are performed, the Dino Egg gains experience points and develops their ability to catch rare Dinosaur.
+                      <br />
+                      <br />
+                      If you successfully catch a Dinosaur, you will receive a certain amount of DNF and the Dinosaur Card.
+                      <br />
+                      <br />
+                      Collect every Dinosaur Card to enjoy our grand price up to 9999 DNF
                     </p>
                   </AccordionBody>
                 </Accordion>
@@ -3703,27 +3695,34 @@ export const AppTemp = () => {
                     onClick={() => handleOpenGameGuide(3)}
                     className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
                   >
-                    Jurassic Market
+                    Jurassic Fund
+                  </AccordionHeader>
+                  <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                    <p>Jurassic Fund is the most important component of the game. All Dino Eggs listed in the jurassic market are only availablle Up to 24hours, After that jurassic eggs will be buyback using the Dino Fund pool</p>
+                      <br />
+                    <p className="text-[#FFC700]">Dino Fund usage includes :</p>
+                      <br />
+                    <img src="/image/jurassicfund.png" alt="jurassic fund" />
+                  </AccordionBody>
+                </Accordion>
+                <Accordion
+                  open={openGameGuide === 4}
+                  icon={<IconGameGuide id={4} open={openGameGuide} />}
+                >
+                  <AccordionHeader
+                    onClick={() => handleOpenGameGuide(4)}
+                    className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
+                  >
+                    Jurassic Egg Market
                   </AccordionHeader>
                   <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
                     <p>
-                      A place where all hunters gather.
+                      Dino Eggs are sold sporadically at Jurassic Egg Market for 50 DNF each. The price of Dino Eggs increases as XP levels increase.
                       <br />
                       <br />
-                      Hunters who intend to purchase Dino Eggs here are required
-                      to have purchase eggs, tickets and USDT in their account.
+                      For a better gaming experience, the overall number of Dino Eggs in circula- tion will depend on the number active Hunters.
                       <br />
                       <br />
-                      One hour prior to the end of the hunt, hunters who are
-                      hunting can pre-list their Dino Eggs at the [Jurassic]
-                      market. The Dino eggs will be listed immediately at the
-                      [Jurassic] market for other Hunters to purchase from after
-                      the hunting session has ended.
-                      <br />
-                      <br />
-                      All Dino Eggs listed in the Jurassic Market are only
-                      available for 24 hours. After 24 hours, any remaining
-                      Jurassic Eggs will trigger the Dino Fund's buy- back policy.
                     </p>
                   </AccordionBody>
                 </Accordion>
@@ -3733,12 +3732,55 @@ export const AppTemp = () => {
                 >
                   <AccordionHeader
                     onClick={() => handleOpenGameGuide(5)}
+                    className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4 text-left"
+                  >
+                    Get DNF Rewards When you Catch Dinosaur!
+                  </AccordionHeader>
+                  <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                    <img src="/image/dnfreward.png" alt="dnf reward" />
+                  </AccordionBody>
+                </Accordion>
+                <Accordion
+                  open={openGameGuide === 6}
+                  icon={<IconGameGuide id={6} open={openGameGuide} />}
+                >
+                  <AccordionHeader
+                    onClick={() => handleOpenGameGuide(6)}
+                    className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
+                  >
+                    Get More Rewards From Gacha
+                  </AccordionHeader>
+                  <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                    <img src="/image/gatchareward.png" alt="gatcha reward" />
+                  </AccordionBody>
+                </Accordion>
+                <Accordion
+                  open={openGameGuide === 7}
+                  icon={<IconGameGuide id={7} open={openGameGuide} />}
+                >
+                  <AccordionHeader
+                    onClick={() => handleOpenGameGuide(7)}
                     className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
                   >
                     Dino Egg
                   </AccordionHeader>
                   <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
-                    <img src="/image/tableDinoEgg.png" alt="table start game" />
+                    <p>
+                      Dino Eggs will be listed soon in the Jurassic Egg Market and available for purchase once the hunt is over. With the new EXP, the cost of Dino Eggs will increase by 6%.
+                      <br />
+                      <br />
+                      2% will go to the seller, 1% will go to plattform Fee and 3% will go to the
+                      “Hunting Buddy Bonus” (if your buddy buy egg), if the Dino Egg has not been sold after 24 hours, Jurassic Fund will purchase the Dino Egg using the Dino Fund Pool.
+                      <br />
+                      <br />
+                      Active income from the Group
+                      <br />
+                      <br />
+                      Ticket Price 0.25 DNF/Ticket.
+                    </p>
+                    <br />
+                    <br />
+                    <img src="/image/tableDinoEgg.png" alt="table dino egg" />
                   </AccordionBody>
                 </Accordion>
                 <Accordion
@@ -3763,54 +3805,122 @@ export const AppTemp = () => {
                   </AccordionBody>
                 </Accordion>
                 <Accordion
-                  open={openGameGuide === 6}
-                  icon={<IconGameGuide id={6} open={openGameGuide} />}
+                  open={openGameGuide === 8}
+                  icon={<IconGameGuide id={8} open={openGameGuide} />}
                 >
                   <AccordionHeader
-                    onClick={() => handleOpenGameGuide(6)}
+                    onClick={() => handleOpenGameGuide(8)}
                     className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
                   >
-                    Buddies
+                    Hunting Buddy Bonus
                   </AccordionHeader>
                   <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
                     <p>
-                      Hunters can earn Buddy hunting bonuses by recruiting
-                      Buddies; Bonuses will be earned whenever your Buddies
-                      purchase Dino Eggs. Tiers receivable are based on the
-                      hunter’s personal rank.
+                      When your Buddy earns DNF from hunting in Jurassic Egg, you will be able to receive a 6.667% bonus on the amount they earn. Hunters can receive up to level 15 of their commander’s hunting bonus. With more Buddy, the more bonuses you can receive.
+                      <br />
+                      <br />
+                      Example :
+                      <br />
+                      <br />
+                      A Legendary hunter’s (all with in level 15 of his network) total hunting value for the day is 5,000,000 DNF, which means their hunting profit is 150,000 DNF. If so, this legendary hunter will get 6.667% of his 150,000 DNF. which is 10,000 DNF as his buddy Hunting Bonus.
+                      <br />
+                      <br />
+                      To receive the Hunting Bonus, the hunters must spend one Ticket before the day ends.
                     </p>
                     <br />
                     <p className="font-bold">Hunter's Rank</p>
-                    <img src="/image/tableBuddies.png" alt="table start game" />
                     <br />
-                    <p>
-                      *In order to receive Buddy Hunting Bonus, the hunter will
-                      need to exhaust Purchase Egg before the day ends,
-                      11:59 hours (UTC +7)
-                    </p>
                   </AccordionBody>
                 </Accordion>
                 <Accordion
-                  open={openGameGuide === 7}
-                  icon={<IconGameGuide id={7} open={openGameGuide} />}
+                  open={openGameGuide === 9}
+                  icon={<IconGameGuide id={9} open={openGameGuide} />}
                 >
                   <AccordionHeader
-                    onClick={() => handleOpenGameGuide(7)}
-                    className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4 rounded-b-xl"
+                    onClick={() => handleOpenGameGuide(9)}
+                    className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
                   >
-                    Rank Requalification
+                    Hunting Ranking
                   </AccordionHeader>
                   <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
                     <p>
-                      Hunter are required to maintain their rank in order to enjoy
-                      their current benefits. 1 week following a promotion to a
-                      rank, a minimum amount of personal hunting value is required
-                      for requalification.
+                      As a Hunter and his partner continue to hunt dinosaur in the game, they will gradually move up to the next rank. The higher rank of the Hunter, more allowances
+                      <br />
+                      <br />
                     </p>
                     <br />
+                    <br />
+                    <img src="/image/hunterranking.png" alt="hunter ranking" />
+                  </AccordionBody>
+                </Accordion>
+                <Accordion
+                  open={openGameGuide === 10}
+                  icon={<IconGameGuide id={10} open={openGameGuide} />}
+                >
+                  <AccordionHeader
+                    onClick={() => handleOpenGameGuide(10)}
+                    className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4 rounded-b-xl"
+                  >
+                    Dino Egg Trading Illustration
+                  </AccordionHeader>
+                  <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
                     <img
-                      src="/image/tableRankRequalification.png"
+                      src="/image/dinotrading.png"
                       alt="table start game"
+                    />
+                  </AccordionBody>
+                </Accordion>
+                <Accordion
+                  open={openGameGuide === 11}
+                  icon={<IconGameGuide id={11} open={openGameGuide} />}
+                >
+                  <AccordionHeader
+                    onClick={() => handleOpenGameGuide(11)}
+                    className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4 rounded-b-xl"
+                  >
+                    Transaction Process
+                  </AccordionHeader>
+                  <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                    <img
+                      src="/image/transactionprocess.png"
+                      alt="transaction process"
+                    />
+                  </AccordionBody>
+                </Accordion>
+                <Accordion
+                  open={openGameGuide === 12}
+                  icon={<IconGameGuide id={12} open={openGameGuide} />}
+                >
+                  <AccordionHeader
+                    onClick={() => handleOpenGameGuide(12)}
+                    className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4 rounded-b-xl"
+                  >
+                    Ultimate Hunter
+                  </AccordionHeader>
+                  <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                    <p className="text-[#FFC700]">Join and become an Ultimate Hunter!</p>
+                    <br />
+                    <br />
+                    <p>Subscribe to the Ultimate Pass to enjoy additional perks in Jurassic Egg</p>
+                    <br />
+                    <br />
+                    <p className="text-[#FFC700]">Ultimate Pass Benefits :</p>
+                    <br />
+                    <br />
+                    <p>
+                      Automatic sale of your Dino Egg (No need to "Pre-Register")
+                      <br />
+                      <br />
+                      1 Extra egg purchase per day
+                      <br />
+                      <br />
+                      10% less hunting time
+                    </p>
+                    <br />
+                    <br />
+                    <img
+                      src="/image/ultimatehunter.png"
+                      alt="ultimate hunter"
                     />
                   </AccordionBody>
                 </Accordion>
