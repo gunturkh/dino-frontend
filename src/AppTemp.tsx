@@ -3780,28 +3780,7 @@ export const AppTemp = () => {
                     </p>
                     <br />
                     <br />
-                    <img src="/image/tableDinoEgg.png" alt="table dino egg" />
-                  </AccordionBody>
-                </Accordion>
-                <Accordion
-                  open={openGameGuide === 4}
-                  icon={<IconGameGuide id={4} open={openGameGuide} />}
-                >
-                  <AccordionHeader
-                    onClick={() => handleOpenGameGuide(4)}
-                    className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
-                  >
-                    Dinosaur
-                  </AccordionHeader>
-                  <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
-                    <p className="font-bold">Captured Dinosaur Rewards</p>
-                    <br />
-                    <img src="/image/tableDinosaur.png" alt="table start game" />
-                    <br />
-                    <p>
-                      Higher rarity Dinosaur can only be captured using a Epic
-                      or Glory Egg.
-                    </p>
+                    <img src="/image/dinoegg.png" alt="dino egg" />
                   </AccordionBody>
                 </Accordion>
                 <Accordion
