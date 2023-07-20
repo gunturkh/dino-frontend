@@ -273,11 +273,11 @@ export const RPC_ENDPOINT = "https://data-seed-prebsc-1-s1.binance.org:8545/";
 export const API_ENDPOINT = "https://beta-api.jurassicegg.co";
 // export const API_ENDPOINT = 'https://api.jurassicegg.co';
 // trunk-ignore(gitleaks/generic-api-key)
-export const CAPTCHA_KEY = "459ae6fa-a040-4481-8f71-98a6603d8a3a";
+// export const CAPTCHA_KEY = "459ae6fa-a040-4481-8f71-98a6603d8a3a";
 
 // recaptcha sitekey for local
 // trunk-ignore(gitleaks/generic-api-key)
-// export const CAPTCHA_KEY = "6Lc4jaMlAAAAAGRgfjJ88dQUZ4WT3GA4xQZRobJN";
+export const CAPTCHA_KEY = "6Lc4jaMlAAAAAGRgfjJ88dQUZ4WT3GA4xQZRobJN";
 
 export const WEBSOCKET = "wss://wsbeta.jurassicegg.co";
 
@@ -289,6 +289,7 @@ export const EXCHANGE_ADDR = "0x217636cdEEDB16DFA0a4Edc66324f972E20FE80f";
 export const EXCHANGE_ABI = [{ "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "exchange", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "_price", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }];
 export const PAYGATEWAY_ADDR = "0xEbf87D8113609d7dEfCfa73c2148c40AEB58da02";
 export const TICKET_ADDR = "0x7196e0b2A5CB949efDB3D808760a329F7f129632";
+export const DEPO_ADDR = '0xe0fbF9E59c7f9582Dd0022d8B58B3759C211d6d3';
 
 // PROD
 // export const USDT_ADDR = "0x55d398326f99059fF775485246999027B3197955";
@@ -298,6 +299,7 @@ export const TICKET_ADDR = "0x7196e0b2A5CB949efDB3D808760a329F7f129632";
 // export const EXCHANGE_ABI = [{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"exchange","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"_price","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}];
 // export const PAYGATEWAY_ADDR = "0x5A8303287090a3398def295eDC78fed580288654";
 // export const TICKET_ADDR = "0x41B1e956450b0b265fC19689916bDdce1911A365";
+// export const DEPO_ADDR = '';
 
 export const COUNTRIES = [
   "AE",

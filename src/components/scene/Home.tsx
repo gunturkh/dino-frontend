@@ -97,6 +97,16 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
   const jFundBalance = useStore((state) => state.jFundBalance);
   const setJFundBalance = useStore((state) => state.setJFundBalance);
   const setWithdrawalHistory = useStore((state) => state.setWithdrawalHistory);
+  const setUSDTWithdrawalHistory = useStore(
+    (state) => state.setUSDTWithdrawalHistory
+  );
+  const setDNFWithdrawalHistory = useStore(
+    (state) => state.setDNFWithdrawalHistory
+  );
+  const setMarketListBuy = useStore((state) => state.setMarketListBuy);
+  const setMarketListSell = useStore((state) => state.setMarketListSell);
+  const setMarketListOpen = useStore((state) => state.setMarketListOpen);
+  const setMarketListHistory = useStore((state) => state.setMarketListHistory);
   // const gatchaAnimationStatus = useStore((state) => state.gatchaAnimationStatus);
   // const setGatchaAnimationStatus = useStore((state) => state.setGatchaAnimationStatus);
 
@@ -552,7 +562,9 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
   }, []);
 
   console.log("gatchaAnimation", gatchaAnimation);
-  const [gatchaGetReward, setGatchaReward] = useState<'ZONK' | 'CARD' | 'NORMAL' | 'EGG' | 'TICKET'>('ZONK');
+  const [gatchaGetReward, setGatchaReward] = useState<
+    "ZONK" | "CARD" | "NORMAL" | "EGG" | "TICKET"
+  >("ZONK");
   const [gatchaAnimationStatus, setGatchaAnimationStatus] = useState(false);
   // gatcha ticket count
   const [ticketCnt, setTicketCnt] = useState(0);
@@ -565,7 +577,8 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
     indexOfLastEgg
   );
   const disabledNext =
-    currentPage === Math.ceil(eggPendingListData?.length / eggsPerPage) || (Math.ceil(eggPendingListData?.length / eggsPerPage) === 0);
+    currentPage === Math.ceil(eggPendingListData?.length / eggsPerPage) ||
+    Math.ceil(eggPendingListData?.length / eggsPerPage) === 0;
 
   const disabledPrev = currentPage === 1;
 
@@ -625,7 +638,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
 
       // load all animation inside memoizedGatchaAnimation using loop
       if (memoizedGatchaAnimation) {
-        console.log('memoizedGatchaAnimation', memoizedGatchaAnimation)
+        console.log("memoizedGatchaAnimation", memoizedGatchaAnimation);
         Object.keys(memoizedGatchaAnimation).forEach((key) => {
           memoizedGatchaAnimation[key].spineData.animations.forEach(
             (animation: any) => {
@@ -755,11 +768,10 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
       }
 
       // if (gatchaAnimationStatus.show) {
-      console.log('gatchaAnimationStatus', gatchaAnimationStatus)
+      console.log("gatchaAnimationStatus", gatchaAnimationStatus);
       if (gatchaAnimationStatus) {
         //TODO: gatcha but get something, need to add more logic here
-        if (gatchaGetReward === 'NORMAL') {
-
+        if (gatchaGetReward === "NORMAL") {
           if (gatchaWithCoin1 && ticketCnt === 1) {
             console.log("gatchaWithCoin1 triggered");
             gatchaWithCoin1.visible = true;
@@ -801,9 +813,8 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
           }
         }
 
-
         // }
-        else if (gatchaGetReward === 'ZONK') {
+        else if (gatchaGetReward === "ZONK") {
           if (gatcha1 && ticketCnt === 1) {
             gatcha1.visible = true;
             node?.addChild(gatcha1);
@@ -816,9 +827,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
             gatcha3.visible = true;
             node?.addChild(gatcha3);
           }
-        }
-
-        else if (gatchaGetReward === 'CARD') {
+        } else if (gatchaGetReward === "CARD") {
           if (gatchaEggWithCoin1 && ticketCnt === 1) {
             console.log("gatchaEggWithCoin1 triggered");
             gatchaEggWithCoin1.visible = true;
@@ -839,10 +848,12 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
             gatchaWithDino.visible = true;
             node?.addChild(gatchaWithDino);
           }
-        }
-
-        else if (gatchaGetReward === 'EGG') {
-          console.log('gatcha reward egg', { ticketCnt, gatchaGetReward, gatchaAnimation })
+        } else if (gatchaGetReward === "EGG") {
+          console.log("gatcha reward egg", {
+            ticketCnt,
+            gatchaGetReward,
+            gatchaAnimation,
+          });
           if (gatchaBonusEgg && ticketCnt === 1) {
             console.log("gatchaBonusEgg triggered");
             gatchaBonusEgg.visible = true;
@@ -875,9 +886,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
             gatchaEggBonusEgg3.visible = true;
             node?.addChild(gatchaEggBonusEgg3);
           }
-        }
-
-        else if (gatchaGetReward === 'TICKET') {
+        } else if (gatchaGetReward === "TICKET") {
           if (gatchaTicket1 && ticketCnt === 1) {
             console.log("gatchaTicket1 triggered");
             gatchaTicket1.visible = true;
@@ -1275,6 +1284,122 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
     }
   };
 
+  const getUSDTWithdrawHistory = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const { data }: any = await axiosInstance({
+      url: "/wallet/usdt/history",
+      method: "GET",
+      headers: options.headers,
+      params: {
+        page: 1,
+      },
+    });
+    console.log("getUSDTWithdrawHistory Result:", data);
+    if (data?.success) {
+      setUSDTWithdrawalHistory(data?.result);
+    } else {
+      toast(data.message);
+    }
+  };
+
+  const getDNFWithdrawHistory = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const { data }: any = await axiosInstance({
+      url: "/wallet/dnf/history",
+      method: "GET",
+      headers: options.headers,
+      params: {
+        page: 1,
+      },
+    });
+    console.log("getDNFWithdrawHistory Result:", data);
+    if (data?.success) {
+      setDNFWithdrawalHistory(data?.result);
+    } else {
+      toast(data.message);
+    }
+  };
+
+  const getMarketListBuy = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const resp: any = await axiosInstance({
+      url: `/market/list-buy`,
+      method: "GET",
+      headers: options.headers,
+    });
+    // console.log("getEggList Result:", data);
+    if (resp.data.success) {
+      setMarketListBuy(resp.data.result);
+    }
+  };
+  const getMarketListSell = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const { data }: any = await axiosInstance({
+      url: "/market/list-sell",
+      method: "GET",
+      headers: options.headers,
+    });
+    console.log("market sell Result:", data);
+    if (data?.success) {
+      setMarketListSell(data.result);
+    } else {
+      toast(data.message);
+    }
+  };
+
+  const getMarketListOpen = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const { data }: any = await axiosInstance({
+      url: "/market/open",
+      method: "GET",
+      headers: options.headers,
+    });
+    console.log("market open Result:", data);
+    if (data?.success) {
+      setMarketListOpen(data.result);
+    } else {
+      toast(data.message);
+    }
+  };
+
+  const getMarketListHistory = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const { data }: any = await axiosInstance({
+      url: "/market/history",
+      method: "GET",
+      headers: options.headers,
+    });
+    console.log("market history Result:", data);
+    if (data?.success) {
+      setMarketListHistory(data.result);
+    } else {
+      toast(data.message);
+    }
+  };
   useEffect(() => {
     // /user/getUserData
     let options = {
@@ -1314,6 +1439,12 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
       // getNotification();
       getJFundBalance();
       getWithdrawHistory();
+      getUSDTWithdrawHistory();
+      getDNFWithdrawHistory();
+      getMarketListBuy();
+      getMarketListSell();
+      getMarketListOpen();
+      getMarketListHistory();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
@@ -1459,8 +1590,8 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                 text={
                   jFundBalance !== ""
                     ? Number(
-                      ethers.utils.formatUnits(jFundBalance, 18)
-                    ).toLocaleString('en-US', { maximumFractionDigits: 2 })
+                        ethers.utils.formatUnits(jFundBalance, 18)
+                      ).toLocaleString("en-US", { maximumFractionDigits: 2 })
                     : "0"
                 }
                 // text={`w=${getHomeContainerBounds.width.toFixed()} h=${getHomeContainerBounds.height}`}
@@ -1481,7 +1612,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
               <Container
                 position={[
                   (DinoFundBgBounds?.width / 2) *
-                  (app.screen?.width > 450 ? 1.05 : 1),
+                    (app.screen?.width > 450 ? 1.05 : 1),
                   DinoFundBgBounds?.height / 2 - 7,
                 ]}
               >
@@ -1554,7 +1685,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                 // position={[app.screen.width / 2 - (lfSideBounds.width / 2), 0]}
                 position={[isNotMobile ? 110 : 90, 10]}
                 anchor={[0.5, 0.5]}
-              // width={app.screen.width > 450 ? 450 : app.screen.width}
+                // width={app.screen.width > 450 ? 450 : app.screen.width}
               >
                 <DetailsComponent
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
@@ -1583,7 +1714,11 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                 <DetailsComponent
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
                   IconTexture={PIXI?.Assets?.get("BonusIcon")}
-                  text={parseFloat(ethers.utils.formatUnits(userData?.bonuses, 18)).toFixed(4).toString()}
+                  text={parseFloat(
+                    ethers.utils.formatUnits(userData?.bonuses, 18)
+                  )
+                    .toFixed(4)
+                    .toString()}
                   posX={0}
                   posY={35}
                   scaleX={isNotMobile ? 1 : 0.8}
@@ -1694,7 +1829,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
               x={-5}
               scale={[0.9, 0.9]}
               height={app.screen.height * 0.4}
-            // width={app.screen.width * 0.9}
+              // width={app.screen.width * 0.9}
             >
               <Sprite
                 texture={PIXI.Assets.get("EggPlate") || PIXI.Texture.EMPTY}
@@ -1704,66 +1839,64 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
               {/* <Graphics draw={draw} ref={pathRef} /> */}
 
               {/* {dummyEggLists?.map( */}
-              {currentEggs?.map(
-                (egg: EggPendingListData, eggIndex: number) => {
-                  if (eggIndex === 0) {
-                    return (
-                      <NormalEggComponent
-                        // ref={eggRef}
-                        key={egg?.id}
-                        data={egg}
-                        currentTime={currentTime}
-                        eggTexture={PIXI.Assets.get(
-                          `BigEggIcon${egg?.ticket === 4 ? "3" : egg?.ticket}`
-                        )}
-                        posX={position[eggIndex]?.posX}
-                        posY={position[eggIndex]?.posY}
-                        posBtn={position[eggIndex]?.posBtn}
-                        // posX={position[currentTime % 8]?.posX}
-                        // posY={position[currentTime % 8]?.posY}
-                        // posBtn={position[currentTime % 8]?.posBtn}
-                        scaleBtn={[1.2, 1.3]}
-                        scaleEgg={[0.75, 0.75]}
-                        onPress={() => console.log("egg 1 clicked")}
-                        setTicketCnt={setTicketCnt}
-                        setGatchaAnimationStatus={setGatchaAnimationStatus}
-                        setGatchaReward={setGatchaReward}
+              {currentEggs?.map((egg: EggPendingListData, eggIndex: number) => {
+                if (eggIndex === 0) {
+                  return (
+                    <NormalEggComponent
+                      // ref={eggRef}
+                      key={egg?.id}
+                      data={egg}
+                      currentTime={currentTime}
+                      eggTexture={PIXI.Assets.get(
+                        `BigEggIcon${egg?.ticket === 4 ? "3" : egg?.ticket}`
+                      )}
+                      posX={position[eggIndex]?.posX}
+                      posY={position[eggIndex]?.posY}
+                      posBtn={position[eggIndex]?.posBtn}
+                      // posX={position[currentTime % 8]?.posX}
+                      // posY={position[currentTime % 8]?.posY}
+                      // posBtn={position[currentTime % 8]?.posBtn}
+                      scaleBtn={[1.2, 1.3]}
+                      scaleEgg={[0.75, 0.75]}
+                      onPress={() => console.log("egg 1 clicked")}
+                      setTicketCnt={setTicketCnt}
+                      setGatchaAnimationStatus={setGatchaAnimationStatus}
+                      setGatchaReward={setGatchaReward}
                       // onDragStart={onDragStart}
                       // onDragMove={onDragMove}
                       // onDragEnd={onDragEnd}
                       // visible={!eggData[0]}
-                      />
-                    );
-                  } else
-                    return (
-                      <NormalEggComponent
-                        key={egg?.id}
-                        data={egg}
-                        currentTime={currentTime}
-                        eggTexture={PIXI.Assets.get(
-                          `EggIcon${egg?.ticket === 4 ? "3" : egg?.ticket}`
-                        )}
-                        posX={position[eggIndex]?.posX}
-                        posY={position[eggIndex]?.posY}
-                        posBtn={position[eggIndex]?.posBtn}
-                        scaleEgg={[1.2, 1.2]}
-                        // posX={position[currentTime % 8]?.posX}
-                        // posY={position[currentTime % 8]?.posY}
-                        // posBtn={position[currentTime % 8]?.posBtn}
-                        // text={"Pre-List"}
-                        onPress={() => console.log(`egg ${eggIndex} clicked`)}
-                        setTicketCnt={setTicketCnt}
-                        setGatchaAnimationStatus={setGatchaAnimationStatus}
-                        setGatchaReward={setGatchaReward}
+                    />
+                  );
+                } else
+                  return (
+                    <NormalEggComponent
+                      key={egg?.id}
+                      data={egg}
+                      currentTime={currentTime}
+                      eggTexture={PIXI.Assets.get(
+                        `EggIcon${egg?.ticket === 4 ? "3" : egg?.ticket}`
+                      )}
+                      posX={position[eggIndex]?.posX}
+                      posY={position[eggIndex]?.posY}
+                      posBtn={position[eggIndex]?.posBtn}
+                      scaleEgg={[1.2, 1.2]}
+                      // posX={position[currentTime % 8]?.posX}
+                      // posY={position[currentTime % 8]?.posY}
+                      // posBtn={position[currentTime % 8]?.posBtn}
+                      // text={"Pre-List"}
+                      onPress={() => console.log(`egg ${eggIndex} clicked`)}
+                      setTicketCnt={setTicketCnt}
+                      setGatchaAnimationStatus={setGatchaAnimationStatus}
+                      setGatchaReward={setGatchaReward}
                       // visible={!eggData[1]}
                       // onDragStart={onDragStart}
                       // onDragMove={onDragMove}
                       // onDragEnd={onDragEnd}
-                      />
-                    );
-                }
-              )}
-              {!disabledPrev &&
+                    />
+                  );
+              })}
+              {!disabledPrev && (
                 <Sprite
                   texture={
                     PIXI.Assets.get(
@@ -1781,8 +1914,8 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                   eventMode={"static"}
                   onpointertap={() => previousPage()}
                 />
-              }
-              {!disabledNext &&
+              )}
+              {!disabledNext && (
                 <Sprite
                   texture={
                     PIXI.Assets.get(
@@ -1799,12 +1932,14 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                   eventMode={"static"}
                   onpointertap={() => nextPage()}
                 />
-              }
+              )}
             </Container>
             {/* <Container position={[0, 250]}> */}
-            {Math.ceil(eggPendingListData?.length / eggsPerPage) !== 0 &&
+            {Math.ceil(eggPendingListData?.length / eggsPerPage) !== 0 && (
               <Text
-                text={`${currentPage}/${Math.ceil(eggPendingListData?.length / eggsPerPage)}`}
+                text={`${currentPage}/${Math.ceil(
+                  eggPendingListData?.length / eggsPerPage
+                )}`}
                 position={[0, app.screen.height * 0.85]}
                 anchor={[0.5, 0.5]}
                 style={
@@ -1817,7 +1952,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                   })
                 }
               />
-            }
+            )}
             {/* </Container> */}
 
             {/* Lower Button Container */}
@@ -1825,7 +1960,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
               ref={lowerSectionContainerRef}
               anchor={[0.5, 0.5]}
               x={0}
-            // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
+              // width={app.screen?.width > 450 ? 450 : app.screen.width * 0.95}
             >
               {/* left side */}
               <LowerButtonComponent
@@ -2057,7 +2192,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[
                       buyTicketPanelBounds?.width * 0.5 -
-                      (isNotMobile ? 50 : 25),
+                        (isNotMobile ? 50 : 25),
                       0,
                     ]}
                     eventMode="static"
@@ -2117,11 +2252,11 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
                     anchor={[0.5, 0.5]}
                     position={[
                       buyTicketPanelBounds?.width * 0.5 -
-                      (isNotMobile ? 50 : 25),
+                        (isNotMobile ? 50 : 25),
                       0,
                     ]}
                     eventMode="static"
-                  // onpointertap={() => setGoogleAuthVisible(false)}
+                    // onpointertap={() => setGoogleAuthVisible(false)}
                   />
                 </Container>
 
