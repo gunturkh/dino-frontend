@@ -3163,7 +3163,7 @@ export const AppTemp = () => {
                             : "text-white"
                         } w-full font-bold font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
                       >
-                        OPEN
+                        POSITION
                       </button>
                       <button
                         type="button"
@@ -3232,150 +3232,7 @@ export const AppTemp = () => {
                         })}
                       </tbody>
                     </table>
-                    <form>
-                      <div className="flex flex-col">
-                        <p className="text-white font-Magra my-3">DNF</p>
-                        <input
-                          name="amount"
-                          type="number"
-                          step="0.01"
-                          placeholder="DNF"
-                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                          style={{
-                            background: `url(image/InputBox.png) no-repeat `,
-                          }}
-                          onChange={(e) => {
-                            console.log("sell amount", e.target.value);
-                            setSellAmount(e.target.value);
-                            countSellUsdt(e.target.value, sellPrice);
-                          }}
-                          value={sellAmount}
-                          min={0}
-                        />
-                        <p className="text-white font-Magra my-3">Price</p>
-                        <input
-                          name="price"
-                          type="number"
-                          step="0.01"
-                          placeholder="Price"
-                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                          style={{
-                            background: `url(image/InputBox.png) no-repeat `,
-                          }}
-                          onChange={(e) => {
-                            setSellPrice(e.target.value);
-                            countSellUsdt(sellAmount, e.target.value);
-                          }}
-                          value={sellPrice}
-                          min={0}
-                        />
-                        <p className="text-white font-Magra my-3">USDT</p>
-                        <input
-                          name="totalPrice"
-                          type="number"
-                          // placeholder="Password"
-                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                          style={{
-                            background: `url(image/InputBox.png) no-repeat `,
-                          }}
-                          readOnly
-                          // onChange={loginForm.handleChange}
-                          // onBlur={loginForm.handleBlur}
-                          value={sellUSDTAmount}
-                        />
-                      </div>
-                    </form>
-                    <div className="flex flex-row justify-around w-full">
-                      <button
-                        type={"submit"}
-                        // disabled={}
-                        onClick={async () => {
-                          try {
-                            let options = {
-                              headers: {
-                                "my-auth-key": token,
-                              },
-                            };
-                            const response = await axiosInstance({
-                              url: "/market/sell",
-                              method: "POST",
-                              headers: options.headers,
-                              data: {
-                                amount: sellUSDTAmount,
-                                price: sellPrice,
-                              },
-                            });
-                            if (response.data.success) {
-                              toast("Post Sell Success");
-                            } else
-                              toast(
-                                response.data?.message || "Post Sell Error"
-                              );
-                            console.log(response.data);
-                          } catch (error) {
-                            console.error(error);
-                            toast("Post Sell Error");
-                          }
-                        }}
-                        className={`${
-                          parseFloat(sellPrice) <= 0
-                            ? "bg-gray-700"
-                            : "bg-red-500"
-                        } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
-                        disabled={parseFloat(sellPrice) <= 0}
-                      >
-                        Sell
-                      </button>
-                    </div>
-                  </>
-                )}
-                {gameTaskPanel.mode === "MARKET.SELL" && (
-                  <>
-                    <p className="text-white font-Magra mb-3">Sell List</p>
-                    <div className="flex flex-row justify-around text-white w-full">
-                      <p>
-                        USDT: {ethers.utils.formatEther(userData.wallet.usdt)}
-                      </p>
-                      <p>
-                        DNF: {ethers.utils.formatEther(userData.wallet.dnf)}
-                      </p>
-                    </div>
-                    <table className="w-full text-base">
-                      <thead className=" uppercase border-y ">
-                        <tr className="text-yellow-500 font-Magra">
-                          <th scope="col" className="w-[6rem]">
-                            Price
-                          </th>
-                          <th scope="col" className="w-[7rem] pr-1">
-                            DNF
-                          </th>
-                          <th scope="col" className="w-[4rem] py-1">
-                            USDT
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {marketListBuy?.map((t: any) => {
-                          return (
-                            <tr className="text-white text-center">
-                              <td>{`${parseFloat(
-                                formatUnits(t.price, 18)
-                              ).toFixed(2)}`}</td>
-                              <td
-                                className={"text-white text-base text-center"}
-                              >{`${parseFloat(formatUnits(t.dnf, 18)).toFixed(
-                                2
-                              )}`}</td>
-                              <td className={`text-white pl-4 text-center`}>
-                                {`${parseFloat(formatUnits(t.usdt, 18)).toFixed(
-                                  2
-                                )}`}
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
+
                     <form>
                       <div className="flex flex-col">
                         <p className="text-white font-Magra my-3">DNF</p>
@@ -3469,6 +3326,152 @@ export const AppTemp = () => {
                         disabled={parseFloat(buyPrice) <= 0}
                       >
                         Buy
+                      </button>
+                    </div>
+
+                  </>
+                )}
+                {gameTaskPanel.mode === "MARKET.SELL" && (
+                  <>
+                    <p className="text-white font-Magra mb-3">Sell List</p>
+                    <div className="flex flex-row justify-around text-white w-full">
+                      <p>
+                        USDT: {ethers.utils.formatEther(userData.wallet.usdt)}
+                      </p>
+                      <p>
+                        DNF: {ethers.utils.formatEther(userData.wallet.dnf)}
+                      </p>
+                    </div>
+                    <table className="w-full text-base">
+                      <thead className=" uppercase border-y ">
+                        <tr className="text-yellow-500 font-Magra">
+                          <th scope="col" className="w-[6rem]">
+                            Price
+                          </th>
+                          <th scope="col" className="w-[7rem] pr-1">
+                            DNF
+                          </th>
+                          <th scope="col" className="w-[4rem] py-1">
+                            USDT
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {marketListBuy?.map((t: any) => {
+                          return (
+                            <tr className="text-white text-center">
+                              <td>{`${parseFloat(
+                                formatUnits(t.price, 18)
+                              ).toFixed(2)}`}</td>
+                              <td
+                                className={"text-white text-base text-center"}
+                              >{`${parseFloat(formatUnits(t.dnf, 18)).toFixed(
+                                2
+                              )}`}</td>
+                              <td className={`text-white pl-4 text-center`}>
+                                {`${parseFloat(formatUnits(t.usdt, 18)).toFixed(
+                                  2
+                                )}`}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+
+                    <form>
+                      <div className="flex flex-col">
+                        <p className="text-white font-Magra my-3">DNF</p>
+                        <input
+                          name="amount"
+                          type="number"
+                          step="0.01"
+                          placeholder="DNF"
+                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          onChange={(e) => {
+                            console.log("sell amount", e.target.value);
+                            setSellAmount(e.target.value);
+                            countSellUsdt(e.target.value, sellPrice);
+                          }}
+                          value={sellAmount}
+                          min={0}
+                        />
+                        <p className="text-white font-Magra my-3">Price</p>
+                        <input
+                          name="price"
+                          type="number"
+                          step="0.01"
+                          placeholder="Price"
+                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          onChange={(e) => {
+                            setSellPrice(e.target.value);
+                            countSellUsdt(sellAmount, e.target.value);
+                          }}
+                          value={sellPrice}
+                          min={0}
+                        />
+                        <p className="text-white font-Magra my-3">USDT</p>
+                        <input
+                          name="totalPrice"
+                          type="number"
+                          // placeholder="Password"
+                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          readOnly
+                          // onChange={loginForm.handleChange}
+                          // onBlur={loginForm.handleBlur}
+                          value={sellUSDTAmount}
+                        />
+                      </div>
+                    </form>
+                    <div className="flex flex-row justify-around w-full">
+                      <button
+                        type={"submit"}
+                        // disabled={}
+                        onClick={async () => {
+                          try {
+                            let options = {
+                              headers: {
+                                "my-auth-key": token,
+                              },
+                            };
+                            const response = await axiosInstance({
+                              url: "/market/sell",
+                              method: "POST",
+                              headers: options.headers,
+                              data: {
+                                amount: sellUSDTAmount,
+                                price: sellPrice,
+                              },
+                            });
+                            if (response.data.success) {
+                              toast("Post Sell Success");
+                            } else
+                              toast(
+                                response.data?.message || "Post Sell Error"
+                              );
+                            console.log(response.data);
+                          } catch (error) {
+                            console.error(error);
+                            toast("Post Sell Error");
+                          }
+                        }}
+                        className={`${
+                          parseFloat(sellPrice) <= 0
+                            ? "bg-gray-700"
+                            : "bg-red-500"
+                        } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                        disabled={parseFloat(sellPrice) <= 0}
+                      >
+                        Sell
                       </button>
                     </div>
                   </>
