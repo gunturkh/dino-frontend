@@ -3014,7 +3014,7 @@ export const AppTemp = () => {
         </div>
       )}
       {swapPanel.show && scene === "HOME" && (
-        <div className="absolute h-[80vh] flex">
+        <div className="absolute h-[80vh] flex item-start">
           <div className=" my-5 flex backdrop-blur-sm  justify-center items-center flex-col bg-white/10 px-3.5 py-2.5 shadow-sm rounded-sm ">
             <div className="flex w-full justify-end">
               <img
@@ -3026,7 +3026,7 @@ export const AppTemp = () => {
               />
             </div>
             <div
-              className="flex justify-start items-center flex-col gap-4 bg-white/50 px-3.5 py-6 shadow-sm rounded-xl "
+              className="w-[400px] flex justify-start items-center flex-col gap-4 bg-white/50 px-3.5 py-6 shadow-sm rounded-xl "
               style={{
                 background: `url(image/formBackground.png) no-repeat `,
                 backgroundSize: "cover",
