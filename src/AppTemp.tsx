@@ -3014,7 +3014,7 @@ export const AppTemp = () => {
         </div>
       )}
       {swapPanel.show && scene === "HOME" && (
-        <div className="absolute h-[80vh] flex item-start">
+        <div className="absolute h-[80vh] flex items-start">
           <div className=" my-5 flex backdrop-blur-sm  justify-center items-center flex-col bg-white/10 px-3.5 py-2.5 shadow-sm rounded-sm ">
             <div className="flex w-full justify-end">
               <img
