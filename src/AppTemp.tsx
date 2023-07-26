@@ -530,6 +530,7 @@ export const AppTemp = () => {
       }
       if (wsresp.event === "market_update") {
         console.log("market_update");
+        getUserData();
         getMarketListBuy();
         getMarketListSell();
         getMarketListOpen();
