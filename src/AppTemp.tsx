@@ -3303,7 +3303,7 @@ export const AppTemp = () => {
                               method: "POST",
                               headers: options.headers,
                               data: {
-                                amount: buyUSDTAmount,
+                                amount: buyAmount,
                                 price: buyPrice,
                               },
                             });
@@ -3449,7 +3449,7 @@ export const AppTemp = () => {
                               method: "POST",
                               headers: options.headers,
                               data: {
-                                amount: sellUSDTAmount,
+                                amount: sellAmount,
                                 price: sellPrice,
                               },
                             });
