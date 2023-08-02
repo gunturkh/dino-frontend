@@ -77,7 +77,6 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
     };
   }, []);
 
-
   useEffect(() => {
     let timeInterval: any;
     const countdown = () => {
@@ -95,7 +94,7 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
   useEffect(() => {
     let timeInterval: any;
     // const countdown = () => {
-    console.log('currentTime jpass', currentTime)
+    console.log("currentTime jpass", currentTime);
     if (userData?.ability_end > 0 && currentTime) {
       // timeInterval = setInterval(() => {
       const countdownDateTime = userData?.ability_end * 1000;
@@ -111,10 +110,8 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
       const totalMinutes = Math.floor(
         (remainingDayTime % (1000 * 60 * 60)) / (1000 * 60)
       );
-      const totalSeconds = Math.floor(
-        (remainingDayTime % (1000 * 60)) / 1000
-      );
-      console.log('totalDays', totalDays)
+      const totalSeconds = Math.floor((remainingDayTime % (1000 * 60)) / 1000);
+      console.log("totalDays", totalDays);
 
       const runningCountdownTime = {
         countdownDays: totalDays,
@@ -246,24 +243,30 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
               position={isNotMobile ? [0, 110] : [0, 95]}
               anchor={[0.5, 0.5]}
               eventMode="static"
-            // onpointertap={() =>
-            //   setIsRarityPanelVisible(!isRarityPanelVisible)
-            // }
+              // onpointertap={() =>
+              //   setIsRarityPanelVisible(!isRarityPanelVisible)
+              // }
             >
               <Text
-                text={`${countdownTime.countdownDays.toString().length === 1
-                  ? `0${countdownTime.countdownDays}`
-                  : countdownTime.countdownDays
-                  }:${countdownTime.countdownHours.toString().length === 1
-                    ? `0${countdownTime.countdownHours}`
-                    : countdownTime.countdownHours
-                  }:${countdownTime.countdownMinutes.toString().length === 1
-                    ? `0${countdownTime.countdownMinutes}`
-                    : countdownTime.countdownMinutes
-                  }:${countdownTime.countdownSeconds.toString().length === 1
-                    ? `0${countdownTime.countdownSeconds}`
-                    : countdownTime.countdownSeconds
-                  }` || ""}
+                text={
+                  `${
+                    countdownTime.countdownDays.toString().length === 1
+                      ? `0${countdownTime.countdownDays}`
+                      : countdownTime.countdownDays
+                  }:${
+                    countdownTime.countdownHours.toString().length === 1
+                      ? `0${countdownTime.countdownHours}`
+                      : countdownTime.countdownHours
+                  }:${
+                    countdownTime.countdownMinutes.toString().length === 1
+                      ? `0${countdownTime.countdownMinutes}`
+                      : countdownTime.countdownMinutes
+                  }:${
+                    countdownTime.countdownSeconds.toString().length === 1
+                      ? `0${countdownTime.countdownSeconds}`
+                      : countdownTime.countdownSeconds
+                  }` || ""
+                }
                 position={[0, 0]}
                 anchor={[0.5, 0.5]}
                 style={
@@ -275,7 +278,7 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
                     fill: ["yellow"],
                   })
                 }
-              // visible={false}
+                // visible={false}
               />
             </Container>
 
@@ -284,9 +287,9 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
               position={isNotMobile ? [110, 110] : [110, 95]}
               anchor={[0.5, 0.5]}
               eventMode="static"
-            // onpointertap={() =>
-            //   setIsRarityPanelVisible(!isRarityPanelVisible)
-            // }
+              // onpointertap={() =>
+              //   setIsRarityPanelVisible(!isRarityPanelVisible)
+              // }
             >
               <Text
                 text={"Statement"}
