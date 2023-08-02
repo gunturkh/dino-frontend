@@ -1526,7 +1526,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
   return (
     <>
       {true && (
-        <Container height={app.screen.height}>
+        <Container >
           <Sprite
             texture={PIXI?.Assets?.get("MainBg") || PIXI.Texture.EMPTY}
             width={

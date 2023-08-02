@@ -60,29 +60,17 @@ function RainforestAnimation() {
       rainForestAnimation.zIndex = -1;
       rainForestAnimation.cullable = true;
 
-      rainForestAnimation.scale.set(2.7);
+      rainForestAnimation.scale.set(3);
 
       rainforest = rainForestAnimation;
     });
 
-    // wait for a few second, after that change the counter to 0, wrap it inside if
-    // if (animationCounter === -1 && rainforest) {
-    //   // clear containerRef to make sure there is no other animation inside
-    //   containerRef.current?.removeChildren();
-    //   setTimeout(() => {
-    //     setAnimationCounter(0);
-    //     console.log("rainforest timer triggered");
-    //   }, 1000);
-    // }
-
-    // load animation 1 first, then wait for a few second to load animation 2 and wait for a few second to load animation 3
     if (
       rainforest !== null &&
       containerRef.current &&
       memoizedRainforestAsset
       // animationCounter === 0
     ) {
-      // add timer to wait for a few second before loading the next animation
       containerRef.current?.addChild(rainforest);
       // containerRef.current.x = -rainforest.width * 1.05;
       containerRef.current.scale.set(scalePoint);
@@ -147,7 +135,6 @@ function RainforestAnimation() {
     <Container
       ref={containerRef}
       x={0}
-      // y={app.screen.height * 0.3}
       anchor={[0.5, 0.5]}
       width={app.screen.width}
     />
