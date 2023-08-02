@@ -5192,7 +5192,7 @@ export const AppTemp = () => {
                   </p>
                   <br />
                   <br />
-                  <img src="/image/dinoegg.png" alt="dino egg" />
+                  <img src="/image/dinoegg1.png" alt="dino egg" />
                 </AccordionBody>
               </Accordion>
               <Accordion

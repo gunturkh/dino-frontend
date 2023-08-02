@@ -299,7 +299,7 @@ export const DEPO_ADDR = '0xe0fbF9E59c7f9582Dd0022d8B58B3759C211d6d3';
 // export const EXCHANGE_ABI = [{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"exchange","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"_price","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}];
 // export const PAYGATEWAY_ADDR = "0x5A8303287090a3398def295eDC78fed580288654";
 // export const TICKET_ADDR = "0x41B1e956450b0b265fC19689916bDdce1911A365";
-// export const DEPO_ADDR = '';
+// export const DEPO_ADDR = '0x4E211D819b3218F59021245Ed0A7B989f7340a5C';
 
 export const COUNTRIES = [
   "AE",
