@@ -3091,7 +3091,7 @@ export const AppTemp = () => {
                       >
                         USDT
                         <br />
-                        {ethers.utils.formatEther(userData.wallet.usdt)}
+                        { userData?.wallet && userData?.wallet?.usdt ? ethers.utils.formatEther(userData?.wallet?.usdt) : '0'}
                       </button>
                       <button
                         type="button"
@@ -3110,7 +3110,7 @@ export const AppTemp = () => {
                       >
                         DNF
                         <br />
-                        {ethers.utils.formatEther(userData.wallet.dnf)}
+                        { userData?.wallet && userData?.wallet?.dnf ? ethers.utils.formatEther(userData?.wallet?.dnf) : '0'}
                       </button>
                     </div>
                   )}
@@ -3191,10 +3191,10 @@ export const AppTemp = () => {
                     <p className="text-white font-Magra mb-3">Buy List</p>
                     <div className="flex flex-row justify-around text-white w-full">
                       <p>
-                        USDT: {ethers.utils.formatEther(userData.wallet.usdt)}
+                        USDT: { userData?.wallet && userData?.wallet?.usdt ? ethers.utils.formatEther(userData?.wallet?.usdt) : '0'}
                       </p>
                       <p>
-                        DNF: {ethers.utils.formatEther(userData.wallet.dnf)}
+                        DNF: { userData?.wallet && userData?.wallet?.dnf ? ethers.utils.formatEther(userData?.wallet?.dnf) : '0'}
                       </p>
                     </div>
                     <table className="w-full text-base">
@@ -3337,10 +3337,10 @@ export const AppTemp = () => {
                     <p className="text-white font-Magra mb-3">Sell List</p>
                     <div className="flex flex-row justify-around text-white w-full">
                       <p>
-                        USDT: {ethers.utils.formatEther(userData.wallet.usdt)}
+                        USDT: { userData?.wallet && userData?.wallet?.usdt ? ethers.utils.formatEther(userData?.wallet?.usdt) : '0'}
                       </p>
                       <p>
-                        DNF: {ethers.utils.formatEther(userData.wallet.dnf)}
+                        DNF: { userData?.wallet && userData?.wallet?.dnf ? ethers.utils.formatEther(userData?.wallet?.dnf) : '0'}
                       </p>
                     </div>
                     <table className="w-full text-base">
