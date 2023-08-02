@@ -1987,7 +1987,7 @@ const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
               <LowerButtonComponent
                 spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}
                 imageIcon={PIXI?.Assets?.get("ImgGameTask")}
-                text={"Game Task"}
+                text={"Exchanger"}
                 posX={BtnSmallBounds?.width - 155}
                 posY={15}
                 imageYOffset={10}
