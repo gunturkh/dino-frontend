@@ -3700,9 +3700,10 @@ export const AppTemp = () => {
                           style={{
                             background: `url(image/InputBox.png) no-repeat `,
                           }}
-                          onChange={(e) =>
-                            setUSDTDepositAmount(parseInt(e.target.value))
-                          }
+                          onChange={(e) => {
+                            if (e.target.value === "") setUSDTDepositAmount(0);
+                            else setUSDTDepositAmount(parseInt(e.target.value));
+                          }}
                           value={USDTDepositAmount}
                           min={0}
                         />
@@ -3809,9 +3810,11 @@ export const AppTemp = () => {
                           style={{
                             background: `url(image/InputBox.png) no-repeat `,
                           }}
-                          onChange={(e) =>
-                            setDNFDepositAmount(parseInt(e.target.value))
-                          }
+                          onChange={(e) => {
+                            if (e.target.value === "")
+                              setDNFDepositAmount(0);
+                            else setDNFDepositAmount(parseInt(e.target.value));
+                          }}
                           value={DNFDepositAmount}
                           min={0}
                         />
