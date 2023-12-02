@@ -136,21 +136,24 @@ function FlyingAnimations() {
 
       tickerOutside.add((delta) => {
         // increase containerRef x position by 10 * delta * scalePoint * direction
-        // @ts-ignore
-        containerRef.current.x += delta * (app.screen.width / duration);
-
-        // if containerRef x position is greater than the screen width + flyingDino1 width * 1.2
-        if (
+        if (containerRef.current?.x) {
           // @ts-ignore
-          containerRef.current.x >
-          app.screen.width + flyingDino1.width * 1.2
-        ) {
-          // increase the counter by 1 after waiting for a few second
-          setTimeout(() => {
-            setAnimationCounter((prev) => prev + 1);
-          }, waitDuration);
-          tickerOutside.stop();
+          containerRef.current.x += delta * (app.screen.width / duration);
+
+          // if containerRef x position is greater than the screen width + flyingDino1 width * 1.2
+          if (
+            // @ts-ignore
+            containerRef.current.x >
+            app.screen.width + flyingDino1.width * 1.2
+          ) {
+            // increase the counter by 1 after waiting for a few second
+            setTimeout(() => {
+              setAnimationCounter((prev) => prev + 1);
+            }, waitDuration);
+            tickerOutside.stop();
+          }
         }
+
       });
       tickerOutside.start();
     }
@@ -167,20 +170,22 @@ function FlyingAnimations() {
       containerRef.current.scale.set(-1 * scalePoint, scalePoint);
 
       tickerOutside.add((delta) => {
-        // @ts-ignore
-        containerRef.current.x -= delta * (app.screen.width / duration);
+        if (containerRef.current?.x) {
+          // @ts-ignore
+          containerRef.current.x -= delta * (app.screen.width / duration);
+          if (
+            // @ts-ignore
+            containerRef.current.x <
+            -flyingDino1.width * 1.2
+          ) {
+            setTimeout(() => {
+              setAnimationCounter((prev) => prev + 1);
+            }, waitDuration);
+            tickerOutside.stop();
+          }
+        }
         // console.log("speed flyingDino", delta * (app.screen.width / duration));
 
-        if (
-          // @ts-ignore
-          containerRef.current.x <
-          -flyingDino1.width * 1.2
-        ) {
-          setTimeout(() => {
-            setAnimationCounter((prev) => prev + 1);
-          }, waitDuration);
-          tickerOutside.stop();
-        }
       });
       tickerOutside.start();
     }
@@ -195,18 +200,20 @@ function FlyingAnimations() {
 
       tickerOutside.add((delta) => {
         // increase containerRef x position by 10 * delta * scalePoint * direction
-        // @ts-ignore
-        containerRef.current.x += delta * (app.screen.width / duration);
-
-        // if containerRef x position is greater than the screen width + flyingDino1 width * 1.2
-        if (
+        if (containerRef.current?.x) {
           // @ts-ignore
-          containerRef.current.x >
-          app.screen.width + flyingDino3.width * 1.2
-        ) {
-          setAnimationCounter(-1);
-          tickerOutside.stop();
+          containerRef.current.x += delta * (app.screen.width / duration);
+          // if containerRef x position is greater than the screen width + flyingDino1 width * 1.2
+          if (
+            // @ts-ignore
+            containerRef.current.x >
+            app.screen.width + flyingDino3.width * 1.2
+          ) {
+            setAnimationCounter(-1);
+            tickerOutside.stop();
+          }
         }
+
       });
       tickerOutside.start();
     }

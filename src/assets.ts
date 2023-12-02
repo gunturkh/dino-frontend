@@ -152,6 +152,10 @@ export const manifest: ResolverManifest = {
           srcs: "image/imgUSDTIcon.png",
         },
         {
+          name: "DNFIcon",
+          srcs: "image/dnf.png",
+        },
+        {
           name: "ImgDetailsBg",
           srcs: "image/imgDetailsBg.png",
         },
@@ -202,18 +206,6 @@ export const manifest: ResolverManifest = {
         {
           name: "EggPlate",
           srcs: "image/eggPlate.png",
-        },
-        {
-          name: "GatchaAnimation1",
-          srcs: BASE_URL + "/animations/cards/testegg1/egg1.json",
-        },
-        {
-          name: "GatchaAnimation2",
-          srcs: BASE_URL + "/animations/cards/testegg2/egg2.json",
-        },
-        {
-          name: "GatchaAnimation3",
-          srcs: BASE_URL + "/animations/cards/testegg3/egg3.json",
         },
       ],
     },
@@ -932,13 +924,13 @@ export const manifest: ResolverManifest = {
     {
       name: "JPassScene",
       assets: [
-        {
-          name: "JPassBackground",
-          srcs: "image/JPassBackground.png",
-        },
+        // {
+        //   name: "JPassBackground",
+        //   srcs: "image/JPassBackground.png",
+        // },
         {
           name: "JPassCardBg",
-          srcs: "image/imgJPassCardBg.png",
+          srcs: "image/ImgJPassCardBg.png",
         },
         {
           name: "JPassItemBg",
@@ -950,15 +942,15 @@ export const manifest: ResolverManifest = {
         },
         {
           name: "JPassCardItem1",
-          srcs: "image/imgJPassCardItem1.png",
+          srcs: "image/imgJpassCardItem1.png",
         },
         {
           name: "JPassCardItem2",
-          srcs: "image/imgJPassCardItem2.png",
+          srcs: "image/imgJpassCardItem2.png",
         },
         {
           name: "JPassCardItem3",
-          srcs: "image/imgJPassCardItem3.png",
+          srcs: "image/imgJpassCardItem3.png",
         },
         {
           name: "JpassPageBg",
@@ -992,6 +984,116 @@ export const manifest: ResolverManifest = {
           name: "JPassItemShortenHunting3",
           srcs: "image/iconJpassShortenHunting3.png",
         },
+      ],
+    },
+    {
+      name: "Animations",
+      assets: [
+        {
+          name: "GatchaAnimation1",
+          srcs: BASE_URL + "/animations/cards/egg1/skeleton.json",
+        },
+        {
+          name: "GatchaAnimation2",
+          srcs: BASE_URL + "/animations/cards/coinegg2/skeleton.json",
+        },
+        {
+          name: "GatchaAnimation3",
+          srcs: BASE_URL + "/animations/cards/coinegg3/skeleton3.json",
+        },
+        {
+          name: "GatchaWithDino",
+          srcs: BASE_URL + "/animations/cards/dino_egg_1/skeleton.json",
+        },
+        {
+          name: "GatchaWithCoin1",
+          srcs: BASE_URL + "/animations/cards/coin/coin.json",
+        },
+        {
+          name: "GatchaEggWithCoin1",
+          srcs: BASE_URL + "/animations/cards/coinegg1/egg1.json",
+        },
+        {
+          name: "GatchaWithCoin2",
+          srcs: BASE_URL + "/animations/cards/coin/coin.json",
+        },
+        {
+          name: "GatchaEggWithCoin2",
+          srcs: BASE_URL + "/animations/cards/coinegg2/skeleton.json",
+        },
+        {
+          name: "GatchaWithCoin3",
+          srcs: BASE_URL + "/animations/cards/coin/coin.json",
+        },
+        {
+          name: "GatchaEggWithCoin3",
+          srcs: BASE_URL + "/animations/cards/coinegg3/skeleton3.json",
+        },
+        {
+          name: "GatchaTicket1",
+          srcs: BASE_URL + "/animations/cards/item/ticket/tiket.json",
+        },
+        {
+          name: "GatchaEggTicket1",
+          srcs: BASE_URL + "/animations/cards/egg/1/skeleton2.json",
+        },
+        {
+          name: "GatchaTicket2",
+          srcs: BASE_URL + "/animations/cards/item/ticket/tiket.json",
+        },
+        {
+          name: "GatchaEggTicket2",
+          srcs: BASE_URL + "/animations/cards/egg/2/skeleton.json",
+        },
+        {
+          name: "GatchaTicket3",
+          srcs: BASE_URL + "/animations/cards/item/ticket/tiket.json",
+        },
+        {
+          name: "GatchaEggTicket3",
+          srcs: BASE_URL + "/animations/cards/egg/3/skeleton3.json",
+        },
+        {
+          name: "GatchaBonusEgg",
+          srcs: BASE_URL + "/animations/cards/item/eggx2/2x.json",
+        },
+        {
+          name: "GatchaEggBonusEgg",
+          srcs: BASE_URL + "/animations/cards/egg/1/skeleton2.json",
+        },
+        {
+          name: "GatchaBonusEgg2",
+          srcs: BASE_URL + "/animations/cards/item/eggx2/2x.json",
+        },
+        {
+          name: "GatchaEggBonusEgg2",
+          srcs: BASE_URL + "/animations/cards/egg/2/skeleton.json",
+        },
+        {
+          name: "GatchaBonusEgg3",
+          srcs: BASE_URL + "/animations/cards/item/eggx2/2x.json",
+        },
+        {
+          name: "GatchaEggBonusEgg3",
+          srcs: BASE_URL + "/animations/cards/egg/3/skeleton3.json",
+        },
+        {
+          name: "Rainforest",
+          srcs: BASE_URL + "/animations/rainforest/skeleton.json",
+        },
+        // {
+        //   name: "GatchaShineWithCoin2",
+        //   srcs: BASE_URL + "/animations/cards/coinegg1/shine.json",
+        // },
+        // {
+        //   name: "GatchaWithCoin2",
+        //   srcs: BASE_URL + "/animations/cards/coinegg2/coin.json",
+        // },
+        // {
+        //   name: "GatchaWithCoin3",
+        //   srcs: BASE_URL + "/animations/cards/coinegg3/coin.json",
+        // },
+
       ],
     },
   ],

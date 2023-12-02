@@ -13,14 +13,18 @@ import {
   useTransactions,
   useNotifications,
 } from "@usedapp/core";
+import * as PIXI from "pixi.js";
 import { Stage } from "@pixi/react";
 import { useState, useEffect, useCallback, useRef } from "react";
+import Marquee from "react-fast-marquee";
+import BigNumber from "bignumber.js";
 import { axiosInstance } from "./utils/api";
 // import { getCountries } from "react-phone-number-input/input";
 // import en from "react-phone-number-input/locale/en.json";
 // @ts-ignore
 // import WalletConnectProvider from '@walletconnect/web3-provider/dist/umd/index.min.js'
 import { formatEther, formatUnits } from "@ethersproject/units";
+import { Lightbox } from "react-modal-image";
 import Home from "./components/scene/Home";
 import Register from "./components/scene/Register";
 import Loading from "./components/scene/Loader";
@@ -32,16 +36,22 @@ import DinoCenter from "./components/scene/DinoCenter";
 
 import { useAuthStore, useStore } from "./utils/store";
 import {
-  USDT_ADDR,
+  TOKEN_ADDR,
   PAYGATEWAY_ADDR,
   TICKET_ADDR,
-  USDT_ABI,
+  TOKEN_ABI,
   CAPTCHA_KEY,
   COUNTRIESLABEL,
   COUNTRIES,
+  USDT_ADDR,
+  // EXCHANGE_ADDR,
+  USDT_ABI,
+  // EXCHANGE_ABI,
+  DEPO_ADDR,
 } from "./utils/config";
-import { Contract } from "ethers";
-import ReCAPTCHA from "react-google-recaptcha";
+import { Contract, ethers } from "ethers";
+// import ReCAPTCHA from "react-google-recaptcha";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
@@ -55,6 +65,11 @@ import JurassicMarket from "./pages/JurassicMarket";
 import { Buddies } from "./pages/Buddies";
 import { History } from "./pages/History";
 import { Bulletin } from "./pages/Bulletin";
+// import useAudio from "./utils/hooks/useAudio";
+import { formatToUTC } from "./utils/functions";
+import { manifest } from "./assets";
+import { useSocket } from "./utils/hooks/useWebSocket";
+import ReactPaginate from "react-paginate";
 // import { BigNumber, BigNumberish, Contract, utils } from "ethers";
 // import { Interface } from "ethers/lib/utils";
 
@@ -87,12 +102,16 @@ declare global {
   interface Window {
     // ⚠️ notice that "Window" is capitalized here
     clipboardData: { setData: any };
+    ethereum: any;
   }
 }
 
-// const USDT_ADDR = "0x0ed04d340a054382383ee2edff0ced66ead7496c";
 const price = 0.25;
+// const dnfPrice = 1;
+// const BASE_URL = "https://cdn.jurassicegg.co";
 export const AppTemp = () => {
+  const socket = useSocket();
+
   const {
     account,
     active,
@@ -111,20 +130,32 @@ export const AppTemp = () => {
   const scene = useStore((state) => state.scene);
   const walletAddress = useStore((state) => state.walletAddress);
   const setWalletAddress = useStore((state) => state.setWalletAddress);
+  const walletBalance = useStore((state) => state.walletBalance);
+  // console.log("walletBalance", walletBalance);
   const setWalletBalance = useStore((state) => state.setWalletBalance);
   // const approved = useStore((state) => state.approved);
   const setApproved = useStore((state) => state.setApproved);
   const setEggPendingListData = useStore(
     (state) => state.setEggPendingListData
   );
+  const eggTransactionState = useStore((state) => state.eggTransactionState);
   const setEggTransactionState = useStore(
     (state) => state.setEggTransactionState
   );
   const ticketPanel = useStore((state) => state.ticketPanel);
   const setTicketPanel = useStore((state) => state.setTicketPanel);
+  const swapPanel = useStore((state) => state.swapPanel);
+  const setSwapPanel = useStore((state) => state.setSwapPanel);
+  // const swapTxHash = useStore((state) => state.swapTxHash);
+  // const setSwapTxHash = useStore((state) => state.setSwapTxHash);
   const withdrawPanel = useStore((state) => state.withdrawPanel);
   const setWithdrawPanel = useStore((state) => state.setWithdrawPanel);
+  const gameTaskPanel = useStore((state) => state.gameTaskPanel);
+  const setGameTaskPanel = useStore((state) => state.setGameTaskPanel);
   const jPassPanel = useStore((state) => state.jPassPanel);
+  // console.log("jPassPanel", jPassPanel);
+  // jPassPanel?.data?.price > 0 &&
+  //   console.log("jPassPanel price", BigInt(jPassPanel?.data?.price * 1e18));
   const setJPassPanel = useStore((state) => state.setJPassPanel);
   const changePasswordPanel = useStore((state) => state.changePasswordPanel);
   const setChangePasswordPanel = useStore(
@@ -133,11 +164,27 @@ export const AppTemp = () => {
   const googleAuthPanel = useStore((state) => state.googleAuthPanel);
   const setGoogleAuthPanel = useStore((state) => state.setGoogleAuthPanel);
   const withdrawalHistory = useStore((state) => state.withdrawalHistory);
+  const setUSDTWithdrawalHistory = useStore(
+    (state) => state.setUSDTWithdrawalHistory
+  );
+  const USDTWithdrawalHistory = useStore(
+    (state) => state.USDTWithdrawalHistory
+  );
+  const setDNFWithdrawalHistory = useStore(
+    (state) => state.setDNFWithdrawalHistory
+  );
+  const DNFWithdrawalHistory = useStore((state) => state.DNFWithdrawalHistory);
+  const notification = useStore((state) => state.notification);
+  const setNotification = useStore((state) => state.setNotification);
+  const setEggListsData = useStore((state) => state.setEggListsData);
+  const eggListFilter = useStore((state) => state.eggListFilter);
+  // console.log("notification text", notification);
   // const cardDetails = useStore((state) => state.cardDetails);
   // const eggListsData = useStore((state) => state.eggListsData);
   // console.log("googleAuthPanel", googleAuthPanel);
-  // const usdtInfo = useToken(USDT_ADDR);
+  // const usdtInfo = useToken(TOKEN_ADDR);
   const usdtBalance = useTokenBalance(USDT_ADDR, account);
+  const dnfBalance = useTokenBalance(TOKEN_ADDR, account);
   const tokenBalance = useTokenBalance(
     "0x1D2F0da169ceB9fC7B3144628dB156f3F6c60dBE",
     account
@@ -152,16 +199,86 @@ export const AppTemp = () => {
     chainId: BSCTestnet.chainId,
   });
   const allowance = useTokenAllowance(
-    USDT_ADDR,
+    TOKEN_ADDR,
     walletAddress,
     PAYGATEWAY_ADDR
   );
-  console.log("egg allowance", allowance);
+  // console.log("egg allowance", allowance);
   const ticketAllowance = useTokenAllowance(
-    USDT_ADDR,
+    TOKEN_ADDR,
     walletAddress,
     TICKET_ADDR
   );
+  const USDTContract = new Contract(USDT_ADDR, USDT_ABI);
+  const SwapContract = new Contract(TOKEN_ADDR, TOKEN_ABI);
+  const { state: stateUSDTDepositApproval, send: sendUSDTDepositApproval } =
+    useContractFunction(USDTContract, "approve", {
+      transactionName: "USDT Deposit Approval",
+    });
+
+  const {
+    sendTransaction: sendUSDTDeposit,
+    state: sendUSDTDepositState,
+    resetState: resetSendUSDTDepositState,
+  } = useSendTransaction({ transactionName: "USDT Deposit" });
+  const {
+    sendTransaction: sendDNFDeposit,
+    state: sendDNFDepositState,
+    resetState: resetSendDNFDepositState,
+  } = useSendTransaction({ transactionName: "DNF Deposit" });
+  const setMarketListBuy = useStore((state) => state.setMarketListBuy);
+  const setMarketListSell = useStore((state) => state.setMarketListSell);
+  const setMarketListOpen = useStore((state) => state.setMarketListOpen);
+  const setMarketListHistory = useStore((state) => state.setMarketListHistory);
+  const marketListBuy = useStore((state) => state.marketListBuy);
+  const marketListSell = useStore((state) => state.marketListSell);
+  const marketListOpen = useStore((state) => state.marketListOpen);
+  const marketListHistory = useStore((state) => state.marketListHistory);
+
+  useEffect(() => {
+    if (
+      sendUSDTDepositState &&
+      sendUSDTDepositState.transaction &&
+      sendUSDTDepositState.status === "Success" &&
+      ticketAllowance
+    ) {
+      // checkValidateTx(sendUSDTDepositState.transaction.hash);
+      resetSendUSDTDepositState();
+    }
+    // console.log("sendUSDTDepositState", sendUSDTDepositState);
+    if (sendUSDTDepositState.status === "Exception") {
+      toast(sendUSDTDepositState.errorMessage);
+      resetSendUSDTDepositState();
+      setDepositState("");
+    }
+  }, [sendUSDTDepositState]);
+
+  const { state: stateDNFDepositApproval, send: sendDNFDepositApproval } =
+    useContractFunction(SwapContract, "approve", {
+      transactionName: "DNF Deposit Approval",
+    });
+  const usdtDepositAllowance = useTokenAllowance(
+    USDT_ADDR,
+    walletAddress,
+    DEPO_ADDR
+  );
+  const dnfDepositAllowance = useTokenAllowance(
+    TOKEN_ADDR,
+    walletAddress,
+    DEPO_ADDR
+  );
+
+  // console.log(
+  //   "usdtDepositAllowance",
+  //   usdtDepositAllowance && BigInt(usdtDepositAllowance.toString())
+  // );
+
+  // console.log(
+  //   "swapAllowance",
+  //   swapAllowance && BigInt(swapAllowance.toString())
+  // );
+  const [otpIntervalId, setOtpIntervalId] = useState<any>(60);
+  const [otpInterval, setOtpInterval] = useState(5);
   const [isOldPasswordVisible, setIsOldPasswordVisible] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isRetypePasswordVisible, setIsRetypePasswordVisible] = useState(false);
@@ -169,6 +286,18 @@ export const AppTemp = () => {
   const [registerCaptcha, setRegisterCaptcha] = useState("");
   const [forgotPasswordCaptcha, setForgotPasswordCaptcha] = useState("");
   const [ticketHistories, setTicketHistories] = useState([]);
+  const [ticketState, setTicketState] = useState("");
+  const [depositState, setDepositState] = useState("");
+  // const [withdrawState, setWithdrawState] = useState("");
+  const [buyAmount, setBuyAmount] = useState("1");
+  const [sellAmount, setSellAmount] = useState("1");
+  const [buyPrice, setBuyPrice] = useState("1");
+  const [sellPrice, setSellPrice] = useState("1");
+  const [buyUSDTAmount, setBuyUSDTAmount] = useState("1");
+  const [sellUSDTAmount, setSellUSDTAmount] = useState("1");
+  const [jPassState, setJPassState] = useState("");
+  const [withdrawAmount, setWithdrawAmount] = useState(0);
+  const [withdrawAddress, setWithdrawAddress] = useState("");
   // const [googleAuthPanel, setGoogleAuthPanel] = useState(false);
   const [googleAuthData, setGoogleAuthData] = useState<{
     qr: string;
@@ -178,18 +307,30 @@ export const AppTemp = () => {
   // const [buddiesHistories, setBuddiesyHistories] = useState<{ username: string, data: { username: string, bought: string, dl_bought: string, regdate: number }[] }[]>([])
   // const [buddiesHistories, setBuddiesyHistories] = useState<string[]>([])
   // console.log('buddiesHistories', buddiesHistories)
+  const [banner, setBanner] = useState<string | null>("");
+  // console.log("banner", banner);
   const [sponsor, setSponsor] = useState<string | null | undefined>("");
   const {
     sendTransaction,
     state: sendTransactionState,
-    // resetState: resetSendTransactionState,
+    resetState: resetSendTransactionState,
   } = useSendTransaction({ transactionName: "Egg Approval" });
   const {
     sendTransaction: sendTransactionPay,
-    // state: sendTransactionPayState,
+    state: sendTransactionPayState,
     // resetState: resetSendTransactionPayState,
   } = useSendTransaction({ transactionName: "Egg Pay" });
 
+  const countBuyUsdt = (amount: string, price: any) => {
+    if (!amount) amount = "0";
+    let namount = new BigNumber(amount);
+    setBuyUSDTAmount(namount.mul(price).toFixed(6));
+  };
+  const countSellUsdt = (amount: string, price: any) => {
+    if (!amount) amount = "0";
+    let namount = new BigNumber(amount);
+    setSellUSDTAmount(namount.mul(price).toFixed(6));
+  };
   // const period = formatUnits(userData?.bought.period, 18);
   // const group = formatUnits(userData?.bought.group, 18);
   // const total = formatUnits(userData?.bought.total, 18);
@@ -198,12 +339,268 @@ export const AppTemp = () => {
   const transactionList = useTransactions();
   const { notifications } = useNotifications();
 
+  async function loadAnimationAssets() {
+    await PIXI.Assets.init({ manifest: manifest });
+    // initialize assets that have big size
+    const bundleIds = manifest.bundles
+      .filter((bundle) => {
+        return ["Animations"].includes(bundle.name);
+      })
+      .map((bundle) => bundle.name);
+
+    // load asset in background
+    const loadBgBundle = await PIXI.Assets.backgroundLoadBundle(bundleIds);
+    const loadBundle = await PIXI.Assets.loadBundle(bundleIds);
+    console.log("loadBgBundle", loadBgBundle);
+    console.log("loadBundle", loadBundle);
+  }
+
+  const getEggList = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const data: any = await axiosInstance({
+      url: `/egg/lists?page=${eggListFilter?.page}&sort=${eggListFilter?.sortby}&order=${eggListFilter?.orderby}`,
+      method: "GET",
+      headers: options.headers,
+    });
+    // console.log("getEggList Result:", data);
+    if (data?.status === 200 && data?.data?.result?.lists) {
+      setEggListsData(data?.data?.result);
+    }
+  };
+
+  const getUSDTWithdrawHistory = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const { data }: any = await axiosInstance({
+      url: "/wallet/usdt/history",
+      method: "GET",
+      headers: options.headers,
+      params: {
+        page: 1,
+      },
+    });
+    console.log("getUSDTWithdrawHistory Result:", data);
+    if (data?.success) {
+      setUSDTWithdrawalHistory(data?.result);
+    } else {
+      toast(data.message);
+    }
+  };
+
+  const getDNFWithdrawHistory = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const { data }: any = await axiosInstance({
+      url: "/wallet/dnf/history",
+      method: "GET",
+      headers: options.headers,
+      params: {
+        page: 1,
+      },
+    });
+    console.log("getDNFWithdrawHistory Result:", data);
+    if (data?.success) {
+      setDNFWithdrawalHistory(data?.result);
+    } else {
+      toast(data.message);
+    }
+  };
+
+  const getMarketListBuy = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const resp: any = await axiosInstance({
+      url: `/market/list-buy`,
+      method: "GET",
+      headers: options.headers,
+    });
+    // console.log("getEggList Result:", data);
+    if (resp.data.success) {
+      setMarketListBuy(resp.data.result);
+    }
+  };
+  const getMarketListSell = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const { data }: any = await axiosInstance({
+      url: "/market/list-sell",
+      method: "GET",
+      headers: options.headers,
+    });
+    console.log("market sell Result:", data);
+    if (data?.success) {
+      setMarketListSell(data.result);
+    } else {
+      toast(data.message);
+    }
+  };
+
+  const getMarketListOpen = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const { data }: any = await axiosInstance({
+      url: "/market/open",
+      method: "GET",
+      headers: options.headers,
+    });
+    console.log("market open Result:", data);
+    if (data?.success) {
+      setMarketListOpen(data.result);
+    } else {
+      toast(data.message);
+    }
+  };
+
+  const getMarketListHistory = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const { data }: any = await axiosInstance({
+      url: "/market/history",
+      method: "GET",
+      headers: options.headers,
+    });
+    console.log("market history Result:", data);
+    if (data?.success) {
+      setMarketListHistory(data.result);
+    } else {
+      toast(data.message);
+    }
+  };
+  const onMessage = useCallback(
+    (message: any) => {
+      const pingWebSocket = async () => {
+        var x = setInterval(() => {
+          socket.send(
+            JSON.stringify({
+              event: "ping",
+            })
+          );
+          clearInterval(x);
+          pingWebSocket();
+        }, 30000);
+      };
+
+      const wsresp = JSON.parse(message?.data);
+      // console.log(wsresp);
+      if (wsresp.event === "connection_established") {
+        console.log("connection_established", token);
+        // if (token) {
+        socket.send(
+          JSON.stringify({
+            event: "subscribe",
+            token: token,
+          })
+        );
+        // }
+        pingWebSocket();
+      }
+      if (wsresp.event === "notification") {
+        toast(`💌 ${wsresp.data.message}`);
+        setNotification(wsresp?.data?.message);
+        getUserData();
+        getEggList();
+      }
+
+      console.log("wsresp egg", wsresp);
+      if (wsresp.event === "egg_sold") {
+        console.log("egg_sold");
+        getEggList();
+      }
+      if (wsresp.event === "market_update") {
+        console.log("market_update");
+        getUserData();
+        getMarketListBuy();
+        getMarketListSell();
+        getMarketListOpen();
+        getMarketListHistory();
+      }
+    },
+    [
+      socket,
+      getEggList,
+      getMarketListBuy,
+      getMarketListSell,
+      getMarketListOpen,
+      getMarketListHistory,
+      token,
+    ]
+  );
+
+  const initialize = async () => {
+    if (token) {
+      try {
+        let options = {
+          headers: {
+            "my-auth-key": token,
+          },
+        };
+        // console.log(options);
+        // const response = await axios.get(API_ENDPOINT + '/user/getUserData', options);
+        const response: any = await axiosInstance({
+          url: "/user/getUserData",
+          method: "GET",
+          headers: options.headers,
+        });
+        console.log(response.data);
+        setUserData(response.data.result);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
+
+  useEffect(() => {
+    console.log("TOKEN CHANGED", token);
+    if (!userData) initialize();
+    // if(!notification) notificate();
+    socket.addEventListener("message", onMessage);
+    return () => {
+      socket.removeEventListener("message", onMessage);
+    };
+  });
+
+  useEffect(() => {
+    if (authMode === "LOGIN" || scene === "HOME") loadAnimationAssets();
+  }, []);
+
+  useEffect(() => {
+    if (sendTransactionPayState.status === "Success") {
+      console.log("sendTransactionPayState", sendTransactionPayState);
+      setEggTransactionState({ mode: "DONE", state: "" });
+    }
+    if (sendTransactionPayState.status === "Exception") {
+      setEggTransactionState({ ...eggTransactionState, state: "" });
+    }
+  }, [sendTransactionPayState]);
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    console.log("sponsor", params.get("sponsor"));
-    if (params.get("sponsor")) {
-      setSponsor(params.get("sponsor"));
-      registerForm.setFieldValue("referralCode", params.get("sponsor"));
+    console.log("ref", params.get("ref"));
+    if (params.get("ref")) {
+      setSponsor(params.get("ref"));
+      registerForm.setFieldValue("referralCode", params.get("ref"));
       setAuthMode("REGISTER");
     }
   }, []);
@@ -216,7 +613,6 @@ export const AppTemp = () => {
   }, [notifications]);
 
   console.log("transactionList", transactionList);
-  const USDTContract = new Contract(USDT_ADDR, USDT_ABI);
 
   let getUserDataOptions = {
     headers: {
@@ -246,6 +642,28 @@ export const AppTemp = () => {
     setForgotPasswordCaptcha(token);
   };
 
+  const getUnfinishedEggTransaction = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const { data }: any = await axiosInstance({
+      url: "/egg/unfinished",
+      method: "GET",
+      headers: options.headers,
+    });
+    console.log("get unfinished egg transaction Result:", data);
+    if (data?.success) {
+      // processTransaction(id, ticket);
+      // setUnfinishedTransaction(data?.result);
+      if (data?.result)
+        toast("You still have unfinished transaction on your listing");
+    } else {
+      toast(data.message);
+    }
+  };
+
   const getUserData = async () => {
     const result = await axiosInstance({
       url: "/user/getUserData",
@@ -255,9 +673,40 @@ export const AppTemp = () => {
     console.log("getUserData Result:", result);
     if (result && result.data && result.data.result) {
       setUserData(result.data.result);
+      const banner = await axiosInstance({
+        url: "/news/announcement",
+        method: "GET",
+        headers: getUserDataOptions.headers,
+      });
+      console.log("result banner ", banner.data.result);
+      if (banner.data.result && banner.data.result.image) {
+        setBanner(banner.data.result);
+      }
     }
   };
 
+  const ShowBanner = (props: any) => {
+    const default_open = sessionStorage.getItem("banner_open")
+      ? sessionStorage.getItem("banner_open") === "true"
+      : true;
+    const [open, setOpen] = useState(default_open);
+    console.log("state ", default_open);
+    const closeLightbox = () => {
+      setOpen(false);
+      sessionStorage.setItem("banner_open", "false");
+    };
+
+    return open ? (
+      <Lightbox
+        medium={props.image.image}
+        hideDownload={true}
+        hideZoom={true}
+        showRotate={false}
+        // @ts-ignore
+        onClose={closeLightbox}
+      />
+    ) : null;
+  };
   const getTicketHistories = async () => {
     const result = await axiosInstance({
       url: "/ticket/history",
@@ -284,12 +733,23 @@ export const AppTemp = () => {
     resetState: resetSendTicketBuyState,
   } = useSendTransaction({ transactionName: "Ticket Buy" });
 
-  const { state, send } = useContractFunction(USDTContract, "approve", {
+  const { state, send } = useContractFunction(SwapContract, "approve", {
     transactionName: "Ticket Approval",
   });
 
+  const { state: JPassApprovalState, send: JPassApprovalSend } =
+    useContractFunction(SwapContract, "approve", {
+      transactionName: "JPass Approval",
+    });
+
+  const {
+    sendTransaction: sendJPassBuy,
+    state: sendJPassBuyState,
+    resetState: resetSendJPassBuyState,
+  } = useSendTransaction({ transactionName: "JPass Buy" });
+
   const { state: eggApprovalState, send: sendEggApproval } =
-    useContractFunction(USDTContract, "approve", {
+    useContractFunction(SwapContract, "approve", {
       transactionName: "Egg Approval",
     });
 
@@ -300,6 +760,14 @@ export const AppTemp = () => {
   useEffect(() => {
     toast(state.errorMessage);
   }, [state.errorMessage]);
+
+  useEffect(() => {
+    toast(JPassApprovalState.errorMessage);
+  }, [JPassApprovalState.errorMessage]);
+
+  useEffect(() => {
+    toast(stateDNFDepositApproval.errorMessage);
+  }, [stateDNFDepositApproval.errorMessage]);
 
   const changeScene = useStore((state) => state.changeScene);
   const [authMode, setAuthMode] = useState<
@@ -314,10 +782,18 @@ export const AppTemp = () => {
   // const [activateError, setActivateError] = useState('')
   const [registerCheckbox, setRegisterCheckbox] = useState(false);
   const [usd, setUsd] = useState(price);
+  // const [dnf, setDnf] = useState(dnfPrice);
+  // const [dnfQty, setDnfQty] = useState<number | string>(1);
   const [qty, setQty] = useState<number | string>(1);
   const [transferUsername, setTransferUsername] = useState("");
   const [transferQty, setTransferQty] = useState(1);
   const [GAValue, setGAValue] = useState("");
+  const [USDTDepositAmount, setUSDTDepositAmount] = useState(0);
+  const [USDTWithdrawAmount, setUSDTWithdrawAmount] = useState(0);
+  const [USDTWithdrawAddress, setUSDTWithdrawAddress] = useState("");
+  const [DNFDepositAmount, setDNFDepositAmount] = useState(0);
+  const [DNFWithdrawAmount, setDNFWithdrawAmount] = useState(0);
+  const [DNFWithdrawAddress, setDNFWithdrawAddress] = useState("");
   // const [countryCodeValue, setCountryCodeValue] = useState();
   const [buyWithBonus, setBuyWithBonus] = useState(false);
 
@@ -327,6 +803,12 @@ export const AppTemp = () => {
     "ticketAllowance",
     ticketAllowance && BigInt(ticketAllowance.toString())
   );
+  // console.log(
+  //   "usd",
+  //   usd && BigInt(usd * 1e18),
+  //   "dnf",
+  //   dnf && BigInt(dnf * 1e18)
+  // );
   const checkUsername = async (e: any) => {
     setTransferUsername(e.target.value);
     const cusr = e.target.value;
@@ -348,6 +830,17 @@ export const AppTemp = () => {
     let total_usd = psx * price;
     setUsd(total_usd);
   };
+
+  // const changeSwapQuantity = (e: any) => {
+  //   let psx = e.target.value;
+  //   if (psx > 10000) psx = 10000;
+  //   console.log("dnf psx", psx);
+  //   setDnfQty(psx);
+  //   if (psx < 0) psx = 0;
+  //   let total_dnf = psx * dnfPrice;
+  //   setDnf(total_dnf);
+  //   // setUsd(total_dnf);
+  // };
 
   // console.log('usdtBalance', usdtBalance)
   console.log("tokenBalance", tokenBalance);
@@ -384,11 +877,15 @@ export const AppTemp = () => {
   }, [googleAuthPanel.show]);
 
   useEffect(() => {
+    console.log("sendTransactionState", sendTransactionState);
     if (sendTransactionState.status === "Success" && allowance) {
       console.log("allowance appTemp", allowance);
       setApproved(allowance.toString());
-      setEggTransactionState("");
-      // resetSendTransactionState();
+      setEggTransactionState({ mode: "PURCHASE", state: "" });
+      resetSendTransactionState();
+    }
+    if (sendTransactionState.status === "Exception") {
+      setEggTransactionState({ ...eggTransactionState, state: "" });
     }
   }, [sendTransactionState, allowance]);
 
@@ -424,10 +921,44 @@ export const AppTemp = () => {
         // console.log(response.data);
         if (response.data.result === 1) {
           toast("Buy Ticket Confirmed");
+          setTicketState("");
           setTicketPanel({ show: false, mode: "BUY" });
           getUserData();
         } else {
           setTimeout(() => checkValidateTx(hash), 5000);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    // axios.post(API_ENDPOINT + '/ticket/validate', { hash: hash }, options)
+  };
+
+  const checkJPassValidateTx = (hash: string) => {
+    console.log("checkJPassValidateTx", hash);
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    axiosInstance({
+      url: "/item/validate",
+      method: "POST",
+      headers: options.headers,
+      data: {
+        hash: hash,
+      },
+    })
+      .then((response) => {
+        // console.log(response.data);
+        if (response.data.result === 1) {
+          toast("Buy JPass Confirmed");
+          setJPassState("");
+          setJPassPanel({ show: false, data: null });
+          changeScene("HOME");
+          getUserData();
+        } else {
+          setTimeout(() => checkJPassValidateTx(hash), 5000);
         }
       })
       .catch((err) => {
@@ -464,9 +995,51 @@ export const AppTemp = () => {
       resetSendTicketBuyState();
     }
     // console.log("sendTicketBuyState", sendTicketBuyState);
-    if (sendTicketBuyState.status === "Exception")
+    if (sendTicketBuyState.status === "Exception") {
       toast(sendTicketBuyState.errorMessage);
+      resetSendTicketBuyState();
+      setTicketState("");
+    }
   }, [sendTicketBuyState]);
+
+  useEffect(() => {
+    if (
+      sendDNFDepositState &&
+      sendDNFDepositState.transaction &&
+      sendDNFDepositState.status === "Success"
+    ) {
+      // checkValidateTx(sendDNFDepositState.transaction.hash);
+      resetSendDNFDepositState();
+    }
+    // console.log("sendDNFDepositState", sendDNFDepositState);
+    if (sendDNFDepositState.status === "Exception") {
+      toast(sendDNFDepositState.errorMessage);
+      resetSendDNFDepositState();
+    }
+  }, [sendDNFDepositState]);
+
+  useEffect(() => {
+    toast(stateUSDTDepositApproval.errorMessage);
+  }, [stateUSDTDepositApproval.errorMessage]);
+
+  useEffect(() => {
+    toast(sendDNFDepositState.errorMessage);
+  }, [sendDNFDepositState.errorMessage]);
+
+  useEffect(() => {
+    if (
+      sendJPassBuyState &&
+      sendJPassBuyState.transaction &&
+      sendJPassBuyState.status === "Success" &&
+      ticketAllowance
+    ) {
+      // checkValidateTx(sendJPassBuyState.transaction.hash);
+      resetSendJPassBuyState();
+    }
+    // console.log("sendJPassBuyState", sendJPassBuyState);
+    if (sendJPassBuyState.status === "Exception")
+      toast(sendJPassBuyState.errorMessage);
+  }, [sendJPassBuyState]);
 
   const checkValidation = async (id: string) => {
     let options = {
@@ -483,7 +1056,7 @@ export const AppTemp = () => {
     // console.log(result.data);
     if (result.data.result === 1) {
       toast("Egg Transaction Confirmed");
-      setEggTransactionState("");
+      setEggTransactionState({ mode: "DONE", state: "" });
       getPendingListingEgg();
       getUserData();
       changeScene("HOME");
@@ -596,12 +1169,12 @@ export const AppTemp = () => {
       errors.username = "Invalid username, min 5 chars & max 20 chars";
     }
     if (!values.password) errors.password = "Required";
-    // else if (
-    //   !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,20}$/i.test(values.password)
-    // ) {
-    //   errors.password =
-    //     "Password must contain 1 uppercase, 1 lowercase, 1 number, min 8 chars & max 20 chars, no symbol";
-    // }
+    else if (
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,20}$/i.test(values.password)
+    ) {
+      errors.password =
+        "Password must contain 1 uppercase, 1 lowercase, 1 number, min 8 chars & max 20 chars, no symbol";
+    }
     console.log("errors", errors);
     return errors;
   };
@@ -742,6 +1315,16 @@ export const AppTemp = () => {
       setSubmitting(false);
       // setAuthMode("LOGINWALLET");
       changeScene("HOME");
+      sessionStorage.setItem("banner_open", "true");
+      if (token) {
+        socket.send(
+          JSON.stringify({
+            event: "subscribe",
+            token: token,
+          })
+        );
+      }
+      // window.location.reload()
     },
   });
   const registerForm = useFormik({
@@ -769,9 +1352,23 @@ export const AppTemp = () => {
     onSubmit: (values, { setSubmitting }) => {
       // alert(JSON.stringify(values, null, 2));
       otpHandler(values.email);
-      setSubmitting(false);
+      setOtpIntervalId(
+        setInterval(() => {
+          setOtpInterval((prev) => prev - 1);
+        }, 1000)
+      );
     },
   });
+  useEffect(() => {
+    console.log("otpIntervalId", otpIntervalId);
+    if (otpInterval <= 0) {
+      console.log("clearInterval", otpIntervalId);
+      clearInterval(otpIntervalId);
+      setOtpInterval(60);
+      otpForm.setSubmitting(false);
+    }
+  }, [otpInterval, otpIntervalId]);
+
   const googleAuthenticationForm = useFormik({
     initialValues: {
       validation: "",
@@ -853,7 +1450,7 @@ export const AppTemp = () => {
           if (forgotPasswordRechaptchaRef?.current) {
             // console.log('forgotPasswordRechaptchaRef?.current', forgotPasswordRechaptchaRef?.current)
             // @ts-ignore
-            forgotPasswordRechaptchaRef?.current?.reset();
+            forgotPasswordRechaptchaRef?.current?.resetCaptcha();
           }
         }
         if (!data.success) {
@@ -862,7 +1459,7 @@ export const AppTemp = () => {
           if (forgotPasswordRechaptchaRef?.current) {
             // console.log('forgotPasswordRechaptchaRef?.current', forgotPasswordRechaptchaRef?.current)
             // @ts-ignore
-            forgotPasswordRechaptchaRef?.current?.reset();
+            forgotPasswordRechaptchaRef?.current?.resetCaptcha();
           }
         }
       };
@@ -929,16 +1526,25 @@ export const AppTemp = () => {
   }, [active, account, authMode, chainId]);
 
   useEffect(() => {
-    if (usdtBalance) {
-      const balance = formatUnits(usdtBalance, 18);
-      console.log("usdtBalance", balance);
+    if (dnfBalance) {
+      const balance = formatUnits(dnfBalance, 18);
+      console.log("dnfBalance", balance);
       setWalletBalance(balance);
     }
-  }, [setWalletBalance, usdtBalance]);
+    if (usdtBalance) {
+      const usdt = formatUnits(usdtBalance, 18);
+      console.log("usdtBalance", usdt);
+    }
+  }, [setWalletBalance, dnfBalance, usdtBalance]);
 
   useEffect(() => {
     getPendingListingEgg();
+    getUserData();
   }, [token]);
+
+  useEffect(() => {
+    if (scene === "HOME") getUnfinishedEggTransaction();
+  }, [scene]);
 
   const options = {
     backgroundColor: 0x1099bb,
@@ -974,7 +1580,7 @@ export const AppTemp = () => {
       captcha: captcha,
     };
     const result = await axiosInstance({
-      url: "/user/authentication",
+      url: "/user/authentication2",
       method: "POST",
       data: loginRequestData,
     });
@@ -985,16 +1591,17 @@ export const AppTemp = () => {
       if (loginRechaptchaRef?.current) {
         // console.log('loginRechaptchaRef?.current', loginRechaptchaRef?.current)
         // @ts-ignore
-        loginRechaptchaRef?.current?.reset();
+        loginRechaptchaRef?.current?.resetCaptcha();
       }
     }
     if (data && data.result) {
       saveToken(data.result?.jwt);
+      localStorage.setItem("token_key", data?.result?.jwt);
       setCaptcha("");
       if (loginRechaptchaRef?.current) {
         // console.log('loginRechaptchaRef?.current', loginRechaptchaRef?.current)
         // @ts-ignore
-        loginRechaptchaRef?.current?.reset();
+        loginRechaptchaRef?.current?.resetCaptcha();
       }
       setAuthMode("LOGINWALLET");
     }
@@ -1027,7 +1634,7 @@ export const AppTemp = () => {
       if (registerRechaptchaRef?.current) {
         // console.log('registerRechaptchaRef?.current', registerRechaptchaRef?.current)
         // @ts-ignore
-        registerRechaptchaRef?.current?.reset();
+        registerRechaptchaRef?.current?.resetCaptcha();
       }
     }
     if (!data.success) {
@@ -1036,7 +1643,7 @@ export const AppTemp = () => {
       if (registerRechaptchaRef?.current) {
         // console.log('registerRechaptchaRef?.current', registerRechaptchaRef?.current)
         // @ts-ignore
-        registerRechaptchaRef?.current?.reset();
+        registerRechaptchaRef?.current?.resetCaptcha();
       }
     }
   };
@@ -1150,7 +1757,7 @@ export const AppTemp = () => {
   // const TicketBuyBtn = (props: any) => {
   //   const amount = BigInt(props.total * 1e18);
   //   // const { address } = getAccount();
-  //   const ticketAllowance = useTokenAllowance(USDT_ADDR, walletAddress, TICKET_ADDR)
+  //   const ticketAllowance = useTokenAllowance(TOKEN_ADDR, walletAddress, TICKET_ADDR)
   //   const [btnApproved, setBtnApproved] = useState<any>();
   //   const [disabled, setDisabled] = useState(false);
   //   const {
@@ -1163,8 +1770,8 @@ export const AppTemp = () => {
   //     setDisabled(true);
   //     // const txReq = { to: TICKET_ADDR, from: walletAddress, data: d.TxRawApproval }
   //     // const config = await prepareWriteContract({
-  //     //   abi: USDT_ABI,
-  //     //   address: USDT_ADDR,
+  //     //   abi: TOKEN_ABI,
+  //     //   address: TOKEN_ADDR,
   //     //   chainId: NETWORK_CHAIN,
   //     //   functionName: 'approve',
   //     //   args: [TICKET_ADDR, amount]
@@ -1260,6 +1867,74 @@ export const AppTemp = () => {
   //     )
   //   }
   // }
+
+  const [toggleBtnAudio, setToggleBtnAudio] = useState(false);
+  // const [playing, toggle] = useAudio(`${BASE_URL}/music/dinomusic.ogg`);
+
+  // useEffect(() => {
+  //   // @ts-ignore
+  //   toggle()
+  // }, [toggleBtnAudio])
+
+  const getEncodeData = async (type: "USDT" | "DNF") => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const response = await axiosInstance({
+      url: `/wallet/${type.toLowerCase()}/deposit`,
+      method: "POST",
+      headers: options.headers,
+      data: {
+        amount: type === "USDT" ? USDTDepositAmount : DNFDepositAmount,
+      },
+    });
+    if (response.data.success) {
+      // console.log(response.data.result);
+      return response.data.result;
+    }
+    return false;
+  };
+
+  const paginateUSDTDepositHistory = ({ selected }: { selected: number }) => {
+    const loadHistory = async (props: any) => {
+      let options = {
+        headers: {
+          "my-auth-key": token,
+        },
+      };
+      const response = await axiosInstance({
+        url: "/wallet/usdt/history",
+        params: {
+          page: props,
+        },
+        method: "GET",
+        headers: options.headers,
+      });
+      setUSDTWithdrawalHistory(response.data.result);
+    };
+    loadHistory(selected + 1);
+  };
+  const paginateDNFDepositHistory = ({ selected }: { selected: number }) => {
+    const loadHistory = async (props: any) => {
+      let options = {
+        headers: {
+          "my-auth-key": token,
+        },
+      };
+      const response = await axiosInstance({
+        url: "/wallet/dnf/history",
+        params: {
+          page: props,
+        },
+        method: "GET",
+        headers: options.headers,
+      });
+      setDNFWithdrawalHistory(response.data.result);
+    };
+    loadHistory(selected + 1);
+  };
   return (
     <div className="relative flex justify-center items-center">
       {scene === "REGISTER" && (
@@ -1273,10 +1948,15 @@ export const AppTemp = () => {
                 alt="Language"
               />
               <img
-                src="image/BtnAudio.png"
+                src={`image/BtnAudio${toggleBtnAudio ? "On" : "Off"}.png`}
                 width={60}
                 height={60}
                 alt="Audio"
+                onClick={() => {
+                  // @ts-ignore
+                  toggle();
+                  setToggleBtnAudio(!toggleBtnAudio);
+                }}
               />
             </div>
             <img
@@ -1385,7 +2065,7 @@ export const AppTemp = () => {
                           )}
                         </button>
                       </div>
-                      <p className="text-red-500 font-bold font-magra max-w-[350px]">
+                      <p className="text-red-500 ml-2 font-bold font-magra max-w-[350px]">
                         {loginForm.errors.password &&
                           loginForm.touched.password &&
                           loginForm.errors.password}
@@ -1401,10 +2081,10 @@ export const AppTemp = () => {
                       </div>
                     </div>
                   </form>
-                  <ReCAPTCHA
+                  <HCaptcha
                     ref={loginRechaptchaRef}
                     sitekey={CAPTCHA_KEY}
-                    onChange={(e: any) => verifiedCallback(e as string)}
+                    onVerify={(e: any) => verifiedCallback(e as string)}
                   />
                   <input
                     alt="btnLogin"
@@ -1579,7 +2259,7 @@ export const AppTemp = () => {
                       <input
                         name="referralCode"
                         type="text"
-                        placeholder="Sponsor"
+                        placeholder="Referral"
                         className="mt-2 py-3 w-[350px] h-auto px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
                         style={{
                           background: `url(image/InputBox.png) no-repeat `,
@@ -1682,19 +2362,24 @@ export const AppTemp = () => {
                         onChange={(e) => setOtp(e.target.value)}
                       />
                       <button
-                        className="absolute right-[20px] top-[15px] font-Magra font-bold text-[#00C2FF] hover:cursor-pointer"
+                        className={`absolute right-[20px] top-[15px] font-Magra font-bold ${
+                          otpForm?.isSubmitting
+                            ? "text-[#00C2FF]/50"
+                            : "text-[#00C2FF]"
+                        } hover:cursor-pointer`}
                         type="button"
                         disabled={otpForm.isSubmitting}
                         onClick={otpForm.submitForm}
                       >
-                        Request OTP
+                        Request OTP{" "}
+                        {`${otpForm.isSubmitting ? `: ${otpInterval}S` : ""}`}
                       </button>
                     </div>
                   </form>
-                  <ReCAPTCHA
+                  <HCaptcha
                     ref={registerRechaptchaRef}
                     sitekey={CAPTCHA_KEY}
-                    onChange={(e: any) => verifiedRegisterCallback(e as string)}
+                    onVerify={(e: any) => verifiedRegisterCallback(e as string)}
                   />
                   <input
                     alt="Register Submit"
@@ -1770,10 +2455,10 @@ export const AppTemp = () => {
                       </p>
                     </div>
                   </form>
-                  <ReCAPTCHA
+                  <HCaptcha
                     ref={forgotPasswordRechaptchaRef}
                     sitekey={CAPTCHA_KEY}
-                    onChange={(e: any) =>
+                    onVerify={(e: any) =>
                       verifiedForgotPasswordCallback(e as string)
                     }
                   />
@@ -2023,7 +2708,7 @@ export const AppTemp = () => {
                         onChange={changeQuantity}
                         value={qty}
                       />
-                      <p className="text-white font-Magra my-3">Total USDT</p>
+                      <p className="text-white font-Magra my-3">Total DNF</p>
                       <input
                         name="totalPrice"
                         type="text"
@@ -2080,101 +2765,114 @@ export const AppTemp = () => {
                       )}
                     </div>
                   </form>
-                  <button
-                    type={"submit"}
-                    // disabled={}
-                    onClick={async () => {
-                      console.log("usd amount approval", usd);
-                      if (buyWithBonus) {
-                        console.log("Buy with bonus clicked", {
-                          qty: parseInt(qty as string),
-                          facode: GAValue.toString(),
-                        });
-                        let options = {
-                          headers: {
-                            "my-auth-key": token,
-                          },
-                        };
-                        const response = await axiosInstance({
-                          url: "/ticket/buyWithBonuses",
-                          method: "POST",
-                          headers: options.headers,
-                          data: {
+                  {ticketState !== "LOADING" && (
+                    <button
+                      type={"submit"}
+                      // disabled={}
+                      onClick={async () => {
+                        console.log("usd amount approval", usd);
+                        setTicketState("LOADING");
+                        if (buyWithBonus) {
+                          console.log("Buy with bonus clicked", {
                             qty: parseInt(qty as string),
                             facode: GAValue.toString(),
-                          },
-                        });
-                        if (response.data.success) {
-                          toast("Buy Ticket Confirmed");
-                          getUserData();
-                        } else alert(response.data.message);
-                      } else if (!buyWithBonus) {
-                        if (
-                          ticketAllowance &&
-                          ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                        ) {
-                          // const txReq = { value: BigInt(usd * 1e18) }
-                          const txSend = await send(
-                            TICKET_ADDR,
-                            BigInt(usd * 1e18)
-                          );
-                          console.log("txSend ticketApproval", txSend);
-                        } else {
+                          });
                           let options = {
                             headers: {
                               "my-auth-key": token,
                             },
                           };
                           const response = await axiosInstance({
-                            url: "/ticket/createRawBuyTickets",
+                            url: "/ticket/buyWithBonuses",
                             method: "POST",
                             headers: options.headers,
                             data: {
-                              qty: qty,
+                              qty: parseInt(qty as string),
+                              facode: GAValue.toString(),
                             },
                           });
-                          console.log(response.data);
                           if (response.data.success) {
-                            const txReq = {
-                              data: response.data.result,
-                              to: TICKET_ADDR,
-                              from: walletAddress,
-                            };
-                            const txSend = await sendTicketBuy(txReq);
-                            console.log("txSend buy ticket", txSend);
-                            if (txSend && txSend.transactionHash)
-                              checkValidateTx(txSend.transactionHash);
+                            setTicketState("");
+                            toast("Buy Ticket Confirmed");
+                            getUserData();
+                          } else alert(response.data.message);
+                        } else if (!buyWithBonus) {
+                          if (parseFloat(walletBalance) >= usd) {
+                            if (
+                              ticketAllowance &&
+                              ticketAllowance.toBigInt() < BigInt(usd * 1e18)
+                            ) {
+                              // const txReq = { value: BigInt(usd * 1e18) }
+                              const txSend = await send(
+                                TICKET_ADDR,
+                                BigInt(usd * 1e18)
+                              );
+                              setTicketState("");
+                              console.log("txSend ticketApproval", txSend);
+                            } else {
+                              let options = {
+                                headers: {
+                                  "my-auth-key": token,
+                                },
+                              };
+                              const response = await axiosInstance({
+                                url: "/ticket/createRawBuyTickets",
+                                method: "POST",
+                                headers: options.headers,
+                                data: {
+                                  qty: qty,
+                                },
+                              });
+                              console.log(response.data);
+                              if (response.data.success) {
+                                const txReq = {
+                                  data: response.data.result,
+                                  to: TICKET_ADDR,
+                                  from: walletAddress,
+                                };
+                                const txSend = await sendTicketBuy(txReq);
+                                console.log("txSend buy ticket", txSend);
+                                if (txSend && txSend.transactionHash)
+                                  checkValidateTx(txSend.transactionHash);
+                              }
+                            }
+                          } else {
+                            setTicketState("");
+                            toast("Your balance is not enough to buy ticket!");
                           }
                         }
+                      }}
+                      className={`${
+                        buyWithBonus
+                          ? "bg-green-500"
+                          : ticketAllowance &&
+                            ticketAllowance.toBigInt() < BigInt(usd * 1e18)
+                          ? "bg-red-500"
+                          : "bg-green-500"
+                      } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                      disabled={
+                        (buyWithBonus &&
+                          GAValue.length < 6 &&
+                          !userData?.ga_key) ||
+                        sendTicketBuyState.status !== "None"
                       }
-                    }}
-                    className={`${
-                      buyWithBonus
-                        ? "bg-green-500"
+                    >
+                      {buyWithBonus
+                        ? "Buy with Bonus"
                         : ticketAllowance &&
                           ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                        ? "bg-red-500"
-                        : "bg-green-500"
-                    } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
-                    disabled={
-                      (buyWithBonus &&
-                        GAValue.length < 6 &&
-                        !userData?.ga_key) ||
-                      sendTicketBuyState.status !== "None"
-                    }
-                  >
-                    {buyWithBonus
-                      ? "Buy with Bonus"
-                      : ticketAllowance &&
-                        ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                      ? "Approval"
-                      : "Buy Ticket"}
-                  </button>
-                  {sendTicketBuyState.status !== "None" && (
+                        ? "Approval"
+                        : "Buy Ticket"}
+                    </button>
+                  )}
+                  {ticketState === "LOADING" && (
+                    <p className="text-white/50 font-Magra">Waiting...</p>
+                  )}
+                  {/* {sendTicketBuyState.status !== "None" && (
                     <p className="text-white/50 font-Magra">
                       {sendTicketBuyState.status}
                     </p>
-                  )}
+                  )} */}
                 </>
               )}
               {ticketPanel.mode === "TRANSFER" && (
@@ -2286,18 +2984,8 @@ export const AppTemp = () => {
                       var date = new Date(t.timestamp * 1000);
 
                       // Will display time in 10:30:23 format
-                      var formattedTime =
-                        date.getDate() +
-                        "/" +
-                        (date.getMonth() + 1) +
-                        "/" +
-                        date.getFullYear() +
-                        " " +
-                        date.getHours() +
-                        ":" +
-                        date.getMinutes() +
-                        ":" +
-                        date.getSeconds();
+                      // TODO: change with function from utils later
+                      const formattedTime = formatToUTC(date);
                       return (
                         <tr className="text-white text-center">
                           <td>{formattedTime}</td>
@@ -2322,6 +3010,1290 @@ export const AppTemp = () => {
                   </tbody>
                 </table>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+      {swapPanel.show && scene === "HOME" && (
+        <div className="absolute h-[80vh] flex items-start overflow-y-scroll">
+          <div className=" my-5 flex backdrop-blur-sm  justify-center items-center flex-col bg-white/10 px-3.5 py-2.5 shadow-sm rounded-sm ">
+            <div className="flex w-full justify-end">
+              <img
+                src="image/logoutBtn.png"
+                width={30}
+                height={30}
+                alt="Close "
+                onClick={() => setSwapPanel({ show: false })}
+              />
+            </div>
+            <div
+              className="w-[400px] flex justify-start items-center flex-col gap-4 bg-white/50 px-3.5 py-6 shadow-sm rounded-xl "
+              style={{
+                background: `url(image/formBackground.png) no-repeat `,
+                backgroundSize: "cover",
+                overflow: "auto",
+              }}
+            >
+              <>
+                <div className="flex gap-2 justify-center w-full">
+                  <div className="flex gap-2 justify-around w-full">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setGameTaskPanel({
+                          ...gameTaskPanel,
+                          mode: "MARKET.BUY",
+                        })
+                      }
+                      className={`${
+                        gameTaskPanel.mode.includes("MARKET")
+                          ? "text-blue-500 border border-blue-500"
+                          : "text-white"
+                      } w-full font-bold font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                    >
+                      Exchanger
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        // setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
+                        setGameTaskPanel({
+                          ...gameTaskPanel,
+                          mode: "DEPOSIT.USDT",
+                        })
+                      }
+                      className={`${
+                        gameTaskPanel.mode.includes("DEPOSIT")
+                          ? "text-blue-500 border border-blue-500"
+                          : "text-white"
+                      } w-full font-bold font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                    >
+                      Deposit
+                    </button>
+                  </div>
+                </div>
+                <div className="flex gap-2 justify-center w-full">
+                  {gameTaskPanel.mode.includes("DEPOSIT") && (
+                    <div className="flex gap-2 justify-around w-full">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setGameTaskPanel({
+                            ...gameTaskPanel,
+                            mode: "DEPOSIT.USDT",
+                          })
+                        }
+                        className={`${
+                          gameTaskPanel.mode.includes("USDT")
+                            ? "text-yellow-500 border border-yellow-500"
+                            : "text-white"
+                        } w-full font-bold font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                      >
+                        USDT
+                        <br />
+                        { userData?.wallet && userData?.wallet?.usdt ? ethers.utils.formatEther(userData?.wallet?.usdt) : '0'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          // setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
+                          setGameTaskPanel({
+                            ...gameTaskPanel,
+                            mode: "DEPOSIT.DNF",
+                          })
+                        }
+                        className={`${
+                          gameTaskPanel.mode.includes("DNF")
+                            ? "text-yellow-500 border border-yellow-500"
+                            : "text-white"
+                        } w-full font-bold font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                      >
+                        DNF
+                        <br />
+                        { userData?.wallet && userData?.wallet?.dnf ? ethers.utils.formatEther(userData?.wallet?.dnf) : '0'}
+                      </button>
+                    </div>
+                  )}
+                  {gameTaskPanel.mode.includes("MARKET") && (
+                    <div className="flex gap-2 justify-around w-full">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setGameTaskPanel({
+                            ...gameTaskPanel,
+                            mode: "MARKET.BUY",
+                          })
+                        }
+                        className={`${
+                          gameTaskPanel.mode.includes("BUY")
+                            ? "text-yellow-500 border border-yellow-500"
+                            : "text-white"
+                        } w-full font-bold font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                      >
+                        BUY
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          // setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
+                          setGameTaskPanel({
+                            ...gameTaskPanel,
+                            mode: "MARKET.SELL",
+                          })
+                        }
+                        className={`${
+                          gameTaskPanel.mode.includes("SELL")
+                            ? "text-yellow-500 border border-yellow-500"
+                            : "text-white"
+                        } w-full font-bold font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                      >
+                        SELL
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          // setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
+                          setGameTaskPanel({
+                            ...gameTaskPanel,
+                            mode: "MARKET.OPEN",
+                          })
+                        }
+                        className={`${
+                          gameTaskPanel.mode.includes("OPEN")
+                            ? "text-yellow-500 border border-yellow-500"
+                            : "text-white"
+                        } w-full font-bold font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                      >
+                        POSITION
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          // setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
+                          setGameTaskPanel({
+                            ...gameTaskPanel,
+                            mode: "MARKET.HISTORY",
+                          })
+                        }
+                        className={`${
+                          gameTaskPanel.mode.includes("HISTORY")
+                            ? "text-yellow-500 border border-yellow-500"
+                            : "text-white"
+                        } w-full font-bold font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                      >
+                        HISTORY
+                      </button>
+                    </div>
+                  )}
+                </div>
+                {gameTaskPanel.mode === "MARKET.BUY" && (
+                  <>
+                    <p className="text-white font-Magra mb-3">Buy List</p>
+                    <div className="flex flex-row justify-around text-white w-full">
+                      <p>
+                        USDT: { userData?.wallet && userData?.wallet?.usdt ? ethers.utils.formatEther(userData?.wallet?.usdt) : '0'}
+                      </p>
+                      <p>
+                        DNF: { userData?.wallet && userData?.wallet?.dnf ? ethers.utils.formatEther(userData?.wallet?.dnf) : '0'}
+                      </p>
+                    </div>
+                    <table className="w-full text-base">
+                      <thead className=" uppercase border-y ">
+                        <tr className="text-yellow-500 font-Magra">
+                          <th scope="col" className="w-[6rem]">
+                            Price
+                          </th>
+                          <th scope="col" className="w-[7rem] pr-1">
+                            DNF
+                          </th>
+                          <th scope="col" className="w-[4rem] py-1">
+                            USDT
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {marketListSell?.map((t: any) => {
+                          return (
+                            <tr className="text-white text-center">
+                              <td>{`${parseFloat(
+                                formatUnits(t.price, 18)
+                              ).toFixed(2)}`}</td>
+                              <td
+                                className={"text-white text-base text-center"}
+                              >{`${parseFloat(formatUnits(t.dnf, 18)).toFixed(
+                                2
+                              )}`}</td>
+                              <td className={`text-white pl-4 text-center`}>
+                                {`${parseFloat(formatUnits(t.usdt, 18)).toFixed(
+                                  2
+                                )}`}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+
+                    <form>
+                      <div className="flex flex-col">
+                        <p className="text-white font-Magra my-3">DNF</p>
+                        <input
+                          name="amount"
+                          type="number"
+                          step="0.01"
+                          placeholder="DNF"
+                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          onChange={(e) => {
+                            console.log("buy amount", e.target.value);
+                            setBuyAmount(e.target.value);
+                            countBuyUsdt(e.target.value, buyPrice);
+                          }}
+                          value={buyAmount}
+                          min={0}
+                        />
+                        <p className="text-white font-Magra my-3">Price</p>
+                        <input
+                          name="price"
+                          type="number"
+                          step="0.01"
+                          placeholder="Price"
+                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          onChange={(e) => {
+                            setBuyPrice(e.target.value);
+                            countBuyUsdt(buyAmount, e.target.value);
+                          }}
+                          value={buyPrice}
+                          min={0}
+                        />
+                        <p className="text-white font-Magra my-3">USDT</p>
+                        <input
+                          name="totalPrice"
+                          type="number"
+                          // placeholder="Password"
+                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          readOnly
+                          // onChange={loginForm.handleChange}
+                          // onBlur={loginForm.handleBlur}
+                          value={buyUSDTAmount}
+                        />
+                      </div>
+                    </form>
+                    <div className="flex flex-row justify-around w-full">
+                      <button
+                        type={"submit"}
+                        // disabled={}
+                        onClick={async () => {
+                          try {
+                            let options = {
+                              headers: {
+                                "my-auth-key": token,
+                              },
+                            };
+                            const response = await axiosInstance({
+                              url: "/market/buy",
+                              method: "POST",
+                              headers: options.headers,
+                              data: {
+                                amount: buyAmount,
+                                price: buyPrice,
+                              },
+                            });
+                            if (response.data.success) {
+                              toast("Post Buy Success");
+                            } else
+                              toast(
+                                response?.data?.message || "Post Buy Error"
+                              );
+                            console.log(response.data);
+                          } catch (error) {
+                            console.error(error);
+                            toast("Post Buy Error");
+                          }
+                        }}
+                        className={`${
+                          parseFloat(buyPrice) <= 0
+                            ? "bg-gray-700"
+                            : "bg-green-500"
+                        }  text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                        disabled={parseFloat(buyPrice) <= 0}
+                      >
+                        Buy
+                      </button>
+                    </div>
+
+                  </>
+                )}
+                {gameTaskPanel.mode === "MARKET.SELL" && (
+                  <>
+                    <p className="text-white font-Magra mb-3">Sell List</p>
+                    <div className="flex flex-row justify-around text-white w-full">
+                      <p>
+                        USDT: { userData?.wallet && userData?.wallet?.usdt ? ethers.utils.formatEther(userData?.wallet?.usdt) : '0'}
+                      </p>
+                      <p>
+                        DNF: { userData?.wallet && userData?.wallet?.dnf ? ethers.utils.formatEther(userData?.wallet?.dnf) : '0'}
+                      </p>
+                    </div>
+                    <table className="w-full text-base">
+                      <thead className=" uppercase border-y ">
+                        <tr className="text-yellow-500 font-Magra">
+                          <th scope="col" className="w-[6rem]">
+                            Price
+                          </th>
+                          <th scope="col" className="w-[7rem] pr-1">
+                            DNF
+                          </th>
+                          <th scope="col" className="w-[4rem] py-1">
+                            USDT
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {marketListBuy?.map((t: any) => {
+                          return (
+                            <tr className="text-white text-center">
+                              <td>{`${parseFloat(
+                                formatUnits(t.price, 18)
+                              ).toFixed(2)}`}</td>
+                              <td
+                                className={"text-white text-base text-center"}
+                              >{`${parseFloat(formatUnits(t.dnf, 18)).toFixed(
+                                2
+                              )}`}</td>
+                              <td className={`text-white pl-4 text-center`}>
+                                {`${parseFloat(formatUnits(t.usdt, 18)).toFixed(
+                                  2
+                                )}`}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+
+                    <form>
+                      <div className="flex flex-col">
+                        <p className="text-white font-Magra my-3">DNF</p>
+                        <input
+                          name="amount"
+                          type="number"
+                          step="0.01"
+                          placeholder="DNF"
+                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          onChange={(e) => {
+                            console.log("sell amount", e.target.value);
+                            setSellAmount(e.target.value);
+                            countSellUsdt(e.target.value, sellPrice);
+                          }}
+                          value={sellAmount}
+                          min={0}
+                        />
+                        <p className="text-white font-Magra my-3">Price</p>
+                        <input
+                          name="price"
+                          type="number"
+                          step="0.01"
+                          placeholder="Price"
+                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          onChange={(e) => {
+                            setSellPrice(e.target.value);
+                            countSellUsdt(sellAmount, e.target.value);
+                          }}
+                          value={sellPrice}
+                          min={0}
+                        />
+                        <p className="text-white font-Magra my-3">USDT</p>
+                        <input
+                          name="totalPrice"
+                          type="number"
+                          // placeholder="Password"
+                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          readOnly
+                          // onChange={loginForm.handleChange}
+                          // onBlur={loginForm.handleBlur}
+                          value={sellUSDTAmount}
+                        />
+                      </div>
+                    </form>
+                    <div className="flex flex-row justify-around w-full">
+                      <button
+                        type={"submit"}
+                        // disabled={}
+                        onClick={async () => {
+                          try {
+                            let options = {
+                              headers: {
+                                "my-auth-key": token,
+                              },
+                            };
+                            const response = await axiosInstance({
+                              url: "/market/sell",
+                              method: "POST",
+                              headers: options.headers,
+                              data: {
+                                amount: sellAmount,
+                                price: sellPrice,
+                              },
+                            });
+                            if (response.data.success) {
+                              toast("Post Sell Success");
+                            } else
+                              toast(
+                                response.data?.message || "Post Sell Error"
+                              );
+                            console.log(response.data);
+                          } catch (error) {
+                            console.error(error);
+                            toast("Post Sell Error");
+                          }
+                        }}
+                        className={`${
+                          parseFloat(sellPrice) <= 0
+                            ? "bg-gray-700"
+                            : "bg-red-500"
+                        } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                        disabled={parseFloat(sellPrice) <= 0}
+                      >
+                        Sell
+                      </button>
+                    </div>
+                  </>
+                )}
+                {gameTaskPanel.mode === "MARKET.OPEN" && (
+                  <>
+                    <table className="w-full text-base">
+                      <thead className=" uppercase border-y ">
+                        <tr className="text-yellow-500 font-Magra">
+                          <th scope="col" className="w-[6rem]">
+                            Price
+                          </th>
+                          <th scope="col" className="w-[7rem] pr-1">
+                            DNF
+                          </th>
+                          <th scope="col" className="w-[4rem] py-1">
+                            USDT
+                          </th>
+                          <th scope="col" className="w-[4rem] py-1">
+                            POSITION
+                          </th>
+                          <th scope="col" className="w-[4rem] py-1">
+                            ACTION
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {marketListOpen?.map((t: any) => {
+                          return (
+                            <tr className="text-white text-center">
+                              <td>{`${parseFloat(
+                                formatUnits(t.price, 18)
+                              ).toFixed(2)}`}</td>
+                              <td
+                                className={"text-white text-base text-center"}
+                              >{`${parseFloat(formatUnits(t.dnf, 18)).toFixed(
+                                2
+                              )}`}</td>
+                              <td className={`text-white pl-4 text-center`}>
+                                {`${parseFloat(formatUnits(t.usdt, 18)).toFixed(
+                                  2
+                                )}`}
+                              </td>
+                              <td
+                                className={`${
+                                  t.position === "BUY"
+                                    ? "text-green-500"
+                                    : "text-red-500"
+                                } pl-4 text-center`}
+                              >
+                                {t.position}
+                              </td>
+                              <td className={`text-white pl-4 text-center`}>
+                                <button
+                                  className="bg-red-500 text-white px-2 py-1 rounded-sm my-2"
+                                  onClick={async () => {
+                                    try {
+                                      let options = {
+                                        headers: {
+                                          "my-auth-key": token,
+                                        },
+                                      };
+                                      const response = await axiosInstance({
+                                        url: "/market/cancel",
+                                        method: "POST",
+                                        headers: options.headers,
+                                        data: {
+                                          id: t.id,
+                                        },
+                                      });
+                                      if (response.data.success) {
+                                        toast("Post Cancel Success");
+                                        getMarketListOpen();
+                                      } else
+                                        toast(
+                                          response.data?.message ||
+                                            "Post Cancel Error"
+                                        );
+                                      console.log(response.data);
+                                    } catch (error) {
+                                      console.error(error);
+                                      toast("Post Cancel Error");
+                                    }
+                                  }}
+                                >
+                                  Cancel
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </>
+                )}
+                {gameTaskPanel.mode === "MARKET.HISTORY" && (
+                  <>
+                    <table className="w-full text-base">
+                      <thead className=" uppercase border-y ">
+                        <tr className="text-yellow-500 font-Magra">
+                          <th scope="col" className="w-[6rem]">
+                            Price
+                          </th>
+                          <th scope="col" className="w-[7rem] pr-1">
+                            DNF
+                          </th>
+                          <th scope="col" className="w-[4rem] py-1">
+                            USDT
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {marketListHistory?.map((t: any) => {
+                          return (
+                            <tr className="text-white text-center">
+                              <td>{`${parseFloat(
+                                formatUnits(t.price, 18)
+                              ).toFixed(2)}`}</td>
+                              <td
+                                className={"text-white text-base text-center"}
+                              >{`${parseFloat(formatUnits(t.dnf, 18)).toFixed(
+                                2
+                              )}`}</td>
+                              <td className={`text-white pl-4 text-center`}>
+                                {`${parseFloat(formatUnits(t.usdt, 18)).toFixed(
+                                  2
+                                )}`}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </>
+                )}
+                <div className="flex gap-2 justify-center w-full">
+                  {gameTaskPanel.mode.includes("DEPOSIT") && (
+                    <div className="flex gap-2 justify-around w-full">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setGameTaskPanel({
+                            ...gameTaskPanel,
+                            mode: `DEPOSIT.${
+                              gameTaskPanel.mode.includes("USDT")
+                                ? "USDT"
+                                : "DNF"
+                            }`,
+                          })
+                        }
+                        className={`${
+                          gameTaskPanel.mode ===
+                          `DEPOSIT.${
+                            gameTaskPanel.mode.includes("USDT") ? "USDT" : "DNF"
+                          }`
+                            ? "text-blue-500"
+                            : "text-white"
+                        } font-bold font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                      >
+                        Deposit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          // setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
+                          setGameTaskPanel({
+                            ...gameTaskPanel,
+                            mode: `DEPOSIT.${
+                              gameTaskPanel.mode.includes("USDT")
+                                ? "USDT"
+                                : "DNF"
+                            }.WITHDRAW`,
+                          })
+                        }
+                        className={`${
+                          gameTaskPanel.mode ===
+                          `DEPOSIT.${
+                            gameTaskPanel.mode.includes("USDT") ? "USDT" : "DNF"
+                          }.WITHDRAW`
+                            ? "text-blue-500"
+                            : "text-white"
+                        } font-bold font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                      >
+                        Withdraw
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          // setTicketPanel({ ...ticketPanel, mode: "HISTORY" })
+                          setGameTaskPanel({
+                            ...gameTaskPanel,
+                            mode: `DEPOSIT.${
+                              gameTaskPanel.mode.includes("USDT")
+                                ? "USDT"
+                                : "DNF"
+                            }.HISTORY`,
+                          })
+                        }
+                        className={`${
+                          gameTaskPanel.mode ===
+                          `DEPOSIT.${
+                            gameTaskPanel.mode.includes("USDT") ? "USDT" : "DNF"
+                          }.HISTORY`
+                            ? "text-blue-500"
+                            : "text-white"
+                        } font-bold font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                      >
+                        History
+                      </button>
+                    </div>
+                  )}
+                </div>
+                {gameTaskPanel.mode === "DEPOSIT.USDT" && (
+                  <>
+                    <form onSubmit={loginForm.handleSubmit}>
+                      <div className="flex flex-col">
+                        <p className="text-white font-Magra mb-3">
+                          Deposit USDT
+                        </p>
+                        <input
+                          name="quantity"
+                          type="number"
+                          placeholder="Total USDT"
+                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          onChange={(e) => {
+                            if (e.target.value === "") setUSDTDepositAmount(0);
+                            else setUSDTDepositAmount(parseInt(e.target.value));
+                          }}
+                          value={USDTDepositAmount}
+                          min={0}
+                        />
+                      </div>
+                    </form>
+                    <div className="flex flex-row justify-around w-full">
+                      {depositState !== "LOADING" && (
+                        <button
+                          type={"submit"}
+                          // disabled={}
+                          onClick={async () => {
+                            try {
+                              setDepositState("LOADING");
+                              if (
+                                usdtDepositAllowance &&
+                                usdtDepositAllowance.toBigInt() <
+                                  BigInt(USDTDepositAmount * 1e18)
+                              ) {
+                                console.log(
+                                  "usdtDepositAllowance button",
+                                  usdtDepositAllowance &&
+                                    BigInt(usdtDepositAllowance.toString())
+                                );
+                                const encodedData = await getEncodeData(
+                                  gameTaskPanel.mode.includes("USDT")
+                                    ? "USDT"
+                                    : "DNF"
+                                );
+                                console.log(
+                                  "encodedData USDT deposit",
+                                  encodedData
+                                );
+
+                                const txSend = await sendUSDTDepositApproval(
+                                  DEPO_ADDR,
+                                  BigInt(USDTDepositAmount * 1e18)
+                                );
+                                console.log(
+                                  "txSend USDT deposit approval",
+                                  txSend
+                                );
+                                if (txSend?.status === 1) {
+                                  setDepositState("");
+                                  toast("USDT Approval Complete");
+                                }
+                              } else {
+                                const encodedData = await getEncodeData("USDT");
+                                const txReq = {
+                                  data: encodedData.deposit,
+                                  to: DEPO_ADDR,
+                                  from: walletAddress,
+                                };
+
+                                const txSend = await sendUSDTDeposit(txReq);
+                                console.log("txSend USDT deposit", txSend);
+                                if (txSend?.status === 1) {
+                                  setDepositState("");
+                                  toast("USDT Deposit Complete");
+                                  getUserData();
+                                  getUSDTWithdrawHistory();
+                                }
+                              }
+                            } catch (error) {
+                              console.error(error);
+                              setDepositState("");
+                            }
+                          }}
+                          className={`${
+                            USDTDepositAmount <= 0
+                              ? "bg-gray-700"
+                              : usdtDepositAllowance &&
+                                usdtDepositAllowance.toBigInt() <
+                                  BigInt(USDTDepositAmount * 1e18)
+                              ? "bg-red-500"
+                              : "bg-green-500"
+                          } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                          disabled={USDTDepositAmount <= 0}
+                        >
+                          {usdtDepositAllowance &&
+                          usdtDepositAllowance.toBigInt() <
+                            BigInt(USDTDepositAmount * 1e18)
+                            ? "Approval"
+                            : "Deposit"}
+                        </button>
+                      )}
+                    </div>
+                    {depositState === "LOADING" && (
+                      <p className="text-white/50 font-Magra">Waiting...</p>
+                    )}
+                  </>
+                )}
+                {gameTaskPanel.mode === "DEPOSIT.DNF" && (
+                  <>
+                    <form onSubmit={loginForm.handleSubmit}>
+                      <div className="flex flex-col">
+                        <p className="text-white font-Magra mb-3">
+                          Deposit DNF
+                        </p>
+                        <input
+                          name="quantity"
+                          type="number"
+                          placeholder="Total DNF"
+                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          onChange={(e) => {
+                            if (e.target.value === "")
+                              setDNFDepositAmount(0);
+                            else setDNFDepositAmount(parseInt(e.target.value));
+                          }}
+                          value={DNFDepositAmount}
+                          min={0}
+                        />
+                      </div>
+                    </form>
+                    {depositState !== "LOADING" && (
+                      <div className="flex flex-row justify-around w-full">
+                        <button
+                          type={"submit"}
+                          // disabled={}
+                          onClick={async () => {
+                            try {
+                              setDepositState("LOADING");
+                              if (
+                                dnfDepositAllowance &&
+                                dnfDepositAllowance.toBigInt() <
+                                  BigInt(DNFDepositAmount * 1e18)
+                              ) {
+                                console.log(
+                                  "dnfDepositAllowance button",
+                                  dnfDepositAllowance &&
+                                    BigInt(dnfDepositAllowance.toString())
+                                );
+                                const encodedData = await getEncodeData(
+                                  gameTaskPanel.mode.includes("DNF")
+                                    ? "USDT"
+                                    : "DNF"
+                                );
+                                console.log(
+                                  "encodedData DNF deposit",
+                                  encodedData
+                                );
+
+                                const txSend = await sendDNFDepositApproval(
+                                  DEPO_ADDR,
+                                  BigInt(DNFDepositAmount * 1e18)
+                                );
+                                console.log(
+                                  "txSend DNF deposit approval",
+                                  txSend
+                                );
+                                if (txSend?.status === 1) {
+                                  setDepositState("");
+                                  toast("DNF Approval Complete");
+                                }
+                              } else {
+                                const encodedData = await getEncodeData("DNF");
+                                const txReq = {
+                                  data: encodedData.deposit,
+                                  to: DEPO_ADDR,
+                                  from: walletAddress,
+                                };
+
+                                const txSend = await sendDNFDeposit(txReq);
+                                console.log("txSend USDT deposit", txSend);
+                                if (txSend?.status === 1) {
+                                  setDepositState("");
+                                  toast("DNF Deposit Complete");
+                                  getUserData();
+                                  getDNFWithdrawHistory();
+                                }
+                              }
+                            } catch (error) {
+                              console.error(error);
+                              setDepositState("");
+                            }
+                          }}
+                          className={`${
+                            DNFDepositAmount <= 0
+                              ? "bg-gray-700"
+                              : dnfDepositAllowance &&
+                                dnfDepositAllowance.toBigInt() <
+                                  BigInt(DNFDepositAmount * 1e18)
+                              ? "bg-red-500"
+                              : "bg-green-500"
+                          } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                          disabled={DNFDepositAmount <= 0}
+                        >
+                          {dnfDepositAllowance &&
+                          dnfDepositAllowance.toBigInt() <
+                            BigInt(DNFDepositAmount * 1e18)
+                            ? "Approval"
+                            : "Deposit"}
+                        </button>
+                      </div>
+                    )}
+                    {depositState === "LOADING" && (
+                      <p className="text-white/50 font-Magra">Waiting...</p>
+                    )}
+                  </>
+                )}
+                {gameTaskPanel.mode === "DEPOSIT.USDT.WITHDRAW" && (
+                  <>
+                    <form onSubmit={loginForm.handleSubmit}>
+                      <div className="flex flex-col gap-2">
+                        <p className="text-white font-Magra mb-3">
+                          Withdraw USDT
+                        </p>
+                        <input
+                          name="quantity"
+                          type="number"
+                          placeholder="Total USDT"
+                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          onChange={(e: any) =>
+                            setUSDTWithdrawAmount(e.target.value)
+                          }
+                          value={USDTWithdrawAmount}
+                        />
+                        <input
+                          name="address"
+                          type="string"
+                          placeholder="Address"
+                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          onChange={(e: any) =>
+                            setUSDTWithdrawAddress(e.target.value)
+                          }
+                          value={USDTWithdrawAddress}
+                        />
+                        <input
+                          name="2FA"
+                          type="number"
+                          placeholder="2FA"
+                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          onChange={(e: any) => setGAValue(e.target.value)}
+                          value={GAValue}
+                        />
+                        {!userData?.ga_key && (
+                          <p className="font-Magra text-md text-red-500 ml-3">
+                            Please configure 2FA on Setting
+                          </p>
+                        )}
+                      </div>
+                    </form>
+                    <button
+                      type={"submit"}
+                      // disabled={}
+                      onClick={async () => {
+                        try {
+                          // setWithdrawState("LOADING");
+                          let options = {
+                            headers: {
+                              "my-auth-key": token,
+                            },
+                          };
+                          const response = await axiosInstance({
+                            url: "/wallet/usdt/withdraw",
+                            method: "POST",
+                            headers: options.headers,
+                            data: {
+                              amount: USDTWithdrawAmount,
+                              facode: GAValue,
+                              to: USDTWithdrawAddress,
+                            },
+                          });
+                          if ((response as any)?.success) {
+                            toast("USDT Withdraw Success");
+                            // setWithdrawState("");
+                          } else {
+                            toast("USDT Withdraw Failed");
+                            // setWithdrawState("");
+                          }
+                        } catch (error) {
+                          console.error(error);
+                          // setWithdrawState("");
+                        }
+                      }}
+                      className={`${
+                        USDTWithdrawAmount === 0 ||
+                        USDTWithdrawAddress === "" ||
+                        GAValue === ""
+                          ? "bg-gray-600"
+                          : "bg-green-500"
+                      } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                      disabled={
+                        USDTWithdrawAmount === 0 ||
+                        USDTWithdrawAddress === "" ||
+                        GAValue === ""
+                      }
+                    >
+                      Withdraw
+                    </button>
+                  </>
+                )}
+                {gameTaskPanel.mode === "DEPOSIT.DNF.WITHDRAW" && (
+                  <>
+                    <form onSubmit={loginForm.handleSubmit}>
+                      <div className="flex flex-col gap-2">
+                        <p className="text-white font-Magra mb-3">
+                          Withdraw DNF
+                        </p>
+                        <input
+                          name="quantity"
+                          type="number"
+                          placeholder="Total DNF"
+                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          onChange={(e: any) =>
+                            setDNFWithdrawAmount(e.target.value)
+                          }
+                          value={DNFWithdrawAmount}
+                        />
+                        <input
+                          name="address"
+                          type="string"
+                          placeholder="Address"
+                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          onChange={(e: any) =>
+                            setDNFWithdrawAddress(e.target.value)
+                          }
+                          value={DNFWithdrawAddress}
+                        />
+                        <input
+                          name="2FA"
+                          type="number"
+                          placeholder="2FA"
+                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
+                          style={{
+                            background: `url(image/InputBox.png) no-repeat `,
+                          }}
+                          onChange={(e: any) => setGAValue(e.target.value)}
+                          value={GAValue}
+                        />
+                        {!userData?.ga_key && (
+                          <p className="font-Magra text-md text-red-500 ml-3">
+                            Please configure 2FA on Setting
+                          </p>
+                        )}
+                      </div>
+                    </form>
+                    <button
+                      type={"submit"}
+                      // disabled={}
+                      onClick={async () => {
+                        try {
+                          // setWithdrawState("LOADING");
+                          let options = {
+                            headers: {
+                              "my-auth-key": token,
+                            },
+                          };
+                          const response = await axiosInstance({
+                            url: "/wallet/dnf/withdraw",
+                            method: "POST",
+                            headers: options.headers,
+                            data: {
+                              amount: DNFWithdrawAmount,
+                              facode: GAValue,
+                              to: DNFWithdrawAddress,
+                            },
+                          });
+                          if ((response as any)?.success) {
+                            toast("DNF Withdraw Success");
+                            // setWithdrawState("");
+                          } else {
+                            toast("DNF Withdraw Failed");
+                            // setWithdrawState("");
+                          }
+                        } catch (error) {
+                          console.error(error);
+                          // setWithdrawState("");
+                        }
+                      }}
+                      className={`${
+                        DNFWithdrawAmount === 0 ||
+                        DNFWithdrawAddress === "" ||
+                        GAValue === ""
+                          ? "bg-gray-600"
+                          : "bg-green-500"
+                      } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                      disabled={
+                        DNFWithdrawAmount === 0 ||
+                        DNFWithdrawAddress === "" ||
+                        GAValue === ""
+                      }
+                    >
+                      Withdraw
+                    </button>
+                  </>
+                )}
+                {gameTaskPanel.mode === "DEPOSIT.USDT.HISTORY" && (
+                  <>
+                    <table className="w-full text-base">
+                      <thead className=" uppercase border-y ">
+                        <tr className="text-yellow-500 font-Magra">
+                          <th scope="col" className="w-[6rem]">
+                            Date
+                          </th>
+                          <th scope="col" className="w-[7rem] pr-1">
+                            Description
+                          </th>
+                          <th scope="col" className="w-[4rem] py-1">
+                            Amount
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {USDTWithdrawalHistory?.lists?.map((t: any) => {
+                          var date = new Date(t.date * 1000);
+
+                          // Will display time in 10:30:23 format
+                          // TODO: change with function from utils later
+                          const formattedTime = formatToUTC(date);
+                          var desc = "";
+                          console.log(t);
+                          if (t.desc.deposit) desc = "Deposit";
+                          if (t.desc.market) {
+                            if (t.desc.market === "BUY")
+                              desc =
+                                "Buy @" +
+                                ethers.utils.formatEther(t.desc.price);
+                            if (t.desc.market === "SELL")
+                              desc =
+                                "Sell @" +
+                                ethers.utils.formatEther(t.desc.price);
+                          }
+                          if (t.desc.withdrawto) {
+                            desc =
+                              "Withdraw to " +
+                              t.desc.withdrawto.replace(
+                                /^(.{8})(.*)(.{5})$/gm,
+                                `$1..$3`
+                              );
+                          }
+                          return (
+                            <tr className="text-white text-left">
+                              <td>{formattedTime}</td>
+                              <td className={"text-white text-base"}>{desc}</td>
+                              <td
+                                className={`${
+                                  t.amount < 0
+                                    ? "text-red-500"
+                                    : "text-green-500"
+                                } pl-4`}
+                              >
+                                {`${parseFloat(
+                                  formatUnits(t.amount, 18)
+                                ).toFixed(2)} USDT`}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                    <ReactPaginate
+                      onPageChange={paginateUSDTDepositHistory}
+                      pageCount={
+                        USDTWithdrawalHistory?.totalpage > 0
+                          ? USDTWithdrawalHistory?.totalpage
+                          : 1
+                      }
+                      marginPagesDisplayed={1}
+                      pageRangeDisplayed={3}
+                      previousLabel={"<<"}
+                      nextLabel={">>"}
+                      containerClassName={
+                        "flex flex-row text-black items-center text-2xl justify-center"
+                      }
+                      breakClassName={
+                        "font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white"
+                      }
+                      pageLinkClassName={
+                        "font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white"
+                      }
+                      previousLinkClassName={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white`}
+                      nextLinkClassName={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white`}
+                      activeLinkClassName={
+                        "font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white text-[#FFC700]"
+                      }
+                    />
+                  </>
+                )}
+                {gameTaskPanel.mode === "DEPOSIT.DNF.HISTORY" && (
+                  <>
+                    <table className="w-full text-base">
+                      <thead className=" uppercase border-y ">
+                        <tr className="text-yellow-500 font-Magra">
+                          <th scope="col" className="w-[6rem]">
+                            Date
+                          </th>
+                          <th scope="col" className="w-[7rem] pr-1">
+                            Description
+                          </th>
+                          <th scope="col" className="w-[4rem] py-1">
+                            Amount
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {DNFWithdrawalHistory?.lists?.map((t: any) => {
+                          var date = new Date(t.date * 1000);
+
+                          // Will display time in 10:30:23 format
+                          // TODO: change with function from utils later
+                          const formattedTime = formatToUTC(date);
+                          var desc = "";
+                          console.log(t);
+                          if (t.desc.deposit) desc = "Deposit";
+                          if (t.desc.market) {
+                            if (t.desc.market === "BUY")
+                              desc =
+                                "Buy @" +
+                                ethers.utils.formatEther(t.desc.price);
+                            if (t.desc.market === "SELL")
+                              desc =
+                                "Sell @" +
+                                ethers.utils.formatEther(t.desc.price);
+                          }
+                          if (t.desc.withdrawto) {
+                            desc =
+                              "Withdraw to " +
+                              t.desc.withdrawto.replace(
+                                /^(.{8})(.*)(.{5})$/gm,
+                                `$1..$3`
+                              );
+                          }
+                          return (
+                            <tr className="text-white text-left">
+                              <td>{formattedTime}</td>
+                              <td className={"text-white text-base"}>{desc}</td>
+                              <td
+                                className={`${
+                                  t.amount < 0
+                                    ? "text-red-500"
+                                    : "text-green-500"
+                                } pl-4`}
+                              >
+                                {`${parseFloat(
+                                  formatUnits(t.amount, 18)
+                                ).toFixed(2)} DNF`}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+
+                    <ReactPaginate
+                      onPageChange={paginateDNFDepositHistory}
+                      pageCount={
+                        DNFWithdrawalHistory?.totalpage > 0
+                          ? DNFWithdrawalHistory?.totalpage
+                          : 1
+                      }
+                      marginPagesDisplayed={1}
+                      pageRangeDisplayed={3}
+                      previousLabel={"<<"}
+                      nextLabel={">>"}
+                      containerClassName={
+                        "flex flex-row text-black items-center text-2xl justify-center"
+                      }
+                      breakClassName={
+                        "font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white"
+                      }
+                      pageLinkClassName={
+                        "font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white"
+                      }
+                      previousLinkClassName={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white`}
+                      nextLinkClassName={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white`}
+                      activeLinkClassName={
+                        "font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white text-[#FFC700]"
+                      }
+                    />
+                  </>
+                )}
+              </>
             </div>
           </div>
         </div>
@@ -2390,9 +4362,16 @@ export const AppTemp = () => {
                         style={{
                           background: `url(image/InputBox.png) no-repeat `,
                         }}
-                        onChange={changeQuantity}
-                        value={qty}
+                        onChange={(e: any) => setWithdrawAmount(e.target.value)}
+                        value={withdrawAmount}
                       />
+                      <p className="text-green-400 font-Magra my-3">
+                        You will receive{" "}
+                        {withdrawAmount > 0
+                          ? withdrawAmount - withdrawAmount * (5 / 100)
+                          : 0}{" "}
+                        DNF
+                      </p>
                       <p className="text-white font-Magra my-3">Address</p>
                       <input
                         name="Address"
@@ -2401,43 +4380,33 @@ export const AppTemp = () => {
                         style={{
                           background: `url(image/InputBox.png) no-repeat `,
                         }}
-                        readOnly
+                        // readOnly
                         // onChange={loginForm.handleChange}
                         // onBlur={loginForm.handleBlur}
-                        value={usd}
+                        onChange={(e: any) =>
+                          setWithdrawAddress(e.target.value)
+                        }
+                        value={withdrawAddress}
                       />
                       <p className="text-white font-Magra my-3">F2A Code</p>
                       <input
-                        name="F2A-code"
+                        name="2FA"
                         type="text"
                         className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
                         style={{
                           background: `url(image/InputBox.png) no-repeat `,
                         }}
-                        readOnly
+                        // readOnly
                         // onChange={loginForm.handleChange}
                         // onBlur={loginForm.handleBlur}
-                        value={usd}
+                        onChange={(e: any) => setGAValue(e.target.value)}
+                        value={GAValue}
                       />
 
-                      {!userData?.ga_key && buyWithBonus && (
+                      {!userData?.ga_key && (
                         <p className="font-Magra text-md text-red-500 ml-3">
                           Please configure 2FA on Setting
                         </p>
-                      )}
-
-                      {buyWithBonus && (
-                        <input
-                          name="2FA"
-                          type="number"
-                          placeholder="2FA"
-                          className="py-3 w-[350px] h-[53px] px-4 rounded-xl placeholder:text-[#A8A8A8] text-white font-Magra font-bold"
-                          style={{
-                            background: `url(image/InputBox.png) no-repeat `,
-                          }}
-                          onChange={(e: any) => setGAValue(e.target.value)}
-                          value={GAValue}
-                        />
                       )}
                     </div>
                   </form>
@@ -2445,97 +4414,40 @@ export const AppTemp = () => {
                     type={"submit"}
                     // disabled={}
                     onClick={async () => {
-                      console.log("usd amount approval", usd);
-                      if (buyWithBonus) {
-                        console.log("Buy with bonus clicked", {
-                          qty: parseInt(qty as string),
+                      console.log("withdraw amount approval", withdrawAmount);
+                      let options = {
+                        headers: {
+                          "my-auth-key": token,
+                        },
+                      };
+                      const response = await axiosInstance({
+                        url: "/bonus/withdraw",
+                        method: "POST",
+                        headers: options.headers,
+                        data: {
+                          amount: withdrawAmount,
+                          to: withdrawAddress,
                           facode: GAValue.toString(),
-                        });
-                        let options = {
-                          headers: {
-                            "my-auth-key": token,
-                          },
-                        };
-                        const response = await axiosInstance({
-                          url: "/ticket/buyWithBonuses",
-                          method: "POST",
-                          headers: options.headers,
-                          data: {
-                            qty: parseInt(qty as string),
-                            facode: GAValue.toString(),
-                          },
-                        });
-                        if (response.data.success) {
-                          toast("Buy Ticket Confirmed");
-                          getUserData();
-                        } else alert(response.data.message);
-                      } else if (!buyWithBonus) {
-                        if (
-                          ticketAllowance &&
-                          ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                        ) {
-                          // const txReq = { value: BigInt(usd * 1e18) }
-                          const txSend = await send(
-                            TICKET_ADDR,
-                            BigInt(usd * 1e18)
-                          );
-                          console.log("txSend ticketApproval", txSend);
-                        } else {
-                          let options = {
-                            headers: {
-                              "my-auth-key": token,
-                            },
-                          };
-                          const response = await axiosInstance({
-                            url: "/ticket/createRawBuyTickets",
-                            method: "POST",
-                            headers: options.headers,
-                            data: {
-                              qty: qty,
-                            },
-                          });
-                          console.log(response.data);
-                          if (response.data.success) {
-                            const txReq = {
-                              data: response.data.result,
-                              to: TICKET_ADDR,
-                              from: walletAddress,
-                            };
-                            const txSend = await sendTicketBuy(txReq);
-                            console.log("txSend buy ticket", txSend);
-                            if (txSend && txSend.transactionHash)
-                              checkValidateTx(txSend.transactionHash);
-                          }
-                        }
-                      }
+                        },
+                      });
+                      if (response.data.success) {
+                        toast("Withdraw Confirmed");
+                        getUserData();
+                        setWithdrawPanel({ show: false, mode: "WITHDRAW" });
+                      } else alert(response.data.message);
                     }}
                     className={`${
-                      buyWithBonus
-                        ? "bg-green-500"
-                        : ticketAllowance &&
-                          ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                        ? "bg-red-500"
-                        : "bg-green-500"
+                      userData?.ga_key ? "bg-green-500" : "bg-red-500"
                     } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
-                    disabled={
-                      (buyWithBonus &&
-                        GAValue.length < 6 &&
-                        !userData?.ga_key) ||
-                      sendTicketBuyState.status !== "None"
-                    }
+                    disabled={!userData?.ga_key}
                   >
-                    {buyWithBonus
-                      ? "Buy with Bonus"
-                      : ticketAllowance &&
-                        ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                      ? "Approval"
-                      : "Transfer"}
+                    Withdraw
                   </button>
-                  {sendTicketBuyState.status !== "None" && (
+                  {/* {sendTicketBuyState.status !== "None" && (
                     <p className="text-white/50 font-Magra">
                       {sendTicketBuyState.status}
                     </p>
-                  )}
+                  )} */}
                 </>
               )}
               {withdrawPanel.mode === "HISTORY" && (
@@ -2549,7 +4461,7 @@ export const AppTemp = () => {
                         Description
                       </th>
                       <th scope="col" className="w-[4rem] py-1">
-                        Amt
+                        Amount
                       </th>
                     </tr>
                   </thead>
@@ -2558,18 +4470,8 @@ export const AppTemp = () => {
                       var date = new Date(t.recdate * 1000);
 
                       // Will display time in 10:30:23 format
-                      var formattedTime =
-                        date.getDate() +
-                        "/" +
-                        (date.getMonth() + 1) +
-                        "/" +
-                        date.getFullYear() +
-                        " " +
-                        date.getHours() +
-                        ":" +
-                        date.getMinutes() +
-                        ":" +
-                        date.getSeconds();
+                      // TODO: change with function from utils later
+                      const formattedTime = formatToUTC(date);
                       return (
                         <tr className="text-white text-left">
                           <td>{formattedTime}</td>
@@ -2579,9 +4481,9 @@ export const AppTemp = () => {
                               t.amount < 0 ? "text-red-500" : "text-green-500"
                             } pl-4`}
                           >
-                            {`$ ${parseFloat(formatUnits(t.amount, 18)).toFixed(
+                            {`${parseFloat(formatUnits(t.amount, 18)).toFixed(
                               2
-                            )}`}
+                            )} DNF`}
                           </td>
                         </tr>
                       );
@@ -2601,7 +4503,7 @@ export const AppTemp = () => {
                 src="image/logoutBtn.png"
                 width={30}
                 height={30}
-                alt="Close Ticket"
+                alt="Close JPass"
                 onClick={() => setJPassPanel({ show: false, data: [] })}
               />
             </div>
@@ -2663,98 +4565,110 @@ export const AppTemp = () => {
                     />
                   )}
                 </form>
-                <button
-                  type={"submit"}
-                  // disabled={}
-                  onClick={async () => {
-                    console.log("usd amount approval", usd);
-                    if (buyWithBonus) {
-                      console.log("Buy with bonus clicked", {
-                        qty: parseInt(qty as string),
-                        facode: GAValue.toString(),
-                      });
-                      let options = {
-                        headers: {
-                          "my-auth-key": token,
-                        },
-                      };
-                      const response = await axiosInstance({
-                        url: "/ticket/buyWithBonuses",
-                        method: "POST",
-                        headers: options.headers,
-                        data: {
-                          qty: parseInt(qty as string),
+                {jPassState !== "LOADING" && (
+                  <button
+                    type={"submit"}
+                    // disabled={}
+                    onClick={async () => {
+                      console.log(
+                        "JPass amount approval",
+                        jPassPanel?.data?.price
+                      );
+                      setJPassState("LOADING");
+                      if (buyWithBonus) {
+                        console.log("Buy with bonus clicked", {
+                          code: jPassPanel?.data?.purchaseCode,
                           facode: GAValue.toString(),
-                        },
-                      });
-                      if (response.data.success) {
-                        toast("Buy Ticket Confirmed");
-                        getUserData();
-                      } else alert(response.data.message);
-                    } else if (!buyWithBonus) {
-                      if (
-                        ticketAllowance &&
-                        ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                      ) {
-                        // const txReq = { value: BigInt(usd * 1e18) }
-                        const txSend = await send(
-                          TICKET_ADDR,
-                          BigInt(usd * 1e18)
-                        );
-                        console.log("txSend ticketApproval", txSend);
-                      } else {
+                        });
                         let options = {
                           headers: {
                             "my-auth-key": token,
                           },
                         };
                         const response = await axiosInstance({
-                          url: "/ticket/createRawBuyTickets",
+                          url: "/item/buyWithBonuses",
                           method: "POST",
                           headers: options.headers,
                           data: {
-                            qty: qty,
+                            code: jPassPanel?.data?.purchaseCode,
+                            facode: GAValue.toString(),
                           },
                         });
-                        console.log(response.data);
                         if (response.data.success) {
-                          const txReq = {
-                            data: response.data.result,
-                            to: TICKET_ADDR,
-                            from: walletAddress,
+                          setJPassState("");
+                          toast("Buy JPass Confirmed");
+                          getUserData();
+                        } else alert(response.data.message);
+                      } else if (!buyWithBonus) {
+                        if (
+                          ticketAllowance &&
+                          ticketAllowance.toBigInt() <
+                            BigInt(jPassPanel?.data?.price * 1e18)
+                        ) {
+                          // const txReq = { value: BigInt(usd * 1e18) }
+                          const txSend = await JPassApprovalSend(
+                            TICKET_ADDR,
+                            BigInt(jPassPanel?.data?.price * 1e18)
+                          );
+                          setJPassState("");
+                          console.log("txSend JPassApproval", txSend);
+                        } else {
+                          let options = {
+                            headers: {
+                              "my-auth-key": token,
+                            },
                           };
-                          const txSend = await sendTicketBuy(txReq);
-                          console.log("txSend buy ticket", txSend);
-                          if (txSend && txSend.transactionHash)
-                            checkValidateTx(txSend.transactionHash);
+                          const response = await axiosInstance({
+                            url: "/item/createRawBuyItems",
+                            method: "POST",
+                            headers: options.headers,
+                            data: {
+                              code: jPassPanel?.data?.purchaseCode,
+                            },
+                          });
+                          console.log("JPass buy", response.data);
+                          if (response.data.success) {
+                            const txReq = {
+                              data: response.data.result,
+                              to: TICKET_ADDR,
+                              from: walletAddress,
+                            };
+                            console.log("txReq JPass", txReq);
+                            const txSend = await sendJPassBuy(txReq);
+                            console.log("txSend buy JPass", txSend);
+                            if (txSend && txSend.transactionHash)
+                              checkJPassValidateTx(txSend.transactionHash);
+                          }
                         }
                       }
+                    }}
+                    className={`${
+                      buyWithBonus
+                        ? "bg-green-500"
+                        : ticketAllowance &&
+                          ticketAllowance.toBigInt() <
+                            BigInt(jPassPanel?.data?.price * 1e18)
+                        ? "bg-red-500"
+                        : "bg-green-500"
+                    } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+                    disabled={
+                      (buyWithBonus &&
+                        GAValue.length < 6 &&
+                        !userData?.ga_key) ||
+                      sendJPassBuyState.status !== "None"
                     }
-                  }}
-                  className={`${
-                    buyWithBonus
-                      ? "bg-green-500"
+                  >
+                    {buyWithBonus
+                      ? "Buy with Bonus"
                       : ticketAllowance &&
-                        ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                      ? "bg-red-500"
-                      : "bg-green-500"
-                  } text-white font-Magra px-3.5 py-2.5 text-sm focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
-                  disabled={
-                    (buyWithBonus && GAValue.length < 6 && !userData?.ga_key) ||
-                    sendTicketBuyState.status !== "None"
-                  }
-                >
-                  {buyWithBonus
-                    ? "Buy with Bonus"
-                    : ticketAllowance &&
-                      ticketAllowance.toBigInt() < BigInt(usd * 1e18)
-                    ? "Approval"
-                    : "Buy Subscription"}
-                </button>
-                {sendTicketBuyState.status !== "None" && (
-                  <p className="text-white/50 font-Magra">
-                    {sendTicketBuyState.status}
-                  </p>
+                        ticketAllowance.toBigInt() <
+                          BigInt(jPassPanel?.data?.price * 1e18)
+                      ? "Approval"
+                      : "Buy Subscription"}
+                  </button>
+                )}
+                {jPassState === "LOADING" && (
+                  <p className="text-white/50 font-Magra">Waiting...</p>
                 )}
               </>
             </div>
@@ -3105,19 +5019,19 @@ export const AppTemp = () => {
                   onClick={() => handleOpenGameGuide(1)}
                   className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4 rounded-t-xl"
                 >
-                  Jurrasic World
+                  Jurassic World
                 </AccordionHeader>
                 <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
                   <p>
                     When the first dinosaur bone was described in Jurassic
                     World, it was thought to come from an elephant or perhaps a
-                    giant.Over a century later, scientists realised such fossils
-                    came from a creature they named Megalosaurus. Then, in
-                    leading anatomist recognised Megalosaurus as part of a whole
-                    new group of animals, which named Dinosaur. Since then,
-                    around 600 different dinosaur species have been described in
-                    Jurassic World and there is more dinosaur that haven’t
-                    described
+                    giant. Over a century later, scientists realised such
+                    fossils came from a creature they named Megalosaurus. Then,
+                    in leading anatomist recognised Megalosaurus as part of a
+                    whole new group of animals, which named Dinosaur. Since
+                    then, around 600 different dinosaur species have been
+                    described in Jurassic World and there is more dinosaur that
+                    haven’t described
                   </p>
                   <br />
                   <p>
@@ -3131,14 +5045,14 @@ export const AppTemp = () => {
                   </p>
                   <br />
                   <p>
-                    Hunters need to go to the [Jurassic] Market to buy Dino Eggs
-                    before starting the hunting journey. When the Dino Eggs is
-                    successfully purchased, the Hunter will also accumulate its
-                    own hunting value. With the increase of the hunting value,
-                    the hunter can also advance to a higher level and enjoy more
-                    benefits (the hunting value of the first-level relationship
-                    buddies of the hunter, can also contribute to the hunter's
-                    hunting value, and assist the hunter to advance).
+                    Decentralized Concept, fair and comfortable in buying and
+                    selling Jurassic Eggs. Jurassic Egg understands that this
+                    kind of concept is an interesting concept to develop, so
+                    Jurassic Egg tries to study it and find a fairer and more
+                    comfortable game method and the balance in each personal
+                    Wallet, your balance is only used when buying an Egg. And
+                    the balance goes directly to your respective Wallet when you
+                    sell it..
                   </p>
                 </AccordionBody>
               </Accordion>
@@ -3150,26 +5064,27 @@ export const AppTemp = () => {
                   onClick={() => handleOpenGameGuide(2)}
                   className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
                 >
-                  Start Game
+                  Game Introduction
                 </AccordionHeader>
                 <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
                   <p>
-                    Before beginning the hunting expedition, hunters must
-                    purchase Dino Eggs at the [Jurassic] Market. Following the
-                    purchase of Dino Eggs, the hunter will also raise their
-                    hunting value, climb the rank ladder, and earn more rewards.
-                    (The hunting value of the hunter's first-degree buddies will
-                    also help the hunter rise in rank.)
-                  </p>
-                  <br />
-                  <img src="/image/tableStartGame.png" alt="table start game" />
-                  <br />
-                  <p>
-                    Hunters will receive additional awards from the [Jurassic]
-                    Market in addition to hunting rewards for successfully
-                    capturing Dinosaurus during the hunting procedure. Hunters
-                    who failed to capture any Dinosaurus will also receive
-                    rewards for their efforts.
+                    Every Hunters going to start with getting Dino Egg
+                    <br />
+                    <br />
+                    Your Dino Egg will start hunting for you in the Jurassic
+                    World for 33-48 hours after a successful purchase. After the
+                    hunt, the Dino Egg are returned to the Jurassic Egg Market
+                    for sale. As more hunts are performed, the Dino Egg gains
+                    experience points and develops their ability to catch rare
+                    Dinosaur.
+                    <br />
+                    <br />
+                    If you successfully catch a Dinosaur, you will receive a
+                    certain amount of DNF and the Dinosaur Card.
+                    <br />
+                    <br />
+                    Collect every Dinosaur Card to enjoy our grand price up to
+                    9999 DNF
                   </p>
                 </AccordionBody>
               </Accordion>
@@ -3181,42 +5096,19 @@ export const AppTemp = () => {
                   onClick={() => handleOpenGameGuide(3)}
                   className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
                 >
-                  Jurrasic Market
+                  Jurassic Fund
                 </AccordionHeader>
                 <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
                   <p>
-                    A place where all hunters gather.
-                    <br />
-                    <br />
-                    Hunters who intend to purchase Dino Eggs here are required
-                    to have purchase eggs, tickets and USDT in their account.
-                    <br />
-                    <br />
-                    One hour prior to the end of the hunt, hunters who are
-                    hunting can pre-list their Dino Eggs at the [Jurassic]
-                    market. The Dino eggs will be listed immediately at the
-                    [Jurassic] market for other Hunters to purchase from after
-                    the hunting session has ended.
-                    <br />
-                    <br />
-                    All Dino Eggs listed in the Jurassic Market are only
-                    available for 24 hours. After 24 hours, any remaining
-                    Jurassic Eggs will trigger the Dino Fund's buy- back policy.
+                    Jurassic Fund is the most important component of the game.
+                    All Dino Eggs listed in the jurassic market are only
+                    availablle Up to 24hours, After that jurassic eggs will be
+                    buyback using the Dino Fund pool
                   </p>
-                </AccordionBody>
-              </Accordion>
-              <Accordion
-                open={openGameGuide === 5}
-                icon={<IconGameGuide id={5} open={openGameGuide} />}
-              >
-                <AccordionHeader
-                  onClick={() => handleOpenGameGuide(5)}
-                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
-                >
-                  Dino Egg
-                </AccordionHeader>
-                <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
-                  <img src="/image/tableDinoEgg.png" alt="table start game" />
+                  <br />
+                  <p className="text-[#FFC700]">Dino Fund usage includes :</p>
+                  <br />
+                  <img src="/image/jurassicfund.png" alt="jurassic fund" />
                 </AccordionBody>
               </Accordion>
               <Accordion
@@ -3227,17 +5119,35 @@ export const AppTemp = () => {
                   onClick={() => handleOpenGameGuide(4)}
                   className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
                 >
-                  Dinosaurus
+                  Jurassic Egg Market
                 </AccordionHeader>
                 <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
-                  <p className="font-bold">Captured Dinosaurus Rewards</p>
-                  <br />
-                  <img src="/image/tableDinosaur.png" alt="table start game" />
-                  <br />
                   <p>
-                    Higher rarity Dinosaurus can only be captured using a Epic
-                    or Glory Egg.
+                    Dino Eggs are sold sporadically at Jurassic Egg Market for
+                    50 DNF each. The price of Dino Eggs increases as XP levels
+                    increase.
+                    <br />
+                    <br />
+                    For a better gaming experience, the overall number of Dino
+                    Eggs in circula- tion will depend on the number active
+                    Hunters.
+                    <br />
+                    <br />
                   </p>
+                </AccordionBody>
+              </Accordion>
+              <Accordion
+                open={openGameGuide === 5}
+                icon={<IconGameGuide id={5} open={openGameGuide} />}
+              >
+                <AccordionHeader
+                  onClick={() => handleOpenGameGuide(5)}
+                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4 text-left"
+                >
+                  Get DNF Rewards When you Catch Dinosaur!
+                </AccordionHeader>
+                <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                  <img src="/image/dnfreward.png" alt="dnf reward" />
                 </AccordionBody>
               </Accordion>
               <Accordion
@@ -3248,24 +5158,10 @@ export const AppTemp = () => {
                   onClick={() => handleOpenGameGuide(6)}
                   className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
                 >
-                  Buddies
+                  Get More Rewards From Gacha
                 </AccordionHeader>
                 <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
-                  <p>
-                    Trainers can earn Buddy hunting bonuses by recruiting
-                    Buddies; Bonuses will be earned whenever your Buddies
-                    purchase Dino Eggs. Tiers receivable are based on the
-                    hunter’s personal rank.
-                  </p>
-                  <br />
-                  <p className="font-bold">Hunter\'s Rank</p>
-                  <img src="/image/tableBuddies.png" alt="table start game" />
-                  <br />
-                  <p>
-                    *In order to receive Buddy Hunting Bonus, the trainer will
-                    need to exhaust one Purchase Ticket before the day ends,
-                    2359hrs (GMT +8)
-                  </p>
+                  <img src="/image/gatchareward.png" alt="gatcha reward" />
                 </AccordionBody>
               </Accordion>
               <Accordion
@@ -3274,22 +5170,162 @@ export const AppTemp = () => {
               >
                 <AccordionHeader
                   onClick={() => handleOpenGameGuide(7)}
-                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4 rounded-b-xl"
+                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
                 >
-                  Rank Requalification
+                  Dino Egg
                 </AccordionHeader>
                 <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
                   <p>
-                    Hunter are required to maintain their rank in order to enjoy
-                    their current benefits. 1 week following a promotion to a
-                    rank, a minimum amount of personal hunting value is required
-                    for requalification.
+                    Dino Eggs will be listed soon in the Jurassic Egg Market and
+                    available for purchase once the hunt is over. With the new
+                    EXP, the cost of Dino Eggs will increase by 6%.
+                    <br />
+                    <br />
+                    2% will go to the seller, 1% will go to plattform Fee and 3%
+                    will go to the “Hunting Buddy Bonus” (if your buddy buy
+                    egg), if the Dino Egg has not been sold after 24 hours,
+                    Jurassic Fund will purchase the Dino Egg using the Dino Fund
+                    Pool.
+                    <br />
+                    <br />
+                    Active income from the Group
+                    <br />
+                    <br />
+                    Ticket Price 0.25 DNF/Ticket.
                   </p>
                   <br />
+                  <br />
+                  <img src="/image/dinoegg1.png" alt="dino egg" />
+                </AccordionBody>
+              </Accordion>
+              <Accordion
+                open={openGameGuide === 8}
+                icon={<IconGameGuide id={8} open={openGameGuide} />}
+              >
+                <AccordionHeader
+                  onClick={() => handleOpenGameGuide(8)}
+                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
+                >
+                  Hunting Buddy Bonus
+                </AccordionHeader>
+                <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                  <p>
+                    When your Buddy earns DNF from hunting in Jurassic Egg, you
+                    will be able to receive a 6.667% bonus on the amount they
+                    earn. Hunters can receive up to level 15 of their
+                    commander’s hunting bonus. With more Buddy, the more bonuses
+                    you can receive.
+                    <br />
+                    <br />
+                    Example :
+                    <br />
+                    <br />
+                    A Legendary hunter’s (all with in level 15 of his network)
+                    total hunting value for the day is 5,000,000 DNF, which
+                    means their hunting profit is 150,000 DNF. If so, this
+                    legendary hunter will get 6.667% of his 150,000 DNF. which
+                    is 10,000 DNF as his buddy Hunting Bonus.
+                    <br />
+                    <br />
+                    To receive the Hunting Bonus, the hunters must spend one
+                    Ticket before the day ends.
+                  </p>
+                  <br />
+                  <p className="font-bold">Hunter's Rank</p>
+                  <br />
+                </AccordionBody>
+              </Accordion>
+              <Accordion
+                open={openGameGuide === 9}
+                icon={<IconGameGuide id={9} open={openGameGuide} />}
+              >
+                <AccordionHeader
+                  onClick={() => handleOpenGameGuide(9)}
+                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4"
+                >
+                  Hunting Ranking
+                </AccordionHeader>
+                <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                  <p>
+                    As a Hunter and his partner continue to hunt dinosaur in the
+                    game, they will gradually move up to the next rank. The
+                    higher rank of the Hunter, more allowances
+                    <br />
+                    <br />
+                  </p>
+                  <br />
+                  <br />
+                  <img src="/image/hunterranking.png" alt="hunter ranking" />
+                </AccordionBody>
+              </Accordion>
+              <Accordion
+                open={openGameGuide === 10}
+                icon={<IconGameGuide id={10} open={openGameGuide} />}
+              >
+                <AccordionHeader
+                  onClick={() => handleOpenGameGuide(10)}
+                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4 rounded-b-xl"
+                >
+                  Dino Egg Trading Illustration
+                </AccordionHeader>
+                <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                  <img src="/image/dinotrading.png" alt="table start game" />
+                </AccordionBody>
+              </Accordion>
+              <Accordion
+                open={openGameGuide === 11}
+                icon={<IconGameGuide id={11} open={openGameGuide} />}
+              >
+                <AccordionHeader
+                  onClick={() => handleOpenGameGuide(11)}
+                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4 rounded-b-xl"
+                >
+                  Transaction Process
+                </AccordionHeader>
+                <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
                   <img
-                    src="/image/tableRankRequalification.png"
-                    alt="table start game"
+                    src="/image/transactionprocess.png"
+                    alt="transaction process"
                   />
+                </AccordionBody>
+              </Accordion>
+              <Accordion
+                open={openGameGuide === 12}
+                icon={<IconGameGuide id={12} open={openGameGuide} />}
+              >
+                <AccordionHeader
+                  onClick={() => handleOpenGameGuide(12)}
+                  className="text-[#FFC700] hover:text-[#FFC700] font-Magra font-bold bg-[#031A22] px-4 rounded-b-xl"
+                >
+                  Ultimate Hunter
+                </AccordionHeader>
+                <AccordionBody className="bg-[#031A22] px-5 py-4 text-white text-sm">
+                  <p className="text-[#FFC700]">
+                    Join and become an Ultimate Hunter!
+                  </p>
+                  <br />
+                  <br />
+                  <p>
+                    Subscribe to the Ultimate Pass to enjoy additional perks in
+                    Jurassic Egg
+                  </p>
+                  <br />
+                  <br />
+                  <p className="text-[#FFC700]">Ultimate Pass Benefits :</p>
+                  <br />
+                  <br />
+                  <p>
+                    Automatic sale of your Dino Egg (No need to "Pre-Register")
+                    <br />
+                    <br />
+                    1 Extra egg purchase per day
+                    <br />
+                    <br />
+                    10% less hunting time
+                  </p>
+                  <br />
+                  <br />
+                  <img src="/image/ultimatehunter.png" alt="ultimate hunter" />
                 </AccordionBody>
               </Accordion>
             </div>
@@ -3311,7 +5347,7 @@ export const AppTemp = () => {
         //         onClick={() => changeScene("HOME")}
         //       />
         //       <div className="flex flex-col items-center justify-center text-[1.5rem] text-white font-bold font-magra ">
-        //         Jurrasic Market
+        //         Jurassic Market
         //       </div>
         //       <img
         //         src="image/logoutBtn.png"
@@ -3514,12 +5550,24 @@ export const AppTemp = () => {
               console.log("payment finished", data);
               if (data.success) {
                 // setApproved(allowance);
-                setEggTransactionState("");
+                // setEggTransactionState("");
               }
               setTimeout(() => checkValidation(transactionData.id), 3000);
             }
           }}
         />
+      )}
+      {scene === "HOME" && notification && (
+        <div className="absolute top-[87px] flex flex-col">
+          <Marquee
+            loop={1}
+            onFinish={() => setNotification(null)}
+            speed={30}
+            className="font-Magra text-[#FFC700]"
+          >
+            {notification}
+          </Marquee>
+        </div>
       )}
       <div>
         <Stage
@@ -3555,6 +5603,8 @@ export const AppTemp = () => {
               <Home
                 onProfileClick={() => changeScene("PROFILE")}
                 scene={scene}
+                // toggle={toggle}
+                // playing={playing as boolean}
               />
             </>
           )}
@@ -3601,6 +5651,7 @@ export const AppTemp = () => {
           )}
         </Stage>
       </div>
+      {banner ? <ShowBanner image={banner} /> : ""}
       <ToastContainer />
     </div>
   );

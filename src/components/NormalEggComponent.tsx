@@ -9,11 +9,14 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 import { axiosInstance } from '../utils/api';
 import { useAuthStore, useStore } from '../utils/store';
+import { ethers } from "ethers";
+// import { formatUnits } from "ethers/lib/utils";
 
 // interface Draggable extends PIXI.DisplayObject {
 //     data: any;
 //     dragging: boolean;
 // }
+const rewardCards = ['herald', 'elite', 'ancient', 'mythical', 'immortal']
 const NormalEggComponent = ({
     key,
     data,
@@ -33,11 +36,14 @@ const NormalEggComponent = ({
     onDragEnd,
     setTicketCnt,
     setGatchaAnimationStatus,
+    setGatchaReward
 }: any) => {
 
     // console.log('eggRef', eggRef)
     const token = useAuthStore((state) => state.token);
     // const setGatchaAnimationStatus = useStore((state) => state.setGatchaAnimationStatus);
+    const userData = useStore((state) => state.userData);
+    console.log('userData', userData)
     const setMyListingEggData = useStore((state) => state.setMyListingEggData);
     // const eggPendingListData = useStore(
     //     (state) => state.eggPendingListData
@@ -51,30 +57,65 @@ const NormalEggComponent = ({
     //     setExpiryTime(data?.openat)
     // }, [data?.openat])
 
-    console.log("expiryTime NormalEgg", currentTime, expiryTime, data.id);
+    console.log("expiryTime NormalEgg", currentTime, expiryTime, data.id, 'openat ', data?.openat, 'listedat ', data?.listedat);
     // console.log('currentTime', currentTime, 'index: ', index)
     const [countdownTime, setCountdownTime] = useState({
         countdownHours: 0,
         countdownMinutes: 0,
         countdownSeconds: 0,
     });
+    useEffect(() => {
+        if (data?.openat > 0 && data?.openat > Math.floor(currentTime / 1000)) setExpiryTime(data?.openat)
+        if (data?.openat === 0 && expiryTime === 0) {
+            getPendingListingEgg()
+        }
+        // if (data?.openat !== 0 && expiryTime === 0) setExpiryTime(data?.openat)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [data?.openat, currentTime])
+
 
     const formatText = ({ expired, posted }: { expired: number, posted: number }) => {
-        if (expired === 0 && posted === 0) return "Pre-List";
-        else if (expired === 0 && posted === 1) return "Gatcha";
-        else
-            return (
-                `${countdownTime.countdownHours.toString().length === 1
-                    ? `0${countdownTime.countdownHours}`
-                    : countdownTime.countdownHours
-                }:${countdownTime.countdownMinutes.toString().length === 1
-                    ? `0${countdownTime.countdownMinutes}`
-                    : countdownTime.countdownMinutes
-                }:${countdownTime.countdownSeconds.toString().length === 1
-                    ? `0${countdownTime.countdownSeconds}`
-                    : countdownTime.countdownSeconds
-                }` || ""
-            );
+        const haveJPass = Math.floor(currentTime / 1000) <= userData?.ability_end
+        console.log('haveJPass', haveJPass)
+        console.log('currentTime', currentTime)
+        if (haveJPass) {
+            if (expired === 0 && data?.openat === 0) {
+                return 'Waiting'
+            }
+            if (expired === 0 && data?.openat !== 0 && Math.floor(currentTime / 1000) >= data?.openat) {
+                return "Gatcha"
+            }
+            else
+                return (
+                    `${countdownTime.countdownHours.toString().length === 1
+                        ? `0${countdownTime.countdownHours}`
+                        : countdownTime.countdownHours
+                    }:${countdownTime.countdownMinutes.toString().length === 1
+                        ? `0${countdownTime.countdownMinutes}`
+                        : countdownTime.countdownMinutes
+                    }:${countdownTime.countdownSeconds.toString().length === 1
+                        ? `0${countdownTime.countdownSeconds}`
+                        : countdownTime.countdownSeconds
+                    }` || ""
+                );
+        }
+        else {
+            if (expired === 0 && posted === 0) return "Pre-List";
+            else if (expired === 0 && posted === 1) return "Gatcha";
+            else
+                return (
+                    `${countdownTime.countdownHours.toString().length === 1
+                        ? `0${countdownTime.countdownHours}`
+                        : countdownTime.countdownHours
+                    }:${countdownTime.countdownMinutes.toString().length === 1
+                        ? `0${countdownTime.countdownMinutes}`
+                        : countdownTime.countdownMinutes
+                    }:${countdownTime.countdownSeconds.toString().length === 1
+                        ? `0${countdownTime.countdownSeconds}`
+                        : countdownTime.countdownSeconds
+                    }` || ""
+                );
+        }
     };
     // console.log('formatText', formatText(), data.id)
 
@@ -88,10 +129,8 @@ const NormalEggComponent = ({
             const remainingDayTime = countdownDateTime - currentTime;
             // console.log(`countdownDateTime ${index}`, countdownDateTime);
             // console.log(`currentTime ${index}`, currentTime);
-            // console.log(`remainingDayTime ${index}`, remainingDayTime);
             const totalHours = Math.floor(
-                (remainingDayTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-            );
+                (remainingDayTime) / (1000 * 60 * 60))
             const totalMinutes = Math.floor(
                 (remainingDayTime % (1000 * 60 * 60)) / (1000 * 60)
             );
@@ -107,8 +146,12 @@ const NormalEggComponent = ({
 
             if (remainingDayTime < 0) {
                 clearInterval(timeInterval);
-                setExpiryTime(0);
+                setExpiryTime(0)
                 getPendingListingEgg()
+                // if (currentTime < data?.openat) {
+                //     setExpiryTime(data?.openat)
+                // }
+                // else setExpiryTime(0);
             } else {
                 setCountdownTime(runningCountdownTime);
             }
@@ -176,7 +219,7 @@ const NormalEggComponent = ({
             method: "GET",
             headers: options.headers,
         });
-        console.log("get pendingListing egg Result:", data);
+        console.log("get pendingListing NormalEgg egg Result:", data);
         if (data?.success) {
             setEggPendingListData(data?.result);
         } else {
@@ -238,8 +281,6 @@ const NormalEggComponent = ({
                     }
                     if (formatText({ expired: expiryTime, posted: data?.posted }) === "Gatcha") {
                         // setGatchaAnimationStatus({ show: true, ticket: data?.ticket })
-                        setTicketCnt(Number(data?.ticket))
-                        setGatchaAnimationStatus(true)
                         console.log('gatcha', { show: true, ticket: data?.ticket })
                         let options = {
                             headers: {
@@ -254,15 +295,59 @@ const NormalEggComponent = ({
                         });
                         // console.log(result.data);
                         if (result.data.success) {
-                            const p = result.data.result.result;
-                            if (p.reward_name === "")
+                            const p = result.data.result;
+                            if (p.reward_type === "none") {
+                                setGatchaReward('ZONK')
+                                setTicketCnt(Number(data?.ticket))
+                                setGatchaAnimationStatus(true)
                                 toast("Oh no! The Dinosaur broke free!");
-                            else
+                            }
+                            else if (rewardCards.includes(p.reward_type)) {
+                                setGatchaReward('CARD')
+                                setTicketCnt(Number(data?.ticket))
+                                setGatchaAnimationStatus(true)
                                 toast(
                                     `Horray, you get ${p.reward_name} valued $ ` +
-                                    (p.reward_value)
+                                    ethers.utils.formatEther(p.reward_value)
                                     // ethers.utils.formatEther(p.reward_value) || 0
                                 );
+                            }
+                            else if (p.reward_type === "money") {
+                                setGatchaReward('NORMAL')
+                                setTicketCnt(Number(data?.ticket))
+                                setGatchaAnimationStatus(true)
+                                toast(
+                                    `Horray, you get ${p.reward_name} valued $ ` +
+                                    ethers.utils.formatEther(p.reward_value)
+                                    // ethers.utils.formatEther(p.reward_value) || 0
+                                );
+                            }
+                            else if (p.reward_type === "egg") {
+                                setGatchaReward('EGG')
+                                setTicketCnt(Number(data?.ticket))
+                                setGatchaAnimationStatus(true)
+                                toast(
+                                    `Horray, you get ${p.reward_name} valued ${p.reward_value}`
+                                );
+                            }
+                            else if (p.reward_type === "ticket") {
+                                setGatchaReward('TICKET')
+                                setTicketCnt(Number(data?.ticket))
+                                setGatchaAnimationStatus(true)
+                                toast(
+                                    `Horray, you get ${p.reward_name} valued ${p.reward_value}`
+                                );
+                            }
+                            else {
+                                setGatchaReward('NORMAL')
+                                setTicketCnt(Number(data?.ticket))
+                                setGatchaAnimationStatus(true)
+                                toast(
+                                    `Horray, you get ${p.reward_name} valued $ ` +
+                                    ethers.utils.formatEther(p.reward_value)
+                                    // ethers.utils.formatEther(p.reward_value) || 0
+                                );
+                            }
                             await getPendingListingEgg();
                             // window.location.reload()
                         } else {

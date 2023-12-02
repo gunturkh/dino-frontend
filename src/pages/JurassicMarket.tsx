@@ -10,10 +10,11 @@ import {
 } from "../utils/functions";
 import { formatUnits } from "ethers/lib/utils";
 import { axiosInstance } from "../utils/api";
-import { PAYGATEWAY_ADDR, USDT_ADDR } from "../utils/config";
+import { PAYGATEWAY_ADDR, TOKEN_ADDR } from "../utils/config";
 import { toast } from "react-toastify";
 import ReactPaginate from "react-paginate";
 import { useEthers } from "@usedapp/core";
+import React from "react";
 
 function JurassicMarket({
   sendEggApproval,
@@ -21,7 +22,10 @@ function JurassicMarket({
   sendPayTransaction,
 }: any) {
   const { activateBrowserWallet } = useEthers();
+
   const token = useAuthStore((state) => state.token);
+  const walletBalance = useStore((state) => state.walletBalance);
+  console.log('walletBalance JurassicMarket', walletBalance)
   const walletAddress = useStore((state) => state.walletAddress);
   const eggTransactionData = useStore((state) => state.eggTransactionData);
   const setEggTransactionData = useStore(
@@ -39,14 +43,14 @@ function JurassicMarket({
   const setMyListingEggData = useStore((state) => state.setMyListingEggData);
 
   // const [transactionState, setTransactionState] = useState<'APPROVAL' | 'PURCHASE'>('APPROVAL')
-  const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage] = useState(12);
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = eggListsData?.lists.slice(
-    indexOfFirstPost,
-    indexOfLastPost
-  );
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const [postsPerPage] = useState(12);
+  // const indexOfLastPost = currentPage * postsPerPage;
+  // const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  // const currentPosts = eggListsData?.lists.slice(
+  //   indexOfFirstPost,
+  //   indexOfLastPost
+  // );
 
   const changeScene = useStore((state) => state.changeScene);
   const period = formatUnits(userData?.bought.period, 18);
@@ -55,6 +59,8 @@ function JurassicMarket({
   // const total = formatUnits(userData.bought.total, 18);
   // console.log('progress JurassicMarket', progress)
   const approved = useStore((state) => state.approved);
+  const eggListFilter = useStore((state) => state.eggListFilter);
+  const setEggListFilter = useStore((state) => state.setEggListFilter);
   console.log('eggTransactionData', eggTransactionData)
   // if (parseFloat(approved as string) >= parseFloat(eggTransactionData.total))  setTransactionState('PURCHASE')
   console.log('approved JurassicMarket', (approved))
@@ -72,7 +78,7 @@ function JurassicMarket({
   const [currentTime, setCurrentTime] = useState(new Date().getTime());
   // const [myListingEgg, setMyListingEgg] = useState<any>([]);
   const rank_dateend = new Date(userData?.rank_end * 1000).toLocaleString();
-  const [marketFilter, setMarketFilter] = useState<any>("Price");
+  // const [marketFilter, setMarketFilter] = useState<any>("Price");
 
   const processTransaction = async (id: string, ticket: number) => {
     let options = {
@@ -115,6 +121,7 @@ function JurassicMarket({
       });
       console.log("processTransaction Result:", response);
       if (response?.data?.success) {
+        setSelectedPanel('My Listing')
         setEggTransactionData({ ...response?.data?.result });
         // if (selectedPanel === 'My Listing') setSelectedPanel("Finish");
       }
@@ -130,13 +137,14 @@ function JurassicMarket({
       },
     };
     const data: any = await axiosInstance({
-      url: "/egg/lists",
+      url: `/egg/lists?page=${eggListFilter?.page}&sort=${eggListFilter?.sortby}&order=${eggListFilter?.orderby}`,
       method: "GET",
       headers: options.headers,
     });
     console.log("getEggList Result:", data);
     if (data?.status === 200 && data?.data?.result?.lists) {
       setEggListsData(data?.data?.result);
+      // setEggListsData({ remaining: 0, lists: [] });
     }
   };
 
@@ -161,75 +169,79 @@ function JurassicMarket({
     }
   };
 
-  const handleKeep = async (id: string, ticket: number) => {
-    let options = {
-      headers: {
-        "my-auth-key": token,
-      },
-    };
-    const { data }: any = await axiosInstance({
-      url: "/egg/keep",
-      method: "POST",
-      headers: options.headers,
-      data: { id },
-    });
-    console.log("handleKeep Result:", data);
-    if (data?.success) {
-      processTransaction(id, ticket);
-    } else {
-      toast(data.message);
+  const handleKeep = async (id: string, ticket: number, total: string) => {
+    // if (parseFloat(walletBalance) >= parseFloat(formatUnits(total, 18))) {
+    console.log('handleKeep enough balance', parseFloat(walletBalance), parseInt(formatUnits(total, 18)), parseFloat(walletBalance) >= parseFloat(formatUnits(total, 18)))
+    if (parseFloat(walletBalance) >= parseFloat(formatUnits(total, 18))) {
+      let options = {
+        headers: {
+          "my-auth-key": token,
+        },
+      };
+      const { data }: any = await axiosInstance({
+        url: "/egg/keep",
+        method: "POST",
+        headers: options.headers,
+        data: { id },
+      });
+      console.log("handleKeep Result:", data);
+      if (data?.success) {
+        processTransaction(id, ticket);
+      } else {
+        toast(data.message);
+      }
     }
+    else toast("Your balance is not enough to keep egg!")
   };
 
   const paginate = ({ selected }: { selected: number }) => {
-    setCurrentPage(selected + 1);
+    const loadEggListWithPage = async (props: any) => {
+      let options = {
+        headers: {
+          "my-auth-key": token,
+        },
+      };
+      const response = await axiosInstance({
+        url: "/egg/lists",
+        params: {
+          page: props,
+        },
+        method: "GET",
+        headers: options.headers,
+      });
+      console.log("page response", response);
+      console.log("page props", props.current);
+      setEggListsData(response.data.result);
+    };
+    loadEggListWithPage(selected + 1)
+    setEggListFilter({ ...eggListFilter, page: selected + 1 })
   };
 
   // create a function for filtering from frontend, when click price and time filter
   // TODO: need to check the logic and where to look for the data
   const filterEggList = (filter: string) => {
-    if (filter === "Price") {
-      // const sortedList = eggListsData?.lists.sort((a: any, b: any) => {
-      //   return a.total - b.total;
-      // });
-      // setEggListsData({ ...eggListsData, lists: sortedList });
-      setMarketFilter("Price");
-    } else if (filter === "Time") {
-      // const sortedList = eggListsData?.lists.sort((a: any, b: any) => {
-      //   return a.openat - b.openat;
-      // });
-      // setEggListsData({ ...eggListsData, lists: sortedList });
-      setMarketFilter("Time");
+    if (filter === "price") {
+      if (eggListFilter?.sortby === 'asc') setEggListFilter({ ...eggListFilter, orderby: 'price', sortby: 'desc' })
+      if (eggListFilter?.sortby === 'desc') setEggListFilter({ ...eggListFilter, orderby: 'price', sortby: 'asc' })
+    } else if (filter === "time") {
+      if (eggListFilter?.sortby === 'asc') setEggListFilter({ ...eggListFilter, orderby: 'time', sortby: 'desc' })
+      if (eggListFilter?.sortby === 'desc') setEggListFilter({ ...eggListFilter, orderby: 'time', sortby: 'asc' })
     }
   };
+  useEffect(() => {
+    return (() => setEggListFilter({ orderby: 'time', sortby: 'asc', page: 1 })
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  useEffect(() => {
+    getEggList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eggListFilter.sortby, eggListFilter.orderby, eggListFilter.page,])
 
   // TODO: handle unfinished egg and continue the transaction
   useEffect(() => {
     getUnfinishedEggTransaction();
     getMyListingEgg();
-
-    // const unlockWallet = async () => {
-    //     console.log('walletAddress', walletAddress)
-    //     // console.log("allowance ", allowance);
-    //     // console.log("account approve", walletAddress);
-    //     if (walletAddress?.length === 0) activateBrowserWallet({ type: 'metamask' })
-    //     else {
-    //         try {
-    //             const txReq = {
-    //                 to: USDT_ADDR,
-    //                 from: walletAddress,
-    //                 data: eggTransactionData.TxRawApproval,
-    //             };
-    //             console.log("txReq", txReq);
-    //             const txSend = await sendTransaction(txReq);
-    //             console.log("txSend", txSend);
-    //         } catch (error) {
-    //             // @ts-ignore
-    //             toast(error)
-    //         }
-    //     }
-    // }
-    // unlockWallet()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedPanel]);
 
@@ -267,7 +279,7 @@ function JurassicMarket({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eggTransactionState]);
-
+  console.log('current time > 1684152000', Math.floor(currentTime / 1000), Math.floor(currentTime / 1000) > 1684152000)
   useEffect(() => {
     let timeInterval: any;
     // const countdown = () => {
@@ -310,10 +322,28 @@ function JurassicMarket({
     // };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTime, eggTransactionData?.expired]);
+
+  useEffect(() => {
+    console.log('check approved', approved)
+    if (approved !== '0' && parseFloat(approved as string) >= parseFloat(eggTransactionData.total)) {
+      console.log('check approved purchase', parseFloat(approved as string) >= parseFloat(eggTransactionData.total))
+      setEggTransactionState({ mode: 'PURCHASE', state: '' })
+    }
+    else setEggTransactionState({ mode: 'APPROVAL', state: '' })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  useEffect(() => {
+    if (eggListsData?.lists.length > 0) {
+      console.log('egg list jurassic currentTime', currentTime)
+      console.log('egg list jurassic', eggListsData?.lists?.map((item: any) => (item.openat)).sort((a, b) => (b - a)))
+
+    }
+  }, [currentTime, eggListsData?.lists])
+
   return (
     <div className="absolute w-full h-full flex justify-center items-center">
       <div className="flex z-20 h-[100vh] w-[450px] max-[450px]:w-[calc(100vw)] max-w-[450px] justify-center items-center flex-col sm:px-4 shadow-sm rounded-sm ">
-        <div className="flex flex-row w-full justify-between mt-4 mb-1">
+        <div className="flex flex-row w-full justify-between mt-4 mb-1 h-[40px]" style={{ zIndex: 99999 }}>
           <img
             src="image/backBtn.png"
             width={40}
@@ -322,7 +352,7 @@ function JurassicMarket({
             onClick={() => changeScene("HOME")}
           />
           <div className="flex flex-col items-center justify-center text-[1.5rem] text-white font-bold font-magra ">
-            Jurrasic Market
+            Jurassic Market
           </div>
           <div className="w-10 h-10"></div>
           {/* <img
@@ -368,7 +398,7 @@ function JurassicMarket({
                       />
                     </div>
                     <img
-                      src="image/RankExpBarBg.png"
+                      src="image/rankExpBarBg.png"
                       className="object-cover z-10"
                       alt="RankExpBarBg"
                     />
@@ -406,22 +436,20 @@ function JurassicMarket({
               {/* Pages */}
               <div className="flex w-full justify-start text-white font-Magra font-bold text-base [@media(max-width:400px)]:text-sm">
                 <div
-                  className={`cursor-pointer px-4 ${
-                    selectedPanel === "Listing"
-                      ? "text-[#FFC700]"
-                      : "text-white"
-                  }`}
+                  className={`cursor-pointer px-4 ${selectedPanel === "Listing"
+                    ? "text-[#FFC700]"
+                    : "text-white"
+                    }`}
                   onClick={() => setSelectedPanel("Listing")}
                 >
                   Listings
                 </div>
                 <div>/</div>
                 <div
-                  className={`cursor-pointer px-2 ${
-                    selectedPanel === "My Listing"
-                      ? "text-[#FFC700]"
-                      : "text-white"
-                  }`}
+                  className={`cursor-pointer px-2 ${selectedPanel === "My Listing"
+                    ? "text-[#FFC700]"
+                    : "text-white"
+                    }`}
                   onClick={() => setSelectedPanel("My Listing")}
                 >
                   My Listings
@@ -431,30 +459,28 @@ function JurassicMarket({
               <div className="flex w-full text-white font-Magra font-bold text-base [@media(max-width:400px)]:text-sm">
                 <div className="flex w-full items-end justify-end">
                   <div
-                    onClick={() => filterEggList("Price")}
+                    onClick={() => filterEggList("price")}
                     className="flex flex-row items-center px-2"
                   >
                     <span>Price</span>
                     <img
                       src="image/btnFilterIcon.png"
                       width={5}
-                      className={`w-[0.7rem] ml-2 ${
-                        marketFilter === "Price" ? "rotate-180" : ""
-                      }`}
+                      className={`w-[0.7rem] ml-2 ${eggListFilter?.orderby === "price" && eggListFilter?.sortby === 'asc' ? "rotate-180" : ""
+                        }`}
                       alt="priceFilterIcon"
                     />
                   </div>
                   <div
-                    onClick={() => filterEggList("Time")}
+                    onClick={() => filterEggList("time")}
                     className="flex flex-row items-center px-4"
                   >
                     <span>Time</span>
                     <img
                       src="image/btnFilterIcon.png"
                       width={5}
-                      className={`w-[0.7rem] ml-2 ${
-                        marketFilter === "Time" ? "rotate-180" : ""
-                      }`}
+                      className={`w-[0.7rem] ml-2 ${eggListFilter?.orderby === "time" && eggListFilter?.sortby === 'asc' ? "rotate-180" : ""
+                        }`}
                       alt="priceFilterIcon"
                     />
                   </div>
@@ -472,6 +498,11 @@ function JurassicMarket({
             )}
             {selectedPanel === "My Listing" && (
               <>
+                {Math.floor(currentTime / 1000) <= 1684152000 &&
+                  <div className="flex h-full justify-center items-center">
+                    <p className="font-Magra text-white text-lg">Market start at 05/15 12:00 UTC</p>
+                  </div>
+                }
                 <div className="flex w-full justify-start font-Magra font-bold text-white">
                   {unfinishedTransaction && eggTransactionData && (
                     <div className="p-4 w-full border-b-2 border-white">
@@ -496,7 +527,7 @@ function JurassicMarket({
                               formatUnits(eggTransactionData?.total, 18)
                             ).toFixed(2)
                           ).toString()}{" "}
-                          USDT
+                          DNF
                         </p>
                         <p className="p-1 bg-gray-700 rounded-sm mb-2">{`${countdownTime.countdownHours.toString().length === 1
                           ? `0${countdownTime.countdownHours}`
@@ -508,13 +539,13 @@ function JurassicMarket({
                             ? `0${countdownTime.countdownSeconds}`
                             : countdownTime.countdownSeconds
                           }` || ""}</p>
-                        {approved && parseFloat(approved as string) >= parseFloat(eggTransactionData.total) ? (
+                        {eggTransactionState?.mode === 'PURCHASE' && approved && parseFloat(approved as string) >= parseFloat(eggTransactionData.total) && (
                           <button
-                            className={`${eggTransactionState === "Loading"
+                            className={`${eggTransactionState?.state === "LOADING"
                               ? "bg-[#FFC700]"
                               : "bg-green-700 "} cursor-pointer px-4 py-2 rounded`}
                             onClick={async (raw: any) => {
-                              setEggTransactionState("Loading");
+                              setEggTransactionState({ mode: 'PURCHASE', state: 'LOADING' });
                               // setTransactionState('PURCHASE')
                               try {
                                 const txReq = {
@@ -532,21 +563,21 @@ function JurassicMarket({
                                 toast(error);
                               }
                             }}
-                            disabled={eggTransactionState === 'Loading'}
+                            disabled={eggTransactionState?.state === 'LOADING'}
                           >
-                            {eggTransactionState === 'Loading'
+                            {eggTransactionState?.state === 'LOADING'
                               ? "Waiting..."
                               : "Purchase"}
                           </button>
-                        ) : (
+                        )}
+                        {(eggTransactionState?.mode === 'APPROVAL' &&
                           <button
-                            className={`${
-                              eggTransactionState === "Loading"
-                                ? "bg-[#FFC700]"
-                                : "bg-red-700"
-                            } cursor-pointer px-4 py-2 rounded`}
+                            className={`${eggTransactionState?.state === "LOADING"
+                              ? "bg-[#FFC700]"
+                              : "bg-red-700"
+                              } cursor-pointer px-4 py-2 rounded`}
                             onClick={async () => {
-                              setEggTransactionState("Loading");
+                              setEggTransactionState({ mode: 'APPROVAL', state: 'LOADING' });
                               // setTransactionState('APPROVAL')
                               // console.log("walletAddress", walletAddress);
                               // console.log("allowance ", allowance);
@@ -556,7 +587,7 @@ function JurassicMarket({
                               else {
                                 try {
                                   const txReq = {
-                                    to: USDT_ADDR,
+                                    to: TOKEN_ADDR,
                                     from: walletAddress,
                                     data: eggTransactionData.TxRawApproval,
                                   };
@@ -570,9 +601,9 @@ function JurassicMarket({
                                 }
                               }
                             }}
-                            disabled={eggTransactionState === "Loading"}
+                            disabled={eggTransactionState?.state === "LOADING"}
                           >
-                            {eggTransactionState === 'Loading'
+                            {eggTransactionState?.state === 'LOADING'
                               ? "Waiting..."
                               : "Approval"}
                           </button>
@@ -590,6 +621,7 @@ function JurassicMarket({
                         egg={egg}
                         index={egg?.id}
                         currentTime={currentTime}
+                        filter={''}
                       />
                     );
                   })}
@@ -599,81 +631,87 @@ function JurassicMarket({
             {selectedPanel === "Listing" && (
               <>
                 <div className="grid grid-cols-4">
-                  {currentPosts.map((egg, index) => {
+                  {eggListsData?.lists?.map((egg, index) => {
                     return (
                       <EggComponent
                         key={egg.id}
                         egg={egg}
                         index={egg?.id}
+                        // filter={marketFilter}
                         currentTime={currentTime}
                         // customTimer={1683430121 + (1050 * index)}
                         onBtnKeepPress={() => {
                           // TODO: action button for keep, using idx from props as a differentiator
-                          console.log("onBtnKeepPress", egg.id);
-                          handleKeep(egg.id, egg.ticket);
+                          console.log("onBtnKeepPress", egg);
+                          handleKeep(egg.id, egg.ticket, egg.total);
                         }}
-                        // onBtnPurchasePress={async () => {
-                        //     // console.log("allowance ", allowance);
-                        //     // console.log("account approve", walletAddress);
-                        //     const txReq = {
-                        //         to: USDT_ADDR,
-                        //         from: walletAddress,
-                        //         data: eggTransactionData.TxRawApproval,
-                        //     };
-                        //     console.log("txReq", txReq);
-                        //     const txSend = await sendTransaction(txReq);
-                        //     console.log("txSend", txSend);
-                        // }}
-                        // onBtnPayPress={async (raw: any) => {
-                        //     const txReq = {
-                        //         data: raw,
-                        //         to: PAYGATEWAY_ADDR,
-                        //         from: walletAddress,
-                        //     };
-                        //     const txSend = await sendPayTransaction(txReq, eggTransactionData);
-                        //     console.log("txSend payment", txSend);
-                        // }}
+                      // onBtnPurchasePress={async () => {
+                      //     // console.log("allowance ", allowance);
+                      //     // console.log("account approve", walletAddress);
+                      //     const txReq = {
+                      //         to: USDT_ADDR,
+                      //         from: walletAddress,
+                      //         data: eggTransactionData.TxRawApproval,
+                      //     };
+                      //     console.log("txReq", txReq);
+                      //     const txSend = await sendTransaction(txReq);
+                      //     console.log("txSend", txSend);
+                      // }}
+                      // onBtnPayPress={async (raw: any) => {
+                      //     const txReq = {
+                      //         data: raw,
+                      //         to: PAYGATEWAY_ADDR,
+                      //         from: walletAddress,
+                      //     };
+                      //     const txSend = await sendPayTransaction(txReq, eggTransactionData);
+                      //     console.log("txSend payment", txSend);
+                      // }}
                       />
                     );
                   })}
                 </div>
-                <div className="flex flex-row justify-center py-8">
-                  <ReactPaginate
-                    onPageChange={paginate}
-                    pageCount={Math.ceil(
-                      eggListsData?.lists?.length / postsPerPage
-                    )}
-                    marginPagesDisplayed={2}
-                    pageRangeDisplayed={3}
-                    previousLabel={"<<"}
-                    nextLabel={">>"}
-                    containerClassName={
-                      "flex flex-row text-white items-center text-2xl"
-                    }
-                    pageLinkClassName={"font-Magra px-2 "}
-                    previousLinkClassName={`font-Magra text-white px-4 `}
-                    nextLinkClassName={"font-Magra text-white px-4"}
-                    // TODO: create circle button for active page
-                    // activeLinkClassName={
-                    //   "text-[#FFC700] w-8 h-8 rounded-full bg-[#1E1E1E] flex justify-center items-center"
-                    // }
-                    activeLinkClassName={"text-[#FFC700] "}
-                  />
-                  <img
-                    onClick={() => getEggList()}
-                    src="image/BtnRefreshListing.png"
-                    // width={5}
-                    className="mx-1 cursor-pointer"
-                    alt="Refresh"
-                  />
-                </div>
+                {Math.floor(currentTime / 1000) <= 1684152000 &&
+                  <div className="flex h-full justify-center items-center">
+                    <p className="font-Magra text-white text-lg">Market start at 05/15 12:00 UTC</p>
+                  </div>
+                }
+                {eggListsData?.lists?.length > 0 &&
+                  <div className="flex flex-row justify-center py-8">
+                    <ReactPaginate
+                      onPageChange={paginate}
+                      pageCount={eggListsData?.totalpage}
+                      marginPagesDisplayed={2}
+                      pageRangeDisplayed={3}
+                      previousLabel={"<<"}
+                      nextLabel={">>"}
+                      containerClassName={
+                        "flex flex-row text-white items-center text-2xl"
+                      }
+                      pageLinkClassName={"font-Magra px-2 "}
+                      previousLinkClassName={`font-Magra text-white px-4 `}
+                      nextLinkClassName={"font-Magra text-white px-4"}
+                      // TODO: create circle button for active page
+                      // activeLinkClassName={
+                      //   "text-[#FFC700] w-8 h-8 rounded-full bg-[#1E1E1E] flex justify-center items-center"
+                      // }
+                      activeLinkClassName={"text-[#FFC700] "}
+                    />
+                    <img
+                      onClick={() => getEggList()}
+                      src="image/BtnRefreshListing.png"
+                      // width={5}
+                      className="mx-1 cursor-pointer"
+                      alt="Refresh"
+                    />
+                  </div>
+                }
               </>
             )}
           </div>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }
 
-export default JurassicMarket;
+export default React.memo(JurassicMarket);

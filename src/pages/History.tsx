@@ -2,6 +2,8 @@ import { useEffect, useState, useCallback } from "react";
 import { axiosInstance } from "../utils/api";
 import { formatUnits } from "@ethersproject/units";
 import { useAuthStore, useStore } from "../utils/store";
+import { formatToUTC, shortenString } from "../utils/functions";
+import ReactPaginate from "react-paginate";
 
 type Page = "Transactions" | "Rewards";
 
@@ -14,30 +16,34 @@ export function History() {
   const [rewardDatas, setRewardDatas] = useState<any>();
 
   const [selectedPage, setSelectedPage] = useState<Page>("Transactions");
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const [postsPerPage] = useState(20);
+  // const indexOfLastPost = currentPage * postsPerPage;
+  // const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  // const currentPosts = datas?.data?.slice(
+  //   indexOfFirstPost,
+  //   indexOfLastPost
+  // );
 
   const ShowData = (props: any) => {
     const { data } = props;
     var date = new Date(data.created * 1000);
+    // show date in UTC
 
     // Will display time in 10:30:23 format
-    var formattedTime =
-      date.getDate() +
-      "/" +
-      (date.getMonth() + 1) +
-      "/" +
-      date.getFullYear() +
-      " " +
-      date.getHours() +
-      ":" +
-      date.getMinutes() +
-      ":" +
-      date.getSeconds();
+    const formattedTime = formatToUTC(date)
 
     return (
       <tr className="table-row">
         <td>{formattedTime}</td>
-        <td>$ {parseFloat(formatUnits(data.total)).toFixed(2)}</td>
-        <td>{data.type}</td>
+        <td className="text-green-400 p-2">{shortenString(data?.txhash)}</td>
+        <td className="text-center">{parseFloat(formatUnits(data.total)).toFixed(2)} DNF</td>
+        <td
+          className={`${data.type === "BUY" ? "text-green-400" : "text-red-500"
+            } text-right`}
+        >
+          {data.type}
+        </td>
       </tr>
     );
   };
@@ -46,6 +52,7 @@ export function History() {
     var date = new Date(data.created * 1000);
 
     // Will display time in 10:30:23 format
+    // TODO: change with function from utils later
     var formattedTime =
       date.getDate() +
       "/" +
@@ -62,7 +69,10 @@ export function History() {
     return (
       <tr className="table-row">
         <td>{formattedTime}</td>
-        <td>$ {parseFloat(formatUnits(data.total)).toFixed(2)}</td>
+        <td className="text-green-400 p-2">{shortenString(data?.address)}</td>
+        <td className="text-right">
+          {parseFloat(formatUnits(data.total)).toFixed(2)} DNF
+        </td>
       </tr>
     );
   };
@@ -94,15 +104,16 @@ export function History() {
           <thead className="text-xs text-white uppercase border-y ">
             <tr>
               <th className="w-[5rem] py-3">Date</th>
-              <th className="w-[7rem] py-3">Amt</th>
-              <th className="w-[8rem] py-3">Description</th>
+              <th className="w-[5rem] py-3 px-2">TxHash</th>
+              <th className="w-[9rem] py-3 text-center">Amount</th>
+              <th className="w-[8rem] py-3 text-right">Description</th>
             </tr>
           </thead>
           <tbody>
             {datas?.data?.length > 0
               ? datas?.data?.map((elm: any, idx: number) => (
-                  <ShowData key={idx} data={elm} />
-                ))
+                <ShowData key={idx} data={elm} />
+              ))
               : null}
           </tbody>
         </table>
@@ -137,14 +148,15 @@ export function History() {
           <thead className="text-xs text-white uppercase border-y ">
             <tr>
               <th className="w-[20rem] py-3">Date</th>
-              <th className="w-[10rem] py-3">Amt</th>
+              <th className="w-[20rem] py-3 px-2">Address</th>
+              <th className="w-[10rem] py-3 text-right">Amount</th>
             </tr>
           </thead>
           <tbody>
             {rewardDatas?.data?.length > 0
               ? rewardDatas?.data?.map((elm: any, idx: number) => (
-                  <ShowRewardsData key={idx} data={elm} />
-                ))
+                <ShowRewardsData key={idx} data={elm} />
+              ))
               : null}
           </tbody>
         </table>
@@ -152,9 +164,7 @@ export function History() {
     );
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const Paginate = (props: any) => {
-    var pctn = [];
+  const paginate = ({ selected }: { selected: number }) => {
     const loadDownlineWithPage = async (props: any) => {
       let options = {
         headers: {
@@ -173,31 +183,10 @@ export function History() {
       console.log("page props", props.current);
       setDatas(response.data.result);
     };
-
-    for (let i = 1; i <= props.total; i++) {
-      let classs = "";
-      if (parseInt(props.current) === i) classs = "active";
-      pctn.push(
-        <li
-          key={i}
-          className={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer ${
-            classs === "active"
-              ? "bg-yellow-700 text-white"
-              : "bg-white text-black"
-          }`}
-          onClick={() => loadDownlineWithPage(i)}
-        >
-          {i}
-        </li>
-      );
-    }
-
-    return <ul className="flex flex-row space-x-2">{pctn}</ul>;
+    loadDownlineWithPage(selected + 1)
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const PaginateRewards = (props: any) => {
-    var pctn = [];
+  const paginateRewards = ({ selected }: { selected: number }) => {
     const loadDownlineWithPage = async (props: any) => {
       let options = {
         headers: {
@@ -216,26 +205,7 @@ export function History() {
       console.log("page props", props.current);
       setRewardDatas(response.data.result);
     };
-
-    for (let i = 1; i <= props.total; i++) {
-      let classs = "";
-      if (parseInt(props.current) === i) classs = "active";
-      pctn.push(
-        <li
-          key={i}
-          className={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer ${
-            classs === "active"
-              ? "bg-yellow-700 text-white"
-              : "bg-white text-black"
-          }`}
-          onClick={() => loadDownlineWithPage(i)}
-        >
-          {i}
-        </li>
-      );
-    }
-
-    return <ul className="flex flex-row space-x-2">{pctn}</ul>;
+    loadDownlineWithPage(selected + 1)
   };
 
   const HistoryCallback = useCallback(History, [datas, token]);
@@ -267,18 +237,16 @@ export function History() {
             <button
               type="button"
               onClick={() => setSelectedPage("Transactions")}
-              className={`${
-                selectedPage === "Transactions" ? "text-blue-500" : "text-white"
-              } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+              className={`${selectedPage === "Transactions" ? "text-blue-500" : "text-white"
+                } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
             >
               Transactions
             </button>
             <button
               type="button"
               onClick={() => setSelectedPage("Rewards")}
-              className={`${
-                selectedPage === "Rewards" ? "text-blue-500" : "text-white"
-              } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
+              className={`${selectedPage === "Rewards" ? "text-blue-500" : "text-white"
+                } font-bold font-Magra px-3.5 py-2.5 text-xl focus-visible:rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
             >
               Rewards
             </button>
@@ -301,12 +269,37 @@ export function History() {
         <div>
           <div className="flex flex-col justify-end h-auto pt-3">
             {selectedPage === "Transactions" && (
-              <Paginate total={datas?.totalpage} current={datas?.pagenow} />
+              <ReactPaginate
+                onPageChange={paginate}
+                pageCount={datas?.totalpage}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={3}
+                previousLabel={"<<"}
+                nextLabel={">>"}
+                containerClassName={
+                  "flex flex-row text-black items-center text-2xl"
+                }
+                pageLinkClassName={"font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white"}
+                previousLinkClassName={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white`}
+                nextLinkClassName={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white`}
+                activeLinkClassName={"font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white text-[#FFC700]"}
+              />
             )}
             {selectedPage === "Rewards" && (
-              <PaginateRewards
-                total={rewardDatas?.totalpage}
-                current={rewardDatas?.pagenow}
+              <ReactPaginate
+                onPageChange={paginateRewards}
+                pageCount={rewardDatas?.totalpage > 0 ? rewardDatas?.totalpage : 1}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={3}
+                previousLabel={"<<"}
+                nextLabel={">>"}
+                containerClassName={
+                  "flex flex-row text-black items-center text-2xl"
+                }
+                pageLinkClassName={"font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white"}
+                previousLinkClassName={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white`}
+                nextLinkClassName={`font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white`}
+                activeLinkClassName={"font-Magra font-bold px-2 border border-gray-400 rounded-md cursor-pointer bg-white text-[#FFC700]"}
               />
             )}
           </div>

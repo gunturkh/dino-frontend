@@ -26,6 +26,14 @@ type User = {
     group: string;
   };
   rank_end: number;
+  wallet: {
+    dnf: string;
+    usdt: string;
+  }
+  locked: {
+    dnf: string;
+    usdt: string;
+  }
 };
 
 export type Egg = {
@@ -39,6 +47,8 @@ export type Egg = {
 type EggListResponse = {
   remaining: number;
   lists: Egg[];
+  page: number;
+  totalpage: number;
 };
 export type EggPendingListData = {
   id: string;
@@ -63,6 +73,10 @@ export type TicketPanelData = {
   mode: "BUY" | "TRANSFER" | "HISTORY";
 };
 
+export type SwapPanelData = {
+  show: boolean
+};
+
 export type WithdrawPanelData = {
   show: boolean;
   mode: "WITHDRAW" | "HISTORY";
@@ -83,6 +97,22 @@ export type GoogleAuthPanelData = {
   mode: "SET" | "REMOVE";
 };
 
+export type GameTaskPanelData = {
+  show: boolean;
+  mode:
+  "MARKET.BUY" |
+  "MARKET.SELL" |
+  "MARKET.LIST" |
+  "MARKET.OPEN" |
+  "MARKET.HISTORY" |
+  "DEPOSIT.USDT" |
+  "DEPOSIT.USDT.HISTORY" |
+  "DEPOSIT.USDT.WITHDRAW" |
+  "DEPOSIT.DNF" |
+  "DEPOSIT.DNF.HISTORY" |
+  "DEPOSIT.DNF.WITHDRAW";
+};
+
 export type CardDetailsData = {
   show: boolean;
   id: number | null;
@@ -93,6 +123,11 @@ export type GatchaAnimationStatus = {
   show: boolean;
   ticket: number;
 };
+
+export type EggTransactionState = {
+  mode: 'PURCHASE' | 'APPROVAL' | 'DONE',
+  state: 'LOADING' | ''
+}
 
 type Store = {
   scene: Screen;
@@ -111,12 +146,16 @@ type Store = {
   setEggListsData: (data: EggListResponse) => void;
   eggTransactionData: EggTransactionData;
   setEggTransactionData: (data: EggTransactionData) => void;
-  eggTransactionState: "Loading" | "";
-  setEggTransactionState: (data: "Loading" | "") => void;
+  eggTransactionState: EggTransactionState;
+  setEggTransactionState: (data: EggTransactionState) => void;
   approved: BigNumber | string | undefined | null;
   setApproved: (data: BigNumber | string | null) => void;
   ticketPanel: TicketPanelData;
   setTicketPanel: (data: TicketPanelData) => void;
+  swapPanel: SwapPanelData;
+  setSwapPanel: (data: SwapPanelData) => void;
+  swapTxHash: string | undefined,
+  setSwapTxHash: (data: string | undefined) => void,
   sponsorLinkPanel: SponsorLinkPanelData;
   setSponsorLinkPanel: (data: SponsorLinkPanelData) => void;
   changePasswordPanel: boolean;
@@ -129,14 +168,30 @@ type Store = {
   setWithdrawPanel: (data: WithdrawPanelData) => void;
   jPassPanel: JPassPanelData;
   setJPassPanel: (data: JPassPanelData) => void;
-  notification: string[];
-  setNotification: (data: string[]) => void;
+  notification: string | null;
+  setNotification: (data: string | null) => void;
   jFundBalance: string;
   setJFundBalance: (data: string) => void;
   setWithdrawalHistory: (data: any) => void;
   withdrawalHistory: string[];
+  setUSDTWithdrawalHistory: (data: any) => void;
+  USDTWithdrawalHistory: { lists: any[], page: number, totalpage: number, totalrecs: number };
+  setDNFWithdrawalHistory: (data: any) => void;
+  DNFWithdrawalHistory: { lists: any[], page: number, totalpage: number, totalrecs: number };
+  marketListBuy: any[];
+  setMarketListBuy: (data: any) => void;
+  marketListSell: any[];
+  setMarketListSell: (data: any) => void;
+  marketListOpen: any[];
+  setMarketListOpen: (data: any) => void;
+  marketListHistory: any[];
+  setMarketListHistory: (data: any) => void;
   gatchaAnimationStatus: GatchaAnimationStatus;
   setGatchaAnimationStatus: (data: GatchaAnimationStatus) => void;
+  eggListFilter: { page: number, orderby: 'price' | 'time', sortby: 'asc' | 'desc' }
+  setEggListFilter: (data: { page: number, orderby: 'price' | 'time', sortby: 'asc' | 'desc' }) => void;
+  gameTaskPanel: GameTaskPanelData;
+  setGameTaskPanel: (data: GameTaskPanelData) => void;
 };
 type AuthStore = {
   token: string | null;
@@ -181,13 +236,21 @@ export const useStore = create<Store>((set, get) => ({
       group: "0",
     },
     rank_end: 0,
+    wallet: {
+      dnf: '0',
+      usdt: '0'
+    },
+    locked: {
+      dnf: '0',
+      usdt: '0'
+    }
   },
   setUserData: (data) => set(() => ({ userData: data })),
   eggPendingListData: [],
   setEggPendingListData: (data) => set(() => ({ eggPendingListData: data })),
   myListingEggData: [],
   setMyListingEggData: (data) => set(() => ({ myListingEggData: data })),
-  eggListsData: { remaining: 0, lists: [] },
+  eggListsData: { remaining: 0, lists: [], page: 1, totalpage: 1 },
   setEggListsData: (data) => set(() => ({ eggListsData: data })),
   eggTransactionData: {
     id: "",
@@ -198,13 +261,18 @@ export const useStore = create<Store>((set, get) => ({
     ticket: 0,
   },
   setEggTransactionData: (data) => set(() => ({ eggTransactionData: data })),
-  eggTransactionState: "",
+  eggTransactionState: { mode: 'APPROVAL', state: '' },
   setEggTransactionState: (data) => set(() => ({ eggTransactionState: data })),
   approved: undefined,
   setApproved: (data) => set(() => ({ approved: data })),
   ticketPanel: { show: false, mode: "BUY" },
   setTicketPanel: ({ show, mode }) =>
     set(() => ({ ticketPanel: { show, mode } })),
+  swapPanel: { show: false },
+  setSwapPanel: ({ show }) =>
+    set(() => ({ swapPanel: { show } })),
+  swapTxHash: '',
+  setSwapTxHash: (data) => set(() => ({ swapTxHash: data })),
   sponsorLinkPanel: { show: false, link: "" },
   setSponsorLinkPanel: (data) => set(() => ({ sponsorLinkPanel: data })),
   changePasswordPanel: false,
@@ -217,15 +285,31 @@ export const useStore = create<Store>((set, get) => ({
   setWithdrawPanel: (data) => set(() => ({ withdrawPanel: data })),
   jPassPanel: { show: false, data: [] },
   setJPassPanel: (data) => set(() => ({ jPassPanel: data })),
-  notification: [],
+  notification: null,
   setNotification: (data) => set(() => ({ notification: data })),
   jFundBalance: "",
   setJFundBalance: (data) => set(() => ({ jFundBalance: data })),
   setWithdrawalHistory: (data) => set(() => ({ withdrawalHistory: data })),
   withdrawalHistory: [],
+  setUSDTWithdrawalHistory: (data) => set(() => ({ USDTWithdrawalHistory: data })),
+  USDTWithdrawalHistory: { lists: [], page: 1, totalpage: 1, totalrecs: 1 },
+  setDNFWithdrawalHistory: (data) => set(() => ({ DNFWithdrawalHistory: data })),
+  DNFWithdrawalHistory: { lists: [], page: 1, totalpage: 1, totalrecs: 1 },
+  marketListBuy: [],
+  setMarketListBuy: (data) => set(() => ({ marketListBuy: data })),
+  marketListSell: [],
+  setMarketListSell: (data) => set(() => ({ marketListSell: data })),
+  marketListOpen: [],
+  setMarketListOpen: (data) => set(() => ({ marketListOpen: data })),
+  marketListHistory: [],
+  setMarketListHistory: (data) => set(() => ({ marketListHistory: data })),
   gatchaAnimationStatus: { show: false, ticket: 0 },
   setGatchaAnimationStatus: (data) =>
     set(() => ({ gatchaAnimationStatus: data })),
+  eggListFilter: { page: 1, orderby: 'time', sortby: 'asc' },
+  setEggListFilter: (data) => set(() => ({ eggListFilter: data })),
+  gameTaskPanel: { show: false, mode: "MARKET.BUY" },
+  setGameTaskPanel: (data) => set(() => ({ gameTaskPanel: data })),
 }));
 
 export const useAuthStore = create(

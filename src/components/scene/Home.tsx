@@ -21,11 +21,15 @@ import { toast } from "react-toastify";
 import NormalEggComponent from "../NormalEggComponent";
 // import gsap from "gsap";
 import { Spine } from "pixi-spine";
+import RainforestAnimation from "../RainforestAnimation";
+// import useAudio from "../../utils/hooks/useAudio";
 // import { TICKET_ADDR } from "../../utils/config";
 type Props = {
   onProfileClick: () => void;
   setScene?: (value: string) => void;
   scene: string;
+  toggle?: any;
+  playing?: any;
 };
 // temporary commented
 // const rawBuyTickets = async (qty: number) => {
@@ -44,10 +48,36 @@ type Props = {
 //   data: any;
 //   dragging: boolean;
 // }
-const Home = ({ onProfileClick, scene }: Props) => {
+// const BASE_URL = "https://cdn.jurassicegg.co";
+// const useAudio = (url: string) => {
+//   const [audio] = useState(new Audio(url));
+//   const [playing, setPlaying] = useState(false);
+
+//   const toggle = () => setPlaying(!playing);
+
+//   useEffect(() => {
+//     playing ? audio.play() : audio.pause();
+//   },
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
+//     [playing]
+//   );
+
+//   useEffect(() => {
+//     audio.addEventListener('ended', () => setPlaying(false));
+//     return () => {
+//       audio.removeEventListener('ended', () => setPlaying(false));
+//     };
+//   // eslint-disable-next-line react-hooks/exhaustive-deps
+//   }, []);
+
+//   return [playing, toggle];
+// };
+
+const Home = ({ onProfileClick, scene, toggle, playing }: Props) => {
   const app = useApp();
   // const pathRef = useRef(null);
   // const eggRef = useRef(null);
+  // const [playing, toggle] = useAudio(`${BASE_URL}/music/music.mpeg`);
   const setEggPendingListData = useStore(
     (state) => state.setEggPendingListData
   );
@@ -60,12 +90,23 @@ const Home = ({ onProfileClick, scene }: Props) => {
   const eggListsData = useStore((state) => state.eggListsData);
   const setEggListsData = useStore((state) => state.setEggListsData);
   const setTicketPanel = useStore((state) => state.setTicketPanel);
+  const setSwapPanel = useStore((state) => state.setSwapPanel);
   const setWithdrawPanel = useStore((state) => state.setWithdrawPanel);
   // const notification = useStore((state) => state.notification);
-  const setNotification = useStore((state) => state.setNotification);
+  // const setNotification = useStore((state) => state.setNotification);
   const jFundBalance = useStore((state) => state.jFundBalance);
   const setJFundBalance = useStore((state) => state.setJFundBalance);
   const setWithdrawalHistory = useStore((state) => state.setWithdrawalHistory);
+  const setUSDTWithdrawalHistory = useStore(
+    (state) => state.setUSDTWithdrawalHistory
+  );
+  const setDNFWithdrawalHistory = useStore(
+    (state) => state.setDNFWithdrawalHistory
+  );
+  const setMarketListBuy = useStore((state) => state.setMarketListBuy);
+  const setMarketListSell = useStore((state) => state.setMarketListSell);
+  const setMarketListOpen = useStore((state) => state.setMarketListOpen);
+  const setMarketListHistory = useStore((state) => state.setMarketListHistory);
   // const gatchaAnimationStatus = useStore((state) => state.gatchaAnimationStatus);
   // const setGatchaAnimationStatus = useStore((state) => state.setGatchaAnimationStatus);
 
@@ -82,7 +123,10 @@ const Home = ({ onProfileClick, scene }: Props) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const [buyTicketPanelVisible, setBuyTicketPanelVisible] = useState(false);
-  const [toggleBtnAudio, setToggleBtnAudio] = useState(false);
+  const [toggleBtnAudio, setToggleBtnAudio] = useState(
+    // playing ? playing : false
+    false
+  );
 
   const [currentTime, setCurrentTime] = useState(new Date().getTime());
   console.log(
@@ -90,6 +134,15 @@ const Home = ({ onProfileClick, scene }: Props) => {
     Math.floor(currentTime / 1000),
     Math.floor(currentTime / 1000) % 8
   );
+
+  // useEffect(() => {
+  //   // console.log('music playing', playing)
+  //   // if (playing) {
+  //   // @ts-ignore
+  //   toggle()
+  //   // }
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [toggleBtnAudio])
 
   // const onDragStart = useCallback((event: any) => {
   //   // console.log('eggRef', eggRef)
@@ -187,45 +240,113 @@ const Home = ({ onProfileClick, scene }: Props) => {
 
   // const dummyEggLists = [
   //   {
-  //     id: 1,
-  //     type: 1,
-  //     hidden: true,
+  //     id: '1',
+  //     listedat: 1684663000,
+  //     openat: 1684663000,
+  //     opened: 0,
+  //     posted: 0,
+  //     total: '0',
+  //     ticket: 1
   //   },
   //   {
-  //     id: 2,
-  //     type: 1,
-  //     hidden: true,
+  //     id: '2',
+  //     listedat: 1684663000,
+  //     openat: 1684663000,
+  //     opened: 0,
+  //     posted: 0,
+  //     total: '0',
+  //     ticket: 1
   //   },
   //   {
-  //     id: 3,
-  //     type: 1,
-  //     hidden: true,
+  //     id: '3',
+  //     listedat: 1684663000,
+  //     openat: 1684663000,
+  //     opened: 0,
+  //     posted: 0,
+  //     total: '0',
+  //     ticket: 1
   //   },
   //   {
-  //     id: 4,
-  //     type: 1,
-  //     hidden: true,
+  //     id: '4',
+  //     listedat: 1684663000,
+  //     openat: 1684663000,
+  //     opened: 0,
+  //     posted: 0,
+  //     total: '0',
+  //     ticket: 1
   //   },
   //   {
-  //     id: 5,
-  //     type: 1,
-  //     hidden: true,
+  //     id: '5',
+  //     listedat: 1684663000,
+  //     openat: 1684663000,
+  //     opened: 0,
+  //     posted: 0,
+  //     total: '0',
+  //     ticket: 1
   //   },
   //   {
-  //     id: 6,
-  //     type: 1,
-  //     hidden: true,
+  //     id: '6',
+  //     listedat: 1684663000,
+  //     openat: 1684663000,
+  //     opened: 0,
+  //     posted: 0,
+  //     total: '0',
+  //     ticket: 1
   //   },
   //   {
-  //     id: 7,
-  //     type: 1,
-  //     hidden: true,
+  //     id: '7',
+  //     listedat: 1684663000,
+  //     openat: 1684663000,
+  //     opened: 0,
+  //     posted: 0,
+  //     total: '0',
+  //     ticket: 1
   //   },
   //   {
-  //     id: 8,
-  //     type: 1,
-  //     hidden: true,
+  //     id: '8',
+  //     listedat: 1684663000,
+  //     openat: 1684663000,
+  //     opened: 0,
+  //     posted: 0,
+  //     total: '0',
+  //     ticket: 1
   //   },
+  //   // {
+  //   //   id: '9',
+  //   //   listedat: 1684663000,
+  //   //   openat: 1684663000,
+  //   //   opened: 0,
+  //   //   posted: 0,
+  //   //   total: '0',
+  //   //   ticket: 1
+  //   // },
+  //   // {
+  //   //   id: '10',
+  //   //   listedat: 1684663000,
+  //   //   openat: 1684663000,
+  //   //   opened: 0,
+  //   //   posted: 0,
+  //   //   total: '0',
+  //   //   ticket: 1
+  //   // },
+  //   // {
+  //   //   id: '11',
+  //   //   listedat: 1684663000,
+  //   //   openat: 1684663000,
+  //   //   opened: 0,
+  //   //   posted: 0,
+  //   //   total: '0',
+  //   //   ticket: 1
+  //   // },
+  //   // {
+  //   //   id: '12',
+  //   //   listedat: 1684663000,
+  //   //   openat: 1684663000,
+  //   //   opened: 0,
+  //   //   posted: 0,
+  //   //   total: '0',
+  //   //   ticket: 1
+  //   // },
   // ];
 
   const upperContainerRef = useCallback((node: any) => {
@@ -398,21 +519,11 @@ const Home = ({ onProfileClick, scene }: Props) => {
     [app.screen.height, app.screen.width]
   );
 
-  const [gatchaAnimation1, setGatchaAnimation1] = useState<any>(null);
-  const [gatchaAnimation2, setGatchaAnimation2] = useState<any>(null);
-  const [gatchaAnimation3, setGatchaAnimation3] = useState<any>(null);
+  const [gatchaAnimation, setGatchaAnimation] = useState<any>(null);
 
-  const memoizedGatchaAnimation1 = useMemo(
-    () => gatchaAnimation1,
-    [gatchaAnimation1]
-  );
-  const memoizedGatchaAnimation2 = useMemo(
-    () => gatchaAnimation2,
-    [gatchaAnimation2]
-  );
-  const memoizedGatchaAnimation3 = useMemo(
-    () => gatchaAnimation3,
-    [gatchaAnimation3]
+  const memoizedGatchaAnimation = useMemo(
+    () => gatchaAnimation,
+    [gatchaAnimation]
   );
 
   useEffect(() => {
@@ -420,26 +531,71 @@ const Home = ({ onProfileClick, scene }: Props) => {
       "GatchaAnimation1",
       "GatchaAnimation2",
       "GatchaAnimation3",
+      "GatchaWithCoin1",
+      "GatchaEggWithCoin1",
+      "GatchaWithCoin2",
+      "GatchaEggWithCoin2",
+      "GatchaWithCoin3",
+      "GatchaEggWithCoin3",
+      "GatchaWithDino",
+      "GatchaTicket1",
+      "GatchaEggTicket1",
+      "GatchaTicket2",
+      "GatchaEggTicket2",
+      "GatchaTicket3",
+      "GatchaEggTicket3",
+      "GatchaBonusEgg",
+      "GatchaEggBonusEgg",
+      "GatchaBonusEgg2",
+      "GatchaEggBonusEgg2",
+      "GatchaBonusEgg3",
+      "GatchaEggBonusEgg3",
     ])
       .then((resources) => {
         console.log("res gatchaAnimation", resources);
-        // set a matched key to dinoAssets
-        setGatchaAnimation1(resources["GatchaAnimation1"]);
-        setGatchaAnimation2(resources["GatchaAnimation2"]);
-        setGatchaAnimation3(resources["GatchaAnimation3"]);
+        // set all game assets here
+        setGatchaAnimation(resources);
       })
       .catch((err) => {
-        console.log("err flyingDino", err);
+        console.log("err gatcha animation", err);
       });
   }, []);
 
+  console.log("gatchaAnimation", gatchaAnimation);
+  const [gatchaGetReward, setGatchaReward] = useState<
+    "ZONK" | "CARD" | "NORMAL" | "EGG" | "TICKET"
+  >("ZONK");
   const [gatchaAnimationStatus, setGatchaAnimationStatus] = useState(false);
   // gatcha ticket count
   const [ticketCnt, setTicketCnt] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [eggsPerPage] = useState(8);
+  const indexOfLastEgg = currentPage * eggsPerPage;
+  const indexOfFirstEgg = indexOfLastEgg - eggsPerPage;
+  const currentEggs = eggPendingListData?.slice(
+    indexOfFirstEgg,
+    indexOfLastEgg
+  );
+  const disabledNext =
+    currentPage === Math.ceil(eggPendingListData?.length / eggsPerPage) ||
+    Math.ceil(eggPendingListData?.length / eggsPerPage) === 0;
+
+  const disabledPrev = currentPage === 1;
+
+  const nextPage = () => {
+    if (currentPage !== Math.ceil(eggPendingListData?.length / eggsPerPage)) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const previousPage = () => {
+    if (currentPage !== 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   const onGatchaAnimationEnd = useCallback(() => {
     console.log("onGatchaAnimationEnd");
-    // setGatchaAnimationStatus({ show: false, ticket: 0 });
     setGatchaAnimationStatus(false);
     setTicketCnt(0);
   }, []);
@@ -456,70 +612,331 @@ const Home = ({ onProfileClick, scene }: Props) => {
       let gatcha2: any = null;
       let gatcha3: any = null;
 
-      // load animation
-      memoizedGatchaAnimation1?.spineData?.animations?.forEach(
-        (animation: any) => {
-          const gatcha = new Spine(memoizedGatchaAnimation1.spineData);
-          gatcha.state.setAnimation(0, animation.name, false);
+      let gatchaWithDino: any = null;
 
-          gatcha.x = 0;
-          gatcha.y = 0;
-          // gatcha.zIndex = -1;
-          // gatcha.cullable = true;
+      let gatchaWithCoin1: any = null;
+      let gatchaEggWithCoin1: any = null;
 
-          gatcha.scale.set(0.2);
+      let gatchaWithCoin2: any = null;
+      let gatchaEggWithCoin2: any = null;
 
-          // node?.addChild(gatcha);
-          gatcha1 = gatcha;
-        }
-      );
+      let gatchaWithCoin3: any = null;
+      let gatchaEggWithCoin3: any = null;
 
-      memoizedGatchaAnimation2?.spineData?.animations?.forEach(
-        (animation: any) => {
-          const gatcha = new Spine(memoizedGatchaAnimation2.spineData);
-          gatcha.state.setAnimation(0, animation.name, false);
+      let gatchaTicket1: any = null;
+      let gatchaEggTicket1: any = null;
+      let gatchaTicket2: any = null;
+      let gatchaEggTicket2: any = null;
+      let gatchaTicket3: any = null;
+      let gatchaEggTicket3: any = null;
+      let gatchaBonusEgg: any = null;
+      let gatchaEggBonusEgg: any = null;
+      let gatchaBonusEgg2: any = null;
+      let gatchaEggBonusEgg2: any = null;
+      let gatchaBonusEgg3: any = null;
+      let gatchaEggBonusEgg3: any = null;
 
-          gatcha.x = 0;
-          gatcha.y = 0;
-          // gatcha.zIndex = -1;
-          // gatcha.cullable = true;
+      // load all animation inside memoizedGatchaAnimation using loop
+      if (memoizedGatchaAnimation) {
+        console.log("memoizedGatchaAnimation", memoizedGatchaAnimation);
+        Object.keys(memoizedGatchaAnimation).forEach((key) => {
+          memoizedGatchaAnimation[key].spineData.animations.forEach(
+            (animation: any) => {
+              const gatcha = new Spine(memoizedGatchaAnimation[key].spineData);
+              gatcha.state.setAnimation(0, animation.name, false);
+              gatcha.x = 0;
+              gatcha.y = 0;
+              gatcha.scale.set(0.8);
+              if (key === "GatchaAnimation1") {
+                gatcha1 = gatcha;
+              } else if (key === "GatchaAnimation2") {
+                gatcha.scale.set(1.2);
+                gatcha2 = gatcha;
+              } else if (key === "GatchaAnimation3") {
+                gatcha.scale.set(1.2);
+                gatcha3 = gatcha;
+              }
 
-          gatcha.scale.set(0.2);
+              if (key === "GatchaWithDino") {
+                gatcha.scale.set(0.3);
+                gatchaWithDino = gatcha;
+              }
 
-          // node?.addChild(gatcha);
-          gatcha2 = gatcha;
-        }
-      );
+              if (key === "GatchaWithCoin1") {
+                gatcha.scale.set(1.2);
+                gatchaWithCoin1 = gatcha;
+              } else if (key === "GatchaWithCoin2") {
+                gatcha.scale.set(1.2);
+                gatchaWithCoin2 = gatcha;
+              } else if (key === "GatchaWithCoin3") {
+                gatcha.scale.set(1.2);
+                gatchaWithCoin3 = gatcha;
+              }
 
-      memoizedGatchaAnimation3?.spineData?.animations?.forEach(
-        (animation: any) => {
-          const gatcha = new Spine(memoizedGatchaAnimation3.spineData);
-          gatcha.state.setAnimation(0, animation.name, false);
+              // trunk-ignore(gitleaks/generic-api-key)
+              if (key === "GatchaEggWithCoin1") {
+                gatcha.scale.set(1.2);
+                gatchaEggWithCoin1 = gatcha;
+              }
+              // trunk-ignore(gitleaks/generic-api-key)
+              if (key === "GatchaEggWithCoin2") {
+                gatcha.scale.set(1.2);
+                gatchaEggWithCoin2 = gatcha;
+              }
+              // trunk-ignore(gitleaks/generic-api-key)
+              if (key === "GatchaEggWithCoin3") {
+                gatcha.scale.set(1.2);
+                gatchaEggWithCoin3 = gatcha;
+              }
 
-          gatcha.x = 0;
-          gatcha.y = 0;
-          // gatcha.zIndex = -1;
-          // gatcha.cullable = true;
+              if (key === "GatchaTicket1") {
+                gatcha.scale.set(0.5);
+                gatchaTicket1 = gatcha;
+              }
+              if (key === "GatchaEggTicket1") {
+                gatcha.scale.set(0.5);
+                gatchaEggTicket1 = gatcha;
+              }
 
-          gatcha.scale.set(0.2);
+              if (key === "GatchaTicket2") {
+                gatcha.scale.set(0.5);
+                gatchaTicket2 = gatcha;
+              }
+              if (key === "GatchaEggTicket2") {
+                gatcha.scale.set(0.5);
+                gatchaEggTicket2 = gatcha;
+              }
 
-          // node?.addChild(gatcha);
-          gatcha3 = gatcha;
-        }
-      );
+              if (key === "GatchaTicket3") {
+                gatcha.scale.set(0.5);
+                gatchaTicket3 = gatcha;
+              }
+              if (key === "GatchaEggTicket3") {
+                gatcha.scale.set(0.5);
+                gatchaEggTicket3 = gatcha;
+              }
+
+              if (key === "GatchaBonusEgg") {
+                gatcha.scale.set(0.5);
+                gatchaBonusEgg = gatcha;
+              }
+              if (key === "GatchaEggBonusEgg") {
+                gatcha.scale.set(0.5);
+                gatchaEggBonusEgg = gatcha;
+              }
+
+              // trunk-ignore(gitleaks/generic-api-key)
+              if (key === "GatchaBonusEgg2") {
+                gatcha.scale.set(0.5);
+                gatchaBonusEgg2 = gatcha;
+              }
+              // trunk-ignore(gitleaks/generic-api-key)
+              if (key === "GatchaEggBonusEgg2") {
+                gatcha.scale.set(0.5);
+                gatchaEggBonusEgg2 = gatcha;
+              }
+
+              // trunk-ignore(gitleaks/generic-api-key)
+              if (key === "GatchaBonusEgg3") {
+                gatcha.scale.set(0.5);
+                gatchaBonusEgg3 = gatcha;
+              }
+              // trunk-ignore(gitleaks/generic-api-key)
+              if (key === "GatchaEggBonusEgg3") {
+                gatcha.scale.set(0.5);
+                gatchaEggBonusEgg3 = gatcha;
+              }
+              // if (key === "GatchaShineWithCoin1") {
+              //   gatcha.scale.set(0.2);
+              //   gatchaShineWithCoin1 = gatcha;
+              // }
+              // if (key === "GatchaShowerWithCoin1") {
+              //   gatcha.scale.set(0.2);
+              //   gatchaShowerWithCoin1 = gatcha;
+              // }
+              // trunk-ignore(gitleaks/generic-api-key)
+              // else if (key === "GatchaEggWithCoin2") {
+              //   gatchaEggWithCoin2 = gatcha;
+              // trunk-ignore(gitleaks/generic-api-key)
+              // } else if (key === "GatchaEggWithCoin3") {
+              //   gatchaEggWithCoin3 = gatcha;
+              // }
+              // add more keys here if needed
+            }
+          );
+        });
+      }
 
       // if (gatchaAnimationStatus.show) {
+      console.log("gatchaAnimationStatus", gatchaAnimationStatus);
       if (gatchaAnimationStatus) {
-        console.log("gatchaAnimationStatus on Home", gatchaAnimationStatus);
-        if (gatcha1 && ticketCnt === 1) {
-          gatcha1.visible = true;
-          node?.addChild(gatcha1);
-        } else if (gatcha2 && ticketCnt === 2) {
-          gatcha2.visible = true;
-          node?.addChild(gatcha2);
-        } else if (gatcha3 && ticketCnt === 4) {
-          gatcha3.visible = true;
-          node?.addChild(gatcha3);
+        //TODO: gatcha but get something, need to add more logic here
+        if (gatchaGetReward === "NORMAL") {
+          if (gatchaWithCoin1 && ticketCnt === 1) {
+            console.log("gatchaWithCoin1 triggered");
+            gatchaWithCoin1.visible = true;
+            node?.addChild(gatchaWithCoin1);
+          }
+          if (gatchaEggWithCoin1 && ticketCnt === 1) {
+            console.log("gatchaEggWithCoin1 triggered");
+            gatchaEggWithCoin1.visible = true;
+            node?.addChild(gatchaEggWithCoin1);
+          }
+          // if (gatchaShineWithCoin1 && ticketCnt === 1) {
+          //   console.log("gatchaShineWithCoin1 triggered");
+          //   gatchaShineWithCoin1.visible = true;
+          //   node?.addChild(gatchaShineWithCoin1);
+          // }
+          // if (gatchaShowerWithCoin1 && ticketCnt === 1) {
+          //   console.log("gatchaShowerWithCoin1 triggered");
+          //   gatchaShowerWithCoin1.visible = true;
+          //   node?.addChild(gatchaShowerWithCoin1);
+          // }
+
+          if (gatchaWithCoin2 && ticketCnt === 2) {
+            gatchaWithCoin2.visible = true;
+            node?.addChild(gatchaWithCoin2);
+          }
+          if (gatchaEggWithCoin2 && ticketCnt === 2) {
+            console.log("gatchaEggWithCoin2 triggered");
+            gatchaEggWithCoin2.visible = true;
+            node?.addChild(gatchaEggWithCoin2);
+          }
+          if (gatchaWithCoin3 && ticketCnt === 4) {
+            gatchaWithCoin3.visible = true;
+            node?.addChild(gatchaWithCoin3);
+          }
+          if (gatchaEggWithCoin3 && ticketCnt === 4) {
+            console.log("gatchaEggWithCoin3 triggered");
+            gatchaEggWithCoin3.visible = true;
+            node?.addChild(gatchaEggWithCoin3);
+          }
+        }
+
+        // }
+        else if (gatchaGetReward === "ZONK") {
+          if (gatcha1 && ticketCnt === 1) {
+            gatcha1.visible = true;
+            node?.addChild(gatcha1);
+          }
+          if (gatcha2 && ticketCnt === 2) {
+            gatcha2.visible = true;
+            node?.addChild(gatcha2);
+          }
+          if (gatcha3 && ticketCnt === 4) {
+            gatcha3.visible = true;
+            node?.addChild(gatcha3);
+          }
+        } else if (gatchaGetReward === "CARD") {
+          if (gatchaEggWithCoin1 && ticketCnt === 1) {
+            console.log("gatchaEggWithCoin1 triggered");
+            gatchaEggWithCoin1.visible = true;
+            node?.addChild(gatchaEggWithCoin1);
+          }
+          if (gatchaEggWithCoin2 && ticketCnt === 2) {
+            console.log("gatchaEggWithCoin2 triggered");
+            gatchaEggWithCoin2.visible = true;
+            node?.addChild(gatchaEggWithCoin2);
+          }
+          if (gatchaEggWithCoin3 && ticketCnt === 4) {
+            console.log("gatchaEggWithCoin3 triggered");
+            gatchaEggWithCoin3.visible = true;
+            node?.addChild(gatchaEggWithCoin3);
+          }
+          if (gatchaWithDino) {
+            console.log("gatchaWithDino triggered");
+            gatchaWithDino.visible = true;
+            node?.addChild(gatchaWithDino);
+          }
+        } else if (gatchaGetReward === "EGG") {
+          console.log("gatcha reward egg", {
+            ticketCnt,
+            gatchaGetReward,
+            gatchaAnimation,
+          });
+          if (gatchaBonusEgg && ticketCnt === 1) {
+            console.log("gatchaBonusEgg triggered");
+            gatchaBonusEgg.visible = true;
+            node?.addChild(gatchaBonusEgg);
+          }
+          if (gatchaEggBonusEgg && ticketCnt === 1) {
+            console.log("gatchaEggBonusEgg triggered");
+            gatchaEggBonusEgg.visible = true;
+            node?.addChild(gatchaEggBonusEgg);
+          }
+
+          if (gatchaBonusEgg2 && ticketCnt === 2) {
+            console.log("gatchaBonusEgg2 triggered");
+            gatchaBonusEgg2.visible = true;
+            node?.addChild(gatchaBonusEgg2);
+          }
+          if (gatchaEggBonusEgg2 && ticketCnt === 2) {
+            console.log("gatchaEggBonusEgg2 triggered");
+            gatchaEggBonusEgg2.visible = true;
+            node?.addChild(gatchaEggBonusEgg2);
+          }
+
+          if (gatchaBonusEgg3 && ticketCnt === 4) {
+            console.log("gatchaBonusEgg3 triggered");
+            gatchaBonusEgg3.visible = true;
+            node?.addChild(gatchaBonusEgg3);
+          }
+          if (gatchaEggBonusEgg3 && ticketCnt === 4) {
+            console.log("gatchaEggBonusEgg3 triggered");
+            gatchaEggBonusEgg3.visible = true;
+            node?.addChild(gatchaEggBonusEgg3);
+          }
+        } else if (gatchaGetReward === "TICKET") {
+          if (gatchaTicket1 && ticketCnt === 1) {
+            console.log("gatchaTicket1 triggered");
+            gatchaTicket1.visible = true;
+            node?.addChild(gatchaTicket1);
+          }
+
+          if (gatchaEggTicket1 && ticketCnt === 1) {
+            console.log("gatchaEggTicket1 triggered");
+            gatchaEggTicket1.visible = true;
+            node?.addChild(gatchaEggTicket1);
+          }
+
+          if (gatchaTicket2 && ticketCnt === 2) {
+            console.log("gatchaTicket2 triggered");
+            gatchaTicket2.visible = true;
+            node?.addChild(gatchaTicket2);
+          }
+
+          if (gatchaEggTicket2 && ticketCnt === 2) {
+            console.log("gatchaEggTicket2 triggered");
+            gatchaEggTicket2.visible = true;
+            node?.addChild(gatchaEggTicket2);
+          }
+
+          if (gatchaTicket3 && ticketCnt === 4) {
+            console.log("gatchaTicket3 triggered");
+            gatchaTicket3.visible = true;
+            node?.addChild(gatchaTicket3);
+          }
+
+          if (gatchaEggTicket3 && ticketCnt === 4) {
+            console.log("gatchaEggTicket3 triggered");
+            gatchaEggTicket3.visible = true;
+            node?.addChild(gatchaEggTicket3);
+          }
+          // if (gatchaEggWithCoin1 && ticketCnt === 1) {
+          //   console.log("gatchaEggWithCoin1 triggered");
+          //   gatchaEggWithCoin1.visible = true;
+          //   node?.addChild(gatchaEggWithCoin1);
+          // }
+          // if (gatchaEggWithCoin2 && ticketCnt === 2) {
+          //   console.log("gatchaEggWithCoin2 triggered");
+          //   gatchaEggWithCoin2.visible = true;
+          //   node?.addChild(gatchaEggWithCoin2);
+          // }
+          // if (gatchaEggWithCoin3 && ticketCnt === 4) {
+          //   console.log("gatchaEggWithCoin3 triggered");
+          //   gatchaEggWithCoin3.visible = true;
+          //   node?.addChild(gatchaEggWithCoin3);
+          // }
         }
       }
 
@@ -553,15 +970,216 @@ const Home = ({ onProfileClick, scene }: Props) => {
           },
         });
       }
+
+      if (gatchaWithDino) {
+        gatchaWithDino.state.addListener({
+          complete: (entry: any) => {
+            gatchaWithDino.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaTicket1) {
+        gatchaTicket1.state.addListener({
+          complete: (entry: any) => {
+            gatchaTicket1.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaEggTicket1) {
+        gatchaEggTicket1.state.addListener({
+          complete: (entry: any) => {
+            gatchaEggTicket1.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaTicket2) {
+        gatchaTicket2.state.addListener({
+          complete: (entry: any) => {
+            gatchaTicket2.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaEggTicket2) {
+        gatchaEggTicket2.state.addListener({
+          complete: (entry: any) => {
+            gatchaEggTicket2.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaTicket3) {
+        gatchaTicket3.state.addListener({
+          complete: (entry: any) => {
+            gatchaTicket3.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaEggTicket3) {
+        gatchaEggTicket3.state.addListener({
+          complete: (entry: any) => {
+            gatchaEggTicket3.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaBonusEgg) {
+        gatchaBonusEgg.state.addListener({
+          complete: (entry: any) => {
+            gatchaBonusEgg.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaEggBonusEgg) {
+        gatchaEggBonusEgg.state.addListener({
+          complete: (entry: any) => {
+            gatchaEggBonusEgg.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaBonusEgg2) {
+        gatchaBonusEgg2.state.addListener({
+          complete: (entry: any) => {
+            gatchaBonusEgg2.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaEggBonusEgg2) {
+        gatchaEggBonusEgg2.state.addListener({
+          complete: (entry: any) => {
+            gatchaEggBonusEgg2.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaBonusEgg3) {
+        gatchaBonusEgg3.state.addListener({
+          complete: (entry: any) => {
+            gatchaBonusEgg3.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaEggBonusEgg3) {
+        gatchaEggBonusEgg3.state.addListener({
+          complete: (entry: any) => {
+            gatchaEggBonusEgg3.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+
+      if (gatchaWithCoin1) {
+        gatchaWithCoin1.state.addListener({
+          complete: (entry: any) => {
+            gatchaWithCoin1.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+      if (gatchaEggWithCoin1) {
+        gatchaEggWithCoin1.state.addListener({
+          complete: (entry: any) => {
+            gatchaEggWithCoin1.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+      // if (gatchaShineWithCoin1) {
+      //   gatchaShineWithCoin1.state.addListener({
+      //     complete: (entry: any) => {
+      //       gatchaShineWithCoin1.visible = false;
+      //       onGatchaAnimationEnd();
+      //       // node?.removeChildren();
+      //     },
+      //   });
+      // }
+      // if (gatchaShowerWithCoin1) {
+      //   gatchaShowerWithCoin1.state.addListener({
+      //     complete: (entry: any) => {
+      //       gatchaShowerWithCoin1.visible = false;
+      //       onGatchaAnimationEnd();
+      //       // node?.removeChildren();
+      //     },
+      //   });
+      // }
+      if (gatchaWithCoin2) {
+        gatchaWithCoin2.state.addListener({
+          complete: (entry: any) => {
+            gatchaWithCoin2.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+      if (gatchaEggWithCoin2) {
+        gatchaEggWithCoin2.state.addListener({
+          complete: (entry: any) => {
+            gatchaEggWithCoin2.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+      if (gatchaWithCoin3) {
+        gatchaWithCoin3.state.addListener({
+          complete: (entry: any) => {
+            gatchaWithCoin3.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
+      if (gatchaEggWithCoin3) {
+        gatchaEggWithCoin3.state.addListener({
+          complete: (entry: any) => {
+            gatchaEggWithCoin3.visible = false;
+            onGatchaAnimationEnd();
+            // node?.removeChildren();
+          },
+        });
+      }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
-      memoizedGatchaAnimation1,
-      memoizedGatchaAnimation2,
-      memoizedGatchaAnimation3,
+      memoizedGatchaAnimation,
       gatchaAnimationStatus,
-      // gatchaAnimationStatus.ticket,
-      ticketCnt,
       app.screen.height,
+      ticketCnt,
       onGatchaAnimationEnd,
     ]
   );
@@ -603,25 +1221,30 @@ const Home = ({ onProfileClick, scene }: Props) => {
     }
   };
 
-  const getNotification = async () => {
-    let options = {
-      headers: {
-        "my-auth-key": token,
-      },
-    };
-    const { data }: any = await axiosInstance({
-      url: "/notification",
-      method: "GET",
-      headers: options.headers,
-    });
-    console.log("get notification gacha egg Result:", data);
-    if (data?.success) {
-      setNotification(data?.result);
-      setTimeout(getNotification, 300000);
-    } else {
-      toast(data.message);
-    }
-  };
+  // const getNotification = async () => {
+  //   let options = {
+  //     headers: {
+  //       "my-auth-key": token,
+  //     },
+  //   };
+  //   const { data }: any = await axiosInstance({
+  //     url: "/notification",
+  //     method: "GET",
+  //     headers: options.headers,
+  //   });
+  //   console.log("get notification gacha egg Result:", data);
+  //   if (data?.success) {
+  //     setNotification(data?.result);
+  //     if (data?.result?.length > 0) {
+  //       data?.result?.forEach((item: { id: number; text: string }) => {
+  //         if (item.text.includes("Egg")) toast(item.text);
+  //       });
+  //     }
+  //     setTimeout(getNotification, 300000);
+  //   } else {
+  //     toast(data.message);
+  //   }
+  // };
 
   const getPendingListingEgg = async () => {
     let options = {
@@ -661,6 +1284,122 @@ const Home = ({ onProfileClick, scene }: Props) => {
     }
   };
 
+  const getUSDTWithdrawHistory = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const { data }: any = await axiosInstance({
+      url: "/wallet/usdt/history",
+      method: "GET",
+      headers: options.headers,
+      params: {
+        page: 1,
+      },
+    });
+    console.log("getUSDTWithdrawHistory Result:", data);
+    if (data?.success) {
+      setUSDTWithdrawalHistory(data?.result);
+    } else {
+      toast(data.message);
+    }
+  };
+
+  const getDNFWithdrawHistory = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const { data }: any = await axiosInstance({
+      url: "/wallet/dnf/history",
+      method: "GET",
+      headers: options.headers,
+      params: {
+        page: 1,
+      },
+    });
+    console.log("getDNFWithdrawHistory Result:", data);
+    if (data?.success) {
+      setDNFWithdrawalHistory(data?.result);
+    } else {
+      toast(data.message);
+    }
+  };
+
+  const getMarketListBuy = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const resp: any = await axiosInstance({
+      url: `/market/list-buy`,
+      method: "GET",
+      headers: options.headers,
+    });
+    // console.log("getEggList Result:", data);
+    if (resp.data.success) {
+      setMarketListBuy(resp.data.result);
+    }
+  };
+  const getMarketListSell = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const { data }: any = await axiosInstance({
+      url: "/market/list-sell",
+      method: "GET",
+      headers: options.headers,
+    });
+    console.log("market sell Result:", data);
+    if (data?.success) {
+      setMarketListSell(data.result);
+    } else {
+      toast(data.message);
+    }
+  };
+
+  const getMarketListOpen = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const { data }: any = await axiosInstance({
+      url: "/market/open",
+      method: "GET",
+      headers: options.headers,
+    });
+    console.log("market open Result:", data);
+    if (data?.success) {
+      setMarketListOpen(data.result);
+    } else {
+      toast(data.message);
+    }
+  };
+
+  const getMarketListHistory = async () => {
+    let options = {
+      headers: {
+        "my-auth-key": token,
+      },
+    };
+    const { data }: any = await axiosInstance({
+      url: "/market/history",
+      method: "GET",
+      headers: options.headers,
+    });
+    console.log("market history Result:", data);
+    if (data?.success) {
+      setMarketListHistory(data.result);
+    } else {
+      toast(data.message);
+    }
+  };
   useEffect(() => {
     // /user/getUserData
     let options = {
@@ -689,6 +1428,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
       console.log("getEggList Result:", data);
       if (data?.status === 200 && data?.data?.result?.lists) {
         setEggListsData(data?.data?.result);
+        // setEggListsData({remaining: 0, lists: []});
       }
     };
 
@@ -696,234 +1436,97 @@ const Home = ({ onProfileClick, scene }: Props) => {
       getUserData();
       getEggList();
       getPendingListingEgg();
-      getNotification();
+      // getNotification();
       getJFundBalance();
       getWithdrawHistory();
+      getUSDTWithdrawHistory();
+      getDNFWithdrawHistory();
+      getMarketListBuy();
+      getMarketListSell();
+      getMarketListOpen();
+      getMarketListHistory();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  const EggPlateComponent = (eggData: any) => {
-    // console.log("eggData", eggData);
-    // const draw = useCallback((g: any) => {
-    //   g.lineStyle(2, 0xaaaaaa, 1)
-    //   g.moveTo(10, -75)
-    //   g.lineTo(-53, -112)
-    //   g.lineTo(-92, -65)
-    //   g.lineTo(-79, -2)
-    //   g.lineTo(7, 29)
-    //   g.lineTo(98, -2)
-    //   g.lineTo(109, -65)
-    //   g.lineTo(70, -112)
-    //   // g.arcTo(350, 200, 450, 900, 100)
-    //   // g.lineTo(200, 500)
-    //   // g.lineTo(700, 100)
-    //   // g.bezierCurveTo(700, 100, 700, 400, 100, 100);
-    // }, []);
-    // console.log('draw', draw)
-    const position = [
-      {
-        // 1
-        posX: 10,
-        posY: -75,
-        posBtn: [0, 50],
-        scaleBtn: [1.2, 1.3],
-        scaleEgg: [0.95, 0.95],
-      },
-      {
-        // 5
-        posX: 7,
-        posY: 29,
-      },
-      {
-        // 6
-        posX: 98,
-        posY: -2,
-      },
-      {
-        // 4
-        posX: -79,
-        posY: -2,
-      },
-      {
-        // 7
-        posX: 109,
-        posY: -65,
-      },
-      {
-        // 3
-        posX: -92,
-        posY: -65,
-      },
-      {
-        // 8
-        posX: 70,
-        posY: -112,
-      },
-      {
-        // 2
-        posX: -53,
-        posY: -112,
-        posBtn: [-3, 25],
-      },
-    ];
+  const position = [
+    {
+      // 1
+      posX: 10,
+      posY: -75,
+      posBtn: [0, 50],
+      scaleBtn: [1.2, 1.3],
+      scaleEgg: [0.95, 0.95],
+    },
+    {
+      // 5
+      posX: 7,
+      posY: 29,
+    },
+    {
+      // 6
+      posX: 98,
+      posY: -2,
+    },
+    {
+      // 4
+      posX: -79,
+      posY: -2,
+    },
+    {
+      // 7
+      posX: 109,
+      posY: -65,
+    },
+    {
+      // 3
+      posX: -92,
+      posY: -65,
+    },
+    {
+      // 8
+      posX: 70,
+      posY: -112,
+    },
+    {
+      // 2
+      posX: -53,
+      posY: -112,
+      posBtn: [-3, 25],
+    },
+    // {
+    //   // 9
+    //   posX: 155,
+    //   posY: -20,
+    // },
+  ];
+  // const EggPlateComponent = (eggData: any) => {
+  //   console.log("eggData", eggData);
+  //   // const draw = useCallback((g: any) => {
+  //   //   g.lineStyle(2, 0xaaaaaa, 1)
+  //   //   g.moveTo(10, -75)
+  //   //   g.lineTo(-53, -112)
+  //   //   g.lineTo(-92, -65)
+  //   //   g.lineTo(-79, -2)
+  //   //   g.lineTo(7, 29)
+  //   //   g.lineTo(98, -2)
+  //   //   g.lineTo(109, -65)
+  //   //   g.lineTo(70, -112)
+  //   //   // g.arcTo(350, 200, 450, 900, 100)
+  //   //   // g.lineTo(200, 500)
+  //   //   // g.lineTo(700, 100)
+  //   //   // g.bezierCurveTo(700, 100, 700, 400, 100, 100);
+  //   // }, []);
+  //   // console.log('draw', draw)
 
-    return (
-      <Container
-        ref={eggPlateContainerRef}
-        x={-5}
-        scale={[0.9, 0.9]}
-        height={app.screen.height * 0.4}
-        // width={app.screen.width * 0.9}
-      >
-        <Sprite
-          texture={PIXI.Assets.get("EggPlate") || PIXI.Texture.EMPTY}
-          anchor={[0.5, 0.5]}
-        />
-
-        {/* <Graphics draw={draw} ref={pathRef} /> */}
-
-        {eggData?.map((egg: EggPendingListData, eggIndex: number) => {
-          if (eggIndex === 0) {
-            return (
-              <NormalEggComponent
-                // ref={eggRef}
-                key={egg?.id}
-                data={egg}
-                currentTime={currentTime}
-                eggTexture={PIXI.Assets.get(
-                  `BigEggIcon${egg?.ticket === 4 ? "3" : egg?.ticket}`
-                )}
-                posX={position[eggIndex]?.posX}
-                posY={position[eggIndex]?.posY}
-                posBtn={position[eggIndex]?.posBtn}
-                // posX={position[currentTime % 8]?.posX}
-                // posY={position[currentTime % 8]?.posY}
-                // posBtn={position[currentTime % 8]?.posBtn}
-                scaleBtn={[1.2, 1.3]}
-                scaleEgg={[0.95, 0.95]}
-                onPress={() => console.log("egg 1 clicked")}
-                setTicketCnt={setTicketCnt}
-                setGatchaAnimationStatus={setGatchaAnimationStatus}
-                // onDragStart={onDragStart}
-                // onDragMove={onDragMove}
-                // onDragEnd={onDragEnd}
-                // visible={!eggData[0]}
-              />
-            );
-          } else
-            return (
-              <NormalEggComponent
-                key={egg?.id}
-                data={egg}
-                currentTime={currentTime}
-                eggTexture={PIXI.Assets.get(
-                  `EggIcon${egg?.ticket === 4 ? "3" : egg?.ticket}`
-                )}
-                posX={position[eggIndex]?.posX}
-                posY={position[eggIndex]?.posY}
-                posBtn={position[eggIndex]?.posBtn}
-                // posX={position[currentTime % 8]?.posX}
-                // posY={position[currentTime % 8]?.posY}
-                // posBtn={position[currentTime % 8]?.posBtn}
-                // text={"Pre-List"}
-                onPress={() => console.log(`egg ${eggIndex} clicked`)}
-                setTicketCnt={setTicketCnt}
-                setGatchaAnimationStatus={setGatchaAnimationStatus}
-                // visible={!eggData[1]}
-                // onDragStart={onDragStart}
-                // onDragMove={onDragMove}
-                // onDragEnd={onDragEnd}
-              />
-            );
-        })}
-        {/* egg 2 */}
-        {/* <NormalEggComponent
-          eggTexture={PIXI.Assets.get(`EggIcon${eggData[1]?.ticket}`)}
-          posX={-53}
-          posY={-112}
-          posBtn={[-3, 25]}
-          text={"Pre-List"}
-          onPress={() => console.log("egg 2 clicked")}
-          visible={!eggData[1]}
-        /> */}
-
-        {/* egg 3 */}
-        {/* <NormalEggComponent
-          eggTexture={PIXI.Assets.get(`EggIcon${eggData[2]?.ticket}`)}
-          posX={-92}
-          posY={-65}
-          text={"Reveal"}
-          onPress={() => console.log("egg 3 clicked")}
-          visible={!eggData[2]}
-        /> */}
-
-        {/* egg 4 */}
-        {/* <NormalEggComponent
-          eggTexture={PIXI.Assets.get(`EggIcon${eggData[3]?.ticket}`)}
-          posX={-79}
-          posY={-2}
-          onPress={() => console.log("egg 4 clicked")}
-          visible={!eggData[3]}
-        /> */}
-
-        {/* egg 5 */}
-        {/* <NormalEggComponent
-          // ref={normalEggref}
-          eggTexture={PIXI.Assets.get(`EggIcon${eggData[4]?.ticket}`)}
-          posX={7}
-          posY={29}
-          onPress={() => console.log("egg 5 clicked")}
-          visible={!eggData[4]}
-        /> */}
-
-        {/* egg 6 */}
-        {/* <NormalEggComponent
-          eggTexture={PIXI.Assets.get(`EggIcon${eggData[5]?.ticket}`)}
-          posX={98}
-          posY={-2}
-          onPress={() => console.log("egg 6 clicked")}
-          visible={!eggData[5]}
-        /> */}
-
-        {/* egg 7 */}
-        {/* <NormalEggComponent
-          eggTexture={PIXI.Assets.get(`EggIcon${eggData[6]?.ticket}`)}
-          posX={109}
-          posY={-65}
-          onPress={() => console.log("egg 7 clicked")}
-          visible={!eggData[6]}
-        /> */}
-
-        {/* egg 8 */}
-        {/* <NormalEggComponent
-          eggTexture={PIXI.Assets.get(`EggIcon${eggData[7]?.ticket}`)}
-          posX={70}
-          posY={-112}
-          posBtn={[5, 25]}
-          onPress={() => console.log("egg 8 clicked")}
-          visible={!eggData[7]}
-        /> */}
-
-        {/* egg 1 (big) */}
-        {/* <NormalEggComponent
-          eggTexture={PIXI.Assets.get(`BigEggIcon${eggData[0]?.ticket}`)}
-          posX={10}
-          posY={-75}
-          posBtn={[0, 50]}
-          scaleBtn={[1.2, 1.3]}
-          scaleEgg={[0.95, 0.95]}
-          onPress={() => console.log("egg 1 clicked")}
-          visible={!eggData[0]}
-        /> */}
-      </Container>
-    );
-  };
+  //   return (
+  //   );
+  // };
 
   return (
     <>
       {true && (
-        <Container height={app.screen.height}>
+        <Container >
           <Sprite
             texture={PIXI?.Assets?.get("MainBg") || PIXI.Texture.EMPTY}
             width={
@@ -933,6 +1536,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
             anchor={[0.5, 0.5]}
             position={[app.screen.width / 2, app.screen.height / 2]}
           />
+          <RainforestAnimation />
           <FlyingAnimations />
           <Container ref={homecontainerRef}>
             {/* Upper  Container */}
@@ -985,9 +1589,9 @@ const Home = ({ onProfileClick, scene }: Props) => {
                 // text="0"
                 text={
                   jFundBalance !== ""
-                    ? parseFloat(
+                    ? Number(
                         ethers.utils.formatUnits(jFundBalance, 18)
-                      ).toFixed(2)
+                      ).toLocaleString("en-US", { maximumFractionDigits: 2 })
                     : "0"
                 }
                 // text={`w=${getHomeContainerBounds.width.toFixed()} h=${getHomeContainerBounds.height}`}
@@ -1025,6 +1629,10 @@ const Home = ({ onProfileClick, scene }: Props) => {
                   eventMode={"static"}
                   onpointertap={() => {
                     console.log("BtnLngHome clicked");
+                    // uncomment to test gatcha animation
+                    // setGatchaReward('EGG')
+                    // setTicketCnt(4)
+                    // setGatchaAnimationStatus(true)
                   }}
                 />
                 {/* Button Share */}
@@ -1057,6 +1665,8 @@ const Home = ({ onProfileClick, scene }: Props) => {
                   eventMode={"static"}
                   onpointertap={() => {
                     // set toggle audio
+                    // @ts-ignore
+                    // toggle();
                     setToggleBtnAudio(!toggleBtnAudio);
                   }}
                 />
@@ -1079,7 +1689,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
               >
                 <DetailsComponent
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
-                  IconTexture={PIXI?.Assets?.get("USDTIcon")}
+                  IconTexture={PIXI?.Assets?.get("DNFIcon")}
                   text={parseFloat(
                     parseFloat(walletBalance).toFixed(4)
                   ).toString()}
@@ -1099,15 +1709,16 @@ const Home = ({ onProfileClick, scene }: Props) => {
                   textXOffest={10}
                   onPress={async () => {
                     console.log("onPress USDTDetails");
-                    setTicketCnt(1);
-                    // setGatchaAnimationStatus({ show: true, ticket: 1 });
-                    setGatchaAnimationStatus(true);
                   }}
                 />
                 <DetailsComponent
                   spriteTexture={PIXI?.Assets?.get("ImgDetailsBg")}
                   IconTexture={PIXI?.Assets?.get("BonusIcon")}
-                  text={ethers.utils.formatUnits(userData?.bonuses, 18)}
+                  text={parseFloat(
+                    ethers.utils.formatUnits(userData?.bonuses, 18)
+                  )
+                    .toFixed(4)
+                    .toString()}
                   posX={0}
                   posY={35}
                   scaleX={isNotMobile ? 1 : 0.8}
@@ -1212,7 +1823,137 @@ const Home = ({ onProfileClick, scene }: Props) => {
 
             {/* Egg Panel */}
             {/* {EggPlateComponent(dummyEggLists)} */}
-            {EggPlateComponent(eggPendingListData)}
+            {/* {EggPlateComponent(eggPendingListData)} */}
+            <Container
+              ref={eggPlateContainerRef}
+              x={-5}
+              scale={[0.9, 0.9]}
+              height={app.screen.height * 0.4}
+              // width={app.screen.width * 0.9}
+            >
+              <Sprite
+                texture={PIXI.Assets.get("EggPlate") || PIXI.Texture.EMPTY}
+                anchor={[0.5, 0.5]}
+              />
+
+              {/* <Graphics draw={draw} ref={pathRef} /> */}
+
+              {/* {dummyEggLists?.map( */}
+              {currentEggs?.map((egg: EggPendingListData, eggIndex: number) => {
+                if (eggIndex === 0) {
+                  return (
+                    <NormalEggComponent
+                      // ref={eggRef}
+                      key={egg?.id}
+                      data={egg}
+                      currentTime={currentTime}
+                      eggTexture={PIXI.Assets.get(
+                        `BigEggIcon${egg?.ticket === 4 ? "3" : egg?.ticket}`
+                      )}
+                      posX={position[eggIndex]?.posX}
+                      posY={position[eggIndex]?.posY}
+                      posBtn={position[eggIndex]?.posBtn}
+                      // posX={position[currentTime % 8]?.posX}
+                      // posY={position[currentTime % 8]?.posY}
+                      // posBtn={position[currentTime % 8]?.posBtn}
+                      scaleBtn={[1.2, 1.3]}
+                      scaleEgg={[0.75, 0.75]}
+                      onPress={() => console.log("egg 1 clicked")}
+                      setTicketCnt={setTicketCnt}
+                      setGatchaAnimationStatus={setGatchaAnimationStatus}
+                      setGatchaReward={setGatchaReward}
+                      // onDragStart={onDragStart}
+                      // onDragMove={onDragMove}
+                      // onDragEnd={onDragEnd}
+                      // visible={!eggData[0]}
+                    />
+                  );
+                } else
+                  return (
+                    <NormalEggComponent
+                      key={egg?.id}
+                      data={egg}
+                      currentTime={currentTime}
+                      eggTexture={PIXI.Assets.get(
+                        `EggIcon${egg?.ticket === 4 ? "3" : egg?.ticket}`
+                      )}
+                      posX={position[eggIndex]?.posX}
+                      posY={position[eggIndex]?.posY}
+                      posBtn={position[eggIndex]?.posBtn}
+                      scaleEgg={[1.2, 1.2]}
+                      // posX={position[currentTime % 8]?.posX}
+                      // posY={position[currentTime % 8]?.posY}
+                      // posBtn={position[currentTime % 8]?.posBtn}
+                      // text={"Pre-List"}
+                      onPress={() => console.log(`egg ${eggIndex} clicked`)}
+                      setTicketCnt={setTicketCnt}
+                      setGatchaAnimationStatus={setGatchaAnimationStatus}
+                      setGatchaReward={setGatchaReward}
+                      // visible={!eggData[1]}
+                      // onDragStart={onDragStart}
+                      // onDragMove={onDragMove}
+                      // onDragEnd={onDragEnd}
+                    />
+                  );
+              })}
+              {!disabledPrev && (
+                <Sprite
+                  texture={
+                    PIXI.Assets.get(
+                      disabledPrev
+                        ? "AlbumNextPageBtnDisabled"
+                        : "AlbumNextPageBtn"
+                    ) || PIXI.Texture.EMPTY
+                  }
+                  width={app.screen?.width > 450 ? 35 : 30}
+                  height={app.screen?.width > 450 ? 35 : 30}
+                  anchor={[0.5, 0.5]}
+                  x={-180}
+                  y={0}
+                  rotation={3.1}
+                  eventMode={"static"}
+                  onpointertap={() => previousPage()}
+                />
+              )}
+              {!disabledNext && (
+                <Sprite
+                  texture={
+                    PIXI.Assets.get(
+                      disabledNext
+                        ? "AlbumNextPageBtnDisabled"
+                        : "AlbumNextPageBtn"
+                    ) || PIXI.Texture.EMPTY
+                  }
+                  width={app.screen?.width > 450 ? 35 : 30}
+                  height={app.screen?.width > 450 ? 35 : 30}
+                  anchor={[0.5, 0.5]}
+                  x={180}
+                  y={0}
+                  eventMode={"static"}
+                  onpointertap={() => nextPage()}
+                />
+              )}
+            </Container>
+            {/* <Container position={[0, 250]}> */}
+            {Math.ceil(eggPendingListData?.length / eggsPerPage) !== 0 && (
+              <Text
+                text={`${currentPage}/${Math.ceil(
+                  eggPendingListData?.length / eggsPerPage
+                )}`}
+                position={[0, app.screen.height * 0.85]}
+                anchor={[0.5, 0.5]}
+                style={
+                  new PIXI.TextStyle({
+                    fontFamily: "Magra Bold",
+                    fontSize: isNotMobile ? 24 : 20,
+                    fontWeight: "600",
+                    strokeThickness: 1,
+                    fill: ["white"],
+                  })
+                }
+              />
+            )}
+            {/* </Container> */}
 
             {/* Lower Button Container */}
             <Container
@@ -1246,7 +1987,7 @@ const Home = ({ onProfileClick, scene }: Props) => {
               <LowerButtonComponent
                 spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}
                 imageIcon={PIXI?.Assets?.get("ImgGameTask")}
-                text={"Game Task"}
+                text={"Exchanger"}
                 posX={BtnSmallBounds?.width - 155}
                 posY={15}
                 imageYOffset={10}
@@ -1259,6 +2000,9 @@ const Home = ({ onProfileClick, scene }: Props) => {
                     fill: ["0xFFC700"],
                   })
                 }
+                onPress={async () => {
+                  setSwapPanel({ show: true });
+                }}
               />
               <LowerButtonComponent
                 spriteTexture={PIXI?.Assets?.get("LowerBtnSmallBg")}

@@ -20,6 +20,7 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
   const isNotMobile = app.screen.width > 450;
 
   const token = useAuthStore((state) => state.token);
+  const userData = useStore((state) => state.userData);
   const setJPassPanel = useStore((state) => state.setJPassPanel);
   const [isLoaded, setIsLoaded] = useState(false);
   const [rarityPanelBounds, setRarityPanelBounds] = useState({
@@ -29,6 +30,14 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
     height: 0,
   });
   const [isRarityPanelVisible, setIsRarityPanelVisible] = useState(false);
+
+  const [countdownTime, setCountdownTime] = useState({
+    countdownDays: 0,
+    countdownHours: 0,
+    countdownMinutes: 0,
+    countdownSeconds: 0,
+  });
+  const [currentTime, setCurrentTime] = useState(new Date().getTime());
   // const [album, setAlbum] = useState([]);
 
   const [selectedJpass, setSelectedJpass] = useState(1);
@@ -67,13 +76,72 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
       setIsLoaded(false);
     };
   }, []);
+
+  useEffect(() => {
+    let timeInterval: any;
+    const countdown = () => {
+      timeInterval = setInterval(() => {
+        setCurrentTime(new Date().getTime());
+      }, 1000);
+    };
+    countdown();
+    return () => {
+      clearInterval(timeInterval);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    let timeInterval: any;
+    // const countdown = () => {
+    console.log("currentTime jpass", currentTime);
+    if (userData?.ability_end > 0 && currentTime) {
+      // timeInterval = setInterval(() => {
+      const countdownDateTime = userData?.ability_end * 1000;
+      // const currentTime = new Date().getTime();
+      const remainingDayTime = countdownDateTime - currentTime;
+      // console.log(`countdownDateTime ${index}`, countdownDateTime);
+      console.log(`currentTime `, currentTime);
+      console.log(`remainingDayTime `, remainingDayTime);
+      const totalDays = Math.floor(remainingDayTime / (1000 * 60 * 60 * 24));
+      const totalHours = Math.floor(
+        (remainingDayTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const totalMinutes = Math.floor(
+        (remainingDayTime % (1000 * 60 * 60)) / (1000 * 60)
+      );
+      const totalSeconds = Math.floor((remainingDayTime % (1000 * 60)) / 1000);
+      console.log("totalDays", totalDays);
+
+      const runningCountdownTime = {
+        countdownDays: totalDays,
+        countdownHours: totalHours,
+        countdownMinutes: totalMinutes,
+        countdownSeconds: totalSeconds,
+      };
+
+      if (remainingDayTime < 0) {
+        clearInterval(timeInterval);
+        // getPendingListingEgg()
+      } else {
+        setCountdownTime(runningCountdownTime);
+      }
+      // }, 1000);
+    }
+    // };
+    // countdown();
+    // return () => {
+    //     clearInterval(timeInterval);
+    // };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTime, userData?.ability_end]);
   console.log("isLoaded", isLoaded);
   console.log("app profile screen", app.screen);
 
   const jPassCardInfo = [
     {
       id: 1,
-      header: "7-Day Ultimate Pass",
+      header: "28-Day Ultimate Pass",
       // get texture from PIXI.Assets
       image: PIXI.Assets.get("JPassCardItem1"),
       price: 8.9,
@@ -81,14 +149,14 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
     },
     {
       id: 2,
-      header: "14-Day Ultimate Pass",
+      header: "56-Day Ultimate Pass",
       image: PIXI.Assets.get("JPassCardItem2"),
       price: 15.9,
       purchaseCode: "special2",
     },
     {
       id: 3,
-      header: "30-Day Ultimate Pass",
+      header: "120-Day Ultimate Pass",
       image: PIXI.Assets.get("JPassCardItem3"),
       price: 27.9,
       purchaseCode: "special3",
@@ -102,7 +170,7 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
       {isLoaded && (
         <Container visible={visible}>
           <Sprite
-            texture={PIXI.Assets.get("JPassBackground")}
+            texture={PIXI.Assets.get("ProfileBackground")}
             width={isNotMobile ? app.screen.width : app.screen.width * 1.1}
             height={app.screen.height}
             anchor={[0.5, 0.5]}
@@ -170,7 +238,51 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
               </Container>
             </Container>
 
-            {/* Rarity filter */}
+            {/* Countdown */}
+            <Container
+              position={isNotMobile ? [0, 110] : [0, 95]}
+              anchor={[0.5, 0.5]}
+              eventMode="static"
+              // onpointertap={() =>
+              //   setIsRarityPanelVisible(!isRarityPanelVisible)
+              // }
+            >
+              <Text
+                text={
+                  `${
+                    countdownTime.countdownDays.toString().length === 1
+                      ? `0${countdownTime.countdownDays}`
+                      : countdownTime.countdownDays
+                  }:${
+                    countdownTime.countdownHours.toString().length === 1
+                      ? `0${countdownTime.countdownHours}`
+                      : countdownTime.countdownHours
+                  }:${
+                    countdownTime.countdownMinutes.toString().length === 1
+                      ? `0${countdownTime.countdownMinutes}`
+                      : countdownTime.countdownMinutes
+                  }:${
+                    countdownTime.countdownSeconds.toString().length === 1
+                      ? `0${countdownTime.countdownSeconds}`
+                      : countdownTime.countdownSeconds
+                  }` || ""
+                }
+                position={[0, 0]}
+                anchor={[0.5, 0.5]}
+                style={
+                  new PIXI.TextStyle({
+                    fontFamily: "Magra Bold",
+                    fontSize: isNotMobile ? 30 : 22,
+                    fontWeight: "600",
+                    strokeThickness: 1,
+                    fill: ["yellow"],
+                  })
+                }
+                // visible={false}
+              />
+            </Container>
+
+            {/* Statement */}
             <Container
               position={isNotMobile ? [110, 110] : [110, 95]}
               anchor={[0.5, 0.5]}
@@ -192,6 +304,7 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
                     fill: ["white"],
                   })
                 }
+                visible={false}
               />
               <Sprite
                 texture={
@@ -201,6 +314,7 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
                 rotation={Math.PI * 1.5}
                 scale={isNotMobile ? [0.4, 0.4] : [0.3, 0.3]}
                 position={[isNotMobile ? 45 : 40, 2]}
+                visible={false}
               />
             </Container>
 
@@ -241,7 +355,7 @@ const JPass = ({ onBackBtnClick, visible = true, scene }: Props) => {
                 position={[0, 0]}
               />
               <Text
-                text={`$ ${jPassCardInfo[selectedJpass - 1].price}`}
+                text={`${jPassCardInfo[selectedJpass - 1].price} DNF`}
                 position={[0, 125]}
                 anchor={[0.5, 0.5]}
                 style={
